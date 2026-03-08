@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17-trixie
+    container_name: postgres-app-lead
+    restart: always
+    environment:
+      POSTGRES_USER: issam
+      POSTGRES_PASSWORD: 2000
+      POSTGRES_DB: app_lead_db
+    ports:
+      - "5454:5432"
+    volumes:
+      - postgres-data-app-lead:/var/lib/postgresql/data
+
+volumes:
+  postgres-data-app-lead:

@@ -1,0 +1,32 @@
+{
+    "name": "ihamani0/laravel-evolution-api",
+    "description": "Laravel package for Evolution API",
+    "type": "library",
+    "require": {
+        "php": "^8.1",
+        "illuminate/support": "^11.0|^12.0"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ihamani0\\LaravelEvolutionApi\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ihamani0\\LaravelEvolutionApi\\EvolutionApiServiceProvider"
+            ],
+            "aliases": {
+                "EvolutionApi": "Ihamani0\\LaravelEvolutionApi\\Facades\\EvolutionApi"
+            }
+        }
+    },
+    "authors": [
+        {
+            "name": "issam hamani",
+            "email": "issam.ess556@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
