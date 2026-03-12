@@ -1,14 +1,41 @@
 # ===========================================
-# Stage 1: Build assets (Node + Vite)
+# Stage 1: Build assets (Node + Vite + PHP)
 # ===========================================
-FROM node:20-alpine AS assets
+FROM php:8.3-cli-alpine AS assets
+
+# Install Node + npm
+RUN apk add --no-cache nodejs npm
 
 WORKDIR /app
 
-COPY package*.json ./
+# Install PHP extensions needed for artisan commands
+RUN apk add --no-cache libpq-dev oniguruma-dev libzip-dev && \
+    docker-php-ext-install pdo pdo_pgsql mbstring zip bcmath
+
+# Install composer
+COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
+
+# Install PHP dependencies first
+COPY composer.json composer.lock ./
+COPY packages/ ./packages/
+RUN composer install \
+    --no-dev \
+    --no-interaction \
+    --no-progress \
+    --optimize-autoloader \
+    --ignore-platform-reqs \
+    --no-scripts
+
+# Copy full app (needed for php artisan wayfinder:generate)
+COPY . .
+
+# Install Node dependencies
 RUN npm ci
 
-COPY . .
+# Generate wayfinder routes before building
+RUN php artisan wayfinder:generate || true
+
+# Build assets
 RUN npm run build
 
 # ===========================================
@@ -34,7 +61,6 @@ RUN composer install \
 # ===========================================
 FROM php:8.3-fpm-alpine AS final
 
-# Install system dependencies
 RUN apk add --no-cache \
     nginx \
     curl \
@@ -48,7 +74,6 @@ RUN apk add --no-cache \
     oniguruma-dev \
     icu-dev
 
-# Install PHP extensions
 RUN docker-php-ext-install \
     pdo \
     pdo_pgsql \
@@ -60,22 +85,18 @@ RUN docker-php-ext-install \
     pcntl \
     intl
 
- 
-RUN apk add --no-cache pcre-dev $PHPIZE_DEPS \
-    && pecl install redis \
-    && docker-php-ext-enable redis \
-    && apk del pcre-dev $PHPIZE_DEPS
+RUN pecl install redis && docker-php-ext-enable redis
 
 WORKDIR /var/www/html
 
-# Copy application files
 COPY . .
 COPY --from=vendor /app/vendor ./vendor
 COPY --from=assets /app/public/build ./public/build
+COPY --from=assets /app/resources/js/routes.ts ./resources/js/routes.ts
 
+# Discover packages with full app available
 RUN php artisan package:discover --ansi
 
-# Copy config files
 COPY ./docker/nginx.conf /etc/nginx/nginx.conf
 COPY ./docker/php.ini /usr/local/etc/php/conf.d/custom.ini
 COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
@@ -83,12 +104,10 @@ COPY ./docker/entrypoint.sh /entrypoint.sh
 
 RUN chmod +x /entrypoint.sh
 
-# Set permissions
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-# Expose Nginx and Reverb ports
-EXPOSE 80 8080
+EXPOSE 80
 
 ENTRYPOINT ["/entrypoint.sh"]
