@@ -27,12 +27,11 @@ echo "🚀 Starting in mode: $APP_MODE"
 if [ "$APP_MODE" = "app" ]; then
 
     # Cache configuration for production
+    echo "🧹 Clearing stale cache..."
+    php artisan cache:clear
+
     echo "⚙️  Caching config..."
     php artisan config:cache
-
-    echo "🗺️  Generating Wayfinder types..."
-    php artisan wayfinder:generate    # ← add this
-
     php artisan route:cache
     php artisan view:cache
     php artisan event:cache
