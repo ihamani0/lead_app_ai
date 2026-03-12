@@ -26,7 +26,8 @@ RUN composer install \
     --no-interaction \
     --no-progress \
     --optimize-autoloader \
-    --ignore-platform-reqs
+    --ignore-platform-reqs \
+    --no-scripts
 
 # ===========================================
 # Stage 3: Final production image
@@ -71,6 +72,8 @@ WORKDIR /var/www/html
 COPY . .
 COPY --from=vendor /app/vendor ./vendor
 COPY --from=assets /app/public/build ./public/build
+
+RUN php artisan package:discover --ansi
 
 # Copy config files
 COPY ./docker/nginx.conf /etc/nginx/nginx.conf
