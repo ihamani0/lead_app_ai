@@ -1,0 +1,30 @@
+{
+    "title": "Catalogue Média",
+    "description": "Gérez les ressources que votre agent IA peut partager avec vos clients",
+    "assetsCount": "Ressources",
+
+    "upload": {
+        "addAsset": "Ajouter une ressource",
+        "addNewMediaAsset": "Ajouter un nouveau média",
+        "category": "Catégorie (Mot-clé IA)",
+        "categoryPlaceholder": "ex: piscine, façade",
+        "mediaType": "Type de média",
+        "image": "Image",
+        "video": "Vidéo",
+        "document": "Document",
+        "uploadFile": "Téléverser un fichier",
+        "externalUrl": "URL externe",
+        "selectFile": "Sélectionner un fichier",
+        "directUrl": "URL directe",
+        "urlPlaceholder": "https://...",
+        "caption": "Légende (Optionnel)",
+        "captionPlaceholder": "Description envoyée avec le média...",
+        "uploading": "Téléversement...",
+        "saveAsset": "Enregistrer"
+    },
+
+    "mediaGrid": {
+        "noAssets": "Aucune ressource {type}",
+        "uploadFiles": "Téléversez des fichiers {type} pour les voir ici"
+    }
+}

@@ -26,8 +26,7 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
-
-        $newTenant= Tenant::create([
+        $newTenant = Tenant::create([
             'name' => $input['name'],
             'slug' => Str::slug($input['name']),
             'plan' => 'starter',

@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
 
             // This is the session key (e.g., "tenantId_phoneNumber")
-            $table->string('session_id')->index(); 
+            $table->string('session_id')->index();
             // n8n stores the LangChain message object here
-            $table->jsonb('message'); 
-            
+            $table->jsonb('message');
+
             $table->timestamps();
         });
     }

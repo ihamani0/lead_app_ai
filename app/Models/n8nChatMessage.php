@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Prunable;
 class n8nChatMessage extends Model
 {
     use Prunable;
+
     //
-    protected $table = "n8n_chat_messages";
+    protected $table = 'n8n_chat_messages';
+
     protected $fillable = [
         'session_id',
         'message',

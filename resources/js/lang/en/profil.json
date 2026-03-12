@@ -1,0 +1,33 @@
+{
+    "title": "WhatsApp Clusters",
+    "description": "Manage your connected numbers and automation fleets.",
+    "totalNodes": "Total Nodes",
+    "active": "Active",
+    "healthRating": "Health Rating",
+    "emptyTitle": "No Clusters Found",
+    "emptyDescription": "Start by creating your first WhatsApp instance to begin automating.",
+    "instancesCount": "Instances",
+
+    "node": "Node",
+    "linkedNumber": "Linked Number",
+    "deployment": "Deployment",
+    "deleteInstance": "Delete instance",
+    "deleteConfirm": "Are you sure you want to delete this instance?",
+    "status": {
+        "connected": "Connected",
+        "connecting": "Connecting",
+        "disconnected": "Disconnected"
+    },
+
+    "refresh_qe": "Refresh QR",
+    "waiting_scan": "Waiting for scan...",
+    "link_whatsApp": "Link WhatsApp",
+    "open_whatsapp": "Open WhatsApp",
+    "go_to_settings": "Go to Settings",
+    "linked_devices": "Linked Devices",
+    "tap_to_link": "Tap to Link",
+    "scan_qr": "Scan QR",
+    "scan_qr_description": "Scan the QR code to start automating conversations",
+    "generate_qr_code": "Generate QR Code",
+    "connecting": "Connecting..."
+}

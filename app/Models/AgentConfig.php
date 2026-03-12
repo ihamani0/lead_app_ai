@@ -11,11 +11,11 @@ class AgentConfig extends Model
     use HasUlids;
 
     protected $guarded = [];
+
     protected $casts = [
         'settings' => 'array',
         'is_active' => 'boolean',
     ];
- 
 
     public function tenant()
     {
@@ -26,5 +26,4 @@ class AgentConfig extends Model
     {
         return $this->belongsTo(EvolutionInstance::class, 'evolution_instance_id');
     }
-
 }

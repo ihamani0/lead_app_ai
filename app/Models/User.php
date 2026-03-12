@@ -53,8 +53,7 @@ class User extends Authenticatable
         ];
     }
 
-
-     public function tenant()
+    public function tenant()
     {
         return $this->belongsTo(Tenant::class);
     }
@@ -63,8 +62,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(Lead::class, 'assigned_to');
     }
-
-
 
     public function isAdmin()
     {

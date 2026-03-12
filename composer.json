@@ -9,15 +9,16 @@
     ],
     "license": "MIT",
     "repositories": [
-	    {
-		"type": "path",
-		"url": "./packages/Ihamani0/laravel-evolution-api"
-	    }
+        {
+            "type": "path",
+            "url": "./packages/Ihamani0/laravel-evolution-api"
+        }
     ],
     "require": {
         "php": "^8.2",
         "ihamani0/laravel-evolution-api": "@dev",
         "inertiajs/inertia-laravel": "^2.0",
+        "laravel-lang/lang": "^15.28",
         "laravel/fortify": "^1.30",
         "laravel/framework": "^12.0",
         "laravel/reverb": "^1.0",

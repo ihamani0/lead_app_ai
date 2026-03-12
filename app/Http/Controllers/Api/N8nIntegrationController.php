@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Log;
 
 class N8nIntegrationController extends Controller
 {
-    private function getTenantId($instanceName) {
+    private function getTenantId($instanceName)
+    {
         return EvolutionInstance::where('instance_name', $instanceName)->value('tenant_id');
     }
 
@@ -20,7 +21,7 @@ class N8nIntegrationController extends Controller
     {
         // n8n sends: { "instance": "...", "phone": "...", "temperature": "HOT", "score": 85, "summary": "Wants a pool" }
         $tenantId = $this->getTenantId($request->instance);
-        
+
         $lead = Lead::where('tenant_id', $tenantId)->where('phone', $request->phone)->first();
 
         if ($lead) {
@@ -28,9 +29,9 @@ class N8nIntegrationController extends Controller
                 'temperature' => $request->temperature ?? $lead->temperature,
                 'qualification_score' => $request->score ?? $lead->qualification_score,
                 'ai_summary' => $request->summary ?? $lead->ai_summary,
-                'status' => 'IN_PROGRESS'
+                'status' => 'IN_PROGRESS',
             ]);
-            
+
             // Example of merging custom data (e.g., budget extracted by AI)
             if ($request->has('custom_data')) {
                 $custom = $lead->custom_data ?? [];
@@ -45,16 +46,16 @@ class N8nIntegrationController extends Controller
     // 2. AI TOOL: Fetch Media
     public function getMedia(Request $request)
     {
-        Log::info('request media' , $request->all());
+        Log::info('request media', $request->all());
         // n8n sends: { "instance": "...", "category": "pool" }
 
-    // Defensive: unwrap if AI sent {"category": "..."} as string
+        // Defensive: unwrap if AI sent {"category": "..."} as string
         $categoryRaw = $request->category;
-        
+
         if (is_string($categoryRaw)) {
             $decoded = json_decode($categoryRaw, true);
-            $category = is_array($decoded) && isset($decoded['category']) 
-                ? $decoded['category'] 
+            $category = is_array($decoded) && isset($decoded['category'])
+                ? $decoded['category']
                 : $categoryRaw;
         } else {
             $category = $categoryRaw;
@@ -67,9 +68,9 @@ class N8nIntegrationController extends Controller
             ->where('category', $category)  // ✅ always clean value
             ->get();
 
-        $formattedAssets = $assets->map(fn($asset) => [
-            'type'    => $asset->type,
-            'url'     => $asset->resolved_url,
+        $formattedAssets = $assets->map(fn ($asset) => [
+            'type' => $asset->type,
+            'url' => $asset->resolved_url,
             'caption' => $asset->caption,
         ]);
 

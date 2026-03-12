@@ -9,7 +9,7 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 
 class MediaAsset extends Model implements HasMedia
 {
-use HasUlids, InteractsWithMedia  ;
+    use HasUlids, InteractsWithMedia;
 
     protected $guarded = [];
 
@@ -21,7 +21,7 @@ use HasUlids, InteractsWithMedia  ;
         if ($this->external_url) {
             return $this->external_url;
         }
-        
+
         // Otherwise, get the URL of the uploaded file via Spatie
         return $this->getFirstMediaUrl('assets');
     }

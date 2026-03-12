@@ -13,7 +13,7 @@ export function ConnectionStatus({ phoneNumber, onDisconnect }: Props) {
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="relative overflow-hidden rounded-2xl border border-emerald-200/50 bg-gradient-to-br from-emerald-50/80 to-white p-6 shadow-lg transition-all hover:shadow-xl dark:border-emerald-500/20 dark:from-emerald-950/30 dark:to-background"
+            className="relative overflow-hidden rounded-2xl border border-emerald-200/50 bg-linear-to-br from-emerald-50/80 to-white p-6 shadow-lg transition-all hover:shadow-xl dark:border-emerald-500/20 dark:from-emerald-950/30 dark:to-background"
         >
             <div className="relative z-10 flex flex-col items-center justify-between gap-6 md:flex-row">
                 <div className="flex items-center gap-5">

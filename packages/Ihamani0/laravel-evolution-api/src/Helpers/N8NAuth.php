@@ -1,5 +1,4 @@
-<?php 
-
+<?php
 
 namespace Ihamani0\LaravelEvolutionApi\Helpers;
 
@@ -13,23 +12,19 @@ namespace Ihamani0\LaravelEvolutionApi\Helpers;
  * - apiKey()   → sends { "apiKey": "..." } in the payload
  * - basic()    → sends { "authUser": "...", "authPass": "..." } in the payload
  * - none()     → sends no auth fields
- *
- * @package Yourname\EvolutionApi\Helpers
  */
-class  N8NAuth {
-
+class N8NAuth
+{
     private function __construct(
-        private readonly ?string $apiKey   = null,
+        private readonly ?string $apiKey = null,
         private readonly ?string $username = null,
         private readonly ?string $password = null,
     ) {}
 
-     /**
+    /**
      * Authenticate using an API key.
      *
-     * @param string $apiKey The API key for the N8N endpoint.
-     *
-     * @return static
+     * @param  string  $apiKey  The API key for the N8N endpoint.
      */
     public static function apiKey(string $apiKey): static
     {
@@ -39,10 +34,8 @@ class  N8NAuth {
     /**
      * Authenticate using HTTP Basic Auth credentials.
      *
-     * @param string $username The basic auth username.
-     * @param string $password The basic auth password.
-     *
-     * @return static
+     * @param  string  $username  The basic auth username.
+     * @param  string  $password  The basic auth password.
      */
     public static function basic(string $username, string $password): static
     {
@@ -51,18 +44,14 @@ class  N8NAuth {
 
     /**
      * No authentication required for the N8N endpoint.
-     *
-     * @return static
      */
     public static function none(): static
     {
-        return new static();
+        return new static;
     }
 
     /**
      * Convert auth config to array for use in API payload.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -79,5 +68,4 @@ class  N8NAuth {
 
         return [];
     }
-
 }

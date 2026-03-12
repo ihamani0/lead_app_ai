@@ -1,0 +1,37 @@
+{
+    "title": "Base de connaissances",
+    "description": "Téléchargez des documents pour entraîner vos assistants IA avec un contexte intelligent",
+    "documentsCount": "Documents",
+
+    "status": {
+    "ready": "Prêt",
+    "processing": "Traitement",
+    "failed": "Échec"
+    },
+    "upload": {
+        "title": "Entraîner l'IA",
+        "description": "Téléchargez des documents pour améliorer les capacités de votre IA",
+        "documentName": "Nom du document",
+        "uploadFile": "Télécharger un fichier",
+        "targetInstances": "Instances cibles",
+        "dropFile": "Déposez le fichier ici ou cliquez pour parcourir",
+        "supportedFormats": "Supporte PDF, TXT, DOCX",
+        "processingDocument": "Traitement du document...",
+        "uploadTrain": "Télécharger et entraîner l'IA"
+    },
+    "placeholders": {
+        "documentExample": "ex : Stratégie de prix 2024"
+    },
+    "documentsTable": {
+        "title": "Bibliothèque de documents",
+        "description": "Gérez vos documents d'entraînement IA",
+        "lastUpdated": "Dernière mise à jour : à l'instant",
+        "document": "Document",
+        "status": "Statut",
+        "uploaded": "Téléchargé",
+        "documentLabel": "Document",
+        "noDocuments": "Aucun document pour le moment",
+        "uploadFirstDocument": "Téléchargez votre premier document pour commencer"
+    }
+
+}

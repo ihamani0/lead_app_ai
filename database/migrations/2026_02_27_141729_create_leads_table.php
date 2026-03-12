@@ -18,25 +18,21 @@ return new class extends Migration
 
             $table->foreignId('instance_id')->nullable()->constrained('evolution_instances');
 
-
             $table->string('name', 255);
             $table->string('phone', 30);
             $table->string('email', 255)->nullable();
 
             $table->string('status')->default('NEW')->index(); // NEW, IN_PROGRESS, CLOSED // new | contacted | qualified | hot | rdv | lost
 
-            $table->enum('contact_status' ,  ['REPONDU' , "ATTENTE_REPONSE"])->default("ATTENTE_REPONSE");
+            $table->enum('contact_status', ['REPONDU', 'ATTENTE_REPONSE'])->default('ATTENTE_REPONSE');
 
-
-
-                // AI Qualification Fields
+            // AI Qualification Fields
             $table->string('temperature', 20)->default('COLD'); // HOT, WARM, COLD
             $table->integer('qualification_score')->default(0); // 0 to 100
             $table->text('ai_summary')->nullable(); // AI writes a summary of the chat
 
-
             // Flexible Data (Budget, Quartier, Source, etc.)
-            $table->jsonb('custom_data')->nullable(); 
+            $table->jsonb('custom_data')->nullable();
 
             $table->timestamp('last_activity_at')->nullable();
             $table->timestamps();

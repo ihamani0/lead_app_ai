@@ -6,12 +6,13 @@ import '../css/app.css';
 import { initializeTheme } from './hooks/use-appearance';
 // eslint-disable-next-line import/order
 import { configureEcho } from '@laravel/echo-react';
+import { setupI18n } from './i18n';
 
 configureEcho({
     broadcaster: 'reverb',
 });
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Crew';
 
 createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),
@@ -22,6 +23,11 @@ createInertiaApp({
         ),
     setup({ el, App, props }) {
         const root = createRoot(el);
+        const pageProps = props.initialPage.props as Record<string, unknown>;
+        const locale = (pageProps.locale as string) ?? 'en';
+        const langVersion = (pageProps.langVersion as string) ?? 'v0';
+
+        setupI18n(locale, langVersion);
 
         root.render(
             <StrictMode>

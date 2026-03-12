@@ -1,0 +1,29 @@
+{
+    "title": "AI Agents",
+    "subtitle": "Manage your automated WhatsApp assistants",
+    "agentsCount": "Agents",
+
+    "assistant": "Assistant",
+    "ai_core": "AI Core",
+
+    "status": {
+        "running": "Running",
+        "paused": "Paused",
+        "offline": "Offline"
+    },
+
+    "whatsapp": "WhatsApp",
+
+    "brain_config": "Brain Configuration",
+    "brain_placeholder": "Initialize the brain to get started...",
+
+    "config_settings": "Configuration & Settings",
+
+    "empty_title": "Your AI Fleet is Empty",
+    "empty_description": "Ready to automate? Connect your first WhatsApp assistant below.",
+
+    "numbers_available": "Number(s) Available",
+    "deploy_description": "Deploy AI assistants to handle these lines automatically.",
+
+    "setup": "Setup"
+}

@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('role', 50)->default('agent'); // admin | manager | agent
 
-
             $table->foreignUlid('tenant_id')->constrained()->onDelete('cascade');
 
             $table->timestamp('email_verified_at')->nullable();
@@ -25,7 +24,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-             $table->index('tenant_id');
+            $table->index('tenant_id');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

@@ -1,0 +1,30 @@
+{
+    "title": "Media Catalog",
+    "description": "Manage assets for your AI agent to share with clients",
+    "assetsCount": "Assets",
+
+    "upload": {
+        "addAsset": "Add Asset",
+        "addNewMediaAsset": "Add New Media Asset",
+        "category": "Category (AI Keyword)",
+        "categoryPlaceholder": "e.g., pool, facade",
+        "mediaType": "Media Type",
+        "image": "Image",
+        "video": "Video",
+        "document": "Document",
+        "uploadFile": "Upload File",
+        "externalUrl": "External URL",
+        "selectFile": "Select File",
+        "directUrl": "Direct URL",
+        "urlPlaceholder": "https://...",
+        "caption": "Caption (Optional)",
+        "captionPlaceholder": "Description sent with the media...",
+        "uploading": "Uploading...",
+        "saveAsset": "Save Asset"
+    },
+
+    "mediaGrid": {
+        "noAssets": "No {type} assets",
+        "uploadFiles": "Upload {type} files to see them here"
+    }
+}

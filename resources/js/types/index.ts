@@ -119,5 +119,6 @@ export interface Lead {
     updated_at: string;
     created_at:string;
     ai_summary:string;
-     custom_data:string;
+    custom_data:string;
+    instance ?:EvolutionInstance
 }

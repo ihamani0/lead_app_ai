@@ -2,6 +2,7 @@
 import { Head, router } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import { useState, useCallback, useEffect } from 'react';
+import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { restart } from '@/routes/instances';
@@ -18,6 +19,8 @@ interface Props {
 }
 
 export default function InstanceShow({ instance }: Props) {
+    const { t } = useTranslation();
+
     const [localInstance, setLocalInstance] = useState(instance);
     const [qrCode, setQrCode] = useState<string | null>(null);
     const [isLoadingQr, setIsLoadingQr] = useState(false);
@@ -36,12 +39,10 @@ export default function InstanceShow({ instance }: Props) {
         }
     }, [localInstance.status, connectionStartTime]);
 
-
     // Calculate elapsed time
-    const elapsedTime = connectionStartTime 
+    const elapsedTime = connectionStartTime
         ? Math.floor((Date.now() - connectionStartTime) / 1000)
         : 0;
-
 
     // WebSocket setup
     const channel = `instance.${instance.instance_name}`;
@@ -115,6 +116,19 @@ export default function InstanceShow({ instance }: Props) {
         [localInstance.id],
     );
 
+    const handleAutoRestart = useCallback(() => {
+        setIsRestarting(true);
+        router.put(
+            restart(localInstance.id),
+            {},
+            {
+                preserveScroll: true,
+                preserveState: true,
+                onFinish: () => setIsRestarting(false),
+            },
+        );
+    }, [localInstance.id]);
+
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: dashboard().url },
         { title: 'Instances', href: index().url },
@@ -123,9 +137,7 @@ export default function InstanceShow({ instance }: Props) {
 
     // Render appropriate status component
     const renderStatusSection = () => {
-
-
-        // FIX: Prioritize the QR code. If we have a QR code generated, 
+        // FIX: Prioritize the QR code. If we have a QR code generated,
         // we must show the scanner, even if the status hasn't updated perfectly yet.
         if (qrCode && localInstance.status !== 'connected') {
             return (
@@ -133,10 +145,10 @@ export default function InstanceShow({ instance }: Props) {
                     qrCode={qrCode}
                     isLoading={isLoadingQr}
                     onGenerate={handleFetchQr}
+                    t={t}
                 />
             );
         }
-
 
         switch (localInstance.status) {
             case 'connected':
@@ -152,6 +164,7 @@ export default function InstanceShow({ instance }: Props) {
                     <ConnectingStatus
                         instanceName={localInstance.instance_name}
                         onRestart={handleRestart}
+                        onAutoRestart={handleAutoRestart}
                         elapsedTime={elapsedTime}
                         isRestarting={isRestarting}
                     />
@@ -163,6 +176,7 @@ export default function InstanceShow({ instance }: Props) {
                         qrCode={qrCode}
                         isLoading={isLoadingQr}
                         onGenerate={handleFetchQr}
+                        t={t}
                     />
                 );
         }
@@ -173,11 +187,9 @@ export default function InstanceShow({ instance }: Props) {
             <Head title={`${localInstance.instance_name} | Instance`} />
 
             <div className="py-8 md:py-12">
-                <div className="mx-auto max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
+                <div className="space-y-6 px-4 sm:px-6 lg:px-8">
                     {/* Status Section */}
-                    <div className="pt-4">
-                        {renderStatusSection()}
-                    </div>
+                    <div className="pt-4">{renderStatusSection()}</div>
 
                     {/* Tabs Section - Only show when connected */}
                     {localInstance.status === 'connected' && (

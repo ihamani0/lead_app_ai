@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
             $table->string('category', 100)->index(); // 'pool', 'facade', 'apartment_f4'
             $table->string('type', 20); // 'image', 'video', 'document'
-            $table->text('external_url')->nullable(); 
+            $table->text('external_url')->nullable();
             $table->text('caption')->nullable(); // Text to send with the image
             $table->boolean('is_active')->default(true);
             $table->timestamps();

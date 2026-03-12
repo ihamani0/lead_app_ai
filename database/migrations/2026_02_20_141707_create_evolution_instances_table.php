@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('evolution_instances', function (Blueprint $table) {
             $table->id();
-            
+
             $table->foreignUlid('tenant_id')->constrained()->onDelete('cascade');
-             
 
             $table->string('instance_name', 100)->unique();
             $table->string('phone_number', 30)->nullable();

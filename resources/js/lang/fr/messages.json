@@ -1,0 +1,21 @@
+{
+    "welcome": "Bienvenue",
+    "dashboard": "Tableau de bord",
+    "profile": "Profil",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "email": "E-mail",
+    "password": "Mot de passe",
+    "confirm_password": "Confirmer le mot de passe",
+    "remember_me": "Se souvenir de moi",
+    "forgot_password": "Mot de passe oublié ?",
+    "language": "Langue",
+    "english": "Anglais",
+    "french": "Français",
+    "agents": "Agents",
+    "leads": "Leads",
+    "media_assets": "Media Assets",
+    "documentation": "Base de connaissances"
+}

@@ -1,0 +1,39 @@
+{
+    "title": "CRM Leads",
+    "description": "Contacts processed and scored by your AI Agent",
+    "leadsCount": "Leads",
+
+    "search": {
+        "placeholder": "Search name or phone...",
+        "allInstances": "All Instances",
+        "allStatuses": "All Statuses",
+        "allTemperatures": "All Temperatures",
+        "new": "New",
+        "inProgress": "In Progress",
+        "qualified": "Qualified",
+        "won": "Closed - Won",
+        "hot": "Hot",
+        "warm": "Warm",
+        "cold": "Cold",
+        "minScore": "Min AI Score (0-100)",
+        "clearFilters": "Clear Filters"
+    },
+
+    "table": {
+        "contact": "Contact",
+        "status": "Status",
+        "temperature": "Temperature",
+        "aiScore": "AI Score",
+        "lastActive": "Last Active",
+        "actions": "Actions"
+    },
+
+    "empty": {
+        "title": "No leads generated yet",
+        "description": "Wait for the AI to process incoming chats!"
+    },
+
+    "badges": {
+        "new": "New"
+    }
+}

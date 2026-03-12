@@ -1,35 +1,32 @@
-<?php 
-
+<?php
 
 namespace App\Services;
 
 use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
 use Ihamani0\LaravelEvolutionApi\Facades\EvolutionApi;
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
- 
 
-class EvolutionService {
+class EvolutionService
+{
+    protected $baseUrl;
 
-    protected $baseUrl ;
-    protected $apiKey ;
+    protected $apiKey;
 
-    protected $evolutaion_url_webhook ;
-
+    protected $evolutaion_url_webhook;
 
     public function __construct()
     {
-        $this->baseUrl = config('services.evolution.base_url')  ;
-        $this->apiKey = config('services.evolution.api_key')  ;
-        $this->evolutaion_url_webhook = config('services.evolution.evolutaion_url_webhook')  ;
+        $this->baseUrl = config('services.evolution.base_url');
+        $this->apiKey = config('services.evolution.api_key');
+        $this->evolutaion_url_webhook = config('services.evolution.evolutaion_url_webhook');
 
     }
 
+    public function createInstance(string $instanceName, string $token): array
+    {
 
-    public function createInstance(string $instanceName , string $token): array {
-        
-        $response= EvolutionApi::instance()->create($instanceName,[
+        $response = EvolutionApi::instance()->create($instanceName, [
             'token' => $token,
             'reject_call' => true,
             'webhook' => [
@@ -39,7 +36,7 @@ class EvolutionService {
                 'events' => [
                     'CONNECTION_UPDATE',
                     'MESSAGES_UPSERT',
-                    'QRCODE_UPDATED'
+                    'QRCODE_UPDATED',
                 ],
             ],
         ]);
@@ -48,16 +45,15 @@ class EvolutionService {
 
     }
 
-
-    public function fetchQrCode(string $instanceName): void {
-        
+    public function fetchQrCode(string $instanceName): void
+    {
 
         EvolutionApi::setInstance($instanceName)->instance()->connect();
 
         Http::withHeaders([
             'apiKey' => $this->apiKey,
-            'Content-Type' => 'application/json'
-         ])->get("{$this->baseUrl}/instance/connect/{$instanceName}");
+            'Content-Type' => 'application/json',
+        ])->get("{$this->baseUrl}/instance/connect/{$instanceName}");
 
         //  if ($response->successful()) {
 
@@ -66,26 +62,23 @@ class EvolutionService {
         //     //   "code": "2@y8eK+bjtEjUWy9/FOM...",
         //     //   "count": 1
         //     // }
-            
-        //     return $response->json('code'); 
+
+        //     return $response->json('code');
         // }
 
         // return null;
     }
 
-
-
-    public function logoutInstance(string $instanceName): array{
-
+    public function logoutInstance(string $instanceName): array
+    {
 
         $response = EvolutionApi::setInstance($instanceName)->instance()->logout();
 
-         return $response;
+        return $response;
     }
 
-
-    public function deleteInstance(string $instanceName): array{
-
+    public function deleteInstance(string $instanceName): array
+    {
 
         $response = EvolutionApi::setInstance($instanceName)->instance()->delete();
 
@@ -94,25 +87,23 @@ class EvolutionService {
         //     'Content-Type' => 'application/json'
         //  ])->delete("{$this->baseUrl}/instance/delete/{$instanceName}");
 
-         return $response;
-    }
-
-    public function restartInstance(string $instanceName){
-        
-        $response = EvolutionApi::setInstance($instanceName)->instance()->restart();
-        
         return $response;
     }
 
+    public function restartInstance(string $instanceName)
+    {
 
+        $response = EvolutionApi::setInstance($instanceName)->instance()->restart();
 
+        return $response;
+    }
 
-
-    //==========Handle N8n Integration===============
+    // ==========Handle N8n Integration===============
 
     private function buildN8nPayload(AgentConfig $agent, bool $isEnabled)
     {
         $settings = $agent->settings ?? [];
+
         return [
             'enabled' => $isEnabled,
             'webhookUrl' => $agent->webhook_url,
@@ -128,21 +119,21 @@ class EvolutionService {
         ];
     }
 
+    public function connectN8nBot(EvolutionInstance $instance, AgentConfig $agent)
+    {
 
-    public function connectN8nBot(EvolutionInstance $instance , AgentConfig $agent ){
-        
         $payload = $this->buildN8nPayload($agent, true);
 
         $response = Http::withHeaders(['apikey' => $this->apiKey])
             ->post("{$this->baseUrl}/n8n/create/{$instance->instance_name}", $payload);
 
-
-        if ($response->failed()) throw new \Exception("Evolution API: " . $response->body());
+        if ($response->failed()) {
+            throw new \Exception('Evolution API: '.$response->body());
+        }
 
         return $response->json();
-         
-    }
 
+    }
 
     public function updateN8nBot(EvolutionInstance $instance, AgentConfig $agent)
     {
@@ -151,7 +142,10 @@ class EvolutionService {
         $response = Http::withHeaders(['apikey' => $this->apiKey])
             ->put("{$this->baseUrl}/n8n/update/{$agent->evo_integration_id}/{$instance->instance_name}", $payload);
 
-        if ($response->failed()) throw new \Exception("Evolution API: " . $response->body());
+        if ($response->failed()) {
+            throw new \Exception('Evolution API: '.$response->body());
+        }
+
         return $response->json();
     }
 
@@ -162,19 +156,27 @@ class EvolutionService {
         $response = Http::withHeaders(['apikey' => $this->apiKey])
             ->put("{$this->baseUrl}/n8n/update/{$agent->evo_integration_id}/{$instance->instance_name}", $payload);
 
-        if ($response->failed()) {dd( $response->body());throw new \Exception("Evolution API: " . $response->body());}
+        if ($response->failed()) {
+            dd($response->body());
+            throw new \Exception('Evolution API: '.$response->body());
+        }
+
         return $response->json();
     }
 
-
     public function deleteN8nBot(EvolutionInstance $instance, AgentConfig $agent)
     {
-        if (!$agent->evo_integration_id) return true;
+        if (! $agent->evo_integration_id) {
+            return true;
+        }
 
         $response = Http::withHeaders(['apikey' => $this->apiKey])
             ->delete("{$this->baseUrl}/n8n/delete/{$agent->evo_integration_id}/{$instance->instance_name}");
 
-        if ($response->failed()) throw new \Exception("Evolution API: " . $response->body());
+        if ($response->failed()) {
+            throw new \Exception('Evolution API: '.$response->body());
+        }
+
         return $response->successful();
     }
 }

@@ -1,0 +1,37 @@
+{
+    "title": "Knowledge Base",
+    "description": "Upload documents to train your AI assistants with intelligent context awareness",
+    "documentsCount": "Documents",
+
+    "status": {
+        "ready": "Ready",
+        "processing": "Processing",
+        "failed": "Failed"
+    },
+    "upload": {
+        "title": "Train AI",
+        "description": "Upload documents to enhance your AI capabilities",
+        "documentName": "Document Name",
+        "uploadFile": "Upload File",
+        "targetInstances": "Target Instances",
+        "dropFile": "Drop file here or click to browse",
+        "supportedFormats": "Supports PDF, TXT, DOCX",
+        "processingDocument": "Processing Document...",
+        "uploadTrain": "Upload & Train AI"
+    },
+    "placeholders": {
+        "documentExample": "e.g., Pricing Strategy 2024"
+    },
+    "documentsTable": {
+        "title": "Documents Library",
+        "description": "Manage your AI training documents",
+        "lastUpdated": "Last updated: Just now",
+        "document": "Document",
+        "status": "Status",
+        "uploaded": "Uploaded",
+        "documentLabel": "Document",
+        "noDocuments": "No documents yet",
+        "uploadFirstDocument": "Upload your first document to get started"
+    }
+
+}

@@ -1,5 +1,6 @@
 // components/media/MediaGrid.tsx
 import { Image as ImageIcon, Video, FileText } from 'lucide-react';
+import { useTranslation } from '@/hooks/use-translation';
 import type { Asset } from '@/types';
 import { AssetCard } from './AssetCard';
 
@@ -16,6 +17,8 @@ export function MediaGrid({
     onSelect,
     emptyType,
 }: MediaGridProps) {
+    const { t } = useTranslation();
+
     if (assets.length === 0) {
         return (
             <div className="col-span-full flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border/50 bg-muted/20 py-16 text-center">
@@ -34,10 +37,10 @@ export function MediaGrid({
                     )}
                 </div>
                 <h3 className="mb-1 text-lg font-semibold text-muted-foreground">
-                    No {emptyType} assets
+                    {t('media.mediaGrid.noAssets', { type: emptyType })}
                 </h3>
                 <p className="text-sm text-muted-foreground/60">
-                    Upload {emptyType} files to see them here
+                    {t('media.mediaGrid.uploadFiles', { type: emptyType })}
                 </p>
             </div>
         );

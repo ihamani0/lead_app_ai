@@ -41,10 +41,10 @@ return [
         'evolutaion_url_webhook' => env('EVOLUTION_WEBHOOK_URL'),
     ],
 
-    'n8n'=>[
-        'n8n_base_url'=>env("N8N_BASE_URL"),
-        'api_key' => env("N8N_API_KEY")
+    'n8n' => [
+        'n8n_base_url' => env('N8N_BASE_URL'),
+        'api_key' => env('N8N_API_KEY'),
 
-    ]
+    ],
 
 ];

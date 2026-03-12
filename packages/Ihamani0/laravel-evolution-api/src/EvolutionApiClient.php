@@ -8,27 +8,24 @@ use Ihamani0\LaravelEvolutionApi\Services\SettingsService;
 use Ihamani0\LaravelEvolutionApi\Services\WebsocketService;
 use Illuminate\Support\Facades\Http;
 
-class EvolutionApiClient {
+class EvolutionApiClient
+{
+    protected string $base_url;
 
+    protected string $api_key;
 
-    protected string $base_url ;
-    protected string $api_key ;
+    protected ?string $instance;
 
-    protected ?string $instance ;
-
-
-
-    public function __construct(string $baseUrl, string $apiKey , ?string $Inistance = null)
+    public function __construct(string $baseUrl, string $apiKey, ?string $Inistance = null)
     {
-        $this->base_url = rtrim($baseUrl, '/');;
+        $this->base_url = rtrim($baseUrl, '/');
         $this->api_key = $apiKey;
         $this->instance = $Inistance;
 
     }
 
-
     // ----------------------------
-    //Getter \ Setter
+    // Getter \ Setter
     // ----------------------------
     public function getInstance(): string
     {
@@ -37,6 +34,7 @@ class EvolutionApiClient {
                 'No instance specified. Use EvolutionApi::setInstance("your-instance") before calling this method.'
             );
         }
+
         return $this->instance;
     }
 
@@ -44,18 +42,18 @@ class EvolutionApiClient {
     public function setInstance(string $instance): static
     {
         $this->instance = $instance;
+
         return $this;
     }
 
-
     // ----------------------------
-    // Core HTTP methods 
+    // Core HTTP methods
     // ----------------------------
 
     public function post(string $endpoint, array $data): array
     {
         $response = Http::withHeaders([
-            'apikey'       => $this->api_key,
+            'apikey' => $this->api_key,
             'Content-Type' => 'application/json',
         ])->post("{$this->base_url}/{$endpoint}", $data);
 
@@ -89,19 +87,19 @@ class EvolutionApiClient {
         return $response->json();
     }
 
-
     // ----------------------------
     //  health Check
     // ----------------------------
-    public function healthCheck(): array {
-       return $this->get('');
+    public function healthCheck(): array
+    {
+        return $this->get('');
     }
-
 
     // ----------------------------
     // Services
     // ----------------------------
-    public function instance(){
+    public function instance()
+    {
         return new InstanceService($this);
     }
 
@@ -114,6 +112,4 @@ class EvolutionApiClient {
     {
         return new WebsocketService($this);
     }
-
-
 }

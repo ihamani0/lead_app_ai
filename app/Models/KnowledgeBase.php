@@ -10,8 +10,6 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class KnowledgeBase extends Model implements HasMedia
 {
     use HasUlids, InteractsWithMedia;
-    protected $guarded = [];   
 
-
-    
+    protected $guarded = [];
 }

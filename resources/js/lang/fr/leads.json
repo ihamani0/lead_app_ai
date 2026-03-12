@@ -1,0 +1,39 @@
+{
+    "title": "CRM Leads",
+    "description": "Contacts traités et scorés par votre Agent IA",
+    "leadsCount": "Leads",
+
+    "search": {
+        "placeholder": "Rechercher par nom ou téléphone...",
+        "allInstances": "Toutes les instances",
+        "allStatuses": "Tous les statuts",
+        "allTemperatures": "Toutes les températures",
+        "new": "Nouveau",
+        "inProgress": "En cours",
+        "qualified": "Qualifié",
+        "won": "Gagné",
+        "hot": "Chaud",
+        "warm": "Tiède",
+        "cold": "Froid",
+        "minScore": "Score IA min (0-100)",
+        "clearFilters": "Effacer les filtres"
+    },
+
+    "table": {
+        "contact": "Contact",
+        "status": "Statut",
+        "temperature": "Température",
+        "aiScore": "Score IA",
+        "lastActive": "Dernière activité",
+        "actions": "Actions"
+    },
+
+    "empty": {
+        "title": "Aucun lead généré",
+        "description": "Attendez que l'IA traite les messages entrants!"
+    },
+
+    "badges": {
+        "new": "Nouveau"
+    }
+}

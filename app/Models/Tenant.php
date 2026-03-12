@@ -3,20 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
-use Illuminate\Database\Eloquent\Model;
-use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Tenant extends Authenticatable
 {
-    use HasUlids , HasApiTokens;
+    use HasApiTokens , HasUlids;
     //
 
     protected $table = 'tenants';
-    
-    public $incrementing = false;
-    protected $keyType = 'string';
 
+    public $incrementing = false;
+
+    protected $keyType = 'string';
 
     protected $fillable = [
         'name',
@@ -26,12 +25,9 @@ class Tenant extends Authenticatable
         'settings',
     ];
 
-
     protected $casts = [
-        'settings'=> "array",
+        'settings' => 'array',
     ];
-
-
 
     public function users()
     {
@@ -47,8 +43,4 @@ class Tenant extends Authenticatable
     {
         return $this->hasMany(Lead::class);
     }
- 
-
-
-
 }

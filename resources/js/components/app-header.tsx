@@ -35,9 +35,22 @@ import { dashboard } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import AppLogo from './app-logo';
 import AppLogoIcon from './app-logo-icon';
+import { LanguageSwitcher } from './language-switcher';
 
 type Props = {
     breadcrumbs?: BreadcrumbItem[];
+};
+
+type PageProps = {
+    auth: {
+        user: {
+            name: string;
+            email: string;
+            avatar?: string;
+        };
+    };
+    locale: string;
+    availableLocales: string[];
 };
 
 const mainNavItems: NavItem[] = [
@@ -65,8 +78,8 @@ const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
 export function AppHeader({ breadcrumbs = [] }: Props) {
-    const page = usePage();
-    const { auth } = page.props;
+    const page = usePage<PageProps>();
+    const { auth, locale, availableLocales } = page.props;
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
     return (
@@ -215,6 +228,10 @@ export function AppHeader({ breadcrumbs = [] }: Props) {
                                 ))}
                             </div>
                         </div>
+                        <LanguageSwitcher
+                            availableLocales={availableLocales}
+                            currentLocale={locale}
+                        />
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button

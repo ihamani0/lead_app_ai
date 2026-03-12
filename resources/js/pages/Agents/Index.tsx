@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { Bot, Phone, PlusCircle, Settings } from 'lucide-react';
+import { Bot, Phone, PlusCircle, Settings, Sparkles } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -9,6 +9,7 @@ import {
     CardContent,
     CardFooter,
 } from '@/components/ui/card';
+import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import { show } from '@/routes/profile';
@@ -29,21 +30,42 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function AgentIndex({ agents, availableInstances }: Props) {
+    const { t } = useTranslation();
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="AI Agents" />
+            <Head title={t('agents.title')} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    {/* Header */}
-                    <div className="mb-6 flex items-center justify-between">
-                        <div>
-                            <h2 className="text-2xl font-bold tracking-tight">
-                                AI Agents
-                            </h2>
-                            <p className="text-muted-foreground">
-                                Manage your automated WhatsApp assistants.
-                            </p>
+                    {/* Header - Purple/Violet Gradient */}
+                    <div className="relative mb-8 overflow-hidden rounded-3xl bg-linear-to-br from-violet-600 via-purple-700 to-indigo-800 p-8 shadow-2xl ring-1 ring-violet-400/30 md:p-12 dark:from-violet-900 dark:via-purple-900 dark:to-indigo-900 dark:ring-violet-700/50">
+                        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-20" />
+                        <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-violet-400/20 blur-3xl" />
+                        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-purple-400/20 blur-3xl" />
+                        <div className="relative z-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-2xl border border-white/30 bg-white/20 p-3 shadow-lg backdrop-blur-md">
+                                        <Bot className="h-8 w-8 text-white" />
+                                    </div>
+                                    <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg md:text-5xl">
+                                        {t('agents.title')}
+                                    </h1>
+                                </div>
+                                <p className="max-w-xl text-lg font-light text-white/90">
+                                    {t('agents.subtitle')}
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
+                                    <Sparkles className="h-4 w-4" />
+                                    <span>
+                                        {agents.length}{' '}
+                                        {t('agents.agentsCount')}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -63,7 +85,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                             <div className="flex items-start justify-between">
                                                 <div className="flex items-center gap-3">
                                                     <div
-                                                        className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-colors ${isActive ? 'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'}`}
+                                                        className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-colors ${isActive ? 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900 dark:text-emerald-400' : 'bg-slate-100 text-slate-400 dark:bg-slate-800'}`}
                                                     >
                                                         <Bot className="h-6 w-6" />
                                                     </div>
@@ -71,7 +93,10 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                         <CardTitle className="text-xl font-bold tracking-tight">
                                                             {agent.instance?.instance_name?.split(
                                                                 '-',
-                                                            )[1] || 'Assistant'}
+                                                            )[1] ||
+                                                                t(
+                                                                    'agents.assistant',
+                                                                )}
                                                         </CardTitle>
                                                         <Badge
                                                             variant="outline"
@@ -92,9 +117,15 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                     >
                                                         {isConnected
                                                             ? agent.is_active
-                                                                ? 'Running'
-                                                                : 'Paused'
-                                                            : 'Offline'}
+                                                                ? t(
+                                                                      'agents.status.running',
+                                                                  )
+                                                                : t(
+                                                                      'agents.status.paused',
+                                                                  )
+                                                            : t(
+                                                                  'agents.status.offline',
+                                                              )}
                                                     </span>
                                                 </div>
                                             </div>
@@ -110,25 +141,27 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                         WhatsApp
                                                     </span>
                                                     <span className="text-sm font-bold tracking-tight text-slate-700 dark:text-slate-200">
-                                                        +
                                                         {agent.instance
-                                                            ?.phone_number ||
-                                                            '---'}
+                                                            ?.phone_number
+                                                            ? `+ ${agent.instance?.phone_number}`
+                                                            : '--- --- ---'}
                                                     </span>
                                                 </div>
                                             </div>
 
                                             <div className="relative rounded-xl border border-slate-100 bg-white/50 p-4 dark:border-slate-800 dark:bg-slate-900/50">
                                                 <p className="mb-2 text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                                                    Brain Configuration
+                                                    {t('agents.brain_config')}
                                                 </p>
                                                 <p className="line-clamp-3 min-h-18 text-sm leading-relaxed text-slate-600 italic dark:text-slate-400">
                                                     "
                                                     {agent.system_prompt ||
-                                                        'Initialize the brain to get started...'}
+                                                        t(
+                                                            'agents.brain_placeholder',
+                                                        )}
                                                     "
                                                 </p>
-                                                <div className="absolute bottom-0 left-0 h-1 w-0 bg-purple-500 transition-all duration-500 group-hover:w-full" />
+                                                {/* <div className="absolute bottom-0 left-0 h-1 w-0 bg-purple-500 transition-all duration-500 group-hover:w-full" /> */}
                                             </div>
                                         </CardContent>
 
@@ -149,7 +182,9 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                         }
                                                     >
                                                         <Settings className="mr-2 h-4 w-4" />
-                                                        Configuration & Settings
+                                                        {t(
+                                                            'agents.config_settings',
+                                                        )}
                                                     </Link>
                                                 )}
                                             </Button>
@@ -165,11 +200,10 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                     <Bot className="h-10 w-10 text-slate-300 dark:text-slate-600" />
                                 </div>
                                 <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">
-                                    Your AI Fleet is Empty
+                                    {t('agents.empty_title')}
                                 </h3>
                                 <p className="mt-2 text-slate-500 dark:text-slate-400">
-                                    Ready to automate? Connect your first
-                                    WhatsApp assistant below.
+                                    {t('agents.empty_description')}
                                 </p>
                             </div>
                             <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-purple-500/5 blur-3xl" />
@@ -187,11 +221,10 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                     <div>
                                         <h3 className="text-xl font-bold tracking-tight text-blue-950 dark:text-blue-50">
                                             {availableInstances.length}{' '}
-                                            Number(s) Available
+                                            {t('agents.numbers_available')}
                                         </h3>
                                         <p className="mt-1 text-blue-700/80 dark:text-blue-400/80">
-                                            Deploy AI assistants to handle these
-                                            lines automatically.
+                                            {t('agents.deploy_description')}
                                         </p>
                                     </div>
                                 </div>
@@ -204,7 +237,8 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                             asChild
                                         >
                                             <Link href={show(instance.id).url}>
-                                                Setup +{instance.phone_number}
+                                                {t('agents.setup')} +
+                                                {instance.phone_number}
                                             </Link>
                                         </Button>
                                     ))}

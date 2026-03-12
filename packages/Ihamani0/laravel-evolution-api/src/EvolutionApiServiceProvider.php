@@ -4,13 +4,13 @@ namespace Ihamani0\LaravelEvolutionApi;
 
 use Illuminate\Support\ServiceProvider;
 
-class EvolutionApiServiceProvider extends ServiceProvider {
-
-
-    public function register(): void{
+class EvolutionApiServiceProvider extends ServiceProvider
+{
+    public function register(): void
+    {
         // Merge default config
         $this->mergeConfigFrom(
-            __DIR__ . '/../config/evolution-api.php',
+            __DIR__.'/../config/evolution-api.php',
             'evolution-api'
         );
 
@@ -23,11 +23,10 @@ class EvolutionApiServiceProvider extends ServiceProvider {
         });
     }
 
-    public function boot():void {
+    public function boot(): void
+    {
         $this->publishes([
-            __DIR__ . '/../config/evolution-api.php' => config_path('evolution-api.php'),
+            __DIR__.'/../config/evolution-api.php' => config_path('evolution-api.php'),
         ], 'evolution-api-config');
     }
-
-
 }

@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslation } from '@/hooks/use-translation';
 import { store } from '@/routes/media';
 import type { MediaFormData } from '@/types';
 
@@ -21,6 +22,7 @@ interface UploadDialogProps {
 }
 
 export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
+    const { t } = useTranslation();
     const { data, post, reset, setData, processing, errors } =
         useForm<MediaFormData>({
             category: '',
@@ -47,23 +49,25 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
             <DialogTrigger asChild>
                 <Button className="gap-2 shadow-lg shadow-primary/20 transition-shadow hover:shadow-primary/30">
                     <Plus className="h-4 w-4" />
-                    Add Asset
+                    {t('media.upload.addAsset')}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Plus className="h-5 w-5 text-primary" />
-                        Add New Media Asset
+                        {t('media.upload.addNewMediaAsset')}
                     </DialogTitle>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-6 pt-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
-                            <Label>Category (AI Keyword)</Label>
+                            <Label>{t('media.upload.category')}</Label>
                             <Input
-                                placeholder="e.g., pool, facade"
+                                placeholder={t(
+                                    'media.upload.categoryPlaceholder',
+                                )}
                                 value={data.category}
                                 onChange={(e) =>
                                     setData('category', e.target.value)
@@ -79,7 +83,7 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Media Type</Label>
+                            <Label>{t('media.upload.mediaType')}</Label>
                             <select
                                 className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
                                 value={data.type}
@@ -87,9 +91,15 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
                                     setData('type', e.target.value)
                                 }
                             >
-                                <option value="image">Image</option>
-                                <option value="video">Video</option>
-                                <option value="document">Document</option>
+                                <option value="image">
+                                    {t('media.upload.image')}
+                                </option>
+                                <option value="video">
+                                    {t('media.upload.video')}
+                                </option>
+                                <option value="document">
+                                    {t('media.upload.document')}
+                                </option>
                             </select>
                         </div>
                     </div>
@@ -100,12 +110,16 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
                         className="w-full"
                     >
                         <TabsList className="grid w-full grid-cols-2">
-                            <TabsTrigger value="file">Upload File</TabsTrigger>
-                            <TabsTrigger value="url">External URL</TabsTrigger>
+                            <TabsTrigger value="file">
+                                {t('media.upload.uploadFile')}
+                            </TabsTrigger>
+                            <TabsTrigger value="url">
+                                {t('media.upload.externalUrl')}
+                            </TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="file" className="mt-4 space-y-3">
-                            <Label>Select File</Label>
+                            <Label>{t('media.upload.selectFile')}</Label>
                             <Input
                                 type="file"
                                 onChange={(e) =>
@@ -126,10 +140,10 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
                         </TabsContent>
 
                         <TabsContent value="url" className="mt-4 space-y-3">
-                            <Label>Direct URL</Label>
+                            <Label>{t('media.upload.directUrl')}</Label>
                             <Input
                                 type="url"
-                                placeholder="https://..."
+                                placeholder={t('media.upload.urlPlaceholder')}
                                 value={data.external_url}
                                 onChange={(e) =>
                                     setData('external_url', e.target.value)
@@ -144,9 +158,9 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
                     </Tabs>
 
                     <div className="space-y-2">
-                        <Label>Caption (Optional)</Label>
+                        <Label>{t('media.upload.caption')}</Label>
                         <Input
-                            placeholder="Description sent with the media..."
+                            placeholder={t('media.upload.captionPlaceholder')}
                             value={data.caption}
                             onChange={(e) => setData('caption', e.target.value)}
                         />
@@ -162,7 +176,9 @@ export function UploadDialog({ open, onOpenChange }: UploadDialogProps) {
                         ) : (
                             <Plus className="h-4 w-4" />
                         )}
-                        {processing ? 'Uploading...' : 'Save Asset'}
+                        {processing
+                            ? t('media.upload.uploading')
+                            : t('media.upload.saveAsset')}
                     </Button>
                 </form>
             </DialogContent>

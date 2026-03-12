@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Controllers\TranslationController;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -35,17 +36,35 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $locale = $request->user()?->tenant?->settings['locale'] ?? 'en';
+
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'locale' => $locale,
+            'availableLocales' => ['en', 'fr'],
+            'langVersion' => app(TranslationController::class)->getVersion($locale),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'role' => $request->user()->role,
+
+                    'tenant' => [
+                        'name' => $request->user()->tenant->name,
+                        'slug' => $request->user()->tenant->slug,
+                        'plan' => $request->user()->tenant->plan,
+                    ],
+                ] : null,
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
-            
-            'flash' => fn () => collect(session()->all())
-                ->except(['_token', '_previous'])
-                ->toArray(),
+
+            'flash' => fn () => [
+                    'success' => session('success'),
+                    'error' => session('error'),
+                    'info' => session('info'),
+                ],
         ];
     }
 }

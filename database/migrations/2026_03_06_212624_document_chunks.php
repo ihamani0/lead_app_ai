@@ -49,11 +49,11 @@ return new class extends Migration
         // ");
 
         // GIN index for full-text search used by hybrid_search
-        DB::statement("
+        DB::statement('
             CREATE INDEX IF NOT EXISTS idx_chunks_search_vector
             ON document_chunks
             USING GIN (search_vector)
-        ");
+        ');
 
         // ─── 4. Pure vector similarity search ────────────────────────────────
         // Used by n8n AI Agent / retrieval nodes.

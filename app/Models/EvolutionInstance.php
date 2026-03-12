@@ -20,12 +20,10 @@ class EvolutionInstance extends Model
         'connected_at',
     ];
 
-
     protected $casts = [
         'settings' => 'array',
         'connected_at' => 'datetime',
     ];
-
 
     public function tenant()
     {
@@ -41,5 +39,4 @@ class EvolutionInstance extends Model
     {
         return $this->hasOne(AgentConfig::class, 'evolution_instance_id');
     }
-
 }

@@ -8,13 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lead extends Model
 {
-   use HasFactory ,HasUlids;
+    use HasFactory ,HasUlids;
 
-       
     protected $guarded = [];
+
     protected $casts = [
         'custom_data' => 'array',
-        'qualification_score' => 'integer'
+        'qualification_score' => 'integer',
     ];
 
     // Scopes
@@ -30,7 +30,7 @@ class Lead extends Model
 
     public function scopeQualified($query)
     {
-        return $query->whereIn('temperature', ["HOT", "WARM", "COLD"]);
+        return $query->whereIn('temperature', ['HOT', 'WARM', 'COLD']);
     }
 
     public function scopeNewLeads($query)
@@ -38,12 +38,13 @@ class Lead extends Model
         return $query->where('status', 'NEW');
     }
 
-
     // Relations
     public function tenant()
     {
         return $this->belongsTo(Tenant::class);
     }
 
-
+    public function instance(){
+        return $this->belongsTo(EvolutionInstance::class , 'instance_id' , 'id');
+    }
 }

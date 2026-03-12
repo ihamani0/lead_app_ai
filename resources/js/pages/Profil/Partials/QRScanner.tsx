@@ -1,5 +1,6 @@
 // resources/js/Pages/Instances/Partials/QRScanner.tsx
 import { motion, AnimatePresence } from 'framer-motion';
+import type { TFunction } from 'i18next';
 import { QrCode, Loader2, RefreshCw, Smartphone } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useState } from 'react';
@@ -10,9 +11,10 @@ interface Props {
     qrCode: string | null;
     isLoading: boolean;
     onGenerate: () => void;
+    t: TFunction;
 }
 
-export function QRScanner({ qrCode, isLoading, onGenerate }: Props) {
+export function QRScanner({ qrCode, isLoading, onGenerate, t }: Props) {
     const [isRegenerating, setIsRegenerating] = useState(false);
 
     const handleRegenerate = () => {
@@ -40,21 +42,24 @@ export function QRScanner({ qrCode, isLoading, onGenerate }: Props) {
 
                     <div>
                         <h2 className="text-2xl font-black tracking-tight text-amber-950 dark:text-amber-50">
-                            Link WhatsApp
+                            
+                            {t("profil.link_whatsApp")}
+
                         </h2>
                         <p className="mt-2 text-amber-800/80 dark:text-amber-400/80">
-                            Scan the QR code to start automating conversations
+                              
+                            {t("profil.scan_qr_description")}
                         </p>
                     </div>
 
                     {/* Steps */}
                     <div className="space-y-3">
-                        <Step number={1} text="Open WhatsApp on your phone" />
+                        <Step number={1} text={t("profil.open_whatsapp")} />
                         <Step
                             number={2}
-                            text="Go to Settings → Linked Devices"
+                            text={t("profil.go_to_settings")}
                         />
-                        <Step number={3} text="Tap 'Link a Device' and scan" />
+                        <Step number={3} text={t("profil.tap_to_link")} />
                     </div>
                 </div>
 
@@ -73,7 +78,7 @@ export function QRScanner({ qrCode, isLoading, onGenerate }: Props) {
                                     size="lg"
                                     onClick={onGenerate}
                                     disabled={isLoading}
-                                    className="h-16 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 px-8 text-lg font-bold text-white shadow-lg shadow-amber-200/50 transition-all hover:scale-105 hover:shadow-xl hover:shadow-amber-300/50 disabled:opacity-70 dark:shadow-amber-900/20"
+                                    className="h-16 rounded-xl bg-linear-to-r from-amber-600 to-amber-500 px-8 text-lg font-bold text-white shadow-lg shadow-amber-200/50 transition-all hover:scale-105 hover:shadow-xl hover:shadow-amber-300/50 disabled:opacity-70 dark:shadow-amber-900/20"
                                 >
                                     {isLoading ? (
                                         <Loader2 className="mr-3 h-6 w-6 animate-spin" />
@@ -81,8 +86,8 @@ export function QRScanner({ qrCode, isLoading, onGenerate }: Props) {
                                         <Smartphone className="mr-3 h-6 w-6" />
                                     )}
                                     {isLoading
-                                        ? 'Connecting...'
-                                        : 'Generate QR Code'}
+                                        ? t("profil.connecting")
+                                        : t("profil.generate_qr_code")}
                                 </Button>
                             </motion.div>
                         ) : (
@@ -115,7 +120,7 @@ export function QRScanner({ qrCode, isLoading, onGenerate }: Props) {
 
                                         {/* Scanning animation overlay */}
                                         <motion.div
-                                            className="absolute inset-0 bg-gradient-to-b from-transparent via-amber-500/20 to-transparent"
+                                            className="absolute inset-0 bg-linear-to-b from-transparent via-amber-500/20 to-transparent"
                                             animate={{
                                                 y: [-100, 200],
                                                 opacity: [0, 1, 0],
@@ -142,7 +147,8 @@ export function QRScanner({ qrCode, isLoading, onGenerate }: Props) {
                                         className="animate-pulse border-amber-500/50 bg-amber-50 px-4 py-1.5 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400"
                                     >
                                         <span className="mr-2 flex h-2 w-2 rounded-full bg-amber-500" />
-                                        Waiting for scan...
+                                        
+                                        {t("profil.waiting_scan")}
                                     </Badge>
 
                                     <Button
@@ -155,7 +161,7 @@ export function QRScanner({ qrCode, isLoading, onGenerate }: Props) {
                                         <RefreshCw
                                             className={`mr-2 h-3.5 w-3.5 transition-transform ${isRegenerating ? 'animate-spin' : 'group-hover/btn:rotate-180'}`}
                                         />
-                                        Refresh QR
+                                        {t("profil.refresh_qr")}
                                     </Button>
                                 </div>
                             </motion.div>

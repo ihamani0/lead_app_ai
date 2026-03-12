@@ -1,5 +1,6 @@
 // components/ConnectingStatus.tsx
-import { Loader2, RefreshCw, Wifi, AlertCircle, Clock } from 'lucide-react';
+import { Loader2, RefreshCw, AlertCircle, Clock } from 'lucide-react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
@@ -7,19 +8,23 @@ import { cn } from '@/lib/utils';
 interface ConnectingStatusProps {
     instanceName: string;
     onRestart: (e: React.MouseEvent) => void;
-    isRestarting:boolean;
-    elapsedTime?: number; // seconds since connection started
+    onAutoRestart: () => void;
+    isRestarting: boolean;
+    elapsedTime?: number;
 }
 
 export function ConnectingStatus({
     instanceName,
     onRestart,
+    onAutoRestart,
     isRestarting,
     elapsedTime = 0,
 }: ConnectingStatusProps) {
-
-
-
+    useEffect(() => {
+        if (!isRestarting) {
+            onAutoRestart();
+        }
+    }, [isRestarting, onAutoRestart]);
     // Format elapsed time
     const minutes = Math.floor(elapsedTime / 60);
     const seconds = elapsedTime % 60;
@@ -97,12 +102,12 @@ export function ConnectingStatus({
 
                         {/* Progress indicators */}
                         <div className="mb-8 flex items-center gap-6">
-                            <div className="flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 dark:bg-amber-900/20">
+                            {/* <div className="flex items-center gap-2 rounded-full bg-amber-100 px-4 py-2 dark:bg-amber-900/20">
                                 <Wifi className="h-4 w-4 text-amber-600 dark:text-amber-400" />
                                 <span className="text-sm font-semibold text-amber-700 dark:text-amber-300">
                                     Handshaking
                                 </span>
-                            </div>
+                            </div> */}
 
                             <div className="flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 dark:bg-slate-800">
                                 <Clock className="h-4 w-4 text-slate-500" />
