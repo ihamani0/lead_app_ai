@@ -80,6 +80,6 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
-EXPOSE 80
+EXPOSE 80 8080
 
 ENTRYPOINT ["/entrypoint.sh"]
