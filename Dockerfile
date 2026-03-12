@@ -19,6 +19,8 @@ FROM composer:2.7 AS vendor
 WORKDIR /app
 
 COPY composer.json composer.lock ./
+COPY packages/ ./packages/
+
 RUN composer install \
     --no-dev \
     --no-interaction \
