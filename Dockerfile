@@ -57,8 +57,11 @@ RUN docker-php-ext-install \
     pcntl \
     intl
 
-# Install Redis PHP extension
-RUN pecl install redis && docker-php-ext-enable redis
+ 
+RUN apk add --no-cache pcre-dev $PHPIZE_DEPS \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && apk del pcre-dev $PHPIZE_DEPS
 
 WORKDIR /var/www/html
 
@@ -80,6 +83,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache
 
+# Expose Nginx and Reverb ports
 EXPOSE 80 8080
 
 ENTRYPOINT ["/entrypoint.sh"]
