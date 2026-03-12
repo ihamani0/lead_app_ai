@@ -33,6 +33,9 @@ if [ "$APP_MODE" = "app" ]; then
     php artisan view:cache
     php artisan event:cache
 
+    echo "🗺️  Generating Wayfinder types..."
+    php artisan wayfinder:generate    # ← add this
+    
     # Run migrations
     echo "🗄️  Running migrations..."
     php artisan migrate --force
