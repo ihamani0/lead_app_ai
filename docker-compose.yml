@@ -4,40 +4,35 @@ services:
 
   # ─── Laravel App (Nginx + PHP-FPM) ───────────────
   app:
-    image: '${SERVICE_IMAGE}'        # Coolify fills this from your GitHub build
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     environment:
-      - SERVICE_FQDN_APP_80          # → app.yourdomain.com
+      - SERVICE_FQDN_APP_80
       - APP_MODE=app
       - APP_ENV=production
       - APP_DEBUG=false
       - APP_KEY=${APP_KEY}
       - APP_URL=${APP_URL}
-
-      # Database
       - DB_CONNECTION=pgsql
       - DB_HOST=laravel-postgres
       - DB_PORT=5432
       - DB_DATABASE=${DB_DATABASE:-laravel}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
-
-      # Redis
       - REDIS_HOST=laravel-redis
       - REDIS_PORT=6379
       - CACHE_DRIVER=redis
       - SESSION_DRIVER=redis
       - QUEUE_CONNECTION=redis
-
-      # Reverb (WebSockets)
       - BROADCAST_CONNECTION=reverb
       - REVERB_APP_ID=${REVERB_APP_ID}
       - REVERB_APP_KEY=${REVERB_APP_KEY}
       - REVERB_APP_SECRET=${REVERB_APP_SECRET}
-      - REVERB_HOST=${REVERB_HOST}        # ws.yourdomain.com
+      - REVERB_HOST=${REVERB_HOST}
       - REVERB_PORT=443
       - REVERB_SCHEME=https
-
     depends_on:
       laravel-postgres:
         condition: service_healthy
@@ -55,26 +50,31 @@ services:
       retries: 10
       start_period: 60s
 
-  # ─── Queue Worker ────────────────────────────────
+  # ─── Queue Worker ─────────────────────────────────
   queue:
-    image: '${SERVICE_IMAGE}'        # same image, different mode
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
+    command: >
+      php artisan queue:work
+      --sleep=3
+      --tries=3
+      --max-time=3600
+      --timeout=90
     environment:
       - APP_MODE=queue
       - APP_ENV=production
       - APP_KEY=${APP_KEY}
-
       - DB_CONNECTION=pgsql
       - DB_HOST=laravel-postgres
       - DB_PORT=5432
       - DB_DATABASE=${DB_DATABASE:-laravel}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
-
       - REDIS_HOST=laravel-redis
       - REDIS_PORT=6379
       - QUEUE_CONNECTION=redis
-
     depends_on:
       laravel-postgres:
         condition: service_healthy
@@ -82,33 +82,34 @@ services:
         condition: service_healthy
     networks:
       - laravel-net
-    # No FQDN needed — queue worker has no public URL
 
-  # ─── Laravel Reverb (WebSockets) ─────────────────
+  # ─── Laravel Reverb (WebSockets) ──────────────────
   reverb:
-    image: '${SERVICE_IMAGE}'        # same image, different mode
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
+    command: >
+      php artisan reverb:start
+      --host=0.0.0.0
+      --port=8080
     environment:
-      - SERVICE_FQDN_REVERB_8080     # → ws.yourdomain.com
+      - SERVICE_FQDN_REVERB_8080
       - APP_MODE=reverb
       - APP_ENV=production
       - APP_KEY=${APP_KEY}
-
       - DB_CONNECTION=pgsql
       - DB_HOST=laravel-postgres
       - DB_PORT=5432
       - DB_DATABASE=${DB_DATABASE:-laravel}
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
-
       - REDIS_HOST=laravel-redis
       - REDIS_PORT=6379
-
       - REVERB_APP_ID=${REVERB_APP_ID}
       - REVERB_APP_KEY=${REVERB_APP_KEY}
       - REVERB_APP_SECRET=${REVERB_APP_SECRET}
       - REVERB_PORT=8080
-
     depends_on:
       laravel-postgres:
         condition: service_healthy
