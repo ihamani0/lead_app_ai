@@ -29,13 +29,16 @@ if [ "$APP_MODE" = "app" ]; then
     # Cache configuration for production
     echo "⚙️  Caching config..."
     php artisan config:cache
+
+    echo "🗺️  Generating Wayfinder types..."
+    php artisan wayfinder:generate    # ← add this
+
     php artisan route:cache
     php artisan view:cache
     php artisan event:cache
 
-    echo "🗺️  Generating Wayfinder types..."
-    php artisan wayfinder:generate    # ← add this
-    
+
+
     # Run migrations
     echo "🗄️  Running migrations..."
     php artisan migrate --force
