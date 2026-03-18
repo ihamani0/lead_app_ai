@@ -10,7 +10,7 @@ export const LogoIcon = (props: React.ComponentProps<"svg">) => (
 export const Logo = () => {
 	
 	return (
-		<h1 className="font-mono dark:text-white text-primary">Crew</h1>
+		<h1 className="font-mono dark:text-white text-primary">CREW</h1>
 	)
 	 
 }
