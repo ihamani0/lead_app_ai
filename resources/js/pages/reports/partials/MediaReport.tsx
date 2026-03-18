@@ -1,12 +1,5 @@
 import { Image, HardDrive, BarChart3 } from 'lucide-react';
-import {
-    LazyChart,
-    PieChart,
-    Pie,
-    Cell,
-    ResponsiveContainer,
-    Tooltip,
-} from '@/components/lazy-recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatBytes } from '@/lib/utils';
 import type { MediaReportData } from '@/types/reports';
@@ -71,32 +64,30 @@ export function MediaReport({ data }: MediaReportProps) {
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <LazyChart>
-                                <ResponsiveContainer width="100%" height={250}>
-                                    <PieChart>
-                                        <Pie
-                                            data={typeData}
-                                            cx="50%"
-                                            cy="50%"
-                                            innerRadius={50}
-                                            outerRadius={80}
-                                            paddingAngle={2}
-                                            dataKey="value"
-                                            label={({ name, percent }) =>
-                                                `${name} ${((percent || 0) * 100).toFixed(0)}%`
-                                            }
-                                        >
-                                            {typeData.map((entry, index) => (
-                                                <Cell
-                                                    key={`cell-${index}`}
-                                                    fill={entry.color}
-                                                />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </LazyChart>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <PieChart>
+                                    <Pie
+                                        data={typeData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={50}
+                                        outerRadius={80}
+                                        paddingAngle={2}
+                                        dataKey="value"
+                                        label={({ name, percent }: any) =>
+                                            `${name} ${((percent || 0) * 100).toFixed(0)}%`
+                                        }
+                                    >
+                                        {typeData.map((entry, index) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={entry.color}
+                                            />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
                         </CardContent>
                     </Card>
 

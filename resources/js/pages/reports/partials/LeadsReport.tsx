@@ -1,13 +1,16 @@
 import { Users, Clock, TrendingUp, BarChart3 } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
 import {
-    LazyChart,
     PieChart,
     Pie,
     Cell,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-} from '@/components/lazy-recharts';
+} from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { getStatusColor, calculatePercentage } from '@/lib/utils';
@@ -105,32 +108,30 @@ export function LeadsReport({ data }: LeadsReportProps) {
                     </CardHeader>
                     <CardContent>
                         {statusData.length > 0 ? (
-                            <LazyChart>
-                                <ResponsiveContainer width="100%" height={250}>
-                                    <PieChart>
-                                        <Pie
-                                            data={statusData}
-                                            cx="50%"
-                                            cy="50%"
-                                            innerRadius={50}
-                                            outerRadius={80}
-                                            paddingAngle={2}
-                                            dataKey="value"
-                                            label={({ name, percent }) =>
-                                                `${name} ${((percent || 0) * 100).toFixed(0)}%`
-                                            }
-                                        >
-                                            {statusData.map((entry, index) => (
-                                                <Cell
-                                                    key={`cell-${index}`}
-                                                    fill={entry.color}
-                                                />
-                                            ))}
-                                        </Pie>
-                                        <Tooltip />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </LazyChart>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <PieChart>
+                                    <Pie
+                                        data={statusData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={50}
+                                        outerRadius={80}
+                                        paddingAngle={2}
+                                        dataKey="value"
+                                        label={({ name, percent }: any) =>
+                                            `${name} ${((percent || 0) * 100).toFixed(0)}%`
+                                        }
+                                    >
+                                        {statusData.map((entry, index) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={entry.color}
+                                            />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
                         ) : (
                             <p className="text-muted-foreground">
                                 No data available
@@ -148,34 +149,30 @@ export function LeadsReport({ data }: LeadsReportProps) {
                     </CardHeader>
                     <CardContent>
                         {temperatureData.length > 0 ? (
-                            <LazyChart>
-                                <ResponsiveContainer width="100%" height={250}>
-                                    <PieChart>
-                                        <Pie
-                                            data={temperatureData}
-                                            cx="50%"
-                                            cy="50%"
-                                            innerRadius={50}
-                                            outerRadius={80}
-                                            paddingAngle={2}
-                                            dataKey="value"
-                                            label={({ name, percent }) =>
-                                                `${name} ${((percent || 0) * 100).toFixed(0)}%`
-                                            }
-                                        >
-                                            {temperatureData.map(
-                                                (entry, index) => (
-                                                    <Cell
-                                                        key={`cell-${index}`}
-                                                        fill={entry.color}
-                                                    />
-                                                ),
-                                            )}
-                                        </Pie>
-                                        <Tooltip />
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </LazyChart>
+                            <ResponsiveContainer width="100%" height={250}>
+                                <PieChart>
+                                    <Pie
+                                        data={temperatureData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={50}
+                                        outerRadius={80}
+                                        paddingAngle={2}
+                                        dataKey="value"
+                                        label={({ name, percent }: any) =>
+                                            `${name} ${((percent || 0) * 100).toFixed(0)}%`
+                                        }
+                                    >
+                                        {temperatureData.map((entry, index) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={entry.color}
+                                            />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            </ResponsiveContainer>
                         ) : (
                             <p className="text-muted-foreground">
                                 No data available

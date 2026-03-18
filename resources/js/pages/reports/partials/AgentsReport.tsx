@@ -1,12 +1,5 @@
 import { Bot, TrendingUp, BarChart3 } from 'lucide-react';
-import {
-    LazyChart,
-    PieChart,
-    Pie,
-    Cell,
-    ResponsiveContainer,
-    Tooltip,
-} from '@/components/lazy-recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { AgentsReportData, AgentData } from '@/types/reports';
@@ -88,32 +81,30 @@ export function AgentsReport({ data }: AgentsReportProps) {
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <LazyChart>
-                            <ResponsiveContainer width="100%" height={250}>
-                                <PieChart>
-                                    <Pie
-                                        data={statusData}
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius={60}
-                                        outerRadius={100}
-                                        paddingAngle={2}
-                                        dataKey="value"
-                                        label={({ name, percent }) =>
-                                            `${name} ${((percent || 0) * 100).toFixed(0)}%`
-                                        }
-                                    >
-                                        {statusData.map((entry, index) => (
-                                            <Cell
-                                                key={`cell-${index}`}
-                                                fill={entry.color}
-                                            />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                </PieChart>
-                            </ResponsiveContainer>
-                        </LazyChart>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <PieChart>
+                                <Pie
+                                    data={statusData}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={60}
+                                    outerRadius={100}
+                                    paddingAngle={2}
+                                    dataKey="value"
+                                    label={({ name, percent }: any) =>
+                                        `${name} ${((percent || 0) * 100).toFixed(0)}%`
+                                    }
+                                >
+                                    {statusData.map((entry, index) => (
+                                        <Cell
+                                            key={`cell-${index}`}
+                                            fill={entry.color}
+                                        />
+                                    ))}
+                                </Pie>
+                                <Tooltip />
+                            </PieChart>
+                        </ResponsiveContainer>
                     </CardContent>
                 </Card>
             )}
