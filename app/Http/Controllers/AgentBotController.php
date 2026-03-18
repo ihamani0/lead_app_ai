@@ -101,7 +101,7 @@ class AgentBotController extends Controller
                 // Save the Integration ID returned by Evolution
                 $agent->update(['evo_integration_id' => $evoResponse['id'] ?? null]);
 
-                return back()->with('success', __('message.success.connected_agent'));
+                return back()->with('success', __('messages.success.connected_agent'));
             });
 
         } catch (Exception $e) {
@@ -129,17 +129,18 @@ class AgentBotController extends Controller
      */
     public function update(Request $request, $instanceId, EvolutionService $evoService)
     {
+
         $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
             ->findOrFail($instanceId);
 
         $agent = $instance->agentConfig;
         if (! $agent) {
-            return back()->withErrors(['error' => __('message.error.no_found_agent')]);
+            return back()->withErrors(['error' => __('messages.error.no_found_agent')]);
         }
 
         $request->validate([
             'config_webhook_url' => 'nullable|url',
-            'system_prompt' => 'required|string',
+            'system_prompt' => 'nullable|string',
             'settings' => 'nullable|array',
         ]);
 
@@ -154,13 +155,13 @@ class AgentBotController extends Controller
             // Sync Settings with Evolution API (Prompt is handled by n8n, but settings go to Evo)
             $evoService->updateN8nBot($instance, $agent);
 
-            // if ($agent->config_webhook_url) {
-            //      \Illuminate\Support\Facades\Http::withHeaders(['X-N8N-API-KEY' => $this->apiKey])->post($agent->config_webhook_url, [
-            //         'system_prompt' => $agent->system_prompt,
-            //     ]);
-            // }
+            // If blacklist not empty → also update global N8N settings
+            $blacklist = $request->settings['blacklist'] ?? [];
+            if (! empty($blacklist)) {
+                $evoService->updateN8nSettings($instance, $agent);
+            }
 
-            return back()->with('success', __('message.success.updated_agent'));
+            return back()->with('success', __('messages.success.updated_agent'));
         } catch (Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }
@@ -240,7 +241,7 @@ class AgentBotController extends Controller
                 ]);
             }
 
-            return back()->with('success', __('message.success.disconnected_agent'));
+            return back()->with('success', __('messages.success.disconnected_agent'));
         } catch (Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }

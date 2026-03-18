@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('phone_number', 30)->nullable();
 
             $table->string('status', 50)->default('disconnected'); // connected | connecting | disconnected
+
             $table->text('qr_code')->nullable();
             $table->text('webhook_url')->nullable();
             $table->jsonb('settings')->nullable();

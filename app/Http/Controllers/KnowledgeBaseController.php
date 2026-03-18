@@ -30,8 +30,7 @@ class KnowledgeBaseController extends Controller
     {
         $request->validate([
             'file' => 'required|file|mimes:pdf,txt,docx|max:10240', // 10MB max
-            'name' => 'required|string|max:255',
-            'instance_names' => ['required', 'array'], // Which bot this belongs to
+            'name' => 'required|string|max:255', // Which bot this belongs to
         ]);
 
         $document = KnowledgeBase::create([
@@ -48,24 +47,23 @@ class KnowledgeBaseController extends Controller
 
         // http://127.0.0.1:5678/webhook-test/ingest-document
         try {
-            foreach ($request->instance_names as $instance) {
 
-                Http::withHeaders([
-                    'X-N8N-API-KEY' => config('services.n8n.api_key'),
-                ])
-                    ->post($n8nWebhookUrl, [
-                        'document_id' => $document->id,
-                        'tenant_id' => (string) $document->tenant_id,
-                        'instance_name' => $instance,
-                        'file_name' => $request->file('file')->getClientOriginalName(),
-                    ]);
+            Http::withHeaders([
+                'X-N8N-API-KEY' => config('services.n8n.api_key'),
+            ])
+                ->post($n8nWebhookUrl, [
+                    'document_id' => $document->id,
+                    'tenant_id' => (string) $document->tenant_id,
+                    'file_name' => $request->file('file')->getClientOriginalName(),
+                ]);
 
-                return back()->with('success', 'Document uploaded! AI is processing it.');
-            }
+            return back()->with('success', __('messages.success.document_uploaded'));
+
         } catch (\Exception $e) {
+            dd($e);
             $document->update(['status' => 'failed']);
 
-            return back()->withErrors(['error' => 'Failed to trigger AI ingestion.']);
+            return back()->withErrors(['error' => __('messages.error.document_uploaded')]);
         }
 
     }
@@ -87,5 +85,13 @@ class KnowledgeBaseController extends Controller
         $document->update(['status' => 'indexed']);
 
         return response()->json(['success' => true]);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $document = KnowledgeBase::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
+        $document->delete();
+
+        return back()->with('success', __('messages.success.document_deleted'));
     }
 }

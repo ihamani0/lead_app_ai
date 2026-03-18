@@ -25,7 +25,6 @@ class TranslationController extends Controller
             return $this->loadTranslations($locale);
         });
 
-        
         $version = $this->getVersion($locale);
 
         return response()->json($translations)
@@ -78,7 +77,6 @@ class TranslationController extends Controller
         return response()->json(['status' => 'cache cleared']);
     }
 
-
     public function getVersion(string $locale): string
     {
         return Cache::remember("translations.{$locale}.version", 86400, function () use ($locale) {
@@ -90,8 +88,8 @@ class TranslationController extends Controller
 
             // Hash all file contents combined — changes if ANY file changes
             $hash = collect(File::files($langPath))
-                ->filter(fn($f) => $f->getExtension() === 'json')
-                ->map(fn($f) => md5_file($f->getPathname()))
+                ->filter(fn ($f) => $f->getExtension() === 'json')
+                ->map(fn ($f) => md5_file($f->getPathname()))
                 ->join('');
 
             return substr(md5($hash), 0, 8);

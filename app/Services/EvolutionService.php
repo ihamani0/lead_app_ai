@@ -6,6 +6,7 @@ use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
 use Ihamani0\LaravelEvolutionApi\Facades\EvolutionApi;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class EvolutionService
 {
@@ -100,6 +101,25 @@ class EvolutionService
 
     // ==========Handle N8n Integration===============
 
+    /**
+     * Convert phone number to WhatsApp JID format.
+     * Example: +213 697 096 705 -> 213697096705@s.whatsapp.net
+     */
+    private function formatPhoneToJid(string $phone): string
+    {
+        return preg_replace('/[^0-9]/', '', $phone).'@s.whatsapp.net';
+    }
+
+    /**
+     * Convert blacklist phone numbers to JID format.
+     */
+    private function convertBlacklistToJids(array $blacklist): array
+    {
+        return collect($blacklist)
+            ->map(fn ($phone) => $this->formatPhoneToJid($phone))
+            ->toArray();
+    }
+
     private function buildN8nPayload(AgentConfig $agent, bool $isEnabled)
     {
         $settings = $agent->settings ?? [];
@@ -116,6 +136,7 @@ class EvolutionService
             'unknownMessage' => $settings['unknownMessage'] ?? '',
             'listeningFromMe' => (bool) ($settings['listeningFromMe'] ?? false),
             'stopBotFromMe' => (bool) ($settings['stopBotFromMe'] ?? true),
+            'ignoreJids' => $this->convertBlacklistToJids($settings['blacklist'] ?? []),
         ];
     }
 
@@ -137,6 +158,7 @@ class EvolutionService
 
     public function updateN8nBot(EvolutionInstance $instance, AgentConfig $agent)
     {
+
         $payload = $this->buildN8nPayload($agent, $agent->is_active);
 
         $response = Http::withHeaders(['apikey' => $this->apiKey])
@@ -178,5 +200,48 @@ class EvolutionService
         }
 
         return $response->successful();
+    }
+
+    /**
+     * Update global N8N settings (applies to all bots).
+     * Gets current settings, merges with new blacklist, sends complete config.
+     */
+    public function updateN8nSettings(EvolutionInstance $instance, AgentConfig $agent)
+    {
+        $settings = $agent->settings ?? [];
+        $blacklist = $settings['blacklist'] ?? [];
+
+        if (empty($blacklist)) {
+            return;
+        }
+
+        // Get current global settings
+        $currentSettings = EvolutionApi::setInstance($instance->instance_name)
+            ->n8n()
+            ->getSettings();
+
+        Log::info('Current settings: '.json_encode($currentSettings));    
+
+        // Convert new blacklist to JIDs
+        $newJids = $this->convertBlacklistToJids($blacklist);
+
+        // Merge with existing ignoreJids
+        $existingJids = $currentSettings['ignoreJids'] ?? [];
+        $mergedJids = array_unique(array_merge($existingJids, $newJids));
+
+        // Send complete settings (POST overwrites all)
+        EvolutionApi::setInstance($instance->instance_name)
+            ->n8n()
+            ->setSettings(
+                expire: $currentSettings['expire'] ?? 20,
+                keywordFinish: $currentSettings['keywordFinish'] ?? '#STOP',
+                delayMessage: $currentSettings['delayMessage'] ?? 1000,
+                unknownMessage: $currentSettings['unknownMessage'] ?? '',
+                listeningFromMe: $currentSettings['listeningFromMe'] ?? false,
+                stopBotFromMe: $currentSettings['stopBotFromMe'] ?? true,
+                keepOpen: $currentSettings['keepOpen'] ?? false,
+                debounceTime: $currentSettings['debounceTime'] ?? 0,
+                ignoreJids: $mergedJids,
+            );
     }
 }

@@ -1,5 +1,14 @@
 import { Link } from '@inertiajs/react';
-import { BookOpen, Bot, Image, LayoutGrid, Phone, Users } from 'lucide-react';
+import {
+    BookOpen,
+    Bot,
+    Image,
+    LayoutGrid,
+    Phone,
+    Users,
+    BarChart3,
+    Settings,
+} from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
 // import { NavUser } from '@/components/nav-user';
 import {
@@ -17,9 +26,11 @@ import { index as indexAgent } from '@/routes/agents';
 import { index as indexDocs } from '@/routes/knowledge';
 import { index as indexLeads } from '@/routes/leads';
 import { index as indexMedia } from '@/routes/media';
-import { index as indexProfil } from '@/routes/profile';
+import { edit, index as indexProfil } from '@/routes/profile';
+import { index as indexReports } from '@/routes/reports';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
+import { NavFooter } from './nav-footer';
 
 export function AppSidebar() {
     const { t } = useTranslation();
@@ -56,14 +67,27 @@ export function AppSidebar() {
             href: indexDocs().url,
             icon: BookOpen,
         },
+        {
+            title: 'Reports',
+            href: indexReports().url,
+            icon: BarChart3,
+        },
+    ];
+
+    const footerNavItems: NavItem[] = [
+        {
+            title: t('messages.settings'),
+            href: edit().url,
+            icon: Settings,
+        },
     ];
 
     return (
-        <Sidebar collapsible="offcanvas" variant="floating">
+        <Sidebar collapsible="offcanvas" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton size="lg" asChild>
+                        <SidebarMenuButton asChild>
                             <Link href={dashboard()} prefetch>
                                 <AppLogo />
                             </Link>
@@ -77,7 +101,7 @@ export function AppSidebar() {
             </SidebarContent>
 
             <SidebarFooter>
-                {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
+                <NavFooter items={footerNavItems} className="mt-auto" />
                 {/* <NavUser /> */}
             </SidebarFooter>
         </Sidebar>

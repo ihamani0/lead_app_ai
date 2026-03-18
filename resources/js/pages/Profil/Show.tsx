@@ -1,7 +1,7 @@
 // resources/js/Pages/Instances/Show.tsx
 import { Head, router } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
@@ -25,10 +25,24 @@ export default function InstanceShow({ instance }: Props) {
     const [qrCode, setQrCode] = useState<string | null>(null);
     const [isLoadingQr, setIsLoadingQr] = useState(false);
     const [isRestarting, setIsRestarting] = useState(false);
+    const [isReconnect, setIsReconnect] = useState(false);
+    const [isWaitingForQr, setIsWaitingForQr] = useState(false);
 
     const [connectionStartTime, setConnectionStartTime] = useState<
         number | null
     >(null);
+
+    const previousStatusRef = useRef(instance.status);
+
+    // Initialize isReconnect based on was_connected from server
+    useEffect(() => {
+        const wasConnected =
+            (instance.settings as Record<string, unknown>)?.was_connected ===
+            true;
+        if (instance.status === 'connecting') {
+            setIsReconnect(wasConnected);
+        }
+    }, [instance.status, instance.settings]);
 
     // Track connection duration
     useEffect(() => {
@@ -51,13 +65,26 @@ export default function InstanceShow({ instance }: Props) {
         if (e.qrCode) {
             setQrCode(e.qrCode);
             setIsLoadingQr(false);
+            setIsWaitingForQr(false);
             setLocalInstance((prev) => ({ ...prev, status: 'disconnected' }));
         }
 
         if (e.instance) {
-            setLocalInstance(e.instance);
-            if (e.instance.status === 'connected') {
+            const newInstance = e.instance as EvolutionInstance;
+            const prevStatus = previousStatusRef.current;
+            const newStatus = newInstance.status;
+
+            // Determine if this is a reconnect (was connected before)
+            if (newStatus === 'connecting' && prevStatus === 'connected') {
+                setIsReconnect(true);
+            }
+
+            previousStatusRef.current = newStatus;
+            setLocalInstance(newInstance);
+
+            if (newStatus === 'connected') {
                 setQrCode(null);
+                setIsWaitingForQr(false);
             }
         }
     });
@@ -70,7 +97,9 @@ export default function InstanceShow({ instance }: Props) {
     // Actions
     const handleFetchQr = useCallback(() => {
         setIsLoadingQr(true);
+        setIsWaitingForQr(true);
         setQrCode(null);
+        setIsReconnect(false); // This is a new connection attempt
         setLocalInstance((prev) => ({ ...prev, status: 'connecting' }));
         router.post(
             fetchQr(instance.id),
@@ -78,7 +107,10 @@ export default function InstanceShow({ instance }: Props) {
             {
                 preserveScroll: true,
                 preserveState: true,
-                onError: () => setIsLoadingQr(false),
+                onError: () => {
+                    setIsLoadingQr(false);
+                    setIsWaitingForQr(false);
+                },
             },
         );
     }, [instance.id]);
@@ -90,7 +122,7 @@ export default function InstanceShow({ instance }: Props) {
                 {},
                 {
                     preserveScroll: true,
-                    preserveState: true, // Allow fresh props from redirect
+                    preserveState: true,
                 },
             );
         }
@@ -137,8 +169,7 @@ export default function InstanceShow({ instance }: Props) {
 
     // Render appropriate status component
     const renderStatusSection = () => {
-        // FIX: Prioritize the QR code. If we have a QR code generated,
-        // we must show the scanner, even if the status hasn't updated perfectly yet.
+        // Priority 1: Show QR Scanner if we have a QR code
         if (qrCode && localInstance.status !== 'connected') {
             return (
                 <QRScanner
@@ -146,6 +177,21 @@ export default function InstanceShow({ instance }: Props) {
                     isLoading={isLoadingQr}
                     onGenerate={handleFetchQr}
                     t={t}
+                />
+            );
+        }
+
+        // Priority 2: If waiting for QR (first connection), show spinner
+        if (isWaitingForQr && localInstance.status === 'connecting') {
+            return (
+                <ConnectingStatus
+                    instanceName={localInstance.instance_name}
+                    onRestart={handleRestart}
+                    onAutoRestart={handleAutoRestart}
+                    elapsedTime={elapsedTime}
+                    isRestarting={isRestarting}
+                    isReconnect={false}
+                    isWaitingForQr={true}
                 />
             );
         }
@@ -167,6 +213,8 @@ export default function InstanceShow({ instance }: Props) {
                         onAutoRestart={handleAutoRestart}
                         elapsedTime={elapsedTime}
                         isRestarting={isRestarting}
+                        isReconnect={isReconnect}
+                        isWaitingForQr={false}
                     />
                 );
 

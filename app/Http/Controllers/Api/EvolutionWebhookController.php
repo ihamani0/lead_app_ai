@@ -86,15 +86,26 @@ class EvolutionWebhookController extends Controller
             $instance = EvolutionInstance::where('instance_name', $instanceName)->first();
 
             if ($instance) {
-                $instance->update([
-                    'status' => $status,
-                    'connected_at' => $status === 'connected' ? now() : null,
-                    'phone_number' => $status === 'connected' ? explode('@', $request->input('data.wuid'))[0] : null,
-                ]);
+                // Only update if status actually changed - reduces DB writes and broadcasts
+                if ($instance->status !== $status) {
+                    // Update was_connected in settings JSON
+                    $settings = $instance->settings ?? [];
+                    if ($status === 'connected') {
+                        $settings['was_connected'] = true;
+                    }
 
-                broadcast(new InstanceConnectionUpdated($instance));
+                    $instance->update([
+                        'status' => $status,
+                        'connected_at' => $status === 'connected' ? now() : null,
+                        'phone_number' => $status === 'connected' ? explode('@', $request->input('data.wuid'))[0] : null,
+                        'settings' => $settings,
+                    ]);
 
-                Log::info("Instance {$instanceName} updated to {$status}");
+                    broadcast(new InstanceConnectionUpdated($instance));
+
+                    Log::info("Instance {$instanceName} updated to {$status}");
+                }
+                // If status unchanged - silently skip (no DB write, no broadcast)
             }
         }
 

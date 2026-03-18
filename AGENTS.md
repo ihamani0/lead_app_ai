@@ -2,12 +2,11 @@
 
 ## Project Overview
 
-This is a Laravel 12 + React 19 (Inertia.js) SaaS application. It uses:
+Laravel 12 + React 19 (Inertia.js) SaaS application.
 
 - **Backend**: PHP 8.2+, Laravel 12, SQLite for testing
-- **Frontend**: React 19, TypeScript, Tailwind CSS v4, Radix UI components
-- **Build**: Vite 7
-- **Testing**: PHPUnit (PHP), no JS tests currently
+- **Frontend**: React 19, TypeScript, Tailwind CSS v4, Radix UI
+- **Testing**: PHPUnit (PHP)
 
 ---
 
@@ -15,47 +14,38 @@ This is a Laravel 12 + React 19 (Inertia.js) SaaS application. It uses:
 
 ### PHP (Laravel)
 
-| Command                  | Description                                          |
-| ------------------------ | ---------------------------------------------------- |
-| `composer run test`      | Run lint + tests                                     |
-| `composer run test:lint` | Run Pint linter in test mode                         |
-| `composer run lint`      | Run Pint linter only                                 |
-| `composer run dev`       | Full dev server (PHP + Vite + Queue + Reverb + Logs) |
-| `composer run start`     | Simple dev server (PHP + Vite)                       |
-| `composer run setup`     | Initial project setup                                |
+| Command              | Description                                          |
+| -------------------- | ---------------------------------------------------- |
+| `composer run test`  | Run lint + tests                                     |
+| `composer run lint`  | Run Pint linter only                                 |
+| `composer run dev`   | Full dev server (PHP + Vite + Queue + Reverb + Logs) |
+| `composer run start` | Simple dev server (PHP + Vite)                       |
 
 **Running a single PHP test:**
 
 ```bash
-# Single test file
 php artisan test tests/Feature/DashboardTest.php
-
-# Single test method
 php artisan test --filter=test_guests_are_redirected_to_the_login_page
 ```
 
 ### JavaScript/TypeScript
 
-| Command                | Description                  |
-| ---------------------- | ---------------------------- |
-| `npm run build`        | Build frontend assets        |
-| `npm run dev`          | Start Vite dev server        |
-| `npm run lint`         | Run ESLint with auto-fix     |
-| `npm run format`       | Run Prettier with auto-fix   |
-| `npm run format:check` | Check Prettier formatting    |
-| `npm run types`        | Run TypeScript type checking |
-
-**Running a single test:** (No JS test framework currently configured)
+| Command          | Description                  |
+| ---------------- | ---------------------------- |
+| `npm run build`  | Build frontend assets        |
+| `npm run dev`    | Start Vite dev server        |
+| `npm run lint`   | Run ESLint with auto-fix     |
+| `npm run format` | Run Prettier with auto-fix   |
+| `npm run types`  | Run TypeScript type checking |
 
 ---
 
-## Code Style Guidelines
+## Code Style
 
 ### PHP
 
 - **Formatter**: Laravel Pint (preset: `laravel`)
 - **Run**: `composer run lint` or `pint`
-- **Config**: `pint.json` (uses Laravel preset)
 
 ### JavaScript/TypeScript
 
@@ -63,46 +53,23 @@ php artisan test --filter=test_guests_are_redirected_to_the_login_page
 - **Linter**: ESLint with TypeScript support
 - **Config**: `eslint.config.js`, `.prettierrc`, `tsconfig.json`
 
-**Run formatting:**
-
-```bash
-npm run format     # Auto-fix
-npm run lint       # ESLint fix
-composer run lint  # PHP lint
-```
-
 ---
 
 ## Import Conventions
 
 ### TypeScript/React
 
-Use explicit type imports with `import type`:
+Use explicit type imports:
 
 ```typescript
-import type { InertiaLinkProps } from '@inertiajs/react';
+import type { FC } from 'react';
+import type { Lead } from '@/types';
 import { type ClassValue, clsx } from 'clsx';
 ```
 
 Import order (enforced by ESLint):
 
-1. Built-in (node)
-2. External (npm packages)
-3. Internal (`@/` alias maps to `resources/js/*`)
-4. Parent/Sibling/Index imports
-
-Example:
-
-```typescript
-import { useState } from 'react';
-import type { FC } from 'react';
-
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useLeadStore } from '@/stores/leadStore';
-
-import { LeadCard } from './LeadCard';
-```
+1. Built-in (node) → 2. External (npm) → 3. Internal (`@/`) → 4. Relative
 
 ### PHP
 
@@ -120,18 +87,8 @@ use Inertia\Inertia;
 
 - **Strict mode**: Enabled in `tsconfig.json`
 - **Type imports**: Always use `import type { ... }` for types
-- **No implicit any**: Enabled - always type your variables
-- **JSX**: Use `react-jsx` (automatic JSX runtime)
+- **No implicit any**: Enabled
 - **Path alias**: Use `@/` for `resources/js/`
-
-```typescript
-// Good
-import type { FC } from 'react';
-import type { Lead } from '@/types';
-
-// Avoid
-import { Lead } from '@/types'; // unless Lead has runtime values
-```
 
 ---
 
@@ -139,18 +96,17 @@ import { Lead } from '@/types'; // unless Lead has runtime values
 
 ### TypeScript/React
 
-- **Components**: PascalCase (`LeadCard.tsx`, `UserMenu.tsx`)
-- **Hooks**: camelCase with `use` prefix (`useLeadStore.ts`, `useFlash.ts`)
-- **Utils**: camelCase (`leadHelper.tsx`, `mediaHelpers.ts`)
-- **Types**: PascalCase (`Lead.ts`, `NavigationItem.ts`)
-- **Files with components**: Include component name (`button.tsx`, `card.tsx`)
+- **Components**: PascalCase (`LeadCard.tsx`)
+- **Hooks**: camelCase with `use` prefix (`useLeadStore.ts`)
+- **Utils**: camelCase (`leadHelper.ts`)
+- **Types**: PascalCase (`Lead.ts`)
 
 ### PHP
 
-- **Classes**: PascalCase (`LeadController`, `User`)
-- **Methods**: camelCase (`index()`, `show()`, `updateLead()`)
-- **Variables**: camelCase (`$lead`, `$tenantId`)
-- **Database columns**: snake_case (`tenant_id`, `created_at`)
+- **Classes**: PascalCase (`LeadController`)
+- **Methods**: camelCase (`index()`, `show()`)
+- **Variables**: camelCase (`$lead`)
+- **Database columns**: snake_case (`tenant_id`)
 
 ---
 
@@ -159,14 +115,12 @@ import { Lead } from '@/types'; // unless Lead has runtime values
 ### PHP/Laravel
 
 ```php
-// Controller example
 public function show(Request $request, $id)
 {
     $lead = Lead::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
     return Inertia::render('Leads/Show', ['lead' => $lead]);
 }
 
-// Use try-catch for complex operations
 try {
     $instance->save();
 } catch (\Exception $e) {
@@ -177,7 +131,6 @@ try {
 ### React/TypeScript
 
 ```typescript
-// Use proper error states
 const [error, setError] = useState<string | null>(null);
 
 const handleSubmit = async () => {
@@ -195,11 +148,10 @@ const handleSubmit = async () => {
 
 ### React Components
 
-- Use functional components with explicit return types for complex components
-- Use `type FC<T> = React.FC<T>` for typed props
-- Keep components in `resources/js/components/`
-- Page components in `resources/js/pages/`
-- UI primitives in `resources/js/components/ui/`
+- Use functional components with `type FC<T>` for typed props
+- Components: `resources/js/components/`
+- Pages: `resources/js/pages/`
+- UI primitives: `resources/js/components/ui/`
 
 ```typescript
 import type { FC } from 'react';
@@ -210,26 +162,18 @@ interface LeadCardProps {
 }
 
 export const LeadCard: FC<LeadCardProps> = ({ lead, onEdit }) => {
-    return (
-        <Card>
-            <CardHeader>{lead.name}</CardHeader>
-        </Card>
-    );
+    return <Card>{lead.name}</Card>;
 };
 ```
 
 ### Tailwind CSS
 
-- Use `cn()` utility for conditional classes (combines clsx + tailwind-merge)
-- Follow Prettier's tailwind plugin formatting
+Use `cn()` utility for conditional classes:
 
 ```typescript
 import { cn } from '@/lib/utils';
 
-<Button className={cn(
-    "base-styles",
-    isActive && "active-styles"
-)} />
+<Button className={cn("base", isActive && "active")} />
 ```
 
 ---
@@ -238,9 +182,9 @@ import { cn } from '@/lib/utils';
 
 ### PHP Tests (PHPUnit)
 
-- Tests go in `tests/Feature/` and `tests/Unit/`
+- Tests in `tests/Feature/` and `tests/Unit/`
 - Use `RefreshDatabase` trait for database tests
-- Follow naming: `TestNameTest.php`
+- Naming: `TestNameTest.php`
 
 ```php
 class DashboardTest extends TestCase
@@ -259,39 +203,37 @@ class DashboardTest extends TestCase
 
 ## Common Paths
 
-| Path                       | Description             |
-| -------------------------- | ----------------------- |
-| `resources/js/`            | Frontend source         |
-| `resources/js/components/` | React components        |
-| `resources/js/pages/`      | Inertia page components |
-| `resources/js/lib/`        | Utilities               |
-| `resources/js/hooks/`      | Custom React hooks      |
-| `app/Http/Controllers/`    | Laravel controllers     |
-| `app/Models/`              | Eloquent models         |
-| `tests/`                   | PHPUnit tests           |
-| `database/migrations/`     | Migrations              |
+| Path                       | Description         |
+| -------------------------- | ------------------- |
+| `resources/js/`            | Frontend source     |
+| `resources/js/components/` | React components    |
+| `resources/js/pages/`      | Inertia pages       |
+| `app/Http/Controllers/`    | Laravel controllers |
+| `app/Models/`              | Eloquent models     |
+| `tests/`                   | PHPUnit tests       |
+| `database/migrations/`     | Migrations          |
 
 ---
 
 ## Development Workflow
 
-1. **Start dev server**: `composer run dev` or `composer run start`
-2. **Make changes** to PHP or JS
-3. **Run linting**:
-    ```bash
-    composer run lint  # PHP
-    npm run lint      # JS/TS
-    ```
-4. **Run tests**: `composer run test`
-5. **Build for production**: `npm run build`
+1. Start: `composer run dev` or `composer run start`
+2. Make changes
+3. Run linting: `composer run lint` + `npm run lint`
+4. Run tests: `composer run test`
+5. Build: `npm run build`
 
----
-
-## Key Dependencies
-
-- Laravel 12, PHP 8.2+
-- React 19, Inertia.js React adapter
-- Tailwind CSS 4
-- Radix UI (via @radix-ui/react-\*)
-- Laravel Fortify (auth), Sanctum (API), Reverb (websockets)
-- Spatie Medialibrary
+[logs] │ Instance issam-issam-A6Na updated to connected │
+[logs] └────────────────────────────────── POST: /webhooks/evolution • Auth ID: guest ┘
+[server] 2026-03-16 13:21:05 /webhooks/evolution ........................ ~ 500.68ms
+[queue] 2026-03-16 12:21:07 App\Events\InstanceConnectionUpdated ........... RUNNING
+[queue] 2026-03-16 12:21:07 App\Events\InstanceConnectionUpdated ..... 128.91ms DONE
+[logs] ┌ 12:21:10 INFO ───────────────────────────────────────────────────────────────┐
+[logs] │ Evolution Webhook: │
+[logs] └ POST: /webhooks/evolution • Auth ID: guest • event: connection.update • instance: issam-issam-A6Na • data: array ( 'instance' => 'issam-issam-A6Na', 'state' => 'connecting', 'statusReason' => 200, ) • destination: http://172.18.0.1:8000/webhooks/evolution • date_time: 2026-03-16T09:10:35.194Z • server_url: http://localhost:8080 • apikey: NULL ┘
+[logs] ┌ 12:21:10 INFO ───────────────────────────────────────────────────────────────┐
+[logs] │ Instance issam-issam-A6Na updated to connecting │
+[logs] └────────────────────────────────── POST: /webhooks/evolution • Auth ID: guest ┘
+[server] 2026-03-16 13:21:10 /webhooks/evolution .............................. ~ 1s
+[queue] 2026-03-16 12:21:12 App\Events\InstanceConnectionUpdated ........... RUNNING
+[queue] 2026-03-16 12:21:12 App\Events\InstanceConnectionUpdated ...... 78.29ms DONE

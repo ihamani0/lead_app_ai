@@ -2,13 +2,14 @@
 
 use App\Http\Controllers\AgentBotController;
 use App\Http\Controllers\Api\EvolutionWebhookController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvolutionInstanceController;
 use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\MediaAssetController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TranslationController;
 use App\Models\Tenant;
-use Ihamani0\LaravelEvolutionApi\Facades\EvolutionApi;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -32,15 +33,19 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+Route::get('/welcome', function () {
+    return Inertia::render('welcome_1', [
+        'canRegister' => Features::enabled(Features::registration()),
+    ]);
+})->name('home1');
+
 Route::get('/sprint', function () {
     return Inertia::render('sprint');
 })->name('sprint');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     Route::get('profile', [EvolutionInstanceController::class, 'index'])->name('profile.index');
 
@@ -73,7 +78,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // CRM Leads
     Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
- 
+
     Route::put('/leads/{id}', [LeadController::class, 'update'])->name('leads.update');
 
     // Media Catalog
@@ -83,6 +88,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/knowledge', [KnowledgeBaseController::class, 'index'])->name('knowledge.index');
     Route::post('/knowledge', [KnowledgeBaseController::class, 'store'])->name('knowledge.store');
+    Route::delete('/knowledge/{id}', [KnowledgeBaseController::class, 'destroy'])->name('knowledge.destroy');
+
+    // Reports
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
 });
 
 Route::get('/create-n8n-token', function () {

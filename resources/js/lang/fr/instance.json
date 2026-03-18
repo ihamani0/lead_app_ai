@@ -1,0 +1,32 @@
+{
+    "instanceId": "ID de l'instance",
+    "phoneNumber": "Numéro de téléphone",
+    "lastConnected": "Dernière connexion",
+    "notLinked": "Non lié",
+    "never": "Jamais",
+
+    "agentStatus": "Statut de l'agent",
+    "agentRunning": "En cours",
+    "agentPaused": "En pause",
+    "agentOffline": "Hors ligne",
+    "noAgent": "Aucun agent configuré",
+
+    "typingDelay": "Délai de frappe",
+    "typingDelayMs": "ms",
+    "typingDelayHelp": "Délai en millisecondes avant que l'IA envoie une réponse. Simule la vitesse de frappe humaine. Recommandé: 1000-2000ms",
+
+    "stopKeyword": "Mot-clé d'arrêt",
+    "stopKeywordHelp": "Lorsqu'un utilisateur envoie ce mot-clé, l'automatisation IA se met en pause pour cette conversation. Par défaut: #STOP",
+
+    "systemPrompt": "Prompt système",
+    "systemPromptHelp": "Instructions qui définissent la personnalité, le comportement et la base de connaissances de votre IA. Soyez précis pour de meilleures réponses.",
+    "promptPreview": "Aperçu du prompt",
+
+    "blacklist": "Numéros bloqués",
+    "blacklistCount": "numéros bloqués",
+    "blacklistHelp": "Numéros de téléphone (avec indicatif pays) que l'IA ignorera. Format: +33123456789, +22991234567",
+    "noBlacklist": "Aucun numéro bloqué",
+
+    "webhookUrl": "URL du Webhook",
+    "webhookUrlHelp": "URL de votre webhook n8n qui traite les messages entrants et retourne les réponses IA."
+}

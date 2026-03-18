@@ -198,18 +198,22 @@ class N8NService extends BaseService
         bool $keepOpen = false,
         int $debounceTime = 0,
         array $ignoreJids = [],
-        ?string $n8nIdFallback = null
+        ?string $n8nIdFallback = null,
+        ?bool $splitMessages = false,
+        ?int $timePerChar = 0
     ): array {
         $payload = [
-            'expire' => $expire,
-            'keywordFinish' => $keywordFinish,
-            'delayMessage' => $delayMessage,
-            'unknownMessage' => $unknownMessage,
-            'listeningFromMe' => $listeningFromMe,
-            'stopBotFromMe' => $stopBotFromMe,
-            'keepOpen' => $keepOpen,
-            'debounceTime' => $debounceTime,
-            'ignoreJids' => $ignoreJids,
+            'expire'            => $expire,
+            'keywordFinish'     => $keywordFinish,
+            'delayMessage'      => $delayMessage,
+            'unknownMessage'    => $unknownMessage,
+            'listeningFromMe'   => $listeningFromMe,
+            'stopBotFromMe'     => $stopBotFromMe,
+            'keepOpen'          => $keepOpen,
+            'debounceTime'      => $debounceTime,
+            'ignoreJids'        => $ignoreJids,
+            'splitMessages'     => $splitMessages ?? false,
+            'timePerChar'       => $timePerChar   ?? 0,
         ];
 
         if ($n8nIdFallback) {

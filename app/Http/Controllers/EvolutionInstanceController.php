@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events\InstanceConnectionUpdated;
-use App\Http\Resources\EvolutionInstance\EvolutionInstanceIndexResource;
 use App\Models\EvolutionInstance;
 use App\Services\EvolutionService;
 use Exception;
@@ -23,7 +22,7 @@ class EvolutionInstanceController extends Controller
                 'instance_name',
                 'status',
                 'phone_number',
-                'created_at'
+                'created_at',
             ]);
 
         return Inertia::render('Profil/Index', [
@@ -76,7 +75,6 @@ class EvolutionInstanceController extends Controller
 
             });
         } catch (Exception $e) {
-            dd($e->getMessage());
 
             return back()->withErrors(['error' => 'Failed to create instance on Evolution API. '.$e->getMessage()]);
         }
@@ -98,14 +96,16 @@ class EvolutionInstanceController extends Controller
         $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
             ->findOrFail($id);
 
+        // Reset was_connected to false (new first connection attempt)
+        $settings = $instance->settings ?? [];
+        $settings['was_connected'] = false;
+        $instance->update([
+            'settings' => $settings,
+            'status' => 'connecting',
+        ]);
+
         // Call Evolution GET /instance/connect/{instance}
         $service->fetchQrCode($instance->instance_name);
-
-        // if (!$qrCode) {
-        //     return response()->json(['error' => 'Could not generate QR']);
-        // }
-
-        // return response()->json(['qr_code' => $qrCode]);
     }
 
     public function disconnect(Request $request, $id, EvolutionService $evolutionService)

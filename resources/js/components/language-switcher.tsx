@@ -34,7 +34,7 @@ export function LanguageSwitcher({ availableLocales, currentLocale }: Props) {
                 preserveState: false, // 👈 force fresh shared props (locale + langVersion)
                 onSuccess: () => {
                     setLocale(locale) 
-                    window.location.reload()
+                     
                 }, // ✅ 3. only update frontend after success
             },
         );

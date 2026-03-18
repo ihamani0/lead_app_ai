@@ -1,0 +1,69 @@
+{
+    "subtitle": "AI-Powered WhatsApp Business Platform",
+    "title": "Automate Your WhatsApp Business with Intelligent AI Agents",
+    "description": "Connect WhatsApp, deploy AI agents, and manage leads automatically. Scale your business communication without increasing headcount.",
+    "buttonStarted": "Get Started",
+    "dashboard": "Dashboard",
+
+    "pricing": {
+        "title": "PRICING",
+        "heading": "Pricing that doesn't suck",
+        "getStarted": "Get Started",
+        "tryFree": "Try Free",
+
+        "free": {
+            "price": "Free",
+            "description": "Perfect for testing and small projects",
+            "featuresTitle": "WHAT'S INCLUDED:",
+            "features": [
+                "1 WhatsApp Instance",
+                "1 AI Agent",
+                "100 MB Storage",
+                "Lead Management",
+                "Basic Analytics"
+            ]
+        },
+
+        "business": {
+            "price": "€300",
+            "period": "month",
+            "description": "For growing businesses that need more power",
+            "featuresTitle": "EVERYTHING IN FREE, PLUS:",
+            "features": [
+                "Unlimited WhatsApp Instances",
+                "Unlimited AI Agents",
+                "10 GB Storage",
+                "Multi-instance Management",
+                "Priority Support",
+                "Custom Knowledge Base (RAG)",
+                "Advanced Analytics",
+                "Campaign Management"
+            ]
+        }
+    },
+
+    "features": {
+        "title": "Powerful Features",
+        "subtitle": "Everything you need to automate your business communications and grow your customer base",
+        "whatsapp-integration": {
+            "title": "WhatsApp Integration",
+            "description": "Connect multiple WhatsApp instances seamlessly with Evolution API"
+        },
+        "ai-agents": {
+            "title": "AI Agents",
+            "description": "Deploy AI agents to handle customer conversations 24/7"
+        },
+        "lead-management": {
+            "title": "Lead Management",
+            "description": "Capture, qualify, and nurture leads automatically"
+        },
+        "analytics": {
+            "title": "Analytics",
+            "description": "Get detailed insights with real-time dashboards and custom reports"
+        },
+        "rag": {
+            "title": "RAG",
+            "description": "Connect your AI agents to your business knowledge base"
+        }
+    }
+}

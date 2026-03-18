@@ -4,6 +4,7 @@ namespace Ihamani0\LaravelEvolutionApi;
 
 use Ihamani0\LaravelEvolutionApi\Exceptions\EvolutionApiException;
 use Ihamani0\LaravelEvolutionApi\Services\InstanceService;
+use Ihamani0\LaravelEvolutionApi\Services\N8NService;
 use Ihamani0\LaravelEvolutionApi\Services\SettingsService;
 use Ihamani0\LaravelEvolutionApi\Services\WebsocketService;
 use Illuminate\Support\Facades\Http;
@@ -111,5 +112,10 @@ class EvolutionApiClient
     public function websocket(): WebsocketService
     {
         return new WebsocketService($this);
+    }
+
+    public function n8n()
+    {
+        return new N8NService($this);
     }
 }

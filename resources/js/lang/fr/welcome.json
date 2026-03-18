@@ -1,0 +1,69 @@
+{
+    "subtitle": "Plateforme WhatsApp Business propulsée par l'IA",
+    "title": "Automatisez votre WhatsApp Business avec des agents IA intelligents ",
+    "description": "Connectez WhatsApp, déployez des agents IA et gérez automatiquement vos prospects. Développez la communication de votre entreprise sans augmenter vos effectifs.",
+    "buttonStarted": "Commencer",
+    "dashboard": "Tableau de bord",
+
+    "pricing": {
+        "title": "TARIFS",
+        "heading": "Des tarifs accessibles",
+        "getStarted": "Commencer",
+        "tryFree": "Essayer gratuitement",
+
+        "free": {
+            "price": "Gratuit",
+            "description": "Parfait pour tester et les petits projets",
+            "featuresTitle": "INCLUS:",
+            "features": [
+                "1 Instance WhatsApp",
+                "1 Agent IA",
+                "100 Mo de Stockage",
+                "Gestion des Prospects",
+                "Analytique Basique"
+            ]
+        },
+
+        "business": {
+            "price": "300€",
+            "period": "mois",
+            "description": "Pour les entreprises en croissance qui ont besoin de plus de puissance",
+            "featuresTitle": "TOUT CE QUI EST INCLUS, PLUS:",
+            "features": [
+                "Instances WhatsApp Illimitées",
+                "Agents IA Illimités",
+                "10 Go de Stockage",
+                "Gestion Multi-instances",
+                "Support Prioritaire",
+                "Base de Connaissances Personnalisée (RAG)",
+                "Analytique Avancée",
+                "Gestion des Campagnes"
+            ]
+        }
+    },
+
+    "features": {
+        "title": "Fonctionnalités puissantes",
+        "subtitle": "Tout ce dont vous avez besoin pour automatiser les communications de votre entreprise et développer votre base de clients",
+        "whatsapp-integration": {
+            "title": "Intégration WhatsApp",
+            "description": "Connectez plusieurs instances WhatsApp facilement avec Evolution API"
+        },
+        "ai-agents": {
+            "title": "Agents IA",
+            "description": "Déployez des agents IA pour gérer les conversations clients 24h/24 et 7j/7"
+        },
+        "lead-management": {
+            "title": "Gestion des Prospects",
+            "description": "Capturez, qualifiez et nourrissez vos prospects automatiquement"
+        },
+        "analytics": {
+            "title": "Analytique",
+            "description": "Obtenez des insights détaillés avec des tableaux de bord en temps réel et des rapports personnalisés"
+        },
+        "rag": {
+            "title": "RAG",
+            "description": "Connectez vos agents IA à la base de connaissances de votre entreprise"
+        }
+    }
+}

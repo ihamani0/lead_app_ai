@@ -13,12 +13,11 @@ class LeadController extends Controller
     public function index(Request $request)
     {
         $tenant_id = Auth::user()->tenant_id;
-        
+
         // 1. Capture the current filters from the URL
         $filters = $request->only([
-            'search', 'status', 'temperature', 'date_from', 'date_to', 'min_score','instance_id'
+            'search', 'status', 'temperature', 'date_from', 'date_to', 'min_score', 'instance_id',
         ]);
-
 
         // 2. Fetch all instances for this tenant to populate the Dropdown
         $instances = EvolutionInstance::where('tenant_id', $tenant_id)
@@ -31,7 +30,7 @@ class LeadController extends Controller
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%")
-                      ->orWhere('phone', 'like', "%{$search}%");
+                        ->orWhere('phone', 'like', "%{$search}%");
                 });
             })
             // New Filter: Instance Name
@@ -43,22 +42,20 @@ class LeadController extends Controller
             ->when($request->min_score, fn ($q, $score) => $q->where('qualification_score', '>=', $score))
             ->orderBy('updated_at', 'desc')
             ->paginate(15)
-            ->withQueryString(); 
+            ->withQueryString();
 
         return Inertia::render('Leads/Index', [
             'leads' => $leads,
             'filters' => $filters, // Pass filters back to UI so inputs stay populated
-            'instances' => $instances
+            'instances' => $instances,
         ]);
     }
-
- 
 
     // Optional: Allow manual override
     public function update(Request $request, $id)
     {
         $lead = Lead::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
-        $lead->update($request->only(['name','status', 'temperature']));
+        $lead->update($request->only(['name', 'status', 'temperature']));
 
         return back()->with('success', __('messages.success.lead_udated_manually'));
     }

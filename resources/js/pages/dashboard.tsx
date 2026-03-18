@@ -1,5 +1,19 @@
 import { Head } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import {
+    Phone,
+    Users,
+    Image,
+    Bot,
+    TrendingUp,
+    TrendingDown,
+    MessageCircle,
+    AlertCircle,
+    CheckCircle2,
+    Clock,
+} from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
@@ -11,25 +25,456 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Dashboard() {
+interface StatCardProps {
+    title: string;
+    value: string | number;
+    icon: React.ElementType;
+    trend?: {
+        value: number;
+        isPositive: boolean;
+    };
+    description?: string;
+}
+
+function StatCard({
+    title,
+    value,
+    icon: Icon,
+    trend,
+    description,
+}: StatCardProps) {
+    return (
+        <Card>
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                    {title}
+                </CardTitle>
+                <Icon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+                <div className="text-2xl font-bold">{value}</div>
+                {trend && (
+                    <div
+                        className={`flex items-center text-xs ${
+                            trend.isPositive ? 'text-green-600' : 'text-red-600'
+                        }`}
+                    >
+                        {trend.isPositive ? (
+                            <TrendingUp className="mr-1 h-3 w-3" />
+                        ) : (
+                            <TrendingDown className="mr-1 h-3 w-3" />
+                        )}
+                        {trend.value}% from last week
+                    </div>
+                )}
+                {description && (
+                    <p className="text-xs text-muted-foreground">
+                        {description}
+                    </p>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+interface InstanceStatusProps {
+    connected: number;
+    disconnected: number;
+    total: number;
+}
+
+function InstanceStatus({
+    connected,
+    disconnected,
+    total,
+}: InstanceStatusProps) {
+    const connectedPercent =
+        total > 0 ? Math.round((connected / total) * 100) : 0;
+
+    return (
+        <Card className="col-span-full md:col-span-1">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                    <Phone className="h-4 w-4" />
+                    Instance Status
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-green-500" />
+                            <span className="text-sm">Connected</span>
+                        </div>
+                        <span className="font-semibold">{connected}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <AlertCircle className="h-4 w-4 text-red-500" />
+                            <span className="text-sm">Disconnected</span>
+                        </div>
+                        <span className="font-semibold">{disconnected}</span>
+                    </div>
+                    <div className="relative h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                        <div
+                            className="h-full bg-green-500 transition-all"
+                            style={{ width: `${connectedPercent}%` }}
+                        />
+                    </div>
+                    <p className="text-center text-xs text-muted-foreground">
+                        {connectedPercent}% uptime
+                    </p>
+                </div>
+            </CardContent>
+        </Card>
+    );
+}
+
+interface LeadsByStatusProps {
+    byStatus: Record<string, number>;
+    byTemperature: Record<string, number>;
+}
+
+function LeadsByStatus({ byStatus, byTemperature }: LeadsByStatusProps) {
+    const statusColors: Record<string, string> = {
+        NEW: 'bg-blue-500',
+        CONTACTED: 'bg-yellow-500',
+        QUALIFIED: 'bg-orange-500',
+        CONVERTED: 'bg-green-500',
+        LOST: 'bg-red-500',
+    };
+
+    const temperatureColors: Record<string, string> = {
+        HOT: 'bg-red-500',
+        WARM: 'bg-orange-400',
+        COLD: 'bg-blue-400',
+    };
+
+    const total = Object.values(byStatus).reduce((a, b) => a + b, 0);
+
+    return (
+        <Card className="col-span-full md:col-span-1">
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-base">
+                    <Users className="h-4 w-4" />
+                    Leads by Status
+                </CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div className="space-y-3">
+                    {Object.entries(byStatus).map(([status, count]) => (
+                        <div
+                            key={status}
+                            className="flex items-center justify-between"
+                        >
+                            <div className="flex items-center gap-2">
+                                <div
+                                    className={`h-2 w-2 rounded-full ${
+                                        statusColors[status] || 'bg-slate-500'
+                                    }`}
+                                />
+                                <span className="text-sm">{status}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-100">
+                                    <div
+                                        className={`h-full ${
+                                            statusColors[status] ||
+                                            'bg-slate-500'
+                                        }`}
+                                        style={{
+                                            width: `${total > 0 ? (count / total) * 100 : 0}%`,
+                                        }}
+                                    />
+                                </div>
+                                <span className="text-sm font-medium">
+                                    {count}
+                                </span>
+                            </div>
+                        </div>
+                    ))}
+                    {Object.keys(byStatus).length === 0 && (
+                        <p className="text-sm text-muted-foreground">
+                            No leads yet
+                        </p>
+                    )}
+                </div>
+
+                {Object.keys(byTemperature).length > 0 && (
+                    <>
+                        <div className="my-4 border-t" />
+                        <p className="mb-3 text-sm font-medium">
+                            By Temperature
+                        </p>
+                        <div className="flex gap-2">
+                            {Object.entries(byTemperature).map(
+                                ([temp, count]) => (
+                                    <div
+                                        key={temp}
+                                        className={`flex-1 rounded-lg p-2 text-center ${
+                                            temperatureColors[temp] ||
+                                            'bg-slate-500'
+                                        } bg-opacity-20`}
+                                    >
+                                        <div
+                                            className={`text-lg font-bold ${
+                                                temperatureColors[
+                                                    temp
+                                                ]?.replace('bg-', 'text-') ||
+                                                'text-slate-700'
+                                            }`}
+                                        >
+                                            {count}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground">
+                                            {temp}
+                                        </div>
+                                    </div>
+                                ),
+                            )}
+                        </div>
+                    </>
+                )}
+            </CardContent>
+        </Card>
+    );
+}
+
+interface RecentLead {
+    id: string;
+    name: string;
+    phone: string;
+    status: string;
+    temperature: string;
+    created_at: string;
+    instance?: {
+        instance_name: string;
+    };
+}
+
+interface DashboardProps {
+    stats: {
+        instances: {
+            total: number;
+            connected: number;
+            disconnected: number;
+        };
+        leads: {
+            total: number;
+            byStatus: Record<string, number>;
+            byTemperature: Record<string, number>;
+            recent: number;
+            today: number;
+        };
+        media: {
+            total: number;
+            size: number;
+        };
+        agents: {
+            total: number;
+            active: number;
+        };
+    };
+    recentLeads: RecentLead[];
+}
+
+function getInitials(name: string): string {
+    return name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+}
+
+function formatDate(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
+
+    if (hours < 1) return 'Just now';
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString();
+}
+
+export default function Dashboard({ stats, recentLeads }: DashboardProps) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
+            <div className="flex flex-col gap-6 p-6">
+                {/* Stats Grid */}
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    <StatCard
+                        title="Total Leads"
+                        value={stats.leads.total}
+                        icon={Users}
+                        description={`${stats.leads.today} new today`}
+                    />
+                    <StatCard
+                        title="WhatsApp Instances"
+                        value={`${stats.instances.connected}/${stats.instances.total}`}
+                        icon={Phone}
+                        description={`${stats.instances.disconnected} disconnected`}
+                    />
+                    <StatCard
+                        title="Active Agents"
+                        value={`${stats.agents.active}/${stats.agents.total}`}
+                        icon={Bot}
+                    />
+                    <StatCard
+                        title="Media Files"
+                        value={stats.media.total}
+                        icon={Image}
+                    />
                 </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+
+                {/* Secondary Stats */}
+                <div className="grid gap-4 md:grid-cols-3">
+                    <InstanceStatus
+                        connected={stats.instances.connected}
+                        disconnected={stats.instances.disconnected}
+                        total={stats.instances.total}
+                    />
+                    <LeadsByStatus
+                        byStatus={stats.leads.byStatus}
+                        byTemperature={stats.leads.byTemperature}
+                    />
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2 text-base">
+                                <Clock className="h-4 w-4" />
+                                Lead Activity
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-muted-foreground">
+                                        New this week
+                                    </span>
+                                    <span className="font-semibold">
+                                        {stats.leads.recent}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-muted-foreground">
+                                        New today
+                                    </span>
+                                    <span className="font-semibold">
+                                        {stats.leads.today}
+                                    </span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-muted-foreground">
+                                        Total leads
+                                    </span>
+                                    <span className="font-semibold">
+                                        {stats.leads.total}
+                                    </span>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
+
+                {/* Recent Leads */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-base">
+                            <MessageCircle className="h-4 w-4" />
+                            Recent Leads
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {recentLeads.length > 0 ? (
+                            <div className="space-y-4">
+                                {recentLeads.map((lead) => (
+                                    <div
+                                        key={lead.id}
+                                        className="flex items-center justify-between rounded-lg border p-3"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <Avatar className="h-9 w-9">
+                                                <AvatarFallback>
+                                                    {getInitials(
+                                                        lead.name || 'Unknown',
+                                                    )}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <p className="font-medium">
+                                                    {lead.name || 'Unknown'}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {lead.phone}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {lead.instance && (
+                                                <Badge
+                                                    variant="outline"
+                                                    className="text-xs"
+                                                >
+                                                    {
+                                                        lead.instance
+                                                            .instance_name
+                                                    }
+                                                </Badge>
+                                            )}
+                                            <Badge
+                                                variant={
+                                                    lead.status === 'NEW'
+                                                        ? 'default'
+                                                        : lead.status ===
+                                                            'CONVERTED'
+                                                          ? 'secondary'
+                                                          : 'outline'
+                                                }
+                                                className="text-xs"
+                                            >
+                                                {lead.status}
+                                            </Badge>
+                                            {lead.temperature && (
+                                                <Badge
+                                                    variant="outline"
+                                                    className={`text-xs ${
+                                                        lead.temperature ===
+                                                        'HOT'
+                                                            ? 'border-red-500 text-red-500'
+                                                            : lead.temperature ===
+                                                                'WARM'
+                                                              ? 'border-orange-500 text-orange-500'
+                                                              : 'border-blue-500 text-blue-500'
+                                                    }`}
+                                                >
+                                                    {lead.temperature}
+                                                </Badge>
+                                            )}
+                                            <span className="text-xs text-muted-foreground">
+                                                {formatDate(lead.created_at)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center py-8 text-center">
+                                <Users className="mb-2 h-10 w-10 text-muted-foreground" />
+                                <p className="text-muted-foreground">
+                                    No leads yet
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                    Leads will appear here when you receive
+                                    messages
+                                </p>
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
             </div>
         </AppLayout>
     );

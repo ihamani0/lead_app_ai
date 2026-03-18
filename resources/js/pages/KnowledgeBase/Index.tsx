@@ -1,4 +1,4 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import {
     FileText,
     UploadCloud,
@@ -9,6 +9,7 @@ import {
     Database,
     Zap,
     X,
+    Trash2,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -27,7 +28,7 @@ import {
 
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-import { store } from '@/routes/knowledge';
+import { store, destroy } from '@/routes/knowledge';
 
 type DocumentStatus = 'indexed' | 'processing' | 'failed';
 
@@ -39,7 +40,7 @@ interface KnowledgeDocument {
 }
 
 // interface Instance {
-    // instance_name: string;
+// instance_name: string;
 // }
 
 interface KnowledgeBaseIndexProps {
@@ -116,12 +117,23 @@ export default function KnowledgeBaseIndex({
         });
     };
 
+    const handleDelete = (id: number) => {
+        if (
+            confirm(
+                t('knowledgeBase.deleteConfirm') ||
+                    'Are you sure you want to delete this document?',
+            )
+        ) {
+            router.delete(destroy(id).url);
+        }
+    };
+
     const getStatusIcon = (status: DocumentStatus) => {
         if (status === 'indexed')
             return (
                 <Badge className="border-emerald-500/30 bg-emerald-500/15 font-medium text-emerald-600 shadow-[0_0_15px_rgba(16,185,129,0.3)] backdrop-blur-sm dark:text-emerald-400">
                     <CheckCircle className="mr-1.5 h-3.5 w-3.5" />
-                    {t("knowledgeBase.status.ready")}
+                    {t('knowledgeBase.status.ready')}
                 </Badge>
             );
 
@@ -129,14 +141,14 @@ export default function KnowledgeBaseIndex({
             return (
                 <Badge className="border-blue-500/30 bg-blue-500/15 font-medium text-blue-600 shadow-[0_0_15px_rgba(59,130,246,0.3)] backdrop-blur-sm dark:text-blue-400">
                     <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-                    {t("knowledgeBase.status.processing")}
+                    {t('knowledgeBase.status.processing')}
                 </Badge>
             );
 
         return (
             <Badge className="border-rose-500/30 bg-rose-500/15 font-medium text-rose-600 shadow-[0_0_15px_rgba(244,63,94,0.3)] backdrop-blur-sm dark:text-rose-400">
                 <AlertCircle className="mr-1.5 h-3.5 w-3.5" />
-                {t("knowledgeBase.status.failed")}
+                {t('knowledgeBase.status.failed')}
             </Badge>
         );
     };
@@ -148,9 +160,9 @@ export default function KnowledgeBaseIndex({
             <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
                 <div className="mx-auto max-w-7xl space-y-10">
                     {/* Header - Stone Gradient (Dark for both modes) */}
-                    <div className="hidden lg:block relative overflow-hidden rounded-3xl bg-linear-to-br from-stone-600 via-stone-700 to-stone-800 p-8 shadow-2xl ring-1 ring-stone-400/30 md:p-12 dark:from-stone-900 dark:via-stone-800 dark:to-stone-900 dark:ring-stone-700/50">
+                    <div className="relative hidden overflow-hidden rounded-3xl bg-linear-to-br from-stone-600 via-stone-700 to-stone-800 p-8 shadow-2xl ring-1 ring-stone-400/30 md:p-12 lg:block dark:from-stone-900 dark:via-stone-800 dark:to-stone-900 dark:ring-stone-700/50">
                         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-20" />
-                        
+
                         <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
                             <div className="space-y-3">
                                 <div className="flex items-center gap-3">
@@ -158,17 +170,20 @@ export default function KnowledgeBaseIndex({
                                         <Database className="h-8 w-8 text-white" />
                                     </div>
                                     <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
-                                        {t("knowledgeBase.title")}
+                                        {t('knowledgeBase.title')}
                                     </h1>
                                 </div>
                                 <p className="max-w-xl text-lg font-light text-white/90">
-                                    {t("knowledgeBase.description")}
+                                    {t('knowledgeBase.description')}
                                 </p>
                             </div>
                             <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-3 py-1.5 text-xs sm:text-sm font-medium text-white shadow-lg backdrop-blur-md">
+                                <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-3 py-1.5 text-xs font-medium text-white shadow-lg backdrop-blur-md sm:text-sm">
                                     <Zap className="h-4 w-4" />
-                                    <span>{documents.length} {t("knowledgeBase.documentsCount")}</span>
+                                    <span>
+                                        {documents.length}{' '}
+                                        {t('knowledgeBase.documentsCount')}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -186,11 +201,11 @@ export default function KnowledgeBaseIndex({
                                             <UploadCloud className="h-5 w-5 text-white" />
                                         </div>
                                         <CardTitle className="bg-linear-to-r from-slate-900 to-slate-600 bg-clip-text text-xl font-bold text-transparent dark:from-white dark:to-slate-300">
-                                            {t("knowledgeBase.upload.title")}
+                                            {t('knowledgeBase.upload.title')}
                                         </CardTitle>
                                     </div>
                                     <p className="text-sm text-slate-500 dark:text-slate-400">
-                                        {t("knowledgeBase.upload.description")}
+                                        {t('knowledgeBase.upload.description')}
                                     </p>
                                 </CardHeader>
 
@@ -203,7 +218,9 @@ export default function KnowledgeBaseIndex({
                                         <div className="group space-y-2.5">
                                             <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
                                                 <FileText className="h-4 w-4 text-slate-400" />
-                                                {t("knowledgeBase.upload.documentName")}
+                                                {t(
+                                                    'knowledgeBase.upload.documentName',
+                                                )}
                                             </Label>
                                             <div className="relative">
                                                 <Input
@@ -230,7 +247,9 @@ export default function KnowledgeBaseIndex({
                                         <div className="space-y-2.5">
                                             <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
                                                 <UploadCloud className="h-4 w-4 text-slate-400" />
-                                                {t("knowledgeBase.upload.uploadFile")}
+                                                {t(
+                                                    'knowledgeBase.upload.uploadFile',
+                                                )}
                                             </Label>
                                             <div
                                                 className={`group relative ${dragActive ? 'scale-[1.02]' : ''}`}
@@ -295,10 +314,14 @@ export default function KnowledgeBaseIndex({
                                                                 <UploadCloud className="h-6 w-6" />
                                                             </div>
                                                             <span className="text-sm font-medium">
-                                                                {t("knowledgeBase.upload.dropFile")}
+                                                                {t(
+                                                                    'knowledgeBase.upload.dropFile',
+                                                                )}
                                                             </span>
                                                             <span className="text-xs text-slate-400">
-                                                                {t("knowledgeBase.upload.supportedFormats")}
+                                                                {t(
+                                                                    'knowledgeBase.upload.supportedFormats',
+                                                                )}
                                                             </span>
                                                         </div>
                                                     )}
@@ -323,7 +346,6 @@ export default function KnowledgeBaseIndex({
                                         </div>
 
                                         {/* Instance Selection */}
-                                        
 
                                         {/* Submit Button - Success Emerald/Teal linear */}
                                         <Button
@@ -331,20 +353,24 @@ export default function KnowledgeBaseIndex({
                                             disabled={processing}
                                             className="group relative h-14 w-full overflow-hidden rounded-xl font-semibold text-white shadow-xl shadow-emerald-500/25 transition-all duration-300 hover:shadow-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-70"
                                         >
-                                            <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300 group-hover:translate-y-0" />
+                                            <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300 " />
                                             <span className="relative flex items-center justify-center gap-2">
                                                 {processing ? (
                                                     <>
                                                         <Loader2 className="h-5 w-5 animate-spin" />
                                                         <span>
-                                                            {t("knowledgeBase.upload.processingDocument")}
+                                                            {t(
+                                                                'knowledgeBase.upload.processingDocument',
+                                                            )}
                                                         </span>
                                                     </>
                                                 ) : (
                                                     <>
                                                         <Sparkles className="h-5 w-5" />
                                                         <span>
-                                                            {t("knowledgeBase.upload.uploadTrain")}
+                                                            {t(
+                                                                'knowledgeBase.upload.uploadTrain',
+                                                            )}
                                                         </span>
                                                     </>
                                                 )}
@@ -368,10 +394,14 @@ export default function KnowledgeBaseIndex({
                                             </div>
                                             <div>
                                                 <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
-                                                    {t("knowledgeBase.documentsTable.title")}
+                                                    {t(
+                                                        'knowledgeBase.documentsTable.title',
+                                                    )}
                                                 </CardTitle>
                                                 <p className="text-sm text-slate-500 dark:text-slate-400">
-                                                    {t("knowledgeBase.documentsTable.description")}
+                                                    {t(
+                                                        'knowledgeBase.documentsTable.description',
+                                                    )}
                                                 </p>
                                             </div>
                                         </div>
@@ -382,19 +412,28 @@ export default function KnowledgeBaseIndex({
                                     </div>
                                 </CardHeader>
 
-                                <CardContent className="relative p-0">
+                                <CardContent className="relative p-1">
                                     <div className="w-full overflow-x-auto">
                                         <Table>
                                             <TableHeader>
                                                 <TableRow className="border-b border-slate-200/50 bg-slate-50/50 backdrop-blur-sm hover:bg-transparent dark:border-slate-700/50 dark:bg-slate-800/30">
                                                     <TableHead className="py-4 font-semibold text-slate-700 dark:text-slate-300">
-                                                        {t("knowledgeBase.documentsTable.documentLabel")}
+                                                        {t(
+                                                            'knowledgeBase.documentsTable.documentLabel',
+                                                        )}
                                                     </TableHead>
                                                     <TableHead className="py-4 font-semibold text-slate-700 dark:text-slate-300">
-                                                        {t("knowledgeBase.documentsTable.status")}
+                                                        {t(
+                                                            'knowledgeBase.documentsTable.status',
+                                                        )}
                                                     </TableHead>
                                                     <TableHead className="py-4 text-right font-semibold text-slate-700 dark:text-slate-300">
-                                                        {t("knowledgeBase.documentsTable.uploaded")} 
+                                                        {t(
+                                                            'knowledgeBase.documentsTable.uploaded',
+                                                        )}
+                                                    </TableHead>
+                                                    <TableHead className="py-4 text-right font-semibold text-slate-700 dark:text-slate-300">
+                                                        action
                                                     </TableHead>
                                                 </TableRow>
                                             </TableHeader>
@@ -433,31 +472,49 @@ export default function KnowledgeBaseIndex({
                                                             )}
                                                         </TableCell>
                                                         <TableCell className="py-4 text-right">
-                                                            <div className="flex flex-col items-end gap-1">
-                                                                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                                                                    {new Date(
-                                                                        doc.created_at,
-                                                                    ).toLocaleDateString(
-                                                                        undefined,
-                                                                        {
-                                                                            month: 'short',
-                                                                            day: 'numeric',
-                                                                            year: 'numeric',
-                                                                        },
-                                                                    )}
-                                                                </span>
-                                                                <span className="text-xs text-slate-400">
-                                                                    {new Date(
-                                                                        doc.created_at,
-                                                                    ).toLocaleTimeString(
-                                                                        undefined,
-                                                                        {
-                                                                            hour: '2-digit',
-                                                                            minute: '2-digit',
-                                                                        },
-                                                                    )}
-                                                                </span>
+                                                            <div className="flex items-center justify-end gap-2">
+                                                                <div className="flex flex-col items-end gap-1">
+                                                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                                                                        {new Date(
+                                                                            doc.created_at,
+                                                                        ).toLocaleDateString(
+                                                                            undefined,
+                                                                            {
+                                                                                month: 'short',
+                                                                                day: 'numeric',
+                                                                                year: 'numeric',
+                                                                            },
+                                                                        )}
+                                                                    </span>
+                                                                    <span className="text-xs text-slate-400">
+                                                                        {new Date(
+                                                                            doc.created_at,
+                                                                        ).toLocaleTimeString(
+                                                                            undefined,
+                                                                            {
+                                                                                hour: '2-digit',
+                                                                                minute: '2-digit',
+                                                                            },
+                                                                        )}
+                                                                    </span>
+                                                                </div>
+                                                                
                                                             </div>
+                                                        </TableCell>
+                                                        <TableCell className="py-4 text-right">
+                                                                <button
+                                                                    onClick={() =>
+                                                                        handleDelete(
+                                                                            doc.id,
+                                                                        )
+                                                                    }
+                                                                    className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-900/30 dark:hover:text-rose-400"
+                                                                    title={t(
+                                                                        'knowledgeBase.delete',
+                                                                    )}
+                                                                >
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </button>
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}
@@ -474,11 +531,14 @@ export default function KnowledgeBaseIndex({
                                                                 </div>
                                                                 <div className="text-center">
                                                                     <p className="text-lg font-medium text-slate-600 dark:text-slate-400">
-                                                                        {t("knowledgeBase.documentsTable.noDocuments")}
+                                                                        {t(
+                                                                            'knowledgeBase.documentsTable.noDocuments',
+                                                                        )}
                                                                     </p>
                                                                     <p className="text-sm">
-                                                                        {t("knowledgeBase.documentsTable.uploadFirstDocument")}
-                                                                         
+                                                                        {t(
+                                                                            'knowledgeBase.documentsTable.uploadFirstDocument',
+                                                                        )}
                                                                     </p>
                                                                 </div>
                                                             </div>
@@ -498,9 +558,8 @@ export default function KnowledgeBaseIndex({
     );
 }
 
-
-
-{/* <div className="space-y-3">
+{
+    /* <div className="space-y-3">
 <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
 <Sparkles className="h-4 w-4 text-slate-400" />
 { }
@@ -549,4 +608,5 @@ instance.instance_name
 {errors.instance_names}
 </p>
 )}
-</div> */}
+</div> */
+}

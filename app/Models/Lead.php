@@ -44,7 +44,8 @@ class Lead extends Model
         return $this->belongsTo(Tenant::class);
     }
 
-    public function instance(){
-        return $this->belongsTo(EvolutionInstance::class , 'instance_id' , 'id');
+    public function instance()
+    {
+        return $this->belongsTo(EvolutionInstance::class, 'instance_id', 'id');
     }
 }

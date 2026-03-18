@@ -86,7 +86,7 @@ class LeadIntegrationController extends Controller
                 'source' => $request->input('source'),
                 'contact_status' => 'ATTENTE_REPONSE',
                 'phone' => $request->input('phone'),
-                'instance_id' => $instance_id
+                'instance_id' => $instance_id,
             ]
         );
 
@@ -127,8 +127,8 @@ class LeadIntegrationController extends Controller
         $agent_status = $instance->agentConfig->is_active;
 
         return response()->json([
-            'status' => $agent_status, 
-            'system_prompt' => $instance->agentConfig->system_prompt
+            'status' => $agent_status,
+            'system_prompt' => $instance->agentConfig->system_prompt,
         ]);
     }
 }

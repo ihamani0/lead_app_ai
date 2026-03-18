@@ -1,0 +1,32 @@
+{
+    "instanceId": "Instance ID",
+    "phoneNumber": "Phone Number",
+    "lastConnected": "Last Connected",
+    "notLinked": "Not linked",
+    "never": "Never",
+
+    "agentStatus": "Agent Status",
+    "agentRunning": "Running",
+    "agentPaused": "Paused",
+    "agentOffline": "Offline",
+    "noAgent": "No agent configured",
+
+    "typingDelay": "Typing Delay",
+    "typingDelayMs": "ms",
+    "typingDelayHelp": "Delay in milliseconds before the AI sends a response. Simulates human typing speed. Recommended: 1000-2000ms",
+
+    "stopKeyword": "Stop Keyword",
+    "stopKeywordHelp": "When a user sends this keyword, the AI automation pauses for that conversation. Default: #STOP",
+
+    "systemPrompt": "System Prompt",
+    "systemPromptHelp": "Instructions that define your AI's personality, behavior, and knowledge base. Be specific for better responses.",
+    "promptPreview": "Prompt preview",
+
+    "blacklist": "Blocked Numbers",
+    "blacklistCount": "blocked numbers",
+    "blacklistHelp": "Phone numbers (with country code) that the AI will ignore. Format: +1234567890, +0987654321",
+    "noBlacklist": "No blocked numbers",
+
+    "webhookUrl": "Webhook URL",
+    "webhookUrlHelp": "Your n8n webhook URL that processes incoming messages and returns AI responses."
+}

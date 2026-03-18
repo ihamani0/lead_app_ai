@@ -5,7 +5,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { EvolutionInstance } from '@/types';
 import AgentManager from './AgentManager';
 import { InstanceSettings } from './InstanceSettings';
-import { InstanceStats } from './InstanceStats';
 
 interface Props {
     instance: EvolutionInstance;
@@ -21,7 +20,7 @@ export function InstanceTabs({ instance }: Props) {
 
     return (
         <Tabs defaultValue="overview" className="w-full">
-            <TabsList className="mb-6 inline-flex h-12 items-center justify-start gap-1 rounded-xl bg-slate-100/80 p-1.5 backdrop-blur-sm dark:bg-slate-900/80">
+            <TabsList className="mb-6 inline-flex h-20 w-full items-center justify-start gap-1 rounded-xl bg-card p-1.5 backdrop-blur-sm">
                 {tabs.map((tab) => (
                     <TabsTrigger
                         key={tab.id}
@@ -38,25 +37,13 @@ export function InstanceTabs({ instance }: Props) {
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3 }}
-                >
-                    <InstanceStats
-                        status={instance.status}
-                        provider="Evolution"
-                        platform="WhatsApp"
-                        lastSynced={instance.connected_at}
-                    />
-                </motion.div>
-
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: 0.1 }}
                 >
                     <InstanceSettings
                         instanceName={instance.instance_name}
                         phoneNumber={instance.phone_number}
                         connectedAt={instance.connected_at}
+                        agentConfig={instance.agent_config}
                     />
                 </motion.div>
             </TabsContent>
