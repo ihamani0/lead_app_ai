@@ -220,7 +220,7 @@ class EvolutionService
             ->n8n()
             ->getSettings();
 
-        Log::info('Current settings: '.json_encode($currentSettings));    
+        Log::info('Current settings: '.json_encode($currentSettings));
 
         // Convert new blacklist to JIDs
         $newJids = $this->convertBlacklistToJids($blacklist);

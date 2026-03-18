@@ -138,6 +138,13 @@ class EvolutionInstanceController extends Controller
         // find instance name by tenant_id
         $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
 
+        // Check if instance has leads before deletion
+        $leadsCount = $instance->leads()->count();
+
+        if ($leadsCount > 0) {
+            return back()->with('error', "Cannot delete instance. It has {$leadsCount} associated lead(s). Please delete or reassign leads first.");
+        }
+
         if ($instance) {
             // 1. Call Evolution API to logout
             $evolutionService->deleteInstance($instance->instance_name);
