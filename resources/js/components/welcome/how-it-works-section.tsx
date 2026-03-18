@@ -1,32 +1,11 @@
 'use client';
 
+import type { TFunction } from 'i18next';
 import { QrCode, Settings, MessageCircle, Check } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
-const steps = [
-    {
-        number: 1,
-        title: 'Connect WhatsApp',
-        description:
-            'Scan the QR code to connect your WhatsApp Business account. Your account will be securely linked to our platform in seconds.',
-        icon: QrCode,
-    },
-    {
-        number: 2,
-        title: 'Configure AI Agent',
-        description:
-            'Set up your AI agent with custom prompts, knowledge base, and automation rules. Tailor it to match your business needs.',
-        icon: Settings,
-    },
-    {
-        number: 3,
-        title: 'Automate Conversations',
-        description:
-            'Your AI agent is now live! It will automatically handle customer inquiries, qualify leads, and provide 24/7 support.',
-        icon: MessageCircle,
-    },
-];
+
 
 // Animated QR Code with shimmer loading
 const QRCodeMockup = () => (
@@ -249,7 +228,30 @@ const customStyles = `
   }
 `;
 
-export function HowItWorksSection() {
+export function HowItWorksSection({t}: {t: TFunction}) {
+
+    const steps = [
+    {
+        number: 1,
+        title: t("welcome.how_work.step1.title"),
+        description:t("welcome.how_work.step1.description"),
+        icon: QrCode,
+    },
+    {
+        number: 2,
+        title: t("welcome.how_work.step2.title"),
+        description:t("welcome.how_work.step2.description"),
+        icon: Settings,
+    },
+    {
+        number: 3,
+        title: t("welcome.how_work.step3.title"),
+        description:t("welcome.how_work.step3.description"),
+        icon: MessageCircle,
+    },
+];
+     
+
     const [activeStep, setActiveStep] = useState(0);
     const [progress, setProgress] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
@@ -291,13 +293,18 @@ export function HowItWorksSection() {
                     {/* Header */}
                     <div className="mb-16 text-center">
                         <span className="text-sm font-semibold tracking-widest text-emerald-600 uppercase dark:text-emerald-400">
-                            How It Works
+                            
+                            {t("welcome.how_work.title")}
                         </span>
                         <h2 className="mt-4 text-4xl font-bold text-balance text-foreground md:text-5xl">
-                            Just 3 steps to get started
+                           
+                            {t("welcome.how_work.subtitle")}
+
                         </h2>
                         <p className="mt-4 text-muted-foreground">
-                            Hover over to pause • Click a step to explore
+                            
+                            {t("welcome.how_work.tip_pause")}
+
                         </p>
                     </div>
 
@@ -339,7 +346,7 @@ export function HowItWorksSection() {
                                         {/* Icon */}
                                         <div
                                             className={cn(
-                                                'relative z-10 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl transition-all duration-300',
+                                                'relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-xl transition-all duration-300',
                                                 isActive || isCompleted
                                                     ? 'scale-110 bg-emerald-500 text-white shadow-lg shadow-emerald-500/30'
                                                     : 'bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400',
@@ -393,7 +400,7 @@ export function HowItWorksSection() {
                             </div>
                             {/* Background glow */}
                             <div className="absolute inset-0 -z-10 opacity-20 blur-3xl">
-                                <div className="h-full w-full rounded-full bg-gradient-to-br from-emerald-500 to-blue-500" />
+                                <div className="h-full w-full rounded-full bg-linear-to-br from-emerald-500 to-blue-500" />
                             </div>
 
                             {/* Progress indicator */}

@@ -1,20 +1,13 @@
 import { Image, HardDrive, BarChart3 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { formatBytes } from '@/lib/utils';
+import { formatBytes, getChartColor } from '@/lib/utils';
 import type { MediaReportData } from '@/types/reports';
 import { SummaryCard } from './SummaryCard';
 
 interface MediaReportProps {
     data: MediaReportData | null;
 }
-
-const TYPE_COLORS: Record<string, string> = {
-    image: '#3b82f6',
-    video: '#8b5cf6',
-    document: '#f59e0b',
-    audio: '#22c55e',
-};
 
 export function MediaReport({ data }: MediaReportProps) {
     if (!data) {
@@ -27,11 +20,13 @@ export function MediaReport({ data }: MediaReportProps) {
 
     const { summary, byType } = data;
 
-    const typeData = Object.entries(byType || {}).map(([name, value]) => ({
-        name,
-        value,
-        color: TYPE_COLORS[name.toLowerCase()] || '#6b7280',
-    }));
+    const typeData = Object.entries(byType || {}).map(
+        ([name, value], index) => ({
+            name,
+            value,
+            color: getChartColor(index + 1),
+        }),
+    );
 
     return (
         <div className="space-y-6">

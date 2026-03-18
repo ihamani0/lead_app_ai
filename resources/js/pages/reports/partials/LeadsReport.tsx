@@ -13,30 +13,17 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { getStatusColor, calculatePercentage } from '@/lib/utils';
+import {
+    getStatusColor,
+    calculatePercentage,
+    getChartColor,
+} from '@/lib/utils';
 import type { LeadsReportData } from '@/types/reports';
 import { SummaryCard } from './SummaryCard';
 
 interface LeadsReportProps {
     data: LeadsReportData | null;
 }
-
-const STATUS_COLORS: Record<string, string> = {
-    NEW: '#3b82f6',
-    IN_PROGRESS: '#f59e0b',
-    CLOSED: '#22c55e',
-    CONTACTED: '#8b5cf6',
-    QUALIFIED: '#06b6d4',
-    HOT: '#ef4444',
-    WARM: '#f97316',
-    COLD: '#6b7280',
-};
-
-const TEMP_COLORS: Record<string, string> = {
-    HOT: '#ef4444',
-    WARM: '#f97316',
-    COLD: '#6b7280',
-};
 
 export function LeadsReport({ data }: LeadsReportProps) {
     if (!data || !data.byStatus) {
@@ -50,17 +37,17 @@ export function LeadsReport({ data }: LeadsReportProps) {
     const { summary, byStatus, byTemperature, bySource, byInstance } = data;
     const total = Object.values(byStatus).reduce((acc, val) => acc + val, 0);
 
-    const statusData = Object.entries(byStatus).map(([name, value]) => ({
+    const statusData = Object.entries(byStatus).map(([name, value], index) => ({
         name,
         value,
-        color: STATUS_COLORS[name] || '#6b7280',
+        color: getChartColor(index + 1),
     }));
 
     const temperatureData = Object.entries(byTemperature).map(
-        ([name, value]) => ({
+        ([name, value], index) => ({
             name,
             value,
-            color: TEMP_COLORS[name] || '#6b7280',
+            color: getChartColor(index + 1),
         }),
     );
 
@@ -207,7 +194,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                                 <Tooltip />
                                 <Bar
                                     dataKey="value"
-                                    fill="#3b82f6"
+                                    fill={getChartColor(1)}
                                     radius={[0, 4, 4, 0]}
                                 />
                             </BarChart>

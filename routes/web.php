@@ -24,24 +24,15 @@ Route::get('/translations/{locale}', [TranslationController::class, 'show'])
 Route::post('/lang/refresh', [TranslationController::class, 'refresh'])
     ->name('translations.refresh');
 
-Route::post('/webhooks/evolution', [EvolutionWebhookController::class, 'handle'])
-    ->name('webhooks.evolution');
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
-})->name('home');
+})->name('home')->middleware('guest');
 
-Route::get('/welcome', function () {
-    return Inertia::render('welcome_1', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
-})->name('home1');
 
-Route::get('/sprint', function () {
-    return Inertia::render('sprint');
-})->name('sprint');
+
 
 Route::middleware(['auth', 'verified'])->group(function () {
 

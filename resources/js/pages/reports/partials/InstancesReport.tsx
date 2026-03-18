@@ -19,19 +19,13 @@ import {
     CardDescription,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { calculatePercentage } from '@/lib/utils';
+import { calculatePercentage, getChartColor } from '@/lib/utils';
 import type { InstancesReportData } from '@/types/reports';
 import { SummaryCard } from './SummaryCard';
 
 interface InstancesReportProps {
     data: InstancesReportData | null;
 }
-
-const STATUS_COLORS: Record<string, string> = {
-    connected: '#22c55e',
-    disconnected: '#ef4444',
-    connecting: '#f59e0b',
-};
 
 export function InstancesReport({ data }: InstancesReportProps) {
     if (!data) {
@@ -49,11 +43,13 @@ export function InstancesReport({ data }: InstancesReportProps) {
     );
     const maxLeads = Math.max(...Object.values(leadsByInstance), 1);
 
-    const statusData = Object.entries(byStatus || {}).map(([name, value]) => ({
-        name,
-        value,
-        color: STATUS_COLORS[name] || '#6b7280',
-    }));
+    const statusData = Object.entries(byStatus || {}).map(
+        ([name, value], index) => ({
+            name,
+            value,
+            color: getChartColor(index + 1),
+        }),
+    );
 
     const leadsData = Object.entries(leadsByInstance).map(([name, value]) => ({
         name,
@@ -151,7 +147,7 @@ export function InstancesReport({ data }: InstancesReportProps) {
                                     <Tooltip />
                                     <Bar
                                         dataKey="value"
-                                        fill="#3b82f6"
+                                        fill={getChartColor(1)}
                                         radius={[4, 4, 0, 0]}
                                     />
                                 </BarChart>

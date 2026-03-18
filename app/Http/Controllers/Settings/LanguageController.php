@@ -11,6 +11,8 @@ class LanguageController extends Controller
 {
     public function update(Request $request)
     {
+
+        
         $validated = $request->validate([
             'locale' => 'required|string|in:en,fr',
         ]);

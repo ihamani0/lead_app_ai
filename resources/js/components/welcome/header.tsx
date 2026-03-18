@@ -6,6 +6,7 @@ import { useScroll } from '@/hooks/use-scroll';
 import { cn } from '@/lib/utils';
 import { dashboard, login, register } from '@/routes';
 import type { Auth } from '@/types';
+import LanguageSwitcher from './LanguageSwitcher';
 import { MobileNav } from './mobile-nav';
 import { Logo } from './welcom-logo';
 
@@ -57,7 +58,7 @@ export function Header({
                     className="rounded-md p-2 hover:bg-muted dark:hover:bg-muted/50"
                     href="#"
                 >
-                    <Logo   />
+                    <Logo />
                 </a>
                 <div className="hidden items-center gap-2 md:flex">
                     {auth.user ? (
@@ -84,13 +85,17 @@ export function Header({
 
                             {canRegister && (
                                 <Button size="sm" asChild>
-                                    <Link href={register()}>{t('welcome.buttonStarted')}</Link>
+                                    <Link href={register()}>
+                                        {t('welcome.buttonStarted')}
+                                    </Link>
                                 </Button>
                             )}
+
+                            <LanguageSwitcher />
                         </>
                     )}
                 </div>
-                <MobileNav />
+                <MobileNav t={t} canRegister={canRegister} />
             </nav>
         </header>
     );

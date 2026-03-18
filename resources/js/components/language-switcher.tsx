@@ -9,7 +9,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/hooks/use-translation';
 import i18n from '@/i18n';
-import { update as languageUpdate } from '@/routes/language';
+import { update } from '@/routes/language';
+
 
 type Props = {
     availableLocales: string[];
@@ -27,8 +28,8 @@ export function LanguageSwitcher({ availableLocales, currentLocale }: Props) {
 
         // ✅ 2. patch backend — let the Inertia reload drive the locale change
         router.patch(
-            languageUpdate.url(),
-            { locale },
+            update.url(),
+            { locale },     
             {
                 replace: true,
                 preserveState: false, // 👈 force fresh shared props (locale + langVersion)

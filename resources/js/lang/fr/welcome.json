@@ -65,5 +65,23 @@
             "title": "RAG",
             "description": "Connectez vos agents IA à la base de connaissances de votre entreprise"
         }
+    },
+
+    "how_work" : {
+        "title" : "Comment ça marche",
+        "subtitle": "En seulement 3 étapes",
+        "tip_pause":"Survolez pour mettre en pause • Cliquez sur une étape pour explorer",
+        "step1" : {
+            "title" : "Connecter WhatsApp",
+            "description" : "Scannez le code QR pour connecter votre compte WhatsApp Business. Votre compte sera lié en toute sécurité à notre plateforme en quelques secondes."
+        },
+        "step2" : {
+            "title" : "Configurer l'agent IA",
+            "description" : "Configurez votre agent IA avec des invites personnalisées, une base de connaissances et des règles d'automatisation. Adaptez-le à vos besoins."
+        },
+        "step3" : {
+            "title" : "Automatiser les conversations",
+            "description" : "Votre agent IA est maintenant actif ! Il gérera automatiquement les demandes des clients, qualifiera les prospects et fournira un support 24h/24 et 7j/7."
+        }
     }
 }

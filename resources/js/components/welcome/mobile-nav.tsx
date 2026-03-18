@@ -1,11 +1,21 @@
+import { Link } from '@inertiajs/react';
+import type { TFunction } from 'i18next';
 import { XIcon, MenuIcon } from 'lucide-react';
 import React from 'react';
 import { Portal, PortalBackdrop } from '@/components/portal';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { login, register } from '@/routes';
 import { navLinks } from './header';
+import LanguageSwitcher from './LanguageSwitcher';
 
-export function MobileNav() {
+export function MobileNav({
+    canRegister,
+    t,
+}: {
+    canRegister?: boolean;
+    t: TFunction;
+}) {
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -48,11 +58,21 @@ export function MobileNav() {
                             ))}
                         </div>
                         <div className="mt-12 flex flex-col gap-2">
-                            <Button className="w-full" variant="outline">
-                                Sign In
+                            <Button size="sm" variant="outline" asChild>
+                                <Link href={login()}>Log in</Link>
                             </Button>
-                            <Button className="w-full">Get Started</Button>
+
+                            {canRegister && (
+                                <Button size="sm" asChild>
+                                    <Link href={register()}>
+                                        {t('welcome.buttonStarted')}
+                                    </Link>
+                                </Button>
+                            )}
                         </div>
+                    </div>
+                    <div className="mt-12 flex flex-col gap-2">
+                        <LanguageSwitcher />
                     </div>
                 </Portal>
             )}

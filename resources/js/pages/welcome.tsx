@@ -28,7 +28,7 @@ export default function Welcome({
                     <HeroSection t={t} auth={auth} />
 
                     <FeaturesSection t={t} />
-                    <HowItWorksSection />
+                    <HowItWorksSection t={t} />
                     <PricingSection />
                     <TestimonialsSection />
                     <CallToAction />

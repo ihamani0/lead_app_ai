@@ -2,6 +2,7 @@ import { Bot, TrendingUp, BarChart3 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { getChartColor } from '@/lib/utils';
 import type { AgentsReportData, AgentData } from '@/types/reports';
 import { SummaryCard } from './SummaryCard';
 
@@ -12,11 +13,6 @@ interface AgentsReportProps {
 interface AgentCardProps {
     agent: AgentData;
 }
-
-const STATUS_COLORS: Record<string, string> = {
-    active: '#22c55e',
-    inactive: '#6b7280',
-};
 
 function AgentCard({ agent }: AgentCardProps) {
     return (
@@ -45,11 +41,13 @@ export function AgentsReport({ data }: AgentsReportProps) {
 
     const { summary, byStatus, agents } = data;
 
-    const statusData = Object.entries(byStatus || {}).map(([name, value]) => ({
-        name,
-        value,
-        color: STATUS_COLORS[name] || '#6b7280',
-    }));
+    const statusData = Object.entries(byStatus || {}).map(
+        ([name, value], index) => ({
+            name,
+            value,
+            color: getChartColor(index + 1),
+        }),
+    );
 
     return (
         <div className="space-y-6">

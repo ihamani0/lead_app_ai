@@ -1,8 +1,7 @@
 'use client';
-import { FacebookIcon, InstagramIcon, LinkedinIcon } from 'lucide-react';
+import { InstagramIcon, LinkedinIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { LanguageSelector } from '../languge-selector';
 import { ThemeToggle } from '../theme-toggle';
 
 export function Footer() {
@@ -51,7 +50,6 @@ export function Footer() {
                     </div>
                     <div className="flex items-center gap-2">
                         <ThemeToggle />
-                        <LanguageSelector />
                     </div>
                 </div>
                 <div className="h-px bg-border" />
@@ -71,24 +69,8 @@ const footerLinks = [
         title: 'Company',
         links: [
             { href: '#', label: 'Engineering Blog' },
-            { href: '#', label: 'Marketplace' },
             { href: '#', label: 'What’s New' },
-            { href: 'https://issamedhamani.site', label: 'About' },
-            { href: '#', label: 'Press' },
-            { href: '#', label: 'Careers' },
-            { href: '#', label: 'Social Good' },
-        ],
-    },
-    {
-        title: 'Community',
-        links: [
-            { href: '#', label: 'Linktree for Enterprise' },
-            { href: '#', label: '2023 Creator Report' },
-            { href: '#', label: '2022 Creator Report' },
-            { href: '#', label: 'Charities' },
-            { href: '#', label: 'What’s Trending' },
-            { href: '#', label: 'Creator Profile Directory' },
-            { href: '#', label: 'Explore Templates' },
+            { href: '#', label: 'About' },
         ],
     },
     {
@@ -96,8 +78,6 @@ const footerLinks = [
         links: [
             { href: '#', label: 'Help Topics' },
             { href: '#', label: 'Getting Started' },
-            { href: '#', label: 'Linoree Pro' },
-            { href: '#', label: 'Features & How-tos' },
             { href: '#', label: 'FAQs' },
             { href: '#', label: 'Report a Violation' },
         ],
@@ -110,17 +90,11 @@ const footerLinks = [
             { href: '#', label: 'Cookie Notice' },
             { href: '#', label: 'Trust Center' },
             { href: '#', label: 'Cookie Preferences' },
-            { href: '#', label: 'Transparency Report' },
-            { href: '#', label: 'Law Enforcement Access Policy' },
         ],
     },
 ];
 
 const socialLinks = [
-    {
-        icon: <FacebookIcon />,
-        href: '#',
-    },
     {
         icon: <InstagramIcon />,
         href: '#',
