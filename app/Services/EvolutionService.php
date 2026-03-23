@@ -99,6 +99,16 @@ class EvolutionService
         return $response;
     }
 
+    public function getInstanceStatus(string $instanceName): array
+    {
+        return EvolutionApi::setInstance($instanceName)->instance()->status();
+    }
+
+    public function disconnectInstance(string $instanceName): array
+    {
+        return EvolutionApi::setInstance($instanceName)->instance()->logout();
+    }
+
     // ==========Handle N8n Integration===============
 
     /**

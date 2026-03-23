@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import { Phone, PowerOff, Settings2, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils'; // Make sure you have the shadcn utils
 import { destroy } from '@/routes/instances';
@@ -15,7 +15,7 @@ export default function InstanceCard({ instance }: InstanceCardProps) {
     const { t } = useTranslation();
 
     const displayName =
-        instance.instance_name.split('-').slice(1, -1).join(' ') ||
+        instance.instance_name.split('-').slice(1, -1).join(' ').toUpperCase() ||
         instance.instance_name;
 
     const isConnected = instance.status === 'connected';
@@ -101,12 +101,19 @@ const statusStyles = {
 
                 <CardHeader className="flex flex-row items-start justify-between px-6 pt-6">
                     <div className="flex flex-col gap-1">
+                        <div>
+
                         <CardTitle className="text-xl font-bold text-foreground">
                         {displayName}
                         </CardTitle>
 
+                        
+
+                        </div>
+
+
                         <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-                        {t("profil.node")}
+                         {instance.instance_name} {t("profil.node")}
                         </p>
                     </div>
 
@@ -124,6 +131,7 @@ const statusStyles = {
                         {t(`profil.status.${instance.status}`)}
                         </span>
                     </div>
+
                     </CardHeader>
 
                     <CardContent className="px-6 pb-6">

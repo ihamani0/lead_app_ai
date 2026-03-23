@@ -13,6 +13,9 @@ return [
         'document_deleted' => 'Document deleted successfully.',
         'document_uploaded' => 'Document uploaded! AI is processing it.',
 
+        'qualification_triggered' => 'Qualification triggered successfully!',
+        'qualification_in_progress' => 'Qualification in progress...',
+
     ],
 
     'error' => [

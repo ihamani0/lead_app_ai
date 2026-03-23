@@ -1,0 +1,39 @@
+{
+    "title": "Dashboard",
+    "stats": {
+        "totalLeads": "Total Leads",
+        "instances": "WhatsApp Instances",
+        "activeAgents": "Active Agents",
+        "mediaFiles": "Media Files",
+        "newToday": "new today",
+        "disconnected": "disconnected"
+    },
+    "instanceStatus": "Instance Status",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "uptime": "uptime",
+    "leadsByStatus": "Leads by Status",
+    "byTemperature": "By Temperature",
+    "noLeads": "No leads yet",
+    "leadActivity": "Lead Activity",
+    "newThisWeek": "New this week",
+    "newToday": "New today",
+    "totalLeads": "Total leads",
+    "recentLeads": "Recent Leads",
+    "unknown": "Unknown",
+    "noLeadsDescription": "Leads will appear here when you receive messages",
+    "status": {
+        "new": "New",
+        "contacted": "Contacted",
+        "qualified": "Qualified",
+        "converted": "Converted",
+        "lost": "Lost",
+        "qualifying": "Qualifying",
+        "inProgress": "In Progress"
+    },
+    "time": {
+        "justNow": "Just now",
+        "hoursAgo": "h ago",
+        "daysAgo": "d ago"
+    }
+}

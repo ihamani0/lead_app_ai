@@ -14,6 +14,7 @@ import {
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
@@ -88,6 +89,7 @@ function InstanceStatus({
     disconnected,
     total,
 }: InstanceStatusProps) {
+    const { t } = useTranslation();
     const connectedPercent =
         total > 0 ? Math.round((connected / total) * 100) : 0;
 
@@ -96,7 +98,7 @@ function InstanceStatus({
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                     <Phone className="h-4 w-4" />
-                    Instance Status
+                    {t('dashboard.instanceStatus')}
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -104,14 +106,18 @@ function InstanceStatus({
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="h-4 w-4 text-green-500" />
-                            <span className="text-sm">Connected</span>
+                            <span className="text-sm">
+                                {t('dashboard.connected')}
+                            </span>
                         </div>
                         <span className="font-semibold">{connected}</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <AlertCircle className="h-4 w-4 text-red-500" />
-                            <span className="text-sm">Disconnected</span>
+                            <span className="text-sm">
+                                {t('dashboard.disconnected')}
+                            </span>
                         </div>
                         <span className="font-semibold">{disconnected}</span>
                     </div>
@@ -122,7 +128,7 @@ function InstanceStatus({
                         />
                     </div>
                     <p className="text-center text-xs text-muted-foreground">
-                        {connectedPercent}% uptime
+                        {connectedPercent}% {t('dashboard.uptime')}
                     </p>
                 </div>
             </CardContent>
@@ -136,12 +142,15 @@ interface LeadsByStatusProps {
 }
 
 function LeadsByStatus({ byStatus, byTemperature }: LeadsByStatusProps) {
+    const { t } = useTranslation();
     const statusColors: Record<string, string> = {
         NEW: 'bg-blue-500',
         CONTACTED: 'bg-yellow-500',
         QUALIFIED: 'bg-orange-500',
         CONVERTED: 'bg-green-500',
         LOST: 'bg-red-500',
+        QUALIFYING: 'bg-purple-500',
+        IN_PROGRESS: 'bg-amber-500',
     };
 
     const temperatureColors: Record<string, string> = {
@@ -152,12 +161,25 @@ function LeadsByStatus({ byStatus, byTemperature }: LeadsByStatusProps) {
 
     const total = Object.values(byStatus).reduce((a, b) => a + b, 0);
 
+    const getStatusLabel = (status: string): string => {
+        const labels: Record<string, string> = {
+            NEW: t('dashboard.status.new'),
+            CONTACTED: t('dashboard.status.contacted'),
+            QUALIFIED: t('dashboard.status.qualified'),
+            CONVERTED: t('dashboard.status.converted'),
+            LOST: t('dashboard.status.lost'),
+            QUALIFYING: t('dashboard.status.qualifying'),
+            IN_PROGRESS: t('dashboard.status.inProgress'),
+        };
+        return labels[status] || status;
+    };
+
     return (
         <Card className="col-span-full md:col-span-1">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                     <Users className="h-4 w-4" />
-                    Leads by Status
+                    {t('dashboard.leadsByStatus')}
                 </CardTitle>
             </CardHeader>
             <CardContent>
@@ -173,7 +195,9 @@ function LeadsByStatus({ byStatus, byTemperature }: LeadsByStatusProps) {
                                         statusColors[status] || 'bg-slate-500'
                                     }`}
                                 />
-                                <span className="text-sm">{status}</span>
+                                <span className="text-sm">
+                                    {getStatusLabel(status)}
+                                </span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-100">
@@ -195,7 +219,7 @@ function LeadsByStatus({ byStatus, byTemperature }: LeadsByStatusProps) {
                     ))}
                     {Object.keys(byStatus).length === 0 && (
                         <p className="text-sm text-muted-foreground">
-                            No leads yet
+                            {t('dashboard.noLeads')}
                         </p>
                     )}
                 </div>
@@ -204,7 +228,7 @@ function LeadsByStatus({ byStatus, byTemperature }: LeadsByStatusProps) {
                     <>
                         <div className="my-4 border-t" />
                         <p className="mb-3 text-sm font-medium">
-                            By Temperature
+                            {t('dashboard.byTemperature')}
                         </p>
                         <div className="flex gap-2">
                             {Object.entries(byTemperature).map(
@@ -287,45 +311,61 @@ function getInitials(name: string): string {
         .slice(0, 2);
 }
 
-function formatDate(dateString: string): string {
+function formatDate(dateString: string, t: (key: string) => string): string {
     const date = new Date(dateString);
     const now = new Date();
     const diff = now.getTime() - date.getTime();
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(hours / 24);
 
-    if (hours < 1) return 'Just now';
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (hours < 1) return t('dashboard.time.justNow');
+    if (hours < 24) return `${hours}${t('dashboard.time.hoursAgo')}`;
+    if (days < 7) return `${days}${t('dashboard.time.daysAgo')}`;
     return date.toLocaleDateString();
 }
 
+function getStatusLabel(status: string, t: (key: string) => string): string {
+    const labels: Record<string, string> = {
+        NEW: t('dashboard.status.new'),
+        CONTACTED: t('dashboard.status.contacted'),
+        QUALIFIED: t('dashboard.status.qualified'),
+        CONVERTED: t('dashboard.status.converted'),
+        LOST: t('dashboard.status.lost'),
+        QUALIFYING: t('dashboard.status.qualifying'),
+        IN_PROGRESS: t('dashboard.status.inProgress'),
+    };
+    return labels[status] || status;
+}
+
 export default function Dashboard({ stats, recentLeads }: DashboardProps) {
+    const { t } = useTranslation();
+    const { t: td } = useTranslation();
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Dashboard" />
+            <Head title={t('dashboard.title')} />
             <div className="flex flex-col gap-6 p-6">
                 {/* Stats Grid */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                     <StatCard
-                        title="Total Leads"
+                        title={t('dashboard.stats.totalLeads')}
                         value={stats.leads.total}
                         icon={Users}
-                        description={`${stats.leads.today} new today`}
+                        description={`${stats.leads.today} ${t('dashboard.stats.newToday')}`}
                     />
                     <StatCard
-                        title="WhatsApp Instances"
+                        title={t('dashboard.stats.instances')}
                         value={`${stats.instances.connected}/${stats.instances.total}`}
                         icon={Phone}
-                        description={`${stats.instances.disconnected} disconnected`}
+                        description={`${stats.instances.disconnected} ${t('dashboard.stats.disconnected')}`}
                     />
                     <StatCard
-                        title="Active Agents"
+                        title={t('dashboard.stats.activeAgents')}
                         value={`${stats.agents.active}/${stats.agents.total}`}
                         icon={Bot}
                     />
                     <StatCard
-                        title="Media Files"
+                        title={t('dashboard.stats.mediaFiles')}
                         value={stats.media.total}
                         icon={Image}
                     />
@@ -346,14 +386,14 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-base">
                                 <Clock className="h-4 w-4" />
-                                Lead Activity
+                                {t('dashboard.leadActivity')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-4">
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm text-muted-foreground">
-                                        New this week
+                                        {t('dashboard.newThisWeek')}
                                     </span>
                                     <span className="font-semibold">
                                         {stats.leads.recent}
@@ -361,7 +401,7 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm text-muted-foreground">
-                                        New today
+                                        {t('dashboard.newToday')}
                                     </span>
                                     <span className="font-semibold">
                                         {stats.leads.today}
@@ -369,7 +409,7 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <span className="text-sm text-muted-foreground">
-                                        Total leads
+                                        {t('dashboard.totalLeads')}
                                     </span>
                                     <span className="font-semibold">
                                         {stats.leads.total}
@@ -385,7 +425,7 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-base">
                             <MessageCircle className="h-4 w-4" />
-                            Recent Leads
+                            {t('dashboard.recentLeads')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -400,13 +440,17 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                                             <Avatar className="h-9 w-9">
                                                 <AvatarFallback>
                                                     {getInitials(
-                                                        lead.name || 'Unknown',
+                                                        lead.name ||
+                                                            td(
+                                                                'dashboard.unknown',
+                                                            ),
                                                     )}
                                                 </AvatarFallback>
                                             </Avatar>
                                             <div>
                                                 <p className="font-medium">
-                                                    {lead.name || 'Unknown'}
+                                                    {lead.name ||
+                                                        td('dashboard.unknown')}
                                                 </p>
                                                 <p className="text-xs text-muted-foreground">
                                                     {lead.phone}
@@ -436,7 +480,7 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                                                 }
                                                 className="text-xs"
                                             >
-                                                {lead.status}
+                                                {getStatusLabel(lead.status, t)}
                                             </Badge>
                                             {lead.temperature && (
                                                 <Badge
@@ -455,7 +499,7 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                                                 </Badge>
                                             )}
                                             <span className="text-xs text-muted-foreground">
-                                                {formatDate(lead.created_at)}
+                                                {formatDate(lead.created_at, t)}
                                             </span>
                                         </div>
                                     </div>
@@ -465,11 +509,10 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                             <div className="flex flex-col items-center justify-center py-8 text-center">
                                 <Users className="mb-2 h-10 w-10 text-muted-foreground" />
                                 <p className="text-muted-foreground">
-                                    No leads yet
+                                    {t('dashboard.noLeads')}
                                 </p>
                                 <p className="text-sm text-muted-foreground">
-                                    Leads will appear here when you receive
-                                    messages
+                                    {t('dashboard.noLeadsDescription')}
                                 </p>
                             </div>
                         )}

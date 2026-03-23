@@ -24,7 +24,7 @@ export function ConnectingStatus({
     isReconnect,
     isWaitingForQr,
 }: ConnectingStatusProps) {
-    const [countdown, setCountdown] = useState(3);
+    const [countdown, setCountdown] = useState(10);
 
     // Format elapsed time
     const minutes = Math.floor(elapsedTime / 60);
@@ -45,7 +45,7 @@ export function ConnectingStatus({
 
         if (isReconnect && countdown === 0 && !isRestarting) {
             onAutoRestart();
-            setCountdown(3); // Reset for next time
+            setCountdown(10); // Reset for next time
         }
     }, [isReconnect, isRestarting, countdown, onAutoRestart]);
 

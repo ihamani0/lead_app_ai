@@ -24,15 +24,11 @@ Route::get('/translations/{locale}', [TranslationController::class, 'show'])
 Route::post('/lang/refresh', [TranslationController::class, 'refresh'])
     ->name('translations.refresh');
 
-
 Route::get('/', function () {
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home')->middleware('guest');
-
-
-
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -71,6 +67,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
 
     Route::put('/leads/{id}', [LeadController::class, 'update'])->name('leads.update');
+
+    Route::post('/leads/{id}/trigger-qualification', [LeadController::class, 'triggerQualification'])->name('leads.trigger-qualification');
 
     // Media Catalog
     Route::get('/media', [MediaAssetController::class, 'index'])->name('media.index');

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Events\InstanceConnectionUpdated;
 use App\Events\QrCodeUpdated;
 use App\Http\Controllers\Controller;
+use App\Jobs\ReconcileInstanceStatus;
 use App\Models\EvolutionInstance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -71,6 +72,19 @@ class EvolutionWebhookController extends Controller
         |--------------------------------------------------------------------------
         */
         if ($event === 'connection.update') {
+
+            $webhookTime = \Carbon\Carbon::parse($payload['date_time'] ?? now(), 'UTC');
+
+            // Ignore webhooks older than 10 seconds
+            if ($webhookTime->diffInSeconds(now('UTC')) > 10) {
+                Log::info("Skipping stale webhook for {$instanceName}", [
+                    'age_seconds' => $webhookTime->diffInSeconds(now()),
+                    'state' => $payload['data']['state'] ?? null,
+                ]);
+                return response()->json(['status' => 'skipped_stale']);
+            }
+
+            
             $state = $payload['data']['state'] ?? 'close';
 
             // Map Evolution state to your DB status
@@ -97,11 +111,18 @@ class EvolutionWebhookController extends Controller
                     $instance->update([
                         'status' => $status,
                         'connected_at' => $status === 'connected' ? now() : null,
-                        'phone_number' => $status === 'connected' ? explode('@', $request->input('data.wuid'))[0] : null,
+                        'phone_number' => $status === 'connected' ? explode('@', $payload['data']['wuid'])[0] : null,
                         'settings' => $settings,
                     ]);
 
+                    
                     broadcast(new InstanceConnectionUpdated($instance));
+
+                    // Start reconciliation polling if stuck in connecting
+                    if ($status === 'connecting') {
+                        ReconcileInstanceStatus::dispatch($instance->id)
+                            ->delay(now()->addSeconds(5));
+                    }
 
                     Log::info("Instance {$instanceName} updated to {$status}");
                 }

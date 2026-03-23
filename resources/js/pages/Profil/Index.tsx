@@ -51,6 +51,8 @@ export default function InstanceIndex({
                                 </p>
                             </div>
                             <div className="flex items-center gap-4">
+                                 
+
                                 <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
                                     <Phone className="h-4 w-4" />
                                     <span>
@@ -58,9 +60,11 @@ export default function InstanceIndex({
                                         {t('profil.instancesCount')}
                                     </span>
                                 </div>
-                                <CreateInstanceDialog />
                             </div>
                         </div>
+                    </div>
+                    <div className='w-full my-4 flex justify-end'>
+                            <CreateInstanceDialog t={t} />
                     </div>
 
                     {/* Stats or Quick Info (Optional but adds premium feel) */}
@@ -163,7 +167,7 @@ export default function InstanceIndex({
                             </p>
 
                             <div className="mt-8 flex justify-center">
-                                <CreateInstanceDialog />
+                                <CreateInstanceDialog t={t} />
                             </div>
                         </div>
                     )}

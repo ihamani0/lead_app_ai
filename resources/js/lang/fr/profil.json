@@ -29,5 +29,15 @@
     "scan_qr": "Scanner le QR",
     "scan_qr_description": "Scannez le code QR pour commencer à automatiser les conversations",
     "generate_qr_code": "Générer le code QR",
-    "connecting": "Connexion..."
+    "connecting": "Connexion...",
+
+    "connectNewNumber": "Connecter un nouveau numéro",
+    "createTitle": "Créer une instance WhatsApp",
+    "createDesc": "Entrez un nom pour cette connexion. Vous scannerez le code QR ensuite.",
+    "name": "Nom",
+    "number":"Télephone",
+    "cancel": "Annuler",
+    "create": "Créer",
+    "createInstance": "Créer une instance",
+    "namePlaceholder": "ex. Équipe commerciale"
 }

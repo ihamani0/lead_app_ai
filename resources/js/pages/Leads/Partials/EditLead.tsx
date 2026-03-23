@@ -105,6 +105,7 @@ export default function EditLead({ lead }: { lead: Lead }) {
                                 <option value="NEW">New</option>
                                 <option value="IN_PROGRESS">In Progress</option>
                                 <option value="QUALIFIED">Qualified</option>
+                                <option value="QUALIFYING">Qualifying</option>
                                 <option value="WON">Closed - Won</option>
                                 <option value="LOST">Closed - Lost</option>
                             </select>

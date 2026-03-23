@@ -43,7 +43,7 @@ class KnowledgeBaseController extends Controller
 
         // Trigger n8n Webhook
         // The URL is your n8n webhook for document ingestion
-        $n8nWebhookUrl = config('services.n8n.n8n_base_url').'webhook/ingest-document';
+        $n8nWebhookUrl = config('services.n8n.n8n_base_url').'/webhook/ingest-document';
 
         // http://127.0.0.1:5678/webhook-test/ingest-document
         try {
@@ -60,7 +60,7 @@ class KnowledgeBaseController extends Controller
             return back()->with('success', __('messages.success.document_uploaded'));
 
         } catch (\Exception $e) {
-            dd($e);
+
             $document->update(['status' => 'failed']);
 
             return back()->withErrors(['error' => __('messages.error.document_uploaded')]);

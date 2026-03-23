@@ -19,6 +19,7 @@ import {
     CardDescription,
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { useTranslation } from '@/hooks/use-translation';
 import { calculatePercentage, getChartColor } from '@/lib/utils';
 import type { InstancesReportData } from '@/types/reports';
 import { SummaryCard } from './SummaryCard';
@@ -28,10 +29,14 @@ interface InstancesReportProps {
 }
 
 export function InstancesReport({ data }: InstancesReportProps) {
+    const { t } = useTranslation();
+
     if (!data) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <div className="text-muted-foreground">No data available</div>
+                <div className="text-muted-foreground">
+                    {t('reports.noData')}
+                </div>
             </div>
         );
     }
@@ -61,18 +66,18 @@ export function InstancesReport({ data }: InstancesReportProps) {
             {/* Summary Cards */}
             <div className="grid gap-4 md:grid-cols-3">
                 <SummaryCard
-                    title="Total Instances"
+                    title={t('reports.instances.summary.totalInstances')}
                     value={summary.total}
                     icon={Phone}
                 />
                 <SummaryCard
-                    title="Connected"
+                    title={t('reports.instances.summary.connected')}
                     value={summary.connected}
                     icon={TrendingUp}
-                    description={`${connectedPercent}% uptime`}
+                    description={`${connectedPercent}${t('reports.instances.summary.uptime')}`}
                 />
                 <SummaryCard
-                    title="Disconnected"
+                    title={t('reports.instances.summary.disconnected')}
                     value={summary.disconnected}
                     icon={BarChart3}
                 />
@@ -84,7 +89,7 @@ export function InstancesReport({ data }: InstancesReportProps) {
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-base">
-                            Instance Status
+                            {t('reports.instances.charts.instanceStatus')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -115,7 +120,7 @@ export function InstancesReport({ data }: InstancesReportProps) {
                             </ResponsiveContainer>
                         ) : (
                             <p className="text-muted-foreground">
-                                No data available
+                                {t('reports.noData')}
                             </p>
                         )}
                     </CardContent>
@@ -125,7 +130,7 @@ export function InstancesReport({ data }: InstancesReportProps) {
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-base">
-                            Leads per Instance
+                            {t('reports.instances.charts.leadsPerInstance')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -154,7 +159,7 @@ export function InstancesReport({ data }: InstancesReportProps) {
                             </ResponsiveContainer>
                         ) : (
                             <p className="text-muted-foreground">
-                                No data available
+                                {t('reports.noData')}
                             </p>
                         )}
                     </CardContent>
@@ -165,10 +170,10 @@ export function InstancesReport({ data }: InstancesReportProps) {
             <Card>
                 <CardHeader>
                     <CardTitle className="text-base">
-                        Leads per Instance
+                        {t('reports.instances.details.leadsPerInstance')}
                     </CardTitle>
                     <CardDescription>
-                        Number of leads captured by each WhatsApp instance
+                        {t('reports.instances.details.description')}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -196,7 +201,7 @@ export function InstancesReport({ data }: InstancesReportProps) {
                         )}
                         {Object.keys(leadsByInstance).length === 0 && (
                             <p className="text-muted-foreground">
-                                No instances found
+                                {t('reports.instances.noInstances')}
                             </p>
                         )}
                     </div>

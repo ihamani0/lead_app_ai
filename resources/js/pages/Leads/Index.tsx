@@ -6,6 +6,9 @@ import {
     ThermometerSun,
     X,
     Users,
+    Loader2,
+    Sparkles,
+    Info,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Pagination from '@/components/pagination';
@@ -21,10 +24,16 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 
-import { index } from '@/routes/leads';
+import { index, triggerQualification } from '@/routes/leads';
 import type { EvolutionInstance, Lead as LeadType } from '@/types';
 import EditLead from './Partials/EditLead';
 import ViewLead from './Partials/ViewLead';
@@ -51,6 +60,24 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
     });
 
     const isFirstRender = useRef(true);
+
+    const [triggeringLeadId, setTriggeringLeadId] = useState<string | null>(
+        null,
+    );
+
+    const handleTriggerQualification = (leadId: string | number) => {
+        setTriggeringLeadId(String(leadId));
+        router.post(
+            triggerQualification(leadId).url,
+            {},
+            {
+                preserveScroll: true,
+                onFinish: () => {
+                    setTriggeringLeadId(null);
+                },
+            },
+        );
+    };
 
     // 2. Automatically apply filters when state changes (with debounce)
     useEffect(() => {
@@ -112,6 +139,115 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                 return <Badge variant="outline">New</Badge>;
         }
     };
+
+    const getStatusBadge = (status: string) => {
+        switch (status) {
+            case 'QUALIFYING':
+                return (
+                    <Badge className="border-purple-200 bg-purple-100 text-purple-800">
+                        <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                        Qualifying
+                    </Badge>
+                );
+            case 'QUALIFIED':
+                return (
+                    <Badge className="border-green-200 bg-green-100 text-green-800">
+                        Qualified
+                    </Badge>
+                );
+            case 'IN_PROGRESS':
+                return <Badge variant="secondary">In Progress</Badge>;
+            case 'WON':
+                return (
+                    <Badge className="border-emerald-200 bg-emerald-100 text-emerald-800">
+                        Won
+                    </Badge>
+                );
+            case 'LOST':
+                return <Badge variant="destructive">Lost</Badge>;
+            case 'NEW':
+                return <Badge variant="outline">New</Badge>;
+            default:
+                return <Badge variant="secondary">{status}</Badge>;
+        }
+    };
+
+    const StatusInfoTooltip = () => (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
+                    >
+                        <Info className="mr-1 h-3 w-3" />
+                        {t('leads.statusInfo.button')}
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent className="w-auto bg-background p-3 text-foreground">
+                    <div className="text-xs">
+                        <p className="mb-2 font-semibold">
+                            {t('leads.statusInfo.title')}
+                        </p>
+                        <table className="w-full text-left">
+                            <thead>
+                                <tr className="border-b">
+                                    <th className="pr-2 pb-1 font-medium">
+                                        {t('leads.statusInfo.n8nStatus')}
+                                    </th>
+                                    <th className="pr-2 pb-1 font-medium">
+                                        {t('leads.statusInfo.dbStatus')}
+                                    </th>
+                                    <th className="pb-1 font-medium">
+                                        {t('leads.statusInfo.meaning')}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td className="py-1 pr-2 text-red-600">
+                                        HOT
+                                    </td>
+                                    <td className="py-1 pr-2">QUALIFIED</td>
+                                    <td className="py-1">
+                                        {t('leads.statusInfo.hot')}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="py-1 pr-2 text-orange-600">
+                                        WARM
+                                    </td>
+                                    <td className="py-1 pr-2">IN_PROGRESS</td>
+                                    <td className="py-1">
+                                        {t('leads.statusInfo.warm')}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="py-1 pr-2 text-blue-600">
+                                        COLD
+                                    </td>
+                                    <td className="py-1 pr-2">IN_PROGRESS</td>
+                                    <td className="py-1">
+                                        {t('leads.statusInfo.cold')}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="py-1 pr-2 text-gray-600">
+                                        PENDING
+                                    </td>
+                                    <td className="py-1 pr-2">NEW</td>
+                                    <td className="py-1">
+                                        {t('leads.statusInfo.pending')}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    );
 
     return (
         <AppLayout>
@@ -194,6 +330,9 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                         <option value="QUALIFIED">
                             {t('leads.search.qualified')}
                         </option>
+                        <option value="QUALIFYING">
+                            {t('leads.search.qualifying')}
+                        </option>
                         <option value="WON">{t('leads.search.won')}</option>
                     </select>
 
@@ -239,6 +378,16 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                         }
                     />
 
+                    {/* Date To */}
+                    <Input
+                        type="date"
+                        title="Created Before Date"
+                        value={params.date_to}
+                        onChange={(e) =>
+                            handleChange('date_to', e.target.value)
+                        }
+                    />
+
                     {/* Active Filters / Clear Button */}
                     {Object.values(params).some((val) => val !== '') && (
                         <div className="flex justify-end pt-2">
@@ -262,7 +411,10 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                                 <TableHead>
                                     {t('leads.table.contact')}
                                 </TableHead>
-                                <TableHead>{t('leads.table.status')}</TableHead>
+                                <TableHead>
+                                    {t('leads.table.status')}
+                                    <StatusInfoTooltip />
+                                </TableHead>
                                 <TableHead>
                                     {t('leads.table.temperature')}
                                 </TableHead>
@@ -289,9 +441,7 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                                         </p>
                                     </TableCell>
                                     <TableCell>
-                                        <Badge variant="secondary">
-                                            {lead.status.replace('_', ' ')}
-                                        </Badge>
+                                        {getStatusBadge(lead.status)}
                                     </TableCell>
                                     <TableCell>
                                         {getTempBadge(lead.temperature)}
@@ -300,13 +450,19 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                                         <div className="flex items-center gap-2">
                                             <Progress
                                                 value={
-                                                    lead.qualification_score ||
-                                                    0
+                                                    ((lead.qualification_score ||
+                                                        0) *
+                                                        100) /
+                                                    10
                                                 }
                                                 className="h-2"
                                             />
                                             <span className="w-8 text-xs font-medium">
-                                                {lead.qualification_score || 0}%
+                                                {((lead.qualification_score ||
+                                                    0) *
+                                                    100) /
+                                                    10}
+                                                %
                                             </span>
                                         </div>
                                     </TableCell>
@@ -318,8 +474,28 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                                     <TableCell className="space-x-1 text-right">
                                         {/* Create this Show page next if you want detailed views */}
                                         <ViewLead selectedLead={lead} />
-
                                         <EditLead lead={lead} />
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() =>
+                                                handleTriggerQualification(
+                                                    lead.id,
+                                                )
+                                            }
+                                            disabled={
+                                                triggeringLeadId === lead.id
+                                            }
+                                            title={t(
+                                                'leads.actions.triggerQualification',
+                                            )}
+                                        >
+                                            {triggeringLeadId === lead.id ? (
+                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                                <Sparkles className="h-4 w-4 text-yellow-500" />
+                                            )}
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}

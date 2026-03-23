@@ -11,6 +11,7 @@
         "new": "New",
         "inProgress": "In Progress",
         "qualified": "Qualified",
+        "qualifying": "Qualifying",
         "won": "Closed - Won",
         "hot": "Hot",
         "warm": "Warm",
@@ -35,5 +36,21 @@
 
     "badges": {
         "new": "New"
+    },
+
+    "actions": {
+        "triggerQualification": "Trigger AI Qualification"
+    },
+
+    "statusInfo": {
+        "button": "Info",
+        "title": "Qualification Status Mapping",
+        "n8nStatus": "Status",
+        "dbStatus": "DB Status",
+        "meaning": "Meaning",
+        "hot": "Ready to convert",
+        "warm": "Needs nurturing",
+        "cold": "Low interest",
+        "pending": "Not enough info"
     }
 }

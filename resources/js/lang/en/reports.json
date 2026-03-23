@@ -1,0 +1,78 @@
+{
+    "title": "Reports",
+    "description": "View analytics and insights for your business",
+    "tabs": {
+        "leads": "Leads",
+        "instances": "Instances",
+        "agents": "Agents",
+        "media": "Media"
+    },
+    "noData": "No data available",
+    "leads": {
+        "summary": {
+            "totalLeads": "Total Leads",
+            "allTime": "All time",
+            "last7Days": "Last 7 Days",
+            "newLeads": "New leads",
+            "last30Days": "Last 30 Days",
+            "avgPerDay": "Avg per Day",
+            "last30DaysDesc": "Last 30 days"
+        },
+        "charts": {
+            "byStatus": "By Status",
+            "byTemperature": "By Temperature",
+            "leadsByInstance": "Leads by Instance",
+            "bySource": "By Source"
+        },
+        "unknown": "Unknown",
+        "progress": {
+            "byStatus": "By Status"
+        }
+    },
+    "instances": {
+        "summary": {
+            "totalInstances": "Total Instances",
+            "connected": "Connected",
+            "uptime": "% uptime",
+            "disconnected": "Disconnected"
+        },
+        "charts": {
+            "instanceStatus": "Instance Status",
+            "leadsPerInstance": "Leads per Instance"
+        },
+        "details": {
+            "leadsPerInstance": "Leads per Instance",
+            "description": "Number of leads captured by each WhatsApp instance"
+        },
+        "noInstances": "No instances found"
+    },
+    "agents": {
+        "summary": {
+            "totalAgents": "Total Agents",
+            "activeAgents": "Active Agents",
+            "inactiveAgents": "Inactive Agents"
+        },
+        "charts": {
+            "agentStatus": "Agent Status"
+        },
+        "list": {
+            "allAgents": "All Agents"
+        },
+        "noInstance": "No instance",
+        "active": "Active",
+        "inactive": "Inactive",
+        "noAgents": "No agents configured"
+    },
+    "media": {
+        "summary": {
+            "totalFiles": "Total Files",
+            "totalStorage": "Total Storage",
+            "averageFileSize": "Average File Size"
+        },
+        "charts": {
+            "byFileType": "By File Type",
+            "fileTypeDistribution": "File Type Distribution"
+        },
+        "noMedia": "No media files found"
+    }
+}

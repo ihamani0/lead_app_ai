@@ -85,6 +85,10 @@ export default function InstanceShow({ instance }: Props) {
             if (newStatus === 'connected') {
                 setQrCode(null);
                 setIsWaitingForQr(false);
+
+                router.reload({
+                    only: ['instance'],
+                });
             }
         }
     });

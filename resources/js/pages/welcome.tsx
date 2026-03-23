@@ -27,7 +27,7 @@ export default function Welcome({
                 <main className="grow">
                     <HeroSection t={t} auth={auth} />
 
-                    <FeaturesSection t={t} />
+                    {/* <FeaturesSection t={t} />
                     <HowItWorksSection t={t} />
                     <PricingSection />
                     <TestimonialsSection />
@@ -35,10 +35,9 @@ export default function Welcome({
 
                     <FaqsSection />
 
-                    <BrandShowcase brandName="CREW" />
+                    <BrandShowcase brandName="CREW" /> */}
                 </main>
                 <Footer />
-
             </div>
         </>
     );

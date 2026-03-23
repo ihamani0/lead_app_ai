@@ -11,6 +11,7 @@
         "new": "Nouveau",
         "inProgress": "En cours",
         "qualified": "Qualifié",
+        "qualifying": "En cours de qualification",
         "won": "Gagné",
         "hot": "Chaud",
         "warm": "Tiède",
@@ -35,5 +36,21 @@
 
     "badges": {
         "new": "Nouveau"
+    },
+
+    "actions": {
+        "triggerQualification": "Déclencher la qualification IA"
+    },
+
+    "statusInfo": {
+        "button": "Info",
+        "title": "Correspondance des statuts de qualification",
+        "n8nStatus": "Statut",
+        "dbStatus": "Statut BDD",
+        "meaning": "Signification",
+        "hot": "Prêt à convertir",
+        "warm": "Nécessite nurturing",
+        "cold": "Faible intérêt",
+        "pending": "Pas assez d'info"
     }
 }

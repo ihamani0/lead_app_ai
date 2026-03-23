@@ -1,0 +1,39 @@
+{
+    "title": "Tableau de bord",
+    "stats": {
+        "totalLeads": "Total Leads",
+        "instances": "Instances WhatsApp",
+        "activeAgents": "Agents Actifs",
+        "mediaFiles": "Fichiers Média",
+        "newToday": "nouveaux aujourd'hui",
+        "disconnected": "déconnectés"
+    },
+    "instanceStatus": "État de l'Instance",
+    "connected": "Connecté",
+    "disconnected": "Déconnecté",
+    "uptime": "de disponibilité",
+    "leadsByStatus": "Leads par Statut",
+    "byTemperature": "Par Température",
+    "noLeads": "Aucun lead",
+    "leadActivity": "Activité des Leads",
+    "newThisWeek": "Cette semaine",
+    "newToday": "Aujourd'hui",
+    "totalLeads": "Total des leads",
+    "recentLeads": "Leads Récents",
+    "unknown": "Inconnu",
+    "noLeadsDescription": "Les leads apparaîtront ici lorsque vous recevrez des messages",
+    "status": {
+        "new": "Nouveau",
+        "contacted": "Contacté",
+        "qualified": "Qualifié",
+        "converted": "Converti",
+        "lost": "Perdu",
+        "qualifying": "En qualification",
+        "inProgress": "En cours"
+    },
+    "time": {
+        "justNow": "À l'instant",
+        "hoursAgo": "h",
+        "daysAgo": "j"
+    }
+}

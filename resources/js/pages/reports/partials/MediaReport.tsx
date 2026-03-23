@@ -1,6 +1,7 @@
 import { Image, HardDrive, BarChart3 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslation } from '@/hooks/use-translation';
 import { formatBytes, getChartColor } from '@/lib/utils';
 import type { MediaReportData } from '@/types/reports';
 import { SummaryCard } from './SummaryCard';
@@ -10,10 +11,14 @@ interface MediaReportProps {
 }
 
 export function MediaReport({ data }: MediaReportProps) {
+    const { t } = useTranslation();
+
     if (!data) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <div className="text-muted-foreground">No data available</div>
+                <div className="text-muted-foreground">
+                    {t('reports.noData')}
+                </div>
             </div>
         );
     }
@@ -33,17 +38,17 @@ export function MediaReport({ data }: MediaReportProps) {
             {/* Summary Cards */}
             <div className="grid gap-4 md:grid-cols-3">
                 <SummaryCard
-                    title="Total Files"
+                    title={t('reports.media.summary.totalFiles')}
                     value={summary.total}
                     icon={Image}
                 />
                 <SummaryCard
-                    title="Total Storage"
+                    title={t('reports.media.summary.totalStorage')}
                     value={formatBytes(summary.totalSize || 0)}
                     icon={HardDrive}
                 />
                 <SummaryCard
-                    title="Average File Size"
+                    title={t('reports.media.summary.averageFileSize')}
                     value={formatBytes(summary.avgSize || 0)}
                     icon={BarChart3}
                 />
@@ -55,7 +60,7 @@ export function MediaReport({ data }: MediaReportProps) {
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-base">
-                                By File Type
+                                {t('reports.media.charts.byFileType')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -89,7 +94,7 @@ export function MediaReport({ data }: MediaReportProps) {
                     <Card>
                         <CardHeader>
                             <CardTitle className="text-base">
-                                File Type Distribution
+                                {t('reports.media.charts.fileTypeDistribution')}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -109,7 +114,7 @@ export function MediaReport({ data }: MediaReportProps) {
                                 ))}
                                 {Object.keys(byType).length === 0 && (
                                     <p className="text-muted-foreground">
-                                        No media files found
+                                        {t('reports.media.noMedia')}
                                     </p>
                                 )}
                             </div>
@@ -123,12 +128,12 @@ export function MediaReport({ data }: MediaReportProps) {
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-base">
-                            By File Type
+                            {t('reports.media.charts.byFileType')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <p className="text-muted-foreground">
-                            No media files found
+                            {t('reports.media.noMedia')}
                         </p>
                     </CardContent>
                 </Card>

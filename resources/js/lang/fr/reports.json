@@ -1,0 +1,78 @@
+{
+    "title": "Rapports",
+    "description": "Voir les analyses et informations pour votre entreprise",
+    "tabs": {
+        "leads": "Leads",
+        "instances": "Instances",
+        "agents": "Agents",
+        "media": "Médias"
+    },
+    "noData": "Aucune donnée disponible",
+    "leads": {
+        "summary": {
+            "totalLeads": "Total des Leads",
+            "allTime": "Tout le temps",
+            "last7Days": "7 derniers jours",
+            "newLeads": "Nouveaux leads",
+            "last30Days": "30 derniers jours",
+            "avgPerDay": "Moyenne/jour",
+            "last30DaysDesc": "30 derniers jours"
+        },
+        "charts": {
+            "byStatus": "Par Statut",
+            "byTemperature": "Par Température",
+            "leadsByInstance": "Leads par Instance",
+            "bySource": "Par Source"
+        },
+        "unknown": "Inconnu",
+        "progress": {
+            "byStatus": "Par Statut"
+        }
+    },
+    "instances": {
+        "summary": {
+            "totalInstances": "Total des Instances",
+            "connected": "Connecté",
+            "uptime": "% de disponibilité",
+            "disconnected": "Déconnecté"
+        },
+        "charts": {
+            "instanceStatus": "État de l'Instance",
+            "leadsPerInstance": "Leads par Instance"
+        },
+        "details": {
+            "leadsPerInstance": "Leads par Instance",
+            "description": "Nombre de leads capturés par chaque instance WhatsApp"
+        },
+        "noInstances": "Aucune instance trouvée"
+    },
+    "agents": {
+        "summary": {
+            "totalAgents": "Total des Agents",
+            "activeAgents": "Agents Actifs",
+            "inactiveAgents": "Agents Inactifs"
+        },
+        "charts": {
+            "agentStatus": "État de l'Agent"
+        },
+        "list": {
+            "allAgents": "Tous les Agents"
+        },
+        "noInstance": "Aucune instance",
+        "active": "Actif",
+        "inactive": "Inactif",
+        "noAgents": "Aucun agent configuré"
+    },
+    "media": {
+        "summary": {
+            "totalFiles": "Total des Fichiers",
+            "totalStorage": "Stockage Total",
+            "averageFileSize": "Taille Moyenne des Fichiers"
+        },
+        "charts": {
+            "byFileType": "Par Type de Fichier",
+            "fileTypeDistribution": "Distribution des Types de Fichiers"
+        },
+        "noMedia": "Aucun fichier média trouvé"
+    }
+}

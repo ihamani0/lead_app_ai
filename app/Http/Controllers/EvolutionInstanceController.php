@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\InstanceConnectionUpdated;
+use App\Jobs\ReconcileInstanceStatus;
 use App\Models\EvolutionInstance;
 use App\Services\EvolutionService;
 use Exception;
@@ -159,16 +160,18 @@ class EvolutionInstanceController extends Controller
 
     public function restart(Request $request, $id, EvolutionService $evolutionService)
     {
-        // find instance name by tenant_id
         $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
 
-        if ($instance) {
-            // 1. Call Evolution API to logout
-            $response = $evolutionService->restartInstance($instance->instance_name);
+        $response = $evolutionService->restartInstance($instance->instance_name);
 
-            return back()->with('success', 'Instance Restart successfully.');
-        }
+        // Force status to connecting + start reconciliation
+        $instance->update(['status' => 'connecting']);
+        broadcast(new InstanceConnectionUpdated($instance));
 
-        return back()->with('error', 'Instance not Founde!.');
+        // Start polling after 6 seconds (give Evolution time to restart)
+        ReconcileInstanceStatus::dispatch($instance->id)
+            ->delay(now()->addSeconds(6));
+
+        return back()->with('success', 'Instance restarting...');
     }
 }

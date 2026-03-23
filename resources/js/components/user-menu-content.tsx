@@ -1,6 +1,6 @@
 import { Link, router } from '@inertiajs/react';
 import type { LucideIcon } from 'lucide-react';
-import { LogOut, Moon, Settings, Sun } from 'lucide-react';
+import { LogOut, Moon, Sun } from 'lucide-react';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -13,7 +13,6 @@ import type { Appearance } from '@/hooks/use-appearance';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { cn } from '@/lib/utils';
 import { logout } from '@/routes';
-import { edit } from '@/routes/profile';
 import type { User } from '@/types';
 type Props = {
     user: User;
@@ -56,8 +55,8 @@ export function UserMenuContent({ user }: Props) {
                                 className={cn(
                                     'flex flex-1 items-center justify-center gap-1 rounded-md py-1.5 text-sm transition-colors',
                                     appearance === value
-                                        ? 'bg-neutral-200 dark:bg-neutral-700'
-                                        : 'hover:bg-neutral-100 dark:hover:bg-neutral-800',
+                                        ? 'bg-neutral-200 dark:bg-neutral-700/30'
+                                        : 'hover:bg-neutral-100 dark:hover:bg-neutral-800/50',
                                 )}
                             >
                                 <Icon className="h-4 w-4" />
@@ -69,7 +68,7 @@ export function UserMenuContent({ user }: Props) {
             </DropdownMenuGroup>
 
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
+            {/* <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                     <Link
                         className="block w-full cursor-pointer"
@@ -81,7 +80,7 @@ export function UserMenuContent({ user }: Props) {
                         Settings
                     </Link>
                 </DropdownMenuItem>
-            </DropdownMenuGroup>
+            </DropdownMenuGroup> */}
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
                 <Link

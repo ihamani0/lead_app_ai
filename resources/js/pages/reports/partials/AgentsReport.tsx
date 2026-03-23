@@ -2,6 +2,7 @@ import { Bot, TrendingUp, BarChart3 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useTranslation } from '@/hooks/use-translation';
 import { getChartColor } from '@/lib/utils';
 import type { AgentsReportData, AgentData } from '@/types/reports';
 import { SummaryCard } from './SummaryCard';
@@ -15,26 +16,33 @@ interface AgentCardProps {
 }
 
 function AgentCard({ agent }: AgentCardProps) {
+    const { t } = useTranslation();
     return (
         <div className="flex items-center justify-between rounded-lg border p-3">
             <div>
                 <p className="font-medium">{agent.name}</p>
                 <p className="text-sm text-muted-foreground">
-                    {agent.instance_name || 'No instance'}
+                    {agent.instance_name || t('reports.agents.noInstance')}
                 </p>
             </div>
             <Badge variant={agent.is_active ? 'default' : 'secondary'}>
-                {agent.is_active ? 'Active' : 'Inactive'}
+                {agent.is_active
+                    ? t('reports.agents.active')
+                    : t('reports.agents.inactive')}
             </Badge>
         </div>
     );
 }
 
 export function AgentsReport({ data }: AgentsReportProps) {
+    const { t } = useTranslation();
+
     if (!data) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <div className="text-muted-foreground">No data available</div>
+                <div className="text-muted-foreground">
+                    {t('reports.noData')}
+                </div>
             </div>
         );
     }
@@ -54,17 +62,17 @@ export function AgentsReport({ data }: AgentsReportProps) {
             {/* Summary Cards */}
             <div className="grid gap-4 md:grid-cols-3">
                 <SummaryCard
-                    title="Total Agents"
+                    title={t('reports.agents.summary.totalAgents')}
                     value={summary.total}
                     icon={Bot}
                 />
                 <SummaryCard
-                    title="Active Agents"
+                    title={t('reports.agents.summary.activeAgents')}
                     value={summary.active}
                     icon={TrendingUp}
                 />
                 <SummaryCard
-                    title="Inactive Agents"
+                    title={t('reports.agents.summary.inactiveAgents')}
                     value={summary.inactive}
                     icon={BarChart3}
                 />
@@ -75,7 +83,7 @@ export function AgentsReport({ data }: AgentsReportProps) {
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-base">
-                            Agent Status
+                            {t('reports.agents.charts.agentStatus')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -110,7 +118,9 @@ export function AgentsReport({ data }: AgentsReportProps) {
             {/* All Agents List */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-base">All Agents</CardTitle>
+                    <CardTitle className="text-base">
+                        {t('reports.agents.list.allAgents')}
+                    </CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-3">
@@ -119,7 +129,7 @@ export function AgentsReport({ data }: AgentsReportProps) {
                         ))}
                         {agents.length === 0 && (
                             <p className="text-muted-foreground">
-                                No agents configured
+                                {t('reports.agents.noAgents')}
                             </p>
                         )}
                     </div>

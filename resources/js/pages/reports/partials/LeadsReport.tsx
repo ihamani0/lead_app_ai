@@ -13,6 +13,7 @@ import {
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { useTranslation } from '@/hooks/use-translation';
 import {
     getStatusColor,
     calculatePercentage,
@@ -26,10 +27,14 @@ interface LeadsReportProps {
 }
 
 export function LeadsReport({ data }: LeadsReportProps) {
+    const { t } = useTranslation();
+
     if (!data || !data.byStatus) {
         return (
             <div className="flex h-64 items-center justify-center">
-                <div className="text-muted-foreground">No data available</div>
+                <div className="text-muted-foreground">
+                    {t('reports.noData')}
+                </div>
             </div>
         );
     }
@@ -61,28 +66,28 @@ export function LeadsReport({ data }: LeadsReportProps) {
             {/* Summary Cards */}
             <div className="grid gap-4 md:grid-cols-4">
                 <SummaryCard
-                    title="Total Leads"
+                    title={t('reports.leads.summary.totalLeads')}
                     value={summary.total}
                     icon={Users}
-                    description="All time"
+                    description={t('reports.leads.summary.allTime')}
                 />
                 <SummaryCard
-                    title="Last 7 Days"
+                    title={t('reports.leads.summary.last7Days')}
                     value={summary.last7days}
                     icon={Clock}
-                    description="New leads"
+                    description={t('reports.leads.summary.newLeads')}
                 />
                 <SummaryCard
-                    title="Last 30 Days"
+                    title={t('reports.leads.summary.last30Days')}
                     value={summary.last30days}
                     icon={TrendingUp}
-                    description="New leads"
+                    description={t('reports.leads.summary.newLeads')}
                 />
                 <SummaryCard
-                    title="Avg per Day"
+                    title={t('reports.leads.summary.avgPerDay')}
                     value={summary.avgPerDay}
                     icon={BarChart3}
-                    description="Last 30 days"
+                    description={t('reports.leads.summary.last30DaysDesc')}
                 />
             </div>
 
@@ -91,7 +96,9 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 {/* Pie Chart - By Status */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">By Status</CardTitle>
+                        <CardTitle className="text-base">
+                            {t('reports.leads.charts.byStatus')}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         {statusData.length > 0 ? (
@@ -121,7 +128,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                             </ResponsiveContainer>
                         ) : (
                             <p className="text-muted-foreground">
-                                No data available
+                                {t('reports.noData')}
                             </p>
                         )}
                     </CardContent>
@@ -131,7 +138,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-base">
-                            By Temperature
+                            {t('reports.leads.charts.byTemperature')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -162,7 +169,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                             </ResponsiveContainer>
                         ) : (
                             <p className="text-muted-foreground">
-                                No data available
+                                {t('reports.noData')}
                             </p>
                         )}
                     </CardContent>
@@ -174,7 +181,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 <Card>
                     <CardHeader>
                         <CardTitle className="text-base">
-                            Leads by Instance
+                            {t('reports.leads.charts.leadsByInstance')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -208,7 +215,9 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 {/* By Status Progress */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">By Status</CardTitle>
+                        <CardTitle className="text-base">
+                            {t('reports.leads.charts.byStatus')}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
@@ -243,7 +252,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                             ))}
                             {Object.keys(byStatus).length === 0 && (
                                 <p className="text-muted-foreground">
-                                    No data available
+                                    {t('reports.noData')}
                                 </p>
                             )}
                         </div>
@@ -253,7 +262,9 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 {/* By Source */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">By Source</CardTitle>
+                        <CardTitle className="text-base">
+                            {t('reports.leads.charts.bySource')}
+                        </CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-3">
@@ -263,14 +274,14 @@ export function LeadsReport({ data }: LeadsReportProps) {
                                     className="flex items-center justify-between"
                                 >
                                     <span className="font-medium">
-                                        {source || 'Unknown'}
+                                        {source || t('reports.leads.unknown')}
                                     </span>
                                     <span className="font-medium">{count}</span>
                                 </div>
                             ))}
                             {Object.keys(bySource).length === 0 && (
                                 <p className="text-muted-foreground">
-                                    No data available
+                                    {t('reports.noData')}
                                 </p>
                             )}
                         </div>

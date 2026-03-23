@@ -156,11 +156,11 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                                                 AI Confidence Score
                                             </span>
                                             <Badge variant="secondary" className="font-bold tabular-nums">
-                                                {selectedLead.qualification_score || 0}%
+                                                {(selectedLead.qualification_score || 0) * 100 / 10}%
                                             </Badge>
                                         </div>
                                         <Progress
-                                            value={selectedLead.qualification_score || 0}
+                                            value={(selectedLead.qualification_score || 0) * 100 / 10}
                                             className="h-2 bg-secondary"
                                         />
                                     </div>
@@ -180,7 +180,7 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                                                 </span>
                                             </div>
                                             <p className="text-sm leading-relaxed text-slate-700 italic dark:text-slate-300">
-                                                "{selectedLead.ai_summary || 'No summary generated yet.'}"
+                                                {selectedLead.ai_summary || 'No summary generated yet.'}
                                             </p>
                                         </div>
                                     </div>

@@ -6,6 +6,7 @@ use App\Models\EvolutionInstance;
 use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
 class LeadController extends Controller
@@ -58,5 +59,26 @@ class LeadController extends Controller
         $lead->update($request->only(['name', 'status', 'temperature']));
 
         return back()->with('success', __('messages.success.lead_udated_manually'));
+    }
+
+    public function triggerQualification(Request $request, $id)
+    {
+        $lead = Lead::where('tenant_id', $request->user()->tenant_id)->with('instance')->findOrFail($id);
+
+        // Set status to QUALIFYING before calling N8n
+        $lead->update(['status' => 'QUALIFYING']);
+
+        $webhookUrl = config('services.n8n.n8n_base_url').'/webhook/lead/qualification';
+        // http://127.0.0.1:5678/webhook-test/lead/qualification
+        $response = Http::withHeaders([
+            'X-N8N-API-KEY' => config('services.n8n.api_key'),
+        ])->post($webhookUrl, [
+            'instanceName' => $lead->instance->instance_name,
+            'phone' => $lead->phone,
+        ]);
+
+        
+
+        return back()->with('success', __('messages.success.qualification_in_progress'));
     }
 }
