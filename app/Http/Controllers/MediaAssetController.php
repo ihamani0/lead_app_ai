@@ -38,7 +38,7 @@ class MediaAssetController extends Controller
                 'category' => 'required|string|max:100', // e.g., 'pool', 'apartment_a'
                 'type' => 'required|in:image,video',
                 'upload_method' => 'required|in:file,url',
-                'required_if:upload_method,file|nullable|file|mimes:jpg,jpeg,png,gif,webp|max:2048',, // 2MB max
+                'file' => 'required_if:upload_method,file|nullable|file|mimes:jpg,jpeg,png,gif,webp|max:2048', // 2MB max
                 'external_url' => 'required_if:upload_method,url|nullable|url',
                 'caption' => 'nullable|string|max:255',
             ]);
