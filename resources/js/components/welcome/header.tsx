@@ -1,9 +1,10 @@
-import { Link } from '@inertiajs/react'; // Assuming Inertia
-import type { TFunction } from 'i18next'; // Update path if needed
+import { Link } from '@inertiajs/react';
+import type { TFunction } from 'i18next';
 import { dashboard, login, register } from '@/routes';
 import type { Auth } from '@/types';
 import { Button } from '../ui/button';
 import LanguageSwitcher from './LanguageSwitcher';
+import { MobileNav } from './mobile-nav';
 
 interface HeaderProps {
     canRegister?: boolean;
@@ -11,84 +12,76 @@ interface HeaderProps {
     t: TFunction;
 }
 
-export const Header = ({ canRegister = true, auth, t }: HeaderProps) => (
-    <nav
-        style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 100,
-            background: 'rgba(255,255,255,.92)',
-            backdropFilter: 'blur(12px)',
-            borderBottom: '1px solid #f0f0f0',
-            padding: '0 40px',
-            height: 64,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-        }}
-    >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span
-                 
-            >
-                MYIA
-            </span>
-        </div>
+export const navLinks = [
+    { labelKey: 'welcome.nav.features', label: 'Features', href: '#features' },
+    { labelKey: 'welcome.nav.pricing', label: 'Pricing', href: '#pricing' },
+    {
+        labelKey: 'welcome.nav.testimonials',
+        label: 'Testimonials',
+        href: '#testimonials',
+    },
+    { labelKey: 'welcome.nav.contact', label: 'Contact', href: '#contact' },
+];
 
-        <div style={{ display: 'flex', gap: 32 }}>
-            {/* Update with your actual translation keys if needed */}
-            {['Features', 'Pricing', 'About', 'Showcase'].map((l) => (
-                <a
-                    key={l}
-                    href={`#${l.toLowerCase()}`}
-                    style={{
-                        textDecoration: 'none',
-                        color: '#444',
-                        fontSize: 14,
-                        fontWeight: 500,
-                    }}
-                >
-                    {l}
-                </a>
-            ))}
-        </div>
-
-        <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
-            <LanguageSwitcher />
-
-            {auth.user ? (
-                <Link
-                    href={dashboard()}
-                    className="btn-primary"
-                    style={{ padding: '9px 20px', fontSize: 14 }}
-                >
-                    Dashboard
-                </Link>
-            ) : (
-                <>
-                    <Link
-                        href={login()}
-                        style={{
-                            fontSize: 14,
-                            fontWeight: 500,
-                            color: '#444',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        Log in
+export const Header = ({ canRegister = true, auth, t }: HeaderProps) => {
+    return (
+        <nav className="sticky top-0 z-50 border-b border-gray-200/80 bg-white/80 backdrop-blur-xl dark:border-gray-800 dark:bg-gray-900/80">
+            <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center gap-2">
+                    <Link href="/" className="flex items-center gap-2">
+                        <span className="text-xl font-bold text-gray-900 dark:text-white">
+                            MYIA
+                        </span>
                     </Link>
-                    {canRegister && (
-                        <Button asChild>
-                            <Link
-                                href={register()}
-                                style={{ padding: '9px 20px', fontSize: 14 }}
-                            >
-                                {t('welcome.buttonStarted', 'Get Started →')}
+                </div>
+
+                <div className="hidden md:flex md:items-center md:gap-8">
+                    {navLinks.map((link) => (
+                        <a
+                            key={link.labelKey}
+                            href={link.href}
+                            className="text-sm font-medium text-gray-600 transition-colors hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                        >
+                            {t(link.labelKey, link.label)}
+                        </a>
+                    ))}
+                </div>
+
+                <div className="flex items-center gap-4">
+                    <div className="hidden md:block">
+                        <LanguageSwitcher />
+                    </div>
+
+                    {auth.user ? (
+                        <Button asChild className="hidden md:inline-flex">
+                            <Link href={dashboard()}>
+                                {t('welcome.dashboard', 'Dashboard')}
                             </Link>
                         </Button>
+                    ) : (
+                        <div className="hidden md:flex md:items-center md:gap-3">
+                            <Link
+                                href={login()}
+                                className="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                            >
+                                {t('welcome.login', 'Log in')}
+                            </Link>
+                            {canRegister && (
+                                <Button asChild>
+                                    <Link href={register()}>
+                                        {t(
+                                            'welcome.buttonStarted',
+                                            'Get Started',
+                                        )}
+                                    </Link>
+                                </Button>
+                            )}
+                        </div>
                     )}
-                </>
-            )}
-        </div>
-    </nav>
-);
+
+                    <MobileNav canRegister={canRegister} t={t} />
+                </div>
+            </div>
+        </nav>
+    );
+};

@@ -46,16 +46,18 @@ export function MobileNav({
                         data-slot={open ? 'open' : 'closed'}
                     >
                         <div className="grid gap-y-2">
-                            {navLinks.map((link) => (
-                                <Button
-                                    asChild
-                                    className="justify-start"
-                                    key={link.label}
-                                    variant="ghost"
-                                >
-                                    <a href={link.href}>{link.label}</a>
-                                </Button>
-                            ))}
+                            {navLinks.map(
+                                (link: { label: string; href: string }) => (
+                                    <Button
+                                        asChild
+                                        className="justify-start"
+                                        key={link.label}
+                                        variant="ghost"
+                                    >
+                                        <a href={link.href}>{link.label}</a>
+                                    </Button>
+                                ),
+                            )}
                         </div>
                         <div className="mt-12 flex flex-col gap-2">
                             <Button size="sm" variant="outline" asChild>

@@ -73,22 +73,8 @@ class EvolutionWebhookController extends Controller
         */
         if ($event === 'connection.update') {
 
-            $webhookTime = \Carbon\Carbon::parse($payload['date_time'] ?? now(), 'UTC');
-
-            // Ignore webhooks older than 10 seconds
-            if ($webhookTime->diffInSeconds(now('UTC')) > 10) {
-                Log::info("Skipping stale webhook for {$instanceName}", [
-                    'age_seconds' => $webhookTime->diffInSeconds(now()),
-                    'state' => $payload['data']['state'] ?? null,
-                ]);
-                return response()->json(['status' => 'skipped_stale']);
-            }
-
-            
             $state = $payload['data']['state'] ?? 'close';
 
-            // Map Evolution state to your DB status
-            // 'open' = connected, 'close' = disconnected, 'connecting' = connecting
             $status = match ($state) {
                 'open' => 'connected',
                 'close' => 'disconnected',
@@ -96,13 +82,10 @@ class EvolutionWebhookController extends Controller
                 default => 'disconnected',
             };
 
-            // 3. Update Database
             $instance = EvolutionInstance::where('instance_name', $instanceName)->first();
 
             if ($instance) {
-                // Only update if status actually changed - reduces DB writes and broadcasts
                 if ($instance->status !== $status) {
-                    // Update was_connected in settings JSON
                     $settings = $instance->settings ?? [];
                     if ($status === 'connected') {
                         $settings['was_connected'] = true;
@@ -111,14 +94,14 @@ class EvolutionWebhookController extends Controller
                     $instance->update([
                         'status' => $status,
                         'connected_at' => $status === 'connected' ? now() : null,
-                        'phone_number' => $status === 'connected' ? explode('@', $payload['data']['wuid'])[0] : null,
+                        'phone_number' => $status === 'connected'
+                            ? explode('@', $payload['data']['wuid'])[0]
+                            : null,
                         'settings' => $settings,
                     ]);
 
-                    
                     broadcast(new InstanceConnectionUpdated($instance));
 
-                    // Start reconciliation polling if stuck in connecting
                     if ($status === 'connecting') {
                         ReconcileInstanceStatus::dispatch($instance->id)
                             ->delay(now()->addSeconds(5));
@@ -126,7 +109,6 @@ class EvolutionWebhookController extends Controller
 
                     Log::info("Instance {$instanceName} updated to {$status}");
                 }
-                // If status unchanged - silently skip (no DB write, no broadcast)
             }
         }
 
