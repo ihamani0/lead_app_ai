@@ -2,6 +2,7 @@ import { Link } from '@inertiajs/react';
 import type { TFunction } from 'i18next';
 import { dashboard, login, register } from '@/routes';
 import type { Auth } from '@/types';
+import AppLogo from '../app-logo';
 import { Button } from '../ui/button';
 import LanguageSwitcher from './LanguageSwitcher';
 import { MobileNav } from './mobile-nav';
@@ -29,9 +30,7 @@ export const Header = ({ canRegister = true, auth, t }: HeaderProps) => {
             <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center gap-2">
                     <Link href="/" className="flex items-center gap-2">
-                        <span className="text-xl font-bold text-gray-900 dark:text-white">
-                            MYIA
-                        </span>
+                        <AppLogo />
                     </Link>
                 </div>
 
