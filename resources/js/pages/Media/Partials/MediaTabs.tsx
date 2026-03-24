@@ -1,5 +1,5 @@
 // components/media/MediaTabs.tsx
-import { Image as ImageIcon, Video, FileText } from 'lucide-react';
+import { Image as ImageIcon, Video } from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -17,9 +17,6 @@ export function MediaTabs({ assets, onDelete, onSelect }: MediaTabsProps) {
 
     const images = assets.filter((a) => a.type === 'image');
     const videos = assets.filter((a) => a.type === 'video');
-    const others = assets.filter(
-        (a) => a.type !== 'image' && a.type !== 'video',
-    );
 
     const tabs = [
         { value: 'all', label: 'All Assets', count: assets.length, icon: null },
@@ -30,12 +27,12 @@ export function MediaTabs({ assets, onDelete, onSelect }: MediaTabsProps) {
             icon: ImageIcon,
         },
         { value: 'videos', label: 'Videos', count: videos.length, icon: Video },
-        {
-            value: 'other',
-            label: 'Other',
-            count: others.length,
-            icon: FileText,
-        },
+        // {
+        //     value: 'other',
+        //     label: 'Other',
+        //     count: others.length,
+        //     icon: FileText,
+        // },
     ];
 
     return (
@@ -83,14 +80,14 @@ export function MediaTabs({ assets, onDelete, onSelect }: MediaTabsProps) {
                 />
             </TabsContent>
 
-            <TabsContent value="other" className="mt-6">
+            {/* <TabsContent value="other" className="mt-6">
                 <MediaGrid
                     assets={others}
                     onDelete={onDelete}
                     onSelect={onSelect}
                     emptyType="other"
                 />
-            </TabsContent>
+            </TabsContent> */}
         </Tabs>
     );
 }

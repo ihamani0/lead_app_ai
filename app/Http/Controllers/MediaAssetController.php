@@ -54,16 +54,21 @@ class MediaAssetController extends Controller
 
             // If file upload, process via Spatie MediaLibrary
             if ($request->upload_method === 'file' && $request->hasFile('file')) {
-                $media = $asset->addMediaFromRequest('file')->toMediaCollection('assets');
+                $media = $asset->addMediaFromRequest('file')
+                ->usingFileName(uniqid() . '.' . $request->file('file')->extension())
+                ->toMediaCollection('assets','s3');
                 // save public url in database
                 $asset->update([
                     'external_url' => $media->getUrl(),
                 ]);
+
+                 
             }
 
             return back()->with('success', 'Media asset added successfully!');
         } catch (Exception $e) {
-            dd($e->getMessage());
+             
+            return back()->with('error', 'Media asset not added successfully!');    
         }
     }
 
