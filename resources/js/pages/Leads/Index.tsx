@@ -262,16 +262,16 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                                 <div className="rounded-2xl border border-white/30 bg-white/20 p-3 shadow-lg backdrop-blur-md">
                                     <Users className="h-8 w-8 text-white" />
                                 </div>
-                                <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg md:text-5xl">
+                                <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-lg md:text-4xl lg:text-5xl">
                                     {t('leads.title')}
                                 </h1>
                             </div>
-                            <p className="max-w-xl text-lg font-light text-white/90">
+                            <p className="max-w-xl text-sm font-light text-white/90 md:text-base lg:text-lg">
                                 {t('leads.description')}
                             </p>
                         </div>
                         <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
+                            <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-xs font-medium text-white shadow-lg backdrop-blur-md md:text-sm">
                                 <Users className="h-4 w-4" />
                                 <span>
                                     {leads.data.length} {t('leads.leadsCount')}
@@ -433,10 +433,10 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                             {leads.data.map((lead) => (
                                 <TableRow key={lead.id}>
                                     <TableCell>
-                                        <p className="font-medium text-slate-900 dark:text-foreground">
+                                        <p className="text-sm font-medium text-slate-900 md:text-base dark:text-foreground">
                                             {lead.name}
                                         </p>
-                                        <p className="text-xs text-slate-500 dark:text-foreground">
+                                        <p className="text-xs text-slate-500 md:text-sm dark:text-foreground">
                                             +{lead.phone}
                                         </p>
                                     </TableCell>

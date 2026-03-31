@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import { destroy } from '@/routes/media';
-import type { Asset } from '@/types';
+import type { Asset, BreadcrumbItem } from '@/types';
 
 import { AssetDetailDialog } from './Partials/AssetDetailDialog';
 import { MediaTabs } from './Partials/MediaTabs';
@@ -19,6 +19,19 @@ interface MediaIndexProps {
 
 export default function Index({ assets }: MediaIndexProps) {
     const { t } = useTranslation();
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: t('dashboard.title'),
+            href: '/dashboard',
+        },
+        {
+            title: t('media.title'),
+            href: '',
+        },
+    ];
+
+
     const [uploadOpen, setUploadOpen] = useState(false);
     const [selectedAsset, setSelectedAsset] = useState<Asset | null>(null);
     const [detailOpen, setDetailOpen] = useState(false);
@@ -39,7 +52,7 @@ export default function Index({ assets }: MediaIndexProps) {
     };
 
     return (
-        <AppLayout>
+        <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('media.title')} />
 
             <div className="min-h-screen bg-linear-to-b from-background to-muted/20">
@@ -53,11 +66,11 @@ export default function Index({ assets }: MediaIndexProps) {
                                     <div className="rounded-2xl border border-white/30 bg-white/20 p-3 shadow-lg backdrop-blur-md">
                                         <Image className="h-8 w-8 text-white" />
                                     </div>
-                                    <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg md:text-5xl">
+                                    <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-lg md:text-4xl lg:text-5xl">
                                         {t('media.title')}
                                     </h1>
                                 </div>
-                                <p className="max-w-xl text-lg font-light text-white/90">
+                                <p className="max-w-xl text-sm font-light text-white/90 md:text-base lg:text-lg">
                                     {t('media.description')}
                                 </p>
                             </div>

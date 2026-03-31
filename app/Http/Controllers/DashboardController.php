@@ -38,7 +38,17 @@ class DashboardController extends Controller
             ->count();
 
         // Media Stats
-        $totalMedia = MediaAsset::where('tenant_id', $tenantId)->count();
+        // $totalMedia = MediaAsset::where('tenant_id', $tenantId)->count();
+        //totale Size
+        $media = MediaAsset::where('tenant_id', $tenantId)->get();
+        $totalMedia = $media->count();
+        $totalSize = 0;
+        foreach ($media as $m) {
+            $mediaFiles = $m->getMedia('assets');
+            foreach ($mediaFiles as $file) {
+                $totalSize += $file->size;
+            }
+        }
 
         // Agent Stats
         $totalAgents = AgentConfig::whereHas('instance', function ($query) use ($tenantId) {
@@ -72,6 +82,7 @@ class DashboardController extends Controller
                 ],
                 'media' => [
                     'total' => $totalMedia,
+                    'totalSize'=>$totalSize
                 ],
                 'agents' => [
                     'total' => $totalAgents,

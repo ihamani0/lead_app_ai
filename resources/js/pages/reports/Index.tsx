@@ -64,8 +64,10 @@ export default function ReportsIndex({
             <Head title={t('reports.title')} />
             <div className="flex flex-col gap-6 p-6">
                 <div>
-                    <h1 className="text-2xl font-bold">{t('reports.title')}</h1>
-                    <p className="text-muted-foreground">
+                    <h1 className="text-xl font-bold md:text-2xl lg:text-3xl">
+                        {t('reports.title')}
+                    </h1>
+                    <p className="text-sm text-muted-foreground md:text-base">
                         {t('reports.description')}
                     </p>
                 </div>

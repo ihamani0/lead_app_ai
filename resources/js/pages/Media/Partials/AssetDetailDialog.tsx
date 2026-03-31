@@ -67,24 +67,17 @@ export function AssetDetailDialog({
         }
     };
 
-
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 onClick={(e) => e.stopPropagation()}
-                className="gap-0 overflow-hidden p-0"
-                style={{
-                    width: '95vw',
-                    maxWidth: '96rem',
-                    height: '90vh',
-                    maxHeight: '90vh',
-                }}
+                className="gap-0 overflow-hidden p-0 sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl"
             >
-                <div className="grid grid-cols-1 md:grid-cols-2 h-full">
+                <div className="flex h-[85vh] flex-col md:grid md:h-[80vh] md:grid-cols-2">
                     <div
                         className={cn(
-                            'relative flex items-center justify-center',
-                            'h-[40vh] md:h-full',
+                            'relative flex shrink-0 items-center justify-center',
+                            'h-[35vh] md:h-full',
                             'bg-linear-to-br',
                             getGradient(asset.type),
                         )}
@@ -101,9 +94,8 @@ export function AssetDetailDialog({
                                 controls
                                 className="h-full w-full object-contain p-4"
                                 style={{
-                                    // Maintain 16:9 aspect ratio within container
                                     aspectRatio: '16/9',
-                                    objectFit: 'contain'
+                                    objectFit: 'contain',
                                 }}
                             />
                         ) : (
@@ -114,35 +106,35 @@ export function AssetDetailDialog({
                                         className="h-12 w-12"
                                     />
                                 </div>
-                                <span className="text-lg font-semibold tracking-widest text-muted-foreground uppercase">
+                                <span className="text-base font-semibold tracking-widest text-muted-foreground uppercase md:text-lg">
                                     {asset.type} Document
                                 </span>
                             </div>
                         )}
                     </div>
 
-                    <div className="flex flex-col h-full min-h-0">
-                        <DialogHeader className="p-4 md:p-6 pb-3 md:pb-4 shrink-0">
-                            <DialogTitle className="flex items-center gap-2 text-lg md:text-xl font-semibold">
+                    <div className="flex h-full min-h-0 flex-col overflow-hidden">
+                        <DialogHeader className="shrink-0 p-4 pb-3 md:p-6 md:pb-4">
+                            <DialogTitle className="flex items-center gap-2 text-base font-semibold md:text-xl">
                                 <MediaIcon
                                     type={asset.type}
                                     className="h-5 w-5"
                                 />
                                 Asset Details
                             </DialogTitle>
-                            <DialogDescription className="text-sm md:text-base">
+                            <DialogDescription className="text-xs md:text-base">
                                 Media information and metadata
                             </DialogDescription>
                         </DialogHeader>
 
                         <ScrollArea className="flex-1 px-4 md:px-6">
-                            <div className="space-y-6 pb-6">
-                                <div className="flex flex-col xl:flex-row gap-2">
+                            <div className="space-y-4 pb-6 md:space-y-6">
+                                <div className="flex flex-col gap-2 sm:flex-row">
                                     <Button
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        className="flex-1 gap-2"
+                                        className="flex-1 gap-2 text-sm"
                                         onClick={handleOpenExternal}
                                     >
                                         <ExternalLink className="h-4 w-4" />
@@ -152,7 +144,7 @@ export function AssetDetailDialog({
                                         type="button"
                                         variant="outline"
                                         size="sm"
-                                        className="flex-1 gap-2"
+                                        className="flex-1 gap-2 text-sm"
                                         onClick={handleCopy(asset.url, 'url')}
                                     >
                                         {isCopied('url') ? (
@@ -228,7 +220,7 @@ export function AssetDetailDialog({
                                     <Label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                         Caption / Description
                                     </Label>
-                                    <div className="rounded-lg border border-border/50 bg-muted/50 p-3 text-sm leading-relaxed">
+                                    <div className="rounded-lg border border-border/50 bg-muted/50 p-3 text-xs leading-relaxed md:text-sm">
                                         {asset.caption || (
                                             <span className="text-muted-foreground italic">
                                                 No caption provided
@@ -247,13 +239,13 @@ export function AssetDetailDialog({
                             </div>
                         </ScrollArea>
 
-                        <DialogFooter className="border-t border-border/50 p-6 pt-2">
+                        <DialogFooter className="border-t border-border/50 p-4 pt-2 md:p-6">
                             <Button
                                 type="button"
                                 variant="destructive"
                                 size="sm"
                                 onClick={handleDelete}
-                                className="gap-2"
+                                className="gap-2 text-sm"
                             >
                                 <Trash2 className="h-4 w-4" />
                                 Delete Asset

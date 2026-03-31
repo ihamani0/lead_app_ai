@@ -41,8 +41,8 @@ export default function DeleteUser() {
             />
             <div className="space-y-4 rounded-lg border border-red-100 bg-red-50 p-4 dark:border-red-200/10 dark:bg-red-700/10">
                 <div className="relative space-y-0.5 text-red-600 dark:text-red-100">
-                    <p className="font-medium">Warning</p>
-                    <p className="text-sm">
+                    <p className="text-sm font-medium md:text-base">Warning</p>
+                    <p className="text-xs md:text-sm">
                         Please proceed with caution, this cannot be undone.
                     </p>
                 </div>
@@ -57,10 +57,10 @@ export default function DeleteUser() {
                         </Button>
                     </DialogTrigger>
                     <DialogContent>
-                        <DialogTitle>
+                        <DialogTitle className="text-base md:text-lg">
                             Are you sure you want to delete your account?
                         </DialogTitle>
-                        <DialogDescription>
+                        <DialogDescription className="text-sm md:text-base">
                             Once your account is deleted, all of its resources
                             and data will also be permanently deleted. Please
                             enter your password to confirm you would like to

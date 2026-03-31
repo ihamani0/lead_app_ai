@@ -88,7 +88,7 @@ export function InstancesReport({ data }: InstancesReportProps) {
                 {/* Pie Chart - By Status */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-sm md:text-base">
                             {t('reports.instances.charts.instanceStatus')}
                         </CardTitle>
                     </CardHeader>
@@ -129,7 +129,7 @@ export function InstancesReport({ data }: InstancesReportProps) {
                 {/* Bar Chart - Leads by Instance */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-sm md:text-base">
                             {t('reports.instances.charts.leadsPerInstance')}
                         </CardTitle>
                     </CardHeader>
@@ -169,10 +169,10 @@ export function InstancesReport({ data }: InstancesReportProps) {
             {/* Progress Bars - Leads per Instance */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-base">
+                    <CardTitle className="text-sm md:text-base">
                         {t('reports.instances.details.leadsPerInstance')}
                     </CardTitle>
-                    <CardDescription>
+                    <CardDescription className="text-xs md:text-sm">
                         {t('reports.instances.details.description')}
                     </CardDescription>
                 </CardHeader>

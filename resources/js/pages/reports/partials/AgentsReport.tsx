@@ -82,7 +82,7 @@ export function AgentsReport({ data }: AgentsReportProps) {
             {statusData.length > 0 && (
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-sm md:text-base">
                             {t('reports.agents.charts.agentStatus')}
                         </CardTitle>
                     </CardHeader>
@@ -118,7 +118,7 @@ export function AgentsReport({ data }: AgentsReportProps) {
             {/* All Agents List */}
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-base">
+                    <CardTitle className="text-sm md:text-base">
                         {t('reports.agents.list.allAgents')}
                     </CardTitle>
                 </CardHeader>

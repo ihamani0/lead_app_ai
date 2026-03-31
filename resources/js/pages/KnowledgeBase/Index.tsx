@@ -29,6 +29,7 @@ import {
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import { store, destroy } from '@/routes/knowledge';
+import { BreadcrumbItem } from '@/types';
 
 type DocumentStatus = 'indexed' | 'processing' | 'failed';
 
@@ -52,6 +53,19 @@ export default function KnowledgeBaseIndex({
     documents,
 }: KnowledgeBaseIndexProps) {
     const { t } = useTranslation();
+    
+    const breadcrumbs: BreadcrumbItem[] = [
+            {
+                title: t('dashboard.title'),
+                href: '/dashboard',
+            },
+            {
+                title: t('knowledgeBase.title'),
+                href: '',
+            },
+        ];
+    
+    
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragActive, setDragActive] = useState(false);
@@ -154,11 +168,11 @@ export default function KnowledgeBaseIndex({
     };
 
     return (
-        <AppLayout>
-            <Head title="Knowledge Base" />
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title={t('knowledgeBase.title')} />
 
             <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
-                <div className="mx-auto max-w-7xl space-y-10">
+                <div className="space-y-10">
                     {/* Header - Stone Gradient (Dark for both modes) */}
                     <div className="relative hidden overflow-hidden rounded-3xl bg-linear-to-br from-stone-600 via-stone-700 to-stone-800 p-8 shadow-2xl ring-1 ring-stone-400/30 md:p-12 lg:block dark:from-stone-900 dark:via-stone-800 dark:to-stone-900 dark:ring-stone-700/50">
                         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-20" />
@@ -169,11 +183,11 @@ export default function KnowledgeBaseIndex({
                                     <div className="rounded-2xl border border-white/30 bg-white/20 p-3 shadow-lg backdrop-blur-md">
                                         <Database className="h-8 w-8 text-white" />
                                     </div>
-                                    <h1 className="text-3xl font-bold tracking-tight text-white md:text-4xl lg:text-5xl">
+                                    <h1 className="text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-5xl">
                                         {t('knowledgeBase.title')}
                                     </h1>
                                 </div>
-                                <p className="max-w-xl text-lg font-light text-white/90">
+                                <p className="max-w-xl text-sm font-light text-white/90 md:text-base lg:text-lg">
                                     {t('knowledgeBase.description')}
                                 </p>
                             </div>
@@ -200,11 +214,11 @@ export default function KnowledgeBaseIndex({
                                         <div className="rounded-xl bg-linear-to-br from-sky-500 to-teal-600 p-2.5 shadow-lg shadow-sky-500/25">
                                             <UploadCloud className="h-5 w-5 text-white" />
                                         </div>
-                                        <CardTitle className="bg-linear-to-r from-slate-900 to-slate-600 bg-clip-text text-xl font-bold text-transparent dark:from-white dark:to-slate-300">
+                                        <CardTitle className="bg-linear-to-r from-slate-900 to-slate-600 bg-clip-text text-lg font-bold text-transparent md:text-xl dark:from-white dark:to-slate-300">
                                             {t('knowledgeBase.upload.title')}
                                         </CardTitle>
                                     </div>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                                    <p className="text-xs text-slate-500 md:text-sm dark:text-slate-400">
                                         {t('knowledgeBase.upload.description')}
                                     </p>
                                 </CardHeader>
@@ -275,14 +289,14 @@ export default function KnowledgeBaseIndex({
                                                                 <CheckCircle className="h-5 w-5" />
                                                             </div>
                                                             <div className="flex flex-col items-center gap-1">
-                                                                <span className="max-w-[200px] truncate text-sm font-medium text-slate-700 dark:text-slate-200">
+                                                                <span className="max-w-[200px] truncate text-xs font-medium text-slate-700 md:text-sm dark:text-slate-200">
                                                                     {
                                                                         data
                                                                             .file
                                                                             .name
                                                                     }
                                                                 </span>
-                                                                <span className="text-xs text-slate-500">
+                                                                <span className="text-xs text-slate-500 md:text-sm">
                                                                     {(
                                                                         data
                                                                             .file
@@ -313,7 +327,7 @@ export default function KnowledgeBaseIndex({
                                                             <div className="rounded-full bg-white/80 p-3 shadow-lg transition-transform duration-300 group-hover:scale-110 dark:bg-slate-800/80">
                                                                 <UploadCloud className="h-6 w-6" />
                                                             </div>
-                                                            <span className="text-sm font-medium">
+                                                            <span className="text-xs font-medium md:text-sm">
                                                                 {t(
                                                                     'knowledgeBase.upload.dropFile',
                                                                 )}
@@ -353,7 +367,7 @@ export default function KnowledgeBaseIndex({
                                             disabled={processing}
                                             className="group relative h-14 w-full overflow-hidden rounded-xl font-semibold text-white shadow-xl shadow-emerald-500/25 transition-all duration-300 hover:shadow-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-70"
                                         >
-                                            <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300 " />
+                                            <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300" />
                                             <span className="relative flex items-center justify-center gap-2">
                                                 {processing ? (
                                                     <>
@@ -393,12 +407,12 @@ export default function KnowledgeBaseIndex({
                                                 <FileText className="h-5 w-5 text-white" />
                                             </div>
                                             <div>
-                                                <CardTitle className="text-xl font-bold text-slate-900 dark:text-white">
+                                                <CardTitle className="text-lg font-bold text-slate-900 md:text-xl dark:text-white">
                                                     {t(
                                                         'knowledgeBase.documentsTable.title',
                                                     )}
                                                 </CardTitle>
-                                                <p className="text-sm text-slate-500 dark:text-slate-400">
+                                                <p className="text-xs text-slate-500 md:text-sm dark:text-slate-400">
                                                     {t(
                                                         'knowledgeBase.documentsTable.description',
                                                     )}
@@ -452,12 +466,12 @@ export default function KnowledgeBaseIndex({
                                                                     <FileText className="h-4 w-4" />
                                                                 </div>
                                                                 <div>
-                                                                    <p className="font-semibold text-slate-900 transition-colors group-hover:text-sky-600 dark:text-slate-100 dark:group-hover:text-sky-400">
+                                                                    <p className="text-sm font-semibold text-slate-900 transition-colors group-hover:text-sky-600 md:text-base dark:text-slate-100 dark:group-hover:text-sky-400">
                                                                         {
                                                                             doc.name
                                                                         }
                                                                     </p>
-                                                                    <p className="text-xs text-slate-500 dark:text-slate-500">
+                                                                    <p className="text-xs text-slate-500 md:text-sm dark:text-slate-500">
                                                                         ID:{' '}
                                                                         {doc.id}{' '}
                                                                         •
@@ -498,23 +512,22 @@ export default function KnowledgeBaseIndex({
                                                                         )}
                                                                     </span>
                                                                 </div>
-                                                                
                                                             </div>
                                                         </TableCell>
                                                         <TableCell className="py-4 text-right">
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleDelete(
-                                                                            doc.id,
-                                                                        )
-                                                                    }
-                                                                    className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-900/30 dark:hover:text-rose-400"
-                                                                    title={t(
-                                                                        'knowledgeBase.delete',
-                                                                    )}
-                                                                >
-                                                                    <Trash2 className="h-4 w-4" />
-                                                                </button>
+                                                            <button
+                                                                onClick={() =>
+                                                                    handleDelete(
+                                                                        doc.id,
+                                                                    )
+                                                                }
+                                                                className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-900/30 dark:hover:text-rose-400"
+                                                                title={t(
+                                                                    'knowledgeBase.delete',
+                                                                )}
+                                                            >
+                                                                <Trash2 className="h-4 w-4" />
+                                                            </button>
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}

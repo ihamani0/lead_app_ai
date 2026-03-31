@@ -49,16 +49,16 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                     <div className="rounded-2xl border border-white/30 bg-white/20 p-3 shadow-lg backdrop-blur-md">
                                         <Bot className="h-8 w-8 text-white" />
                                     </div>
-                                    <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg md:text-5xl">
+                                    <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-lg md:text-4xl lg:text-5xl">
                                         {t('agents.title')}
                                     </h1>
                                 </div>
-                                <p className="max-w-xl text-lg font-light text-white/90">
+                                <p className="max-w-xl text-sm font-light text-white/90 md:text-base lg:text-lg">
                                     {t('agents.subtitle')}
                                 </p>
                             </div>
                             <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
+                                <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-xs font-medium text-white shadow-lg backdrop-blur-md md:text-sm">
                                     <Sparkles className="h-4 w-4" />
                                     <span>
                                         {agents.length}{' '}
@@ -90,7 +90,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                         <Bot className="h-6 w-6" />
                                                     </div>
                                                     <div>
-                                                        <CardTitle className="text-xl font-bold tracking-tight">
+                                                        <CardTitle className="text-base font-bold tracking-tight md:text-lg lg:text-xl">
                                                             {agent.instance?.instance_name?.split(
                                                                 '-',
                                                             )[1] ||
@@ -140,7 +140,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                     <span className="text-[10px] font-medium text-slate-400 uppercase">
                                                         WhatsApp
                                                     </span>
-                                                    <span className="text-sm font-bold tracking-tight text-slate-700 dark:text-slate-200">
+                                                    <span className="text-xs font-bold tracking-tight text-slate-700 md:text-sm dark:text-slate-200">
                                                         {agent.instance
                                                             ?.phone_number
                                                             ? `+ ${agent.instance?.phone_number}`
@@ -199,10 +199,10 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                 <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800">
                                     <Bot className="h-10 w-10 text-slate-300 dark:text-slate-600" />
                                 </div>
-                                <h3 className="text-2xl font-black tracking-tight text-slate-900 dark:text-slate-100">
+                                <h3 className="text-xl font-black tracking-tight text-slate-900 md:text-2xl lg:text-3xl dark:text-slate-100">
                                     {t('agents.empty_title')}
                                 </h3>
-                                <p className="mt-2 text-slate-500 dark:text-slate-400">
+                                <p className="mt-2 text-sm text-slate-500 md:text-base dark:text-slate-400">
                                     {t('agents.empty_description')}
                                 </p>
                             </div>
@@ -219,11 +219,11 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                         <PlusCircle className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                                     </div>
                                     <div>
-                                        <h3 className="text-xl font-bold tracking-tight text-blue-950 dark:text-blue-50">
+                                        <h3 className="text-lg font-bold tracking-tight text-blue-950 md:text-xl lg:text-2xl dark:text-blue-50">
                                             {availableInstances.length}{' '}
                                             {t('agents.numbers_available')}
                                         </h3>
-                                        <p className="mt-1 text-blue-700/80 dark:text-blue-400/80">
+                                        <p className="mt-1 text-sm text-blue-700/80 md:text-base dark:text-blue-400/80">
                                             {t('agents.deploy_description')}
                                         </p>
                                     </div>

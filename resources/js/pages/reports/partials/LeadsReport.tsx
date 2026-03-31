@@ -96,7 +96,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 {/* Pie Chart - By Status */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-sm md:text-base">
                             {t('reports.leads.charts.byStatus')}
                         </CardTitle>
                     </CardHeader>
@@ -137,7 +137,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 {/* Pie Chart - By Temperature */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-sm md:text-base">
                             {t('reports.leads.charts.byTemperature')}
                         </CardTitle>
                     </CardHeader>
@@ -180,7 +180,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
             {instanceData.length > 0 && (
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-sm md:text-base">
                             {t('reports.leads.charts.leadsByInstance')}
                         </CardTitle>
                     </CardHeader>
@@ -215,7 +215,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 {/* By Status Progress */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-sm md:text-base">
                             {t('reports.leads.charts.byStatus')}
                         </CardTitle>
                     </CardHeader>
@@ -262,7 +262,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 {/* By Source */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-sm md:text-base">
                             {t('reports.leads.charts.bySource')}
                         </CardTitle>
                     </CardHeader>

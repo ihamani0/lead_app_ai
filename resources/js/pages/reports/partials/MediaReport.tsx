@@ -59,7 +59,7 @@ export function MediaReport({ data }: MediaReportProps) {
                 <div className="grid gap-6 md:grid-cols-2">
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-base">
+                            <CardTitle className="text-sm md:text-base">
                                 {t('reports.media.charts.byFileType')}
                             </CardTitle>
                         </CardHeader>
@@ -93,7 +93,7 @@ export function MediaReport({ data }: MediaReportProps) {
 
                     <Card>
                         <CardHeader>
-                            <CardTitle className="text-base">
+                            <CardTitle className="text-sm md:text-base">
                                 {t('reports.media.charts.fileTypeDistribution')}
                             </CardTitle>
                         </CardHeader>
@@ -127,7 +127,7 @@ export function MediaReport({ data }: MediaReportProps) {
             {typeData.length === 0 && (
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
+                        <CardTitle className="text-sm md:text-base">
                             {t('reports.media.charts.byFileType')}
                         </CardTitle>
                     </CardHeader>
