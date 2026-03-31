@@ -9,7 +9,8 @@
     "status": {
         "running": "Running",
         "paused": "Paused",
-        "offline": "Offline"
+        "offline": "Offline",
+        "noInstance": "No Instance"
     },
 
     "whatsapp": "WhatsApp",
@@ -20,10 +21,34 @@
     "config_settings": "Configuration & Settings",
 
     "empty_title": "Your AI Fleet is Empty",
-    "empty_description": "Ready to automate? Connect your first WhatsApp assistant below.",
+    "empty_description": "Ready to automate? Create your first AI agent below.",
 
     "numbers_available": "Number(s) Available",
     "deploy_description": "Deploy AI assistants to handle these lines automatically.",
 
-    "setup": "Setup"
+    "setup": "Setup",
+
+    "create_agent": "Create Agent",
+    "create_agent_description": "Create a new AI agent. You can link a WhatsApp instance later.",
+    "agent_name": "Agent Name",
+    "agent_name_placeholder": "e.g., Sales Bot, Support Agent",
+    "system_prompt": "System Prompt",
+    "system_prompt_placeholder": "You are a helpful assistant...",
+    "webhook_url": "Webhook URL",
+    "webhook_url_placeholder": "https://your-n8n-instance.com/webhook/...",
+    "no_instance": "No instance linked",
+    "link_instance": "Link Instance",
+    "unlink_instance": "Unlink Instance",
+    "change_instance": "Change Instance",
+    "edit_agent": "Edit Agent",
+    "delete_agent": "Delete Agent",
+    "knowledge_base_count": "Documents",
+    "linked_to": "Linked to",
+    "available_instances": "Available Instances",
+    "select_instance": "Select an instance",
+    "select_agent": "Select an agent",
+    "agent_created": "Agent created successfully",
+    "agent_updated": "Agent updated successfully",
+    "instance_linked": "Instance linked successfully",
+    "instance_unlinked": "Instance unlinked successfully"
 }

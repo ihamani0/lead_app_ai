@@ -40,7 +40,7 @@ class MediaAssetController extends Controller
                 'category' => 'required|string|max:100', // e.g., 'pool', 'apartment_a'
                 'type' => 'required|in:image,video',
                 'upload_method' => 'required|in:file,url',
-                'file' => 'required_if:upload_method,file|nullable|file|mimes:jpg,jpeg,png,gif,webp|max:2048', // 2MB max
+                'file' => 'required_if:upload_method,file|nullable|file|mimes:jpg,jpeg,png,gif,webp|max:30720', // 30MB max
                 'external_url' => 'required_if:upload_method,url|nullable|url',
                 'caption' => 'nullable|string|max:255',
             ]);
@@ -86,7 +86,7 @@ class MediaAssetController extends Controller
             $validated = $request->validate([
                 'filename' => 'required|string|max:255',
                 'mime_type' => 'required|string|max:100',
-                'size' => 'required|integer|max:25600', // 25MB in KB
+                'size' => 'required|integer|max:30720', // 30MB in KB
             ]);
 
             $extension = pathinfo($validated['filename'], PATHINFO_EXTENSION);

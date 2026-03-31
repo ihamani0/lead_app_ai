@@ -13,6 +13,7 @@
         "description": "Upload documents to enhance your AI capabilities",
         "documentName": "Document Name",
         "uploadFile": "Upload File",
+        "targetAgent": "Target Agent",
         "targetInstances": "Target Instances",
         "dropFile": "Drop file here or click to browse",
         "supportedFormats": "Supports PDF, TXT, DOCX",
@@ -32,6 +33,8 @@
         "documentLabel": "Document",
         "noDocuments": "No documents yet",
         "uploadFirstDocument": "Upload your first document to get started"
-    }
-
+    },
+    "filterByAgent": "Filter by Agent",
+    "allAgents": "All Agents",
+    "noAgent": "No Agent Assigned"
 }

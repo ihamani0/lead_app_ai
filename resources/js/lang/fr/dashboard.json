@@ -39,6 +39,7 @@
     "temperature": {
         "hot": "Chaud",
         "warm": "Tiède",
-        "cold": "Froid"
+        "cold": "Froid",
+        "pending": "En attente"
     }
 }

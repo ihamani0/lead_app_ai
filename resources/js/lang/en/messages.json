@@ -17,5 +17,17 @@
     "agents": "Agents",
     "leads": "Leads",
     "media_assets": "Media Assets",
-    "documentation": "Knowledge Base"
+    "documentation": "Knowledge Base",
+    "success": {
+        "agent_created": "Agent created successfully",
+        "connected_agent": "Agent connected successfully",
+        "updated_agent": "Agent updated successfully",
+        "disconnected_agent": "Agent disconnected successfully",
+        "document_uploaded": "Document uploaded successfully",
+        "document_deleted": "Document deleted successfully"
+    },
+    "error": {
+        "no_found_agent": "Agent not found",
+        "document_uploaded": "Failed to upload document"
+    }
 }

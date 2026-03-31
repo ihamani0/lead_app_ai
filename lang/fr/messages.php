@@ -16,6 +16,8 @@ return [
         'qualification_triggered' => 'Qualification déclenchée avec succès !',
         'qualification_in_progress' => 'Qualification en cours...',
 
+        'agent_created'=> "Agent créé avec succès!"
+
     ],
 
     'error' => [

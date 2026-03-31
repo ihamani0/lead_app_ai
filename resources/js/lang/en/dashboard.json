@@ -39,6 +39,7 @@
     "temperature": {
         "hot": "Hot",
         "warm": "Warm",
-        "cold": "Cold"
+        "cold": "Cold",
+        "pending": "Pending"
     }
 }

@@ -53,7 +53,7 @@ const ALLOWED_VIDEO_TYPES = [
     'video/quicktime',
     'video/x-msvideo',
 ];
-const MAX_FILE_SIZE = 25 * 1024 * 1024; // 25MB
+const MAX_FILE_SIZE = 30 * 1024 * 1024; // 30MB
 
 function getUppyRestrictions(type: string) {
     const allowedTypes =
@@ -353,7 +353,7 @@ function UppyUploadInner({
             }
             // Validate size
             if (file.size > MAX_FILE_SIZE) {
-                onUploadError(new Error('File exceeds 25 MB limit.'));
+                onUploadError(new Error('File exceeds 30 MB limit.'));
                 return;
             }
             // Remove any existing file first
@@ -490,8 +490,8 @@ function UppyUploadInner({
 
                         <p className="mt-2 text-xs text-muted-foreground">
                             {mediaType === 'image'
-                                ? 'JPEG, PNG, GIF, WebP • Max 25 MB'
-                                : 'MP4, WebM, MOV, AVI • Max 25 MB'}
+                                ? 'JPEG, PNG, GIF, WebP • Max 30 MB'
+                                : 'MP4, WebM, MOV, AVI • Max 30 MB'}
                         </p>
 
                         <input
