@@ -13,7 +13,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ReconcileInstanceStatus implements ShouldQueue , ShouldBeUnique
+class ReconcileInstanceStatus implements ShouldBeUnique, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -23,15 +23,12 @@ class ReconcileInstanceStatus implements ShouldQueue , ShouldBeUnique
 
     public function __construct(public int $instanceId) {}
 
-
-
     public function uniqueId(): string
     {
-        return 'reconcile_instance_' . $this->instanceId;
+        return 'reconcile_instance_'.$this->instanceId;
     }
 
     public int $uniqueFor = 120;
-
 
     public function handle(EvolutionService $evolutionService): void
     {

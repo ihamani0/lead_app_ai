@@ -77,8 +77,6 @@ class LeadController extends Controller
             'phone' => $lead->phone,
         ]);
 
-        
-
         return back()->with('success', __('messages.success.qualification_in_progress'));
     }
 }

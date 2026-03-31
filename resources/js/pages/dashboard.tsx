@@ -143,20 +143,35 @@ interface LeadsByStatusProps {
 
 function LeadsByStatus({ byStatus, byTemperature }: LeadsByStatusProps) {
     const { t } = useTranslation();
+
+    // Enhanced colors with dark mode variants for better vibrancy
     const statusColors: Record<string, string> = {
-        NEW: 'bg-blue-500',
-        CONTACTED: 'bg-yellow-500',
-        QUALIFIED: 'bg-orange-500',
-        CONVERTED: 'bg-green-500',
-        LOST: 'bg-red-500',
-        QUALIFYING: 'bg-purple-500',
-        IN_PROGRESS: 'bg-amber-500',
+        NEW: 'bg-blue-500 dark:bg-blue-600',
+        CONTACTED: 'bg-amber-400 dark:bg-amber-500', // Amber reads better than yellow
+        QUALIFIED: 'bg-indigo-500 dark:bg-indigo-600',
+        CONVERTED: 'bg-emerald-500 dark:bg-emerald-600', // Emerald looks more professional
+        LOST: 'bg-rose-500 dark:bg-rose-600',
+        QUALIFYING: 'bg-purple-500 dark:bg-purple-600',
+        IN_PROGRESS: 'bg-orange-500 dark:bg-orange-600',
     };
 
-    const temperatureColors: Record<string, string> = {
-        HOT: 'bg-red-500',
-        WARM: 'bg-orange-400',
-        COLD: 'bg-blue-400',
+    // Temperature colors with alpha variants for backgrounds
+    const temperatureConfig: Record<string, { bg: string; text: string; border: string }> = {
+        HOT: { 
+            bg: 'bg-rose-500/10 dark:bg-rose-500/20', 
+            text: 'text-rose-600 dark:text-rose-400', 
+            border: 'border-rose-500/20 dark:border-rose-500/30'
+        },
+        WARM: { 
+            bg: 'bg-orange-500/10 dark:bg-orange-500/20', 
+            text: 'text-orange-600 dark:text-orange-400', 
+            border: 'border-orange-500/20 dark:border-orange-500/30'
+        },
+        COLD: { 
+            bg: 'bg-cyan-500/10 dark:bg-cyan-500/20', 
+            text: 'text-cyan-600 dark:text-cyan-400', 
+            border: 'border-cyan-500/20 dark:border-cyan-500/30'
+        },
     };
 
     const total = Object.values(byStatus).reduce((a, b) => a + b, 0);
@@ -175,87 +190,81 @@ function LeadsByStatus({ byStatus, byTemperature }: LeadsByStatusProps) {
     };
 
     return (
-        <Card className="col-span-full md:col-span-1">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-base">
-                    <Users className="h-4 w-4" />
+        <Card className="col-span-full md:col-span-1 shadow-sm border-slate-200 dark:border-slate-800">
+            <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base font-semibold text-slate-900 dark:text-slate-100">
+                    <Users className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                     {t('dashboard.leadsByStatus')}
                 </CardTitle>
             </CardHeader>
-            <CardContent>
-                <div className="space-y-3">
-                    {Object.entries(byStatus).map(([status, count]) => (
-                        <div
-                            key={status}
-                            className="flex items-center justify-between"
-                        >
-                            <div className="flex items-center gap-2">
-                                <div
-                                    className={`h-2 w-2 rounded-full ${
-                                        statusColors[status] || 'bg-slate-500'
-                                    }`}
-                                />
-                                <span className="text-sm">
-                                    {getStatusLabel(status)}
-                                </span>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <div className="h-1.5 w-20 overflow-hidden rounded-full bg-slate-100">
+            <CardContent className="pt-4">
+                <div className="space-y-4">
+                    {Object.entries(byStatus).map(([status, count]) => {
+                        const colorClass = statusColors[status] || 'bg-slate-500 dark:bg-slate-600';
+                        const percentage = total > 0 ? (count / total) * 100 : 0;
+
+                        return (
+                            <div key={status} className="group flex items-center justify-between">
+                                <div className="flex items-center gap-2.5">
                                     <div
-                                        className={`h-full ${
-                                            statusColors[status] ||
-                                            'bg-slate-500'
-                                        }`}
-                                        style={{
-                                            width: `${total > 0 ? (count / total) * 100 : 0}%`,
-                                        }}
+                                        className={`h-2.5 w-2.5 rounded-full shadow-sm ${colorClass} ring-2 ring-white dark:ring-slate-950`}
                                     />
+                                    <span className="text-sm font-medium text-slate-600 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-slate-100 transition-colors">
+                                        {getStatusLabel(status)}
+                                    </span>
                                 </div>
-                                <span className="text-sm font-medium">
-                                    {count}
-                                </span>
+                                <div className="flex items-center gap-3">
+                                    <div className="relative h-2 w-24 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
+                                        <div
+                                            className={`absolute top-0 left-0 h-full rounded-full transition-all duration-500 ease-out ${colorClass}`}
+                                            style={{ width: `${percentage}%` }}
+                                        />
+                                    </div>
+                                    <span className="w-8 text-right text-sm font-bold text-slate-900 dark:text-slate-100">
+                                        {count}
+                                    </span>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        );
+                    })}
+
                     {Object.keys(byStatus).length === 0 && (
-                        <p className="text-sm text-muted-foreground">
-                            {t('dashboard.noLeads')}
-                        </p>
+                        <div className="flex h-20 items-center justify-center rounded-lg border border-dashed border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50">
+                            <p className="text-sm text-muted-foreground">
+                                {t('dashboard.noLeads')}
+                            </p>
+                        </div>
                     )}
                 </div>
 
                 {Object.keys(byTemperature).length > 0 && (
                     <>
-                        <div className="my-4 border-t" />
-                        <p className="mb-3 text-sm font-medium">
+                        <div className="my-5 border-t border-slate-100 dark:border-slate-800" />
+                        <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                             {t('dashboard.byTemperature')}
                         </p>
-                        <div className="flex gap-2">
-                            {Object.entries(byTemperature).map(
-                                ([temp, count]) => (
+                        <div className="grid grid-cols-3 gap-3">
+                            {Object.entries(byTemperature).map(([temp, count]) => {
+                                const config = temperatureConfig[temp] || {
+                                    bg: 'bg-slate-500/10 dark:bg-slate-500/20',
+                                    text: 'text-slate-600 dark:text-slate-400',
+                                    border: 'border-slate-500/20'
+                                };
+
+                                return (
                                     <div
                                         key={temp}
-                                        className={`flex-1 rounded-lg p-2 text-center ${
-                                            temperatureColors[temp] ||
-                                            'bg-slate-500'
-                                        } bg-opacity-20`}
+                                        className={`flex flex-col items-center justify-center rounded-xl border ${config.border} ${config.bg} p-3 transition-all hover:shadow-md`}
                                     >
-                                        <div
-                                            className={`text-lg font-bold ${
-                                                temperatureColors[
-                                                    temp
-                                                ]?.replace('bg-', 'text-') ||
-                                                'text-slate-700'
-                                            }`}
-                                        >
+                                        <div className={`text-xl font-bold ${config.text}`}>
                                             {count}
                                         </div>
-                                        <div className="text-xs text-muted-foreground">
-                                            {temp}
+                                        <div className="mt-1 text-[10px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                            {t(`dashboard.temperature.${temp.toLowerCase()}`) || temp}
                                         </div>
                                     </div>
-                                ),
-                            )}
+                                );
+                            })}
                         </div>
                     </>
                 )}

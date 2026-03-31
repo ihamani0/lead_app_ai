@@ -35,5 +35,10 @@
         "justNow": "Just now",
         "hoursAgo": "h ago",
         "daysAgo": "d ago"
+    },
+    "temperature": {
+        "hot": "Hot",
+        "warm": "Warm",
+        "cold": "Cold"
     }
 }

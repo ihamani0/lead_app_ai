@@ -22,8 +22,8 @@ class N8nIntegrationController extends Controller
         // n8n sends: { "instance": "...", "phone": "...", "temperature": "HOT", "score": 85, "summary": "Wants a pool", "status": "HOT" }
 
         $request->validate([
-            'instance' => "required",
-            'phone' => "required",
+            'instance' => 'required',
+            'phone' => 'required',
         ]);
         $tenantId = $this->getTenantId($request->instance);
 
@@ -55,7 +55,7 @@ class N8nIntegrationController extends Controller
             }
         }
 
-        return response()->json(['status' => 'success' , 'lead' => $lead]);
+        return response()->json(['status' => 'success', 'lead' => $lead]);
     }
 
     // 2. AI TOOL: Fetch Media

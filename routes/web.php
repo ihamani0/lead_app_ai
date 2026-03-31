@@ -73,6 +73,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Media Catalog
     Route::get('/media', [MediaAssetController::class, 'index'])->name('media.index');
     Route::post('/media', [MediaAssetController::class, 'store'])->name('media.store');
+    Route::post('/media/presign', [MediaAssetController::class, 'presign'])->name('media.presign');
+    Route::post('/media/finalize', [MediaAssetController::class, 'finalize'])->name('media.finalize');
     Route::delete('/media/{id}', [MediaAssetController::class, 'destroy'])->name('media.destroy');
 
     Route::get('/knowledge', [KnowledgeBaseController::class, 'index'])->name('knowledge.index');

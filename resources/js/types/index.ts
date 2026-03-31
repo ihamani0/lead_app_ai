@@ -54,7 +54,7 @@ export interface AgentConfig {
     is_active: boolean; // Bot on/off
     webhook_url?: string | null; // URL for Evolution messages
 
-    config_webhook_url:string | null;
+    config_webhook_url: string | null;
 
     // Provider Settings
     provider: EvolutionProvider; // Provider type
@@ -69,36 +69,40 @@ export interface AgentConfig {
     // Evolution-specific settings
     settings?: EvolutionSettings | null;
 
-    instance?:EvolutionInstance | null
+    instance?: EvolutionInstance | null;
 
     // Timestamps (if you want to include Laravel timestamps)
     created_at?: string;
     updated_at?: string;
 }
 
-
 export interface Asset {
-  id: string;
-  category: string;
-  type: 'image' | 'video' | 'document' | string;
-  external_url: string;
-  caption: string;
-  url: string;
-  created_at?: string;
-  updated_at?: string;
-  name?: string;
-  size?: string;
+    id: string;
+    category: string;
+    type: 'image' | 'video' | 'document' | string;
+    external_url: string;
+    caption: string;
+    url: string;
+    created_at?: string;
+    updated_at?: string;
+    name?: string;
+    size?: string;
 }
 
 export interface MediaFormData {
-  category: string;
-  type: string;
-  upload_method: string;
-  file: File | null;
-  external_url: string;
-  caption: string;
+    category: string;
+    type: string;
+    upload_method: string;
+    file: File | null;
+    external_url: string;
+    caption: string;
 }
 
+export interface PresignResponse {
+    url: string;
+    headers: Record<string, string>;
+    key: string;
+}
 
 export type LeadStatus =
     | 'new'
@@ -117,8 +121,8 @@ export interface Lead {
     temperature: LeadTemperature;
     qualification_score: number | null;
     updated_at: string;
-    created_at:string;
-    ai_summary:string;
-    custom_data:string;
-    instance ?:EvolutionInstance
+    created_at: string;
+    ai_summary: string;
+    custom_data: string;
+    instance?: EvolutionInstance;
 }

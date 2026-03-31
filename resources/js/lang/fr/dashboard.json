@@ -35,5 +35,10 @@
         "justNow": "À l'instant",
         "hoursAgo": "h",
         "daysAgo": "j"
+    },
+    "temperature": {
+        "hot": "Chaud",
+        "warm": "Tiède",
+        "cold": "Froid"
     }
 }
