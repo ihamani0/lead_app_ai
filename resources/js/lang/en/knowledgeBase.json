@@ -36,5 +36,11 @@
     },
     "filterByAgent": "Filter by Agent",
     "allAgents": "All Agents",
-    "noAgent": "No Agent Assigned"
+    "noAgent": "No Agent Assigned",
+    "download": "Download",
+    "delete": "Delete",
+    "deleteConfirm": "Are you sure you want to delete this document?",
+    "select_agent_required": "Select an agent",
+    "noAgentsWarning": "You need to create an agent before uploading documents.",
+    "createAgentFirst": "Create Agent First"
 }

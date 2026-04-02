@@ -12,4 +12,14 @@ class KnowledgeBase extends Model implements HasMedia
     use HasUlids, InteractsWithMedia;
 
     protected $guarded = [];
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(AgentConfig::class, 'agent_config_id');
+    }
 }

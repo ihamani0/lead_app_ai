@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignUlid('tenant_id')->constrained()->onDelete('cascade');
 
             $table->string('instance_name', 100)->unique();
+            $table->string('display_name', 100)->nullable();
             $table->string('phone_number', 30)->nullable();
 
             $table->string('status', 50)->default('disconnected'); // connected | connecting | disconnected
@@ -24,9 +25,13 @@ return new class extends Migration
             $table->text('qr_code')->nullable();
             $table->text('webhook_url')->nullable();
             $table->jsonb('settings')->nullable();
+
+            $table->softDeletes(); // ← Laravel's deleted_at for accidental deletes
+
             $table->timestamp('connected_at')->nullable();
             $table->timestamps();
 
+            $table->unique(['tenant_id', 'instance_name']);
             $table->index('tenant_id');
         });
     }

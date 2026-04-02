@@ -13,19 +13,18 @@ return new class extends Migration
     {
         Schema::create('agent_configs', function (Blueprint $table) {
             $table->ulid('id')->primary();
+
+            $table->string('name')->nullable()->after('tenant_id');
+
             $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
 
             // Link to the WhatsApp Instance
-            // (If the instance is deleted, the bot config is deleted)
-            $table->foreignId('evolution_instance_id')->constrained()->cascadeOnDelete();
-            $table->string('instance_name')->unique();
+
+            $table->foreignId('evolution_instance_id')->nullable()->constrained()->nullOnDelete();
 
             // 2. Connection Settings
             $table->boolean('is_active')->default(false); // Can toggle bot on/off
             $table->string('webhook_url')->nullable(); // Where Evolution sends messages
-
-            // where laravel post the system pompte to n8n
-            $table->string('config_webhook_url')->nullable();
 
             // 3. Provider Settings (Future Proofing)
             $table->string('provider')->default('n8n');  // 'n8n', 'typebot', 'dify'
@@ -37,6 +36,9 @@ return new class extends Migration
 
             // 4. AI Brain
             $table->text('system_prompt')->nullable();
+
+            // 5- default system propmt
+            $table->text('default_system_prompt')->nullable();
 
             // 5. Evolution Specific Settings (delayMessage, keywordFinish, etc.)
             $table->jsonb('settings')->nullable();

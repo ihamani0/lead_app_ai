@@ -46,22 +46,39 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Placeholders for disconnect/restart
     Route::post('/disconnect/{id}', [EvolutionInstanceController::class, 'disconnect'])->name('profile.disconnect');
-
-    Route::delete('/instances/{id}', [EvolutionInstanceController::class, 'destroy'])->name('instances.destroy');
-
     Route::put('/restart/{id}', [EvolutionInstanceController::class, 'restart'])->name('instances.restart');
 
-    // Bot Management
-    Route::post('/instances/{id}/bot', [AgentBotController::class, 'store'])->name('bot.store');
+    Route::post('/restore/{id}', [EvolutionInstanceController::class, 'restore'])->name('instances.restore');
 
-    Route::put('/instances/{id}/bot', [AgentBotController::class, 'update'])->name('bot.update');
+    // Delete Instance Route
+    Route::delete('/{id}', [EvolutionInstanceController::class, 'destroy'])->name('instances.destroy');
+    // Admin only
+    Route::delete('/{id}/force', [EvolutionInstanceController::class, 'forceDestroy'])->name('instances.force-destroy');
 
-    Route::patch('/instances/{id}/bot/toggle', [AgentBotController::class, 'toggle'])->name('bot.toggle');
-
-    Route::delete('/instances/{id}/bot', [AgentBotController::class, 'destroy'])->name('bot.destroy');
-
-    // Agent Idnex
+    // Agent Index
     Route::get('/agents', [AgentBotController::class, 'index'])->name('agents.index');
+
+    // Standalone Agent CRUD
+    Route::post('/agents', [AgentBotController::class, 'store'])->name('agents.store');
+    Route::put('/agents/{agent}', [AgentBotController::class, 'update'])->name('agents.update');
+    Route::patch('/agents/{agent}/toggle', [AgentBotController::class, 'toggle'])->name('agents.toggle');
+    Route::delete('/agents/{agent}', [AgentBotController::class, 'destroy'])->name('agents.destroy');
+
+    // Agent-Instance linking
+    Route::post('/agents/{agent}/link-instance', [AgentBotController::class, 'linkInstance'])->name('agents.link-instance');
+    Route::post('/agents/{agent}/unlink-instance', [AgentBotController::class, 'unlinkInstance'])->name('agents.unlink-instance');
+
+    // Agent Detail Page & Operations
+    Route::get('/agents/{agent}', [AgentBotController::class, 'show'])->name('agents.show');
+    Route::post('/agents/{agent}/clone', [AgentBotController::class, 'clone'])->name('agents.clone');
+    Route::patch('/agents/{agent}/settings', [AgentBotController::class, 'updateSettings'])->name('agents.update-settings');
+    Route::post('/agents/{agent}/reset-prompt', [AgentBotController::class, 'resetSystemPrompt'])->name('agents.reset-prompt');
+
+    // Legacy bot routes (keep for backward compatibility)
+    Route::post('/instances/{id}/bot', [AgentBotController::class, 'storeLegacy'])->name('bot.store');
+    Route::put('/instances/{id}/bot', [AgentBotController::class, 'updateLegacy'])->name('bot.update');
+    Route::patch('/instances/{id}/bot/toggle', [AgentBotController::class, 'toggleLegacy'])->name('bot.toggle');
+    Route::delete('/instances/{id}/bot', [AgentBotController::class, 'destroyLegacy'])->name('bot.destroy');
 
     // CRM Leads
     Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
@@ -80,6 +97,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/knowledge', [KnowledgeBaseController::class, 'index'])->name('knowledge.index');
     Route::post('/knowledge', [KnowledgeBaseController::class, 'store'])->name('knowledge.store');
     Route::delete('/knowledge/{id}', [KnowledgeBaseController::class, 'destroy'])->name('knowledge.destroy');
+
+    Route::get('/knowledge/download/{id}', [KnowledgeBaseController::class, 'download'])->name('knowledge.web.download');
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');

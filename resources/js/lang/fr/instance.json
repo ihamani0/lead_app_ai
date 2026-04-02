@@ -1,5 +1,6 @@
 {
     "instanceId": "ID de l'instance",
+    "instanceDetails": "Détails de l'instance",
     "phoneNumber": "Numéro de téléphone",
     "lastConnected": "Dernière connexion",
     "notLinked": "Non lié",
@@ -10,6 +11,7 @@
     "agentPaused": "En pause",
     "agentOffline": "Hors ligne",
     "noAgent": "Aucun agent configuré",
+    "noAgentDesc": "Liez un agent pour automatiser les réponses",
 
     "typingDelay": "Délai de frappe",
     "typingDelayMs": "ms",

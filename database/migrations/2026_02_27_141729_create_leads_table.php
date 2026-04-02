@@ -16,7 +16,10 @@ return new class extends Migration
 
             $table->foreignUlid('tenant_id')->constrained()->onDelete('cascade');
 
-            $table->foreignId('instance_id')->nullable()->constrained('evolution_instances')->onDelete('set null');
+            $table->foreignId('instance_id')
+                ->nullable()
+                ->constrained('evolution_instances')
+                ->onDelete('restrict'); // ← Prevent hard delete if leads exist
 
             $table->string('name', 255);
             $table->string('phone', 30);

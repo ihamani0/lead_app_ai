@@ -63,6 +63,7 @@ export interface AgentData {
     name: string;
     instance: string | null;
     instance_name?: string;
+    display_name?: string | null;
     is_active: boolean;
     created_at: string;
 }

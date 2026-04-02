@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Api\LeadIntegrationController;
 use App\Http\Controllers\Api\N8nIntegrationController;
-use App\Http\Controllers\KnowledgeBaseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,8 +32,8 @@ Route::group(['prefix' => 'n8n', 'middleware' => 'auth:sanctum'], function () {
     Route::put('/update/score/lead', [N8nIntegrationController::class, 'updateLead']);
 
     // 2. Download Document
-    Route::get('/knowledge/download/{id}', [KnowledgeBaseController::class, 'download'])->name('knowledge.download');
+    Route::get('/knowledge/download/{id}', [N8nIntegrationController::class, 'download'])->name('knowledge.download');
 
     // 3. Mark Document as Indexed (Replaces Google Sheet Update)
-    Route::post('/knowledge/mark-indexed', [KnowledgeBaseController::class, 'markAsIndexed']);
+    Route::post('/knowledge/mark-indexed', [N8nIntegrationController::class, 'markAsIndexed']);
 });

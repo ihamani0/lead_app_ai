@@ -39,7 +39,7 @@ class DashboardController extends Controller
 
         // Media Stats
         // $totalMedia = MediaAsset::where('tenant_id', $tenantId)->count();
-        //totale Size
+        // totale Size
         $media = MediaAsset::where('tenant_id', $tenantId)->get();
         $totalMedia = $media->count();
         $totalSize = 0;
@@ -82,7 +82,7 @@ class DashboardController extends Controller
                 ],
                 'media' => [
                     'total' => $totalMedia,
-                    'totalSize'=>$totalSize
+                    'totalSize' => $totalSize,
                 ],
                 'agents' => [
                     'total' => $totalAgents,

@@ -168,7 +168,10 @@ export default function InstanceShow({ instance }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Dashboard', href: dashboard().url },
         { title: 'Instances', href: index().url },
-        { title: localInstance.instance_name, href: '' },
+        {
+            title: localInstance.display_name || localInstance.instance_name,
+            href: '',
+        },
     ];
 
     // Render appropriate status component
@@ -236,7 +239,9 @@ export default function InstanceShow({ instance }: Props) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`${localInstance.instance_name} | Instance`} />
+            <Head
+                title={`${localInstance.display_name || localInstance.instance_name} | Instance`}
+            />
 
             <div className="py-8 md:py-12">
                 <div className="space-y-6 px-4 sm:px-6 lg:px-8">

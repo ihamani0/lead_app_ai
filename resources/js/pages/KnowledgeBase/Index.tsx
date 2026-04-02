@@ -10,6 +10,7 @@ import {
     Zap,
     X,
     Trash2,
+    Download,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import {
     Table,
     TableBody,
@@ -29,7 +37,8 @@ import {
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import { store, destroy } from '@/routes/knowledge';
-import { BreadcrumbItem } from '@/types';
+import web from '@/routes/knowledge/web';
+import type { BreadcrumbItem, AgentConfig } from '@/types';
 
 type DocumentStatus = 'indexed' | 'processing' | 'failed';
 
@@ -38,43 +47,41 @@ interface KnowledgeDocument {
     name: string;
     status: DocumentStatus;
     created_at: string;
+    agent_config_id?: string | null;
+    agent?: AgentConfig | null;
 }
-
-// interface Instance {
-// instance_name: string;
-// }
 
 interface KnowledgeBaseIndexProps {
     documents: KnowledgeDocument[];
+    agents: AgentConfig[];
 }
-// instances: Instance[];
 
 export default function KnowledgeBaseIndex({
     documents,
+    agents,
 }: KnowledgeBaseIndexProps) {
     const { t } = useTranslation();
-    
+
     const breadcrumbs: BreadcrumbItem[] = [
-            {
-                title: t('dashboard.title'),
-                href: '/dashboard',
-            },
-            {
-                title: t('knowledgeBase.title'),
-                href: '',
-            },
-        ];
-    
-    
+        {
+            title: t('dashboard.title'),
+            href: '/dashboard',
+        },
+        {
+            title: t('knowledgeBase.title'),
+            href: '',
+        },
+    ];
 
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragActive, setDragActive] = useState(false);
+    const [agentFilter, setAgentFilter] = useState<string>('all');
 
     const { data, setData, post, processing, reset, errors } = useForm({
         name: '',
         file: null as File | null,
+        agent_config_id: '',
     });
-    // instance_names: [] as string[],
 
     // const toggleInstance = (instance_name: string) => {
     //     if (data.instance_names.includes(instance_name)) {
@@ -359,37 +366,106 @@ export default function KnowledgeBaseIndex({
                                             )}
                                         </div>
 
-                                        {/* Instance Selection */}
+                                        {/* Agent Selection - Required */}
+                                        {agents.length > 0 && (
+                                            <div className="space-y-2.5">
+                                                <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                                    <Sparkles className="h-4 w-4 text-slate-400" />
+                                                    {t(
+                                                        'knowledgeBase.upload.targetAgent',
+                                                    )}
+                                                    <span className="text-rose-500">
+                                                        *
+                                                    </span>
+                                                </Label>
+                                                <Select
+                                                    value={data.agent_config_id}
+                                                    onValueChange={(value) =>
+                                                        setData(
+                                                            'agent_config_id',
+                                                            value,
+                                                        )
+                                                    }
+                                                >
+                                                    <SelectTrigger className="h-12 rounded-xl border-slate-200/60 bg-white/60 backdrop-blur-sm transition-all duration-300 focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-700/60 dark:bg-slate-800/60">
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'knowledgeBase.select_agent_required',
+                                                            )}
+                                                        />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {agents.map((agent) => (
+                                                            <SelectItem
+                                                                key={agent.id}
+                                                                value={agent.id}
+                                                            >
+                                                                {agent.name ||
+                                                                    'Unnamed Agent'}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                {errors.agent_config_id && (
+                                                    <p className="flex items-center gap-1 text-xs font-medium text-rose-500">
+                                                        <AlertCircle className="h-3 w-3" />
+                                                        {errors.agent_config_id}
+                                                    </p>
+                                                )}
+                                            </div>
+                                        )}
 
                                         {/* Submit Button - Success Emerald/Teal linear */}
-                                        <Button
-                                            type="submit"
-                                            disabled={processing}
-                                            className="group relative h-14 w-full overflow-hidden rounded-xl font-semibold text-white shadow-xl shadow-emerald-500/25 transition-all duration-300 hover:shadow-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-70"
-                                        >
-                                            <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300" />
-                                            <span className="relative flex items-center justify-center gap-2">
-                                                {processing ? (
-                                                    <>
-                                                        <Loader2 className="h-5 w-5 animate-spin" />
-                                                        <span>
-                                                            {t(
-                                                                'knowledgeBase.upload.processingDocument',
-                                                            )}
-                                                        </span>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <Sparkles className="h-5 w-5" />
-                                                        <span>
-                                                            {t(
-                                                                'knowledgeBase.upload.uploadTrain',
-                                                            )}
-                                                        </span>
-                                                    </>
-                                                )}
-                                            </span>
-                                        </Button>
+                                        {agents.length === 0 ? (
+                                            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
+                                                <p className="mb-2 text-sm font-medium text-amber-700 dark:text-amber-300">
+                                                    {t(
+                                                        'knowledgeBase.noAgentsWarning',
+                                                    )}
+                                                </p>
+                                                <Button
+                                                    asChild
+                                                    variant="outline"
+                                                    className="w-full gap-2 border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/30"
+                                                >
+                                                    <a href="/agents">
+                                                        <Sparkles className="h-4 w-4" />
+                                                        {t(
+                                                            'knowledgeBase.createAgentFirst',
+                                                        )}
+                                                    </a>
+                                                </Button>
+                                            </div>
+                                        ) : (
+                                            <Button
+                                                type="submit"
+                                                disabled={processing}
+                                                className="group relative h-14 w-full overflow-hidden rounded-xl font-semibold text-white shadow-xl shadow-emerald-500/25 transition-all duration-300 hover:shadow-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-70"
+                                            >
+                                                <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300" />
+                                                <span className="relative flex items-center justify-center gap-2">
+                                                    {processing ? (
+                                                        <>
+                                                            <Loader2 className="h-5 w-5 animate-spin" />
+                                                            <span>
+                                                                {t(
+                                                                    'knowledgeBase.upload.processingDocument',
+                                                                )}
+                                                            </span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Sparkles className="h-5 w-5" />
+                                                            <span>
+                                                                {t(
+                                                                    'knowledgeBase.upload.uploadTrain',
+                                                                )}
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </span>
+                                            </Button>
+                                        )}
                                     </form>
                                 </CardContent>
                             </Card>
@@ -419,11 +495,68 @@ export default function KnowledgeBaseIndex({
                                                 </p>
                                             </div>
                                         </div>
-                                        {/* <div className="flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400">
-                                            <Clock className="h-3.5 w-3.5" />
-                                            Last updated: Just now
-                                        </div> */}
                                     </div>
+                                    {/* Agent Filter */}
+                                    {agents.length > 0 && (
+                                        <div className="mt-4 flex items-center gap-3">
+                                            <Label className="text-xs font-medium text-slate-600 dark:text-slate-400">
+                                                {t(
+                                                    'knowledgeBase.filterByAgent',
+                                                )}
+                                            </Label>
+                                            <Select
+                                                value={agentFilter}
+                                                onValueChange={(value) => {
+                                                    setAgentFilter(value);
+                                                    if (value !== 'all') {
+                                                        router.get(
+                                                            window.location
+                                                                .pathname,
+                                                            { agent_id: value },
+                                                            {
+                                                                preserveState: true,
+                                                                preserveScroll: true,
+                                                            },
+                                                        );
+                                                    } else {
+                                                        router.get(
+                                                            window.location
+                                                                .pathname,
+                                                            {},
+                                                            {
+                                                                preserveState: true,
+                                                                preserveScroll: true,
+                                                            },
+                                                        );
+                                                    }
+                                                }}
+                                            >
+                                                <SelectTrigger className="w-[200px]">
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'knowledgeBase.allAgents',
+                                                        )}
+                                                    />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    <SelectItem value="all">
+                                                        {t(
+                                                            'knowledgeBase.allAgents',
+                                                        )}
+                                                    </SelectItem>
+                                                    {agents.map((agent) => (
+                                                        <SelectItem
+                                                            key={agent.id}
+                                                            value={agent.id}
+                                                        >
+                                                            {agent.name ||
+                                                                'Unnamed Agent'}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    )}
                                 </CardHeader>
 
                                 <CardContent className="relative p-1">
@@ -435,6 +568,9 @@ export default function KnowledgeBaseIndex({
                                                         {t(
                                                             'knowledgeBase.documentsTable.documentLabel',
                                                         )}
+                                                    </TableHead>
+                                                    <TableHead className="py-4 font-semibold text-slate-700 dark:text-slate-300">
+                                                        Agent
                                                     </TableHead>
                                                     <TableHead className="py-4 font-semibold text-slate-700 dark:text-slate-300">
                                                         {t(
@@ -481,6 +617,24 @@ export default function KnowledgeBaseIndex({
                                                             </div>
                                                         </TableCell>
                                                         <TableCell className="py-4">
+                                                            {doc.agent ? (
+                                                                <Badge
+                                                                    variant="outline"
+                                                                    className="text-xs"
+                                                                >
+                                                                    {doc.agent
+                                                                        .name ||
+                                                                        'Unnamed'}
+                                                                </Badge>
+                                                            ) : (
+                                                                <span className="text-xs text-slate-400 italic">
+                                                                    {t(
+                                                                        'knowledgeBase.noAgent',
+                                                                    )}
+                                                                </span>
+                                                            )}
+                                                        </TableCell>
+                                                        <TableCell className="py-4">
                                                             {getStatusIcon(
                                                                 doc.status,
                                                             )}
@@ -515,19 +669,35 @@ export default function KnowledgeBaseIndex({
                                                             </div>
                                                         </TableCell>
                                                         <TableCell className="py-4 text-right">
-                                                            <button
-                                                                onClick={() =>
-                                                                    handleDelete(
-                                                                        doc.id,
-                                                                    )
-                                                                }
-                                                                className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-900/30 dark:hover:text-rose-400"
-                                                                title={t(
-                                                                    'knowledgeBase.delete',
-                                                                )}
-                                                            >
-                                                                <Trash2 className="h-4 w-4" />
-                                                            </button>
+                                                            <div className="flex items-center justify-end gap-1">
+                                                                <a
+                                                                    href={
+                                                                        web.download(
+                                                                            doc.id,
+                                                                        ).url
+                                                                    }
+                                                                    
+                                                                    className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-sky-100 hover:text-sky-600 dark:hover:bg-sky-900/30 dark:hover:text-sky-400"
+                                                                    title={t(
+                                                                        'knowledgeBase.download',
+                                                                    )}
+                                                                >
+                                                                    <Download className="h-4 w-4" />
+                                                                </a>
+                                                                <button
+                                                                    onClick={() =>
+                                                                        handleDelete(
+                                                                            doc.id,
+                                                                        )
+                                                                    }
+                                                                    className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-900/30 dark:hover:text-rose-400"
+                                                                    title={t(
+                                                                        'knowledgeBase.delete',
+                                                                    )}
+                                                                >
+                                                                    <Trash2 className="h-4 w-4" />
+                                                                </button>
+                                                            </div>
                                                         </TableCell>
                                                     </TableRow>
                                                 ))}
@@ -535,7 +705,7 @@ export default function KnowledgeBaseIndex({
                                                 {documents.length === 0 && (
                                                     <TableRow>
                                                         <TableCell
-                                                            colSpan={3}
+                                                            colSpan={4}
                                                             className="h-64"
                                                         >
                                                             <div className="flex flex-col items-center justify-center gap-4 text-slate-400 dark:text-slate-500">
@@ -569,57 +739,4 @@ export default function KnowledgeBaseIndex({
             </div>
         </AppLayout>
     );
-}
-
-{
-    /* <div className="space-y-3">
-<Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-<Sparkles className="h-4 w-4 text-slate-400" />
-{ }
-</Label>
-<div className="flex flex-wrap gap-2 rounded-xl border border-slate-200/50 bg-slate-100/50 p-3 backdrop-blur-sm dark:border-slate-700/50 dark:bg-slate-800/30">
-{instances.map((instance) => {
-const active =
-data.instance_names.includes(
-instance.instance_name,
-);
-return (
-<button
-key={
-instance.instance_name
-}
-type="button"
-onClick={() =>
-toggleInstance(
-instance.instance_name,
-)
-}
-className={`relative transform rounded-full px-4 py-2 text-sm font-medium transition-all duration-300 hover:scale-105 active:scale-95 ${
-active
-? 'border-0 bg-linear-to-r from-sky-500 to-teal-500 text-white shadow-lg shadow-sky-500/25'
-: 'border border-slate-200 bg-white text-slate-600 hover:border-sky-400 hover:text-sky-600 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:border-sky-500 dark:hover:text-sky-400'
-} `}
->
-{active && (
-<span className="absolute inset-0 animate-pulse rounded-full bg-white/20" />
-)}
-<span className="relative flex items-center gap-1.5">
-{active && (
-<CheckCircle className="h-3.5 w-3.5" />
-)}
-{
-instance.instance_name
-}
-</span>
-</button>
-);
-})}
-</div>
-{errors.instance_names && (
-<p className="flex items-center gap-1 text-xs font-medium text-rose-500">
-<AlertCircle className="h-3 w-3" />
-{errors.instance_names}
-</p>
-)}
-</div> */
 }

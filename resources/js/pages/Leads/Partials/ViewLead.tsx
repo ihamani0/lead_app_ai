@@ -26,7 +26,7 @@ import type { Lead } from '@/types';
 
 export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
     return (
-<Dialog>
+        <Dialog>
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
@@ -36,12 +36,12 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                     <Eye className="h-4 w-4" />
                 </Button>
             </DialogTrigger>
-            
+
             <DialogContent className="w-full max-w-lg gap-0 overflow-hidden border-border bg-background p-0">
                 {/* Header with linear background */}
                 <div className="relative bg-linear-to-br from-violet-500/10 via-purple-500/5 to-blue-500/10 p-6 pb-4 dark:from-violet-950/50 dark:via-purple-950/30 dark:to-blue-950/50">
                     <div className="bg-grid-white/10 dark:bg-grid-white/5 absolute inset-0 mask-[linear-linear(0deg,white,rgba(255,255,255,0.6))]"></div>
-                    
+
                     <DialogHeader className="relative">
                         <div className="mb-2 flex items-center gap-3">
                             <div className="rounded-xl bg-linear-to-br from-violet-500 to-purple-600 p-2 shadow-lg shadow-violet-500/20">
@@ -62,7 +62,6 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                 <ScrollArea className="max-h-[calc(100vh-12rem)]">
                     {selectedLead && (
                         <div className="space-y-6 p-6">
-                            
                             {/* Core Info Card */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -89,7 +88,9 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                                             Phone
                                         </div>
                                         <div className="flex items-center gap-1.5 font-medium text-foreground">
-                                            <span className="text-muted-foreground">+</span>
+                                            <span className="text-muted-foreground">
+                                                +
+                                            </span>
                                             {selectedLead.phone}
                                         </div>
                                     </div>
@@ -104,11 +105,17 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                                         </div>
                                         <div className="flex flex-col items-end gap-1.5 font-medium text-foreground">
                                             <p className="font-medium text-slate-900 dark:text-foreground">
-                                                {selectedLead.instance?.instance_name || 'Main Agent'}
+                                                {selectedLead.instance
+                                                    ?.display_name ||
+                                                    selectedLead.instance
+                                                        ?.instance_name ||
+                                                    'Main Agent'}
                                             </p>
                                             <p className="text-xs text-slate-500 dark:text-foreground">
-                                                +{selectedLead.instance?.phone_number || "-- --"}
-                                            </p>                                          
+                                                +
+                                                {selectedLead.instance
+                                                    ?.phone_number || '-- --'}
+                                            </p>
                                         </div>
                                     </div>
 
@@ -120,7 +127,9 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                                             Created
                                         </div>
                                         <div className="text-sm font-medium text-foreground">
-                                            {new Date(selectedLead.created_at).toLocaleDateString(undefined, {
+                                            {new Date(
+                                                selectedLead.created_at,
+                                            ).toLocaleDateString(undefined, {
                                                 year: 'numeric',
                                                 month: 'short',
                                                 day: 'numeric',
@@ -155,12 +164,24 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                                             <span className="text-sm font-medium text-foreground">
                                                 AI Confidence Score
                                             </span>
-                                            <Badge variant="secondary" className="font-bold tabular-nums">
-                                                {(selectedLead.qualification_score || 0) * 100 / 10}%
+                                            <Badge
+                                                variant="secondary"
+                                                className="font-bold tabular-nums"
+                                            >
+                                                {((selectedLead.qualification_score ||
+                                                    0) *
+                                                    100) /
+                                                    10}
+                                                %
                                             </Badge>
                                         </div>
                                         <Progress
-                                            value={(selectedLead.qualification_score || 0) * 100 / 10}
+                                            value={
+                                                ((selectedLead.qualification_score ||
+                                                    0) *
+                                                    100) /
+                                                10
+                                            }
                                             className="h-2 bg-secondary"
                                         />
                                     </div>
@@ -180,7 +201,8 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                                                 </span>
                                             </div>
                                             <p className="text-sm leading-relaxed text-slate-700 italic dark:text-slate-300">
-                                                {selectedLead.ai_summary || 'No summary generated yet.'}
+                                                {selectedLead.ai_summary ||
+                                                    'No summary generated yet.'}
                                             </p>
                                         </div>
                                     </div>
@@ -188,27 +210,34 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                             </div>
 
                             {/* Dynamic Custom Data */}
-                            {selectedLead.custom_data && Object.keys(selectedLead.custom_data).length > 0 && (
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-2 text-sm font-medium text-foreground">
-                                        <div className="h-4 w-1 rounded-full bg-linear-to-b from-emerald-500 to-teal-500" />
-                                        Extracted Data
-                                    </div>
+                            {selectedLead.custom_data &&
+                                Object.keys(selectedLead.custom_data).length >
+                                    0 && (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                                            <div className="h-4 w-1 rounded-full bg-linear-to-b from-emerald-500 to-teal-500" />
+                                            Extracted Data
+                                        </div>
 
-                                    <div className="grid grid-cols-2 gap-3">
-                                        {Object.entries(selectedLead.custom_data).map(([key, value]) => (
-                                            <div key={key} className="rounded-xl border bg-card p-3 shadow-sm transition-shadow hover:shadow-md">
-                                                <p className="mb-1 text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
-                                                    {key.replace(/_/g, ' ')}
-                                                </p>
-                                                <p className="truncate text-sm font-semibold text-foreground">
-                                                    {String(value)}
-                                                </p>
-                                            </div>
-                                        ))}
+                                        <div className="grid grid-cols-2 gap-3">
+                                            {Object.entries(
+                                                selectedLead.custom_data,
+                                            ).map(([key, value]) => (
+                                                <div
+                                                    key={key}
+                                                    className="rounded-xl border bg-card p-3 shadow-sm transition-shadow hover:shadow-md"
+                                                >
+                                                    <p className="mb-1 text-[10px] font-semibold tracking-wider text-muted-foreground uppercase">
+                                                        {key.replace(/_/g, ' ')}
+                                                    </p>
+                                                    <p className="truncate text-sm font-semibold text-foreground">
+                                                        {String(value)}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
                                     </div>
-                                </div>
-                            )}
+                                )}
                         </div>
                     )}
                 </ScrollArea>

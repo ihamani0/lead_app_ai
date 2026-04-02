@@ -22,6 +22,7 @@ export function CreateInstanceDialog({ t }: { t: TFunction }) {
 
     const form = useForm({
         name: '',
+        display_name: '',
         phone_number: '',
     });
 
@@ -45,7 +46,7 @@ export function CreateInstanceDialog({ t }: { t: TFunction }) {
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button variant={'outline'} className='shadow-lg'>
+                <Button variant={'outline'} className="shadow-lg">
                     <PlusCircle className="mr-2 h-4 w-4" />
                     {t('profil.connectNewNumber')}
                 </Button>
@@ -56,15 +57,15 @@ export function CreateInstanceDialog({ t }: { t: TFunction }) {
             >
                 <form onSubmit={onSubmit}>
                     <DialogHeader>
-                        <DialogTitle>{t("profil.createTitle")}</DialogTitle>
+                        <DialogTitle>{t('profil.createTitle')}</DialogTitle>
                         <DialogDescription>
-                            {t("profil.createDesc")}
+                            {t('profil.createDesc')}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="name" className="text-right">
-                                {t("profil.name")}
+                                {t('profil.name')}
                             </Label>
                             <Input
                                 id="name"
@@ -73,13 +74,30 @@ export function CreateInstanceDialog({ t }: { t: TFunction }) {
                                     form.setData('name', e.target.value)
                                 }
                                 className="col-span-3"
-                                placeholder={t("profil.namePlaceholder")}
+                                placeholder={t('profil.namePlaceholder')}
                                 required
                             />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
+                            <Label
+                                htmlFor="display_name"
+                                className="text-right"
+                            >
+                                {t('profil.displayName')}
+                            </Label>
+                            <Input
+                                id="display_name"
+                                value={form.data.display_name}
+                                onChange={(e) =>
+                                    form.setData('display_name', e.target.value)
+                                }
+                                className="col-span-3"
+                                placeholder={t('profil.displayNamePlaceholder')}
+                            />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="phone" className="text-right">
-                                {t("profil.number")}
+                                {t('profil.number')}
                             </Label>
                             <Input
                                 id="phone"
@@ -102,7 +120,7 @@ export function CreateInstanceDialog({ t }: { t: TFunction }) {
                             {form.processing && (
                                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             )}
-                            {t("profil.createInstance")}
+                            {t('profil.createInstance')}
                         </Button>
                     </DialogFooter>
                 </form>

@@ -308,7 +308,8 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                         </option>
                         {instances.map((inst) => (
                             <option key={inst.id} value={inst.id}>
-                                {inst.instance_name.split('-')[1] ||
+                                {inst.display_name ||
+                                    inst.instance_name.split('-')[1] ||
                                     inst.instance_name}
                             </option>
                         ))}

@@ -13,7 +13,7 @@ export interface RecentLead {
     status: string;
     temperature: string;
     created_at: string;
-    instance?: { instance_name: string };
+    instance?: { instance_name: string; display_name: string | null };
 }
 
 interface RecentLeadsListProps {
@@ -129,7 +129,8 @@ export function RecentLeadsList({ leads }: RecentLeadsListProps) {
                                         variant="outline"
                                         className="hidden text-xs sm:inline-flex"
                                     >
-                                        {lead.instance.instance_name}
+                                        {lead.instance.display_name ||
+                                            lead.instance.instance_name}
                                     </Badge>
                                 )}
                                 <Badge

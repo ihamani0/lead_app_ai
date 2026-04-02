@@ -14,9 +14,14 @@ return new class extends Migration
         Schema::create('knowledge_bases', function (Blueprint $table) {
             $table->ulid('id')->primary();
             $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
+            $table->foreignUlid('agent_config_id')
+                ->nullable()
+                ->constrained('agent_configs')
+                ->nullOnDelete();
+
             $table->string('name');
-            $table->string('file_path')->nullable(); // Where it's stored in Laravel
-            $table->string('status')->default('processing'); // processing, indexed, failed
+            $table->string('file_path')->nullable();
+            $table->string('status')->default('processing');
             $table->timestamps();
         });
     }

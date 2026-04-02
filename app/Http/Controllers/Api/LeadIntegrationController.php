@@ -116,19 +116,27 @@ class LeadIntegrationController extends Controller
     // get instance with agent config
     public function getAgentConfig(Request $request)
     {
+        $request->validate(['instance' => 'required']);
 
-        $request->validate([
-            'instance' => 'required',
-        ]);
-        // n8n sends: { "instance": "tenant-slug-xyz", "phone": "551199..." }
         $tenantId = $this->getTenantIdFromInstance($request->input('instance'));
-        $instance = EvolutionInstance::where('tenant_id', $tenantId)->where('instance_name', $request->input('instance'))->with('agentConfig')->first();
+        $instance = EvolutionInstance::where('tenant_id', $tenantId)
+            ->where('instance_name', $request->input('instance'))
+            ->with('agentConfig.knowledgeBases')
+            ->firstOrFail();
 
-        $agent_status = $instance->agentConfig->is_active;
+        $agentConfig = $instance->agentConfig;
 
         return response()->json([
-            'status' => $agent_status,
-            'system_prompt' => $instance->agentConfig->system_prompt,
+            'status' => $agentConfig->is_active,
+            'agent' => [
+                'id' => $agentConfig->id,
+                'name' => $agentConfig->name,
+                'provider' => $agentConfig->provider,
+                'webhook_url' => $agentConfig->webhook_url,
+                'is_active' => $agentConfig->is_active,
+                'settings' => $agentConfig->settings,
+            ],
+            'system_prompt' => $agentConfig->system_prompt, // Only once here
         ]);
     }
 }

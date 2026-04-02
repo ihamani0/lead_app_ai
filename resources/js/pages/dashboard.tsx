@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/react';
 import { Users, Phone, Bot, Image } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
+import { formatBytes } from '@/lib/utils';
 import { dashboard } from '@/routes';
 import type { BreadcrumbItem } from '@/types';
 import { InstanceStatusChart } from './dashboard/instance-status-chart';
@@ -14,9 +15,6 @@ import {
     type RecentLead,
 } from './dashboard/recent-leads-list';
 import { StatCard } from './dashboard/stat-card';
-import { formatBytes } from '@/lib/utils';
-
-// Import separated components
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Dashboard', href: dashboard().url },
@@ -53,7 +51,7 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                         value={stats.leads.total}
                         icon={Users}
                         description={`${stats.leads.today} ${t('dashboard.stats.newToday')}`}
-                        trend={{ value: 12, isPositive: true }}
+                        // trend={{ value: 12, isPositive: true }}
                     />
                     <StatCard
                         title={t('dashboard.stats.instances')}
@@ -65,7 +63,7 @@ export default function Dashboard({ stats, recentLeads }: DashboardProps) {
                         title={t('dashboard.stats.activeAgents')}
                         value={`${stats.agents.active}/${stats.agents.total}`}
                         icon={Bot}
-                        trend={{ value: 5, isPositive: true }}
+                        // trend={{ value: 5, isPositive: true }}
                     />
                     <StatCard
                         title={t('dashboard.stats.mediaFiles')}

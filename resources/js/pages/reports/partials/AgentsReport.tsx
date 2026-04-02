@@ -22,7 +22,9 @@ function AgentCard({ agent }: AgentCardProps) {
             <div>
                 <p className="font-medium">{agent.name}</p>
                 <p className="text-sm text-muted-foreground">
-                    {agent.instance_name || t('reports.agents.noInstance')}
+                    {agent.instance_name ||
+                        agent.display_name ||
+                        t('reports.agents.noInstance')}
                 </p>
             </div>
             <Badge variant={agent.is_active ? 'default' : 'secondary'}>

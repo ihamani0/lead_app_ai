@@ -23,64 +23,258 @@ class AgentBotController extends Controller
 
     /**
      * Display a list of AI agents for the tenant.
-     *
-     * @return Inertia\Response
-     *
-     * @description
-     * Currently a placeholder. Can be implemented to return all agents for the tenant.
      */
     public function index(): Response
     {
-
         $tenantId = Auth::user()->tenant_id;
 
-        // Fetch all agents for this tenant, including the WhatsApp instance data
-        $agents = AgentConfig::with('instance')
+        $agents = AgentConfig::with(['instance', 'knowledgeBases'])
+            ->withCount('knowledgeBases')
             ->where('tenant_id', $tenantId)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        // Fetch connected instances that DO NOT have an agent yet
-        // So the user knows which numbers are available for automation
         $availableInstances = EvolutionInstance::where('tenant_id', $tenantId)
             ->where('status', 'connected')
-            ->doesntHave('agentConfig')
+            ->whereDoesntHave('agentConfig')
             ->get();
 
         return Inertia::render('Agents/Index', [
             'agents' => $agents,
             'availableInstances' => $availableInstances,
         ]);
-
     }
 
     /**
-     * Create or connect an AI agent to an Evolution instance.
-     *
-     * @param  Request  $request  The HTTP request, must include 'webhook_url' as a valid URL.
-     * @param  string  $instanceId  The ID of the Evolution instance to connect the bot to.
-     * @param  EvolutionService  $evoService  Service to handle API communication with Evolution.
-     * @return \Illuminate\Http\RedirectResponse Redirects back with success or error message.
-     *
-     * @description
-     * - Validates webhook URL.
-     * - Finds the instance for the current tenant.
-     * - Creates or updates the local AgentConfig record.
-     * - Sends the agent configuration to Evolution API.
-     * - Stores the returned evo_integration_id locally.
-     * - Sets default settings if the agent is new (delayMessage, keywordFinish).
+     * Create a standalone agent (no instance required).
      */
-    public function store(Request $request, string $instanceId, EvolutionService $evoService): \Illuminate\Http\RedirectResponse
+    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'system_prompt' => 'nullable|string',
+            'webhook_url' => 'nullable|url',
+        ]);
+
+        try {
+            AgentConfig::create([
+                'tenant_id' => $request->user()->tenant_id,
+                'name' => $request->name,
+                'system_prompt' => $request->system_prompt,
+                'webhook_url' => $request->webhook_url,
+                'is_active' => false,
+                'settings' => [],
+            ]);
+
+            return back()->with('success', __('messages.success.agent_created'));
+        } catch (Exception $e) {
+            dd($e->getMessage());
+
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Update AI agent settings and system prompt.
+     */
+    public function update(Request $request, AgentConfig $agent): \Illuminate\Http\RedirectResponse
     {
 
+        if ($agent->tenant_id !== $request->user()->tenant_id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+            'config_webhook_url' => 'nullable|url',
+            'system_prompt' => 'nullable|string',
+            'settings' => 'nullable|array',
+        ]);
+
+        try {
+            $agent->update([
+                'name' => $request->name ?? $agent->name,
+                'webhook_url' => $request->config_webhook_url ?? $agent->webhook_url,
+                'system_prompt' => $request->system_prompt,
+                'settings' => [...($agent->settings ?? []), ...($request->settings ?? [])],
+            ]);
+
+            // Sync with Evolution API if linked
+            if ($agent->isLinked() && $agent->instance) {
+                $evoService = app(EvolutionService::class);
+                $evoService->updateN8nBot($agent->instance, $agent);
+
+                $blacklist = $request->settings['blacklist'] ?? [];
+                if (! empty($blacklist)) {
+                    $evoService->updateN8nSettings($agent->instance, $agent);
+                }
+            }
+
+            return back()->with('success', __('messages.success.updated_agent'));
+        } catch (Exception $e) {
+
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Link an instance to an agent.
+     */
+    public function linkInstance(Request $request, AgentConfig $agent, EvolutionService $evoService): \Illuminate\Http\RedirectResponse
+    {
+
+        if ($agent->tenant_id !== $request->user()->tenant_id) {
+            abort(403);
+        }
+
+        $request->validate([
+            'instance_id' => 'required|exists:evolution_instances,id',
+            'webhook_url' => 'required|url',
+        ]);
+
+        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
+            ->findOrFail($request->instance_id);
+
+        if ($instance->status !== 'connected') {
+            return back()->withErrors(['error' => 'Instance must be connected before linking.']);
+        }
+
+        try {
+            return DB::transaction(function () use ($agent, $instance, $request, $evoService) {
+                // If agent was previously linked to another instance, unlink first
+                if ($agent->isLinked() && $agent->instance) {
+                    try {
+                        $evoService->deleteN8nBot($agent->instance, $agent);
+                    } catch (Exception) {
+                        // Ignore errors when unlinking
+                    }
+                }
+
+                // Update agent with new instance
+                $agent->update([
+                    'evolution_instance_id' => $instance->id,
+                    'webhook_url' => $request->webhook_url,
+                    'is_active' => true,
+                ]);
+
+                // Connect bot to Evolution API
+                $evoResponse = $evoService->connectN8nBot($instance, $agent);
+                $agent->update(['evo_integration_id' => $evoResponse['id'] ?? null]);
+
+                return back()->with('success', __('messages.success.connected_agent'));
+            });
+        } catch (Exception $e) {
+            dd($e->getMessage());
+
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Unlink an instance from an agent (keeps agent config intact).
+     */
+    public function unlinkInstance(Request $request, AgentConfig $agent, EvolutionService $evoService): \Illuminate\Http\RedirectResponse
+    {
+        if ($agent->tenant_id !== $request->user()->tenant_id) {
+            abort(403);
+        }
+
+        if (! $agent->isLinked()) {
+            return back()->withErrors(['error' => 'Agent is not linked to any instance.']);
+        }
+
+        try {
+            return DB::transaction(function () use ($agent, $evoService) {
+                // Remove from Evolution API
+                if ($agent->instance) {
+                    try {
+                        $evoService->deleteN8nBot($agent->instance, $agent);
+                    } catch (Exception $e) {
+                        // Ignore errors
+                        dd($e->getMessage());
+                    }
+                }
+
+                // Clear connection details but keep name, prompt, settings, knowledge bases
+                $agent->update([
+                    'evolution_instance_id' => null,
+                    'is_active' => false,
+                    'evo_integration_id' => null,
+                    'webhook_url' => null,
+                ]);
+
+                return back()->with('success', __('messages.success.disconnected_agent'));
+            });
+        } catch (Exception $e) {
+            dd($e->getMessage());
+
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Toggle the AI agent status (pause/resume).
+     */
+    public function toggle(Request $request, AgentConfig $agent, EvolutionService $evoService): \Illuminate\Http\RedirectResponse
+    {
+        if ($agent->tenant_id !== $request->user()->tenant_id) {
+            abort(403);
+        }
+
+        if (! $agent->isLinked()) {
+            return back()->withErrors(['error' => 'Agent must be linked to an instance first.']);
+        }
+
+        try {
+            return DB::transaction(function () use ($agent, $evoService) {
+                $newStatus = ! $agent->is_active;
+
+                $evoService->toggleN8nBot($agent->instance, $agent, $newStatus);
+                $agent->update(['is_active' => $newStatus]);
+
+                $message = $newStatus ? 'Bot Resumed' : 'Bot Paused';
+
+                return back()->with('success', $message);
+            });
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Delete an agent entirely.
+     */
+    public function destroy(Request $request, AgentConfig $agent): \Illuminate\Http\RedirectResponse
+    {
+        if ($agent->tenant_id !== $request->user()->tenant_id) {
+            abort(403);
+        }
+
+        try {
+            if ($agent->isLinked() && $agent->instance) {
+                $evoService = app(EvolutionService::class);
+                $evoService->deleteN8nBot($agent->instance, $agent);
+            }
+
+            $agent->delete();
+
+            return back()->with('success', 'Agent deleted successfully.');
+        } catch (Exception $e) {
+            dd($e->getMessage());
+
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    // ─── Legacy methods (for backward compatibility with old instance-based routes) ───
+
+    public function storeLegacy(Request $request, string $instanceId, EvolutionService $evoService): \Illuminate\Http\RedirectResponse
+    {
         $request->validate(['webhook_url' => 'required|url']);
 
         $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)->findOrFail($instanceId);
 
-        // dd($instance);
-
         try {
-            // Create or update the Agent Config locally first
             return DB::transaction(function () use ($instance, $request, $evoService) {
                 $agent = AgentConfig::updateOrCreate(
                     [
@@ -88,48 +282,25 @@ class AgentBotController extends Controller
                         'evolution_instance_id' => $instance->id,
                     ], [
                         'instance_name' => $instance->instance_name,
+                        'name' => $instance->instance_name,
                         'webhook_url' => $request->webhook_url,
                         'is_active' => true,
-                        // Default settings if brand new
                         'settings' => ['delayMessage' => 1200, 'keywordFinish' => '#STOP'],
                     ]
                 );
 
-                // Send to Evolution API
                 $evoResponse = $evoService->connectN8nBot($instance, $agent);
-
-                // Save the Integration ID returned by Evolution
                 $agent->update(['evo_integration_id' => $evoResponse['id'] ?? null]);
 
                 return back()->with('success', __('messages.success.connected_agent'));
             });
-
         } catch (Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
         }
-
     }
 
-    /**
-     * Update AI agent settings and system prompt.
-     *
-     * @param  Request  $request  The HTTP request; optional fields:
-     *                            - system_prompt (string)
-     *                            - settings (array)
-     *                            - webhook_url (string, URL)
-     * @param  string  $instanceId  The ID of the Evolution instance.
-     * @param  EvolutionService  $evoService  Service to communicate with Evolution API.
-     * @return \Illuminate\Http\RedirectResponse Redirects back with success or error message.
-     *
-     * @description
-     * - Finds the agent config for the instance.
-     * - Merges new settings with existing ones.
-     * - Updates system prompt and webhook URL if provided.
-     * - Sends updated settings to Evolution API (prompt handled by n8n).
-     */
-    public function update(Request $request, $instanceId, EvolutionService $evoService)
+    public function updateLegacy(Request $request, $instanceId, EvolutionService $evoService)
     {
-
         $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
             ->findOrFail($instanceId);
 
@@ -145,17 +316,14 @@ class AgentBotController extends Controller
         ]);
 
         try {
-            // Update local DB
             $agent->update([
                 'config_webhook_url' => $request->config_webhook_url ?? $agent->config_webhook_url,
                 'system_prompt' => $request->system_prompt,
                 'settings' => [...($agent->settings ?? []), ...($request->settings ?? [])],
             ]);
 
-            // Sync Settings with Evolution API (Prompt is handled by n8n, but settings go to Evo)
             $evoService->updateN8nBot($instance, $agent);
 
-            // If blacklist not empty → also update global N8N settings
             $blacklist = $request->settings['blacklist'] ?? [];
             if (! empty($blacklist)) {
                 $evoService->updateN8nSettings($instance, $agent);
@@ -167,36 +335,15 @@ class AgentBotController extends Controller
         }
     }
 
-    /**
-     * Toggle the AI agent status (pause/resume).
-     *
-     * @param  Request  $request  The HTTP request.
-     * @param  string  $instanceId  The ID of the Evolution instance.
-     * @param  EvolutionService  $evoService  Service to communicate with Evolution API.
-     * @return \Illuminate\Http\RedirectResponse Redirects back with message indicating bot status.
-     *
-     * @description
-     * - Retrieves the agent config for the instance.
-     * - Computes the new status as the opposite of current 'is_active'.
-     * - Calls Evolution API to pause/resume the bot.
-     * - Updates local DB 'is_active' field.
-     * - Returns a message: 'Bot Paused' or 'Bot Resumed'.
-     */
-    public function toggle(Request $request, $instanceId, EvolutionService $evoService)
+    public function toggleLegacy(Request $request, $instanceId, EvolutionService $evoService)
     {
         $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)->findOrFail($instanceId);
         $agent = $instance->agentConfig;
 
         try {
-
-            return DB::transaction(function () use ($instance, $agent, $evoService) {
-
+            return DB::transaction(function () use ($agent, $evoService) {
                 $newStatus = ! $agent->is_active;
-
-                // Send to Evolution API  // Tell Evolution to pause/resume
-                $evoService->toggleN8nBot($instance, $agent, $newStatus);
-
-                // Update DB
+                $evoService->toggleN8nBot($agent->instance, $agent, $newStatus);
                 $agent->update(['is_active' => $newStatus]);
 
                 $message = $newStatus ? 'Bot Resumed' : 'Bot Paused';
@@ -208,32 +355,14 @@ class AgentBotController extends Controller
         }
     }
 
-    /**
-     * Disconnect the AI agent from Evolution API and clear integration details.
-     *
-     * @param  Request  $request  The HTTP request.
-     * @param  string  $instanceId  The ID of the Evolution instance.
-     * @param  EvolutionService  $evoService  Service to communicate with Evolution API.
-     * @return \Illuminate\Http\RedirectResponse Redirects back with success or error message.
-     *
-     * @description
-     * - Retrieves the agent config for the instance.
-     * - Calls Evolution API to delete the bot.
-     * - Updates local DB to clear integration ID and webhook URL.
-     * - Sets 'is_active' to false.
-     * - Preserves system prompt/settings in local DB for future reuse.
-     */
-    public function destroy(Request $request, $instanceId, EvolutionService $evoService)
+    public function destroyLegacy(Request $request, $instanceId, EvolutionService $evoService)
     {
         $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)->findOrFail($instanceId);
         $agent = $instance->agentConfig;
 
         try {
             if ($agent) {
-                // Remove from Evolution
                 $evoService->deleteN8nBot($instance, $agent);
-
-                // We keep the record but clear the connection details so they don't lose their prompt
                 $agent->update([
                     'is_active' => false,
                     'evo_integration_id' => null,
@@ -244,6 +373,124 @@ class AgentBotController extends Controller
             return back()->with('success', __('messages.success.disconnected_agent'));
         } catch (Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Display agent detail page.
+     */
+    public function show(Request $request, string $agentId): Response
+    {
+        $tenantId = $request->user()->tenant_id;
+
+        $agent = AgentConfig::with(['instance', 'knowledgeBases'])
+            ->withCount('knowledgeBases')
+            ->where('tenant_id', $tenantId)
+            ->findOrFail($agentId);
+
+        $availableInstances = EvolutionInstance::where('tenant_id', $tenantId)
+            ->where('status', 'connected')
+            ->where(function ($query) use ($agent) {
+                $query->whereDoesntHave('agentConfig')
+                    ->orWhere('id', $agent->evolution_instance_id);
+            })
+            ->get();
+
+        return Inertia::render('Agents/Show', [
+            'agent' => $agent,
+            'availableInstances' => $availableInstances,
+        ]);
+    }
+
+    /**
+     * Clone an agent (copy without instance link).
+     */
+    public function clone(Request $request)
+    {
+        $request->validate([
+            'name' => 'nullable|string|max:255',
+        ]);
+
+        $originalAgent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
+            ->findOrFail($request->route('agent'));
+
+        try {
+            $clonedAgent = $originalAgent->replicate();
+            $clonedAgent->name = $request->input('name', $originalAgent->name.' (Copy)');
+            $clonedAgent->evolution_instance_id = null;
+            $clonedAgent->is_active = false;
+            $clonedAgent->webhook_url = null;
+            $clonedAgent->evo_integration_id = null;
+            $clonedAgent->save();
+
+            return back()->with('success', 'Agent cloned successfully.');
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => 'Failed to clone agent: '.$e->getMessage()]);
+        }
+    }
+
+    /**
+     * Update agent settings (blocklist, delay, etc).
+     */
+    public function updateSettings(Request $request, string $agentId, EvolutionService $evoService)
+    {
+        $request->validate([
+            'settings' => 'nullable|array',
+            'settings.blocklist' => 'nullable|array',
+            'settings.blocklist.*' => 'string|max:20',
+            'settings.delayMessage' => 'nullable|integer|min:0',
+            'settings.keywordFinish' => 'nullable|string|max:50',
+            'settings.unknownMessage' => 'nullable|string|max:500',
+            'settings.listeningFromMe' => 'nullable|boolean',
+            'settings.stopBotFromMe' => 'nullable|boolean',
+            'settings.keepOpen' => 'nullable|boolean',
+        ]);
+
+        $agent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
+            ->findOrFail($agentId);
+
+        try {
+            DB::transaction(function () use ($agent, $request, $evoService) {
+                $currentSettings = $agent->settings ?? [];
+                $newSettings = $request->input('settings', []);
+
+                $mergedSettings = array_merge($currentSettings, $newSettings);
+
+                if (isset($newSettings['blocklist'])) {
+                    $mergedSettings['blocklist'] = array_values(array_unique($newSettings['blocklist']));
+                }
+
+                $agent->settings = $mergedSettings;
+                $agent->save();
+
+                if ($agent->isLinked() && $agent->is_active) {
+                    $evoService->updateN8nSettings($agent->instance, $agent);
+                }
+            });
+
+            return back()->with('success', 'Settings updated successfully.');
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => 'Failed to update settings: '.$e->getMessage()]);
+
+        }
+    }
+
+    /**
+     * Reset system prompt to default.
+     */
+    public function resetSystemPrompt(Request $request, string $agentId)
+    {
+        $agent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
+            ->findOrFail($agentId);
+
+        try {
+            $agent->update([
+                'system_prompt' => $agent->default_system_prompt,
+            ]);
+
+            return back()->with('success', 'System prompt reset to default.');
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => 'Failed to reset prompt: '.$e->getMessage()]);
         }
     }
 }

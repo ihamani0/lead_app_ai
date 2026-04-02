@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\EvolutionInstance;
+use App\Models\KnowledgeBase;
 use App\Models\Lead;
 use App\Models\MediaAsset;
 use Illuminate\Http\Request;
@@ -98,5 +99,24 @@ class N8nIntegrationController extends Controller
         Log::info('assets count', ['count' => $assets->count()]);
 
         return response()->json(['assets' => $formattedAssets]);
+    }
+
+    public function download(Request $request, $id)
+    {
+        $document = KnowledgeBase::where('tenant_id', $request->tenant_id)
+            ->findOrFail($id);
+
+        $file_path = $document->getFirstMediaPath('documents');
+
+        return response()->download($file_path);
+    }
+
+    public function markAsIndexed(Request $request)
+    {
+        $document = KnowledgeBase::where('tenant_id', $request->tenant_id)
+            ->findOrFail($request->document_id);
+        $document->update(['status' => 'indexed']);
+
+        return response()->json(['success' => true]);
     }
 }

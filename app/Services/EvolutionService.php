@@ -219,7 +219,7 @@ class EvolutionService
     public function updateN8nSettings(EvolutionInstance $instance, AgentConfig $agent)
     {
         $settings = $agent->settings ?? [];
-        $blacklist = $settings['blacklist'] ?? [];
+        $blacklist = $settings['blocklist'] ?? [];
 
         if (empty($blacklist)) {
             return;
@@ -246,7 +246,7 @@ class EvolutionService
                 expire: $currentSettings['expire'] ?? 20,
                 keywordFinish: $currentSettings['keywordFinish'] ?? '#STOP',
                 delayMessage: $currentSettings['delayMessage'] ?? 1000,
-                unknownMessage: $currentSettings['unknownMessage'] ?? '',
+                unknownMessage: $currentSettings['unknownMessage'] ?: 'Message not recognized',
                 listeningFromMe: $currentSettings['listeningFromMe'] ?? false,
                 stopBotFromMe: $currentSettings['stopBotFromMe'] ?? true,
                 keepOpen: $currentSettings['keepOpen'] ?? false,

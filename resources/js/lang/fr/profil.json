@@ -35,9 +35,26 @@
     "createTitle": "Créer une instance WhatsApp",
     "createDesc": "Entrez un nom pour cette connexion. Vous scannerez le code QR ensuite.",
     "name": "Nom",
-    "number":"Télephone",
+    "number": "Télephone",
     "cancel": "Annuler",
     "create": "Créer",
     "createInstance": "Créer une instance",
-    "namePlaceholder": "ex. Équipe commerciale"
+    "namePlaceholder": "ex. Équipe commerciale",
+    "displayName": "Nom d'affichage",
+    "displayNamePlaceholder": "ex. Ligne Support Principale",
+
+    "tabActive": "Actif",
+    "tabDeleted": "Supprimé",
+    "deleted": "Supprimé",
+    "restore": "Restaurer",
+    "forceDelete": "Supprimer définitivement",
+    "forceDeleteConfirm": "Tapez DELETE pour confirmer",
+    "forceDeleteWarning": "Cette action est irréversible. Toutes les données seront définitivement supprimées.",
+    "deleting": "Suppression...",
+    "instance": "Instance",
+    "deletedAt": "Supprimé le",
+    "needsRecreation": "Nécessite une reconnexion",
+    "originalName": "Nom original",
+    "noDeleted": "Aucune instance supprimée",
+    "noDeletedDesc": "Les instances supprimées apparaîtront ici."
 }

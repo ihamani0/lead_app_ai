@@ -4,15 +4,16 @@
     "documentsCount": "Documents",
 
     "status": {
-    "ready": "Prêt",
-    "processing": "Traitement",
-    "failed": "Échec"
+        "ready": "Prêt",
+        "processing": "Traitement",
+        "failed": "Échec"
     },
     "upload": {
         "title": "Entraîner l'IA",
         "description": "Téléchargez des documents pour améliorer les capacités de votre IA",
         "documentName": "Nom du document",
         "uploadFile": "Télécharger un fichier",
+        "targetAgent": "Agent cible",
         "targetInstances": "Instances cibles",
         "dropFile": "Déposez le fichier ici ou cliquez pour parcourir",
         "supportedFormats": "Supporte PDF, TXT, DOCX",
@@ -32,6 +33,14 @@
         "documentLabel": "Document",
         "noDocuments": "Aucun document pour le moment",
         "uploadFirstDocument": "Téléchargez votre premier document pour commencer"
-    }
-
+    },
+    "filterByAgent": "Filtrer par agent",
+    "allAgents": "Tous les agents",
+    "noAgent": "Aucun agent assigné",
+    "download": "Télécharger",
+    "delete": "Supprimer",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer ce document ?",
+    "select_agent_required": "Sélectionner un agent",
+    "noAgentsWarning": "Vous devez créer un agent avant de télécharger des documents.",
+    "createAgentFirst": "Créer un agent"
 }

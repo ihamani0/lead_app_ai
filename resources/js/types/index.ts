@@ -5,23 +5,26 @@ export type * from './ui';
 export type InstanceStatus = 'connecting' | 'connected' | 'disconnected';
 
 export interface EvolutionInstance {
-    id: string; // ULID
+    id: string;
     tenant_id: string;
 
-    instance_name: string; // e.g., "tenant-slug-name-xyz"
-    phone_number: string | null; // e.g., "551199999999"
+    instance_name: string;
+    display_name: string | null;
+    phone_number: string | null;
 
     status: InstanceStatus;
 
-    qr_code: string | null; // Base64 string if stored, otherwise null
+    qr_code: string | null;
     webhook_url: string | null;
 
-    settings: Record<string, unknown> | null; // JSONB column
+    settings: Record<string, unknown> | null;
+
+    deleted_at: string | null;
 
     agent_config: AgentConfig | null;
-    connected_at: string | null; // ISO Date String
-    created_at: string; // ISO Date String
-    updated_at: string; // ISO Date String
+    connected_at: string | null;
+    created_at: string;
+    updated_at: string;
 }
 
 // Optional: If you pass paginated data from Laravel
@@ -42,36 +45,35 @@ export interface EvolutionSettings {
     keepOpen?: boolean; // Keep the conversation open after response
     debounceTime?: number; // Debounce time in ms
     ignoreJids?: string[]; // JIDs to ignore
+    blocklist?: string[]; // Blocked JIDs
     [key: string]: unknown; // Allow future evolution-specific fields
 }
 
 export interface AgentConfig {
-    id: string; // ULID primary key (if using Laravel default)
-    evolution_instance_id: string; // FK to EvolutionInstance
-    instance_name: string; // Unique name for the instance
+    id: string;
+    name: string;
+    evolution_instance_id: string | null;
+    instance_name: string | null;
 
-    // Connection Settings
-    is_active: boolean; // Bot on/off
-    webhook_url?: string | null; // URL for Evolution messages
+    is_active: boolean;
+    webhook_url?: string | null;
 
     config_webhook_url: string | null;
 
-    // Provider Settings
-    provider: EvolutionProvider; // Provider type
-    provider_id?: string | null; // Workflow/ID for the provider
+    provider: EvolutionProvider;
+    provider_id?: string | null;
 
-    // Evolution API integration
-    evo_integration_id?: string | null; // ID returned by API
+    evo_integration_id?: string | null;
 
-    // AI Brain
-    system_prompt?: string | null; // Optional AI system prompt
+    system_prompt?: string | null;
+    default_system_prompt?: string | null;
 
-    // Evolution-specific settings
     settings?: EvolutionSettings | null;
 
     instance?: EvolutionInstance | null;
 
-    // Timestamps (if you want to include Laravel timestamps)
+    knowledge_bases_count?: number;
+
     created_at?: string;
     updated_at?: string;
 }
