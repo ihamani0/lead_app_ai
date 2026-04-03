@@ -5,29 +5,14 @@ namespace App\Http\Controllers\Api;
 use App\Events\InstanceConnectionUpdated;
 use App\Events\QrCodeUpdated;
 use App\Http\Controllers\Controller;
-use App\Jobs\ReconcileInstanceStatus;
 use App\Models\EvolutionInstance;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-// Evolution Webhook:                                                           │
-// [logs] └ POST: /webhooks/evolution • Auth ID: guest
-// • event: connection.update
-// • instance: ha-hamani-issam-edone-mXzT
-// • data: array ( 'instance' => 'ha-hamani-issam-edone-mXzT', 'wuid' => '213697096705@s.whatsapp.net', 'profilePictureUrl' => NULL, 'state' => 'open', 'statusReason' => 200, )
-// • destination: http://172.21.0.1:8000/webhooks/evolution
-// • date_time: 2026-02-22T20:13:47.486Z
-// • sender: 213697096705@s.whatsapp.net
-// • server_url: http://localhost:8080 • apikey: NULL ┘
-
 class EvolutionWebhookController extends Controller
 {
-    //
     public function handle(Request $request)
     {
-        // 1. Log payload for debugging (check storage/logs/laravel.log)
-        Log::info('Evolution Webhook:', $request->all());
-
         $payload = $request->all();
         $event = $payload['event'] ?? null;
         $instanceName = $payload['instance'] ?? null;
@@ -41,29 +26,19 @@ class EvolutionWebhookController extends Controller
         | QR UPDATED
         |--------------------------------------------------------------------------
         */
-
         if ($event === 'qrcode.updated') {
-
-            // Extract the QR code correctly from the nested structure
             $qrData = $payload['data']['qrcode'] ?? null;
 
             if (! $qrData) {
                 Log::warning('QR code data missing in webhook', ['payload' => $payload]);
-
                 return response()->json(['error' => 'QR data missing'], 400);
             }
 
-            // Use the base64 image data (ready to display)
+            // Evolution API provides base64 image data directly
+            $qrCode = $qrData['base64'] ?? $qrData['code'] ?? null;
 
-            // Or use the raw code if you want to generate QR yourself
-            $qrCode = $qrData['code'] ?? null;
-
-            broadcast(new QrCodeUpdated(
-                $instanceName,
-                $qrCode // This now contains the actual QR data!
-
-            ));
-
+            broadcast(new QrCodeUpdated($instanceName, $qrCode));
+            return response()->json(['status' => 'success']);
         }
 
         /*
@@ -72,43 +47,41 @@ class EvolutionWebhookController extends Controller
         |--------------------------------------------------------------------------
         */
         if ($event === 'connection.update') {
-
             $state = $payload['data']['state'] ?? 'close';
+            $statusReason = $payload['data']['statusReason'] ?? null;
 
+            // State Machine Logic
             $status = match ($state) {
                 'open' => 'connected',
-                'close' => 'disconnected',
                 'connecting' => 'connecting',
+                // 401 or 'device_removed' means the user explicitly logged out from their phone.
+                // Any other code (like 428, 500) is a temporary network drop, Evolution will auto-reconnect.
+                'close' => ($statusReason == 401 || $statusReason === 'device_removed') ? 'disconnected' : 'connecting',
                 default => 'disconnected',
             };
 
             $instance = EvolutionInstance::where('instance_name', $instanceName)->first();
 
-            if ($instance) {
-                if ($instance->status !== $status) {
-                    $settings = $instance->settings ?? [];
-                    if ($status === 'connected') {
-                        $settings['was_connected'] = true;
-                    }
-
-                    $instance->update([
-                        'status' => $status,
-                        'connected_at' => $status === 'connected' ? now() : null,
-                        'phone_number' => $status === 'connected'
-                            ? explode('@', $payload['data']['wuid'])[0]
-                            : null,
-                        'settings' => $settings,
-                    ]);
-
-                    broadcast(new InstanceConnectionUpdated($instance));
-
-                    if ($status === 'connecting') {
-                        ReconcileInstanceStatus::dispatch($instance->id)
-                            ->delay(now()->addSeconds(5));
-                    }
-
-                    Log::info("Instance {$instanceName} updated to {$status}");
+            if ($instance && $instance->status !== $status) {
+                $settings = $instance->settings ?? [];
+                
+                if ($status === 'connected') {
+                    $settings['was_connected'] = true;
+                } elseif ($status === 'disconnected') {
+                    $settings['was_connected'] = false;
                 }
+
+                $instance->update([
+                    'status' => $status,
+                    'connected_at' => $status === 'connected' ? now() : $instance->connected_at,
+                    'phone_number' => $status === 'connected' && isset($payload['data']['wuid'])
+                        ? explode('@', $payload['data']['wuid'])[0]
+                        : ($status === 'disconnected' ? null : $instance->phone_number),
+                    'settings' => $settings,
+                ]);
+
+                broadcast(new InstanceConnectionUpdated($instance));
+                Log::info("Instance {$instanceName} updated to {$status} (Reason: {$statusReason})");
             }
         }
 
