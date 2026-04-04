@@ -19,7 +19,7 @@
         "disconnected": "Disconnected"
     },
 
-    "refresh_qe": "Refresh QR",
+    "refresh_qr": "Refresh QR",
     "waiting_scan": "Waiting for scan...",
     "link_whatsApp": "Link WhatsApp",
     "open_whatsapp": "Open WhatsApp",

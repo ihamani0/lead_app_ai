@@ -47,6 +47,11 @@ export default function InstanceShow({ instance }: Props) {
             previousStatusRef.current = newStatus;
             setLocalInstance(newInstance);
 
+
+            if (newStatus === 'connecting') {
+                setQrCode(null); 
+            }
+
             if (newStatus === 'connected') {
                 setQrCode(null);
                 setIsWaitingForQr(false);

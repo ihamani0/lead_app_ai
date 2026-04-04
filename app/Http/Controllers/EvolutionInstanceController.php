@@ -119,6 +119,8 @@ class EvolutionInstanceController extends Controller
         ]);
 
         $service->fetchQrCode($instance->instance_name);
+
+        return back();
     }
 
     public function restart(Request $request, $id, EvolutionService $evolutionService)
@@ -130,8 +132,7 @@ class EvolutionInstanceController extends Controller
         $instance->update(['status' => 'connecting']);
         broadcast(new InstanceConnectionUpdated($instance));
 
-        ReconcileInstanceStatus::dispatch($instance->id)
-            ->delay(now()->addSeconds(6));
+        
 
         return back()->with('success', __('messages.success.instance_restarting'));
     }

@@ -35,7 +35,7 @@ class EvolutionWebhookController extends Controller
             }
 
             // Evolution API provides base64 image data directly
-            $qrCode = $qrData['base64'] ?? $qrData['code'] ?? null;
+            $qrCode = $qrData['code'] ?? null;
 
             broadcast(new QrCodeUpdated($instanceName, $qrCode));
             return response()->json(['status' => 'success']);

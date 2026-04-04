@@ -48,26 +48,27 @@ class EvolutionService
 
     public function fetchQrCode(string $instanceName): void
     {
-
-        EvolutionApi::setInstance($instanceName)->instance()->connect();
-
-        Http::withHeaders([
-            'apiKey' => $this->apiKey,
+        // 1. Make the request to Evolution API
+        $response = Http::withHeaders([
+            'apikey' => $this->apiKey, // 'apikey' should usually be lowercase 'a' in v2
             'Content-Type' => 'application/json',
         ])->get("{$this->baseUrl}/instance/connect/{$instanceName}");
 
-        //  if ($response->successful()) {
+        // 2. If successful, Evolution returns the QR code in the response body!
+        if ($response->successful()) {
+            $data = $response->json();
+            
+            // Extract the raw code
+            $qrCode = $data['code'] ?? null;
 
-        //     // Evolution v2 usually returns {
-        //     //   "pairingCode": "WZYEH1YY",
-        //     //   "code": "2@y8eK+bjtEjUWy9/FOM...",
-        //     //   "count": 1
-        //     // }
-
-        //     return $response->json('code');
-        // }
-
-        // return null;
+            // 3. Instantly broadcast it to the frontend!
+            // This guarantees the UI updates immediately even if the webhook is delayed.
+            if ($qrCode) {
+                broadcast(new \App\Events\QrCodeUpdated($instanceName, $qrCode));
+            }
+        } else {
+            Log::error("Failed to fetch QR for {$instanceName}: " . $response->body());
+        }
     }
 
     public function logoutInstance(string $instanceName): array
