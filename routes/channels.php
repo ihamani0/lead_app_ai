@@ -12,3 +12,9 @@ Broadcast::channel('instance.{instanceName}', function ($user, $instanceName) {
 
     return true;
 });
+
+Broadcast::channel('lead', function ($user) {
+    Log::info('info', [$user]);
+
+    return true;
+});

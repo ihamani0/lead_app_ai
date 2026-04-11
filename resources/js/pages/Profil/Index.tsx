@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { motion } from 'framer-motion';
-import { LayoutGrid, List, Phone, Smartphone } from 'lucide-react';
+import { LayoutGrid, List, Phone } from 'lucide-react';
 import { useState } from 'react';
 import { CreateInstanceDialog } from '@/components/Instances/CreateInstanceDialog';
 import { DeletedInstanceCard } from '@/components/Instances/DeletedInstanceCard';
@@ -42,58 +42,67 @@ export default function InstanceIndex({
     const activeCount = instances.length;
     const deletedCount = deletedInstances?.length || 0;
 
-    // const connectedCount = instances.filter(
-    //     (i) => i.status === 'connected',
-    // ).length;
-    // const healthPercentage =
-    //     activeCount > 0 ? Math.round((connectedCount / activeCount) * 100) : 0;
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('profil.title')} />
 
-            <div className="min-h-screen py-12">
-                <div className="px-4 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
+                <div className="space-y-5">
                     {/* Header - Orange/Amber Gradient */}
-                    <div className="relative mb-8 overflow-hidden rounded-3xl bg-linear-to-br from-amber-500 via-orange-600 to-red-600 p-8 shadow-2xl ring-1 ring-amber-400/30 md:p-12 dark:from-amber-900 dark:via-orange-900 dark:to-red-900 dark:ring-amber-700/50">
-                        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-20" />
-                        <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-amber-400/20 blur-3xl" />
-                        <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-orange-400/20 blur-3xl" />
-                        <div className="relative z-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="rounded-2xl border border-white/30 bg-white/20 p-3 shadow-lg backdrop-blur-md">
-                                        <Smartphone className="h-8 w-8 text-white" />
-                                    </div>
-                                    <h1 className="text-4xl font-bold tracking-tight text-white drop-shadow-lg md:text-5xl">
-                                        {t('profil.title')}
-                                    </h1>
-                                </div>
-                                <p className="max-w-xl text-lg font-light text-white/90">
-                                    {t('profil.description')}
-                                </p>
+                <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500 via-green-600 to-teal-700 p-4 shadow-xl ring-1 ring-emerald-400/30 sm:p-5 md:p-6 dark:from-emerald-700 
+                dark:via-green-800 dark:to-teal-800
+                    dark:ring-emerald-400/30">
+
+                {/* Background pattern */}
+                <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-15 dark:opacity-10" />
+
+                {/* Glow (smaller + cleaner) */}
+                <div className="absolute -top-8 -right-8 h-16 w-16 rounded-full bg-emerald-300/20 blur-2xl" />
+                <div className="absolute -bottom-8 -left-8 h-16 w-16 rounded-full bg-green-300/20 blur-2xl" />
+
+                <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+                    {/* LEFT */}
+                    <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            
+                            <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
+                            <Phone className="h-5 w-5 text-white sm:h-6 sm:w-6" />
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
-                                    <Phone className="h-4 w-4" />
-                                    <span>
-                                        {activeCount}{' '}
-                                        {t('profil.instancesCount')}
-                                    </span>
-                                </div>
-                            </div>
+
+                            <h1 className="text-lg font-semibold text-white sm:text-xl md:text-3xl">
+                            {t('profil.title')}
+                            </h1>
                         </div>
+
+                        <p className="text-xs text-white/80 sm:text-sm md:text-base max-w-xs sm:max-w-md">
+                            {t('profil.description')}
+                        </p>
                     </div>
 
-                    <div className="my-4 flex w-full justify-end">
+                    {/* RIGHT */}
+                    <div className="flex items-center justify-between sm:justify-end gap-2">
+                    
+                    <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] text-white sm:px-3 sm:text-xs">
+                        <Phone className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <span>
+                        {activeCount} {t('profil.instancesCount')}
+                        </span>
+                        
+                    </div>
                         <CreateInstanceDialog t={t} />
                     </div>
+
+                </div>
+            </div>
+
 
                     {/* Stats */}
 
 
                     {/* Tabs */}
-                    <Tabs defaultValue="active" className="w-full">
+                    <Tabs defaultValue="active" className="w-full mt-5">
                         <TabsList className="mb-6 grid w-full grid-cols-2">
                             <TabsTrigger value="active" className="gap-2">
                                 {t('profil.tabActive')} ({activeCount})
@@ -105,7 +114,7 @@ export default function InstanceIndex({
 
                         {/* Active Tab */}
                         <TabsContent value="active" className="space-y-4">
-                            <div className="mb-5 flex w-full justify-end gap-2">
+                            <div className="hidden md:flex mb-5 w-full justify-end gap-2">
                                 <Button
                                     size="icon"
                                     variant={grid === 3 ? 'default' : 'outline'}

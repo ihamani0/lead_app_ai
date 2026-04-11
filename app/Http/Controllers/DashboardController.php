@@ -24,8 +24,9 @@ class DashboardController extends Controller
         // Lead Stats
         $leads = Lead::where('tenant_id', $tenantId)->get();
         $totalLeads = $leads->count();
-        $leadsByStatus = $leads->groupBy('status')->map(fn ($group) => $group->count());
-        $leadsByTemperature = $leads->groupBy('temperature')->map(fn ($group) => $group->count());
+        $leadsByAiQualification = $leads->groupBy('ai_qualification_status')->map(fn ($group) => $group->count());
+        $leadsByQualificationResult = $leads->groupBy('qualification_result')->map(fn ($group) => $group->count());
+        $leadsByTreatmentStatus = $leads->groupBy('treatment_status')->map(fn ($group) => $group->count());
 
         // Recent leads (last 7 days)
         $recentLeads = Lead::where('tenant_id', $tenantId)
@@ -75,8 +76,9 @@ class DashboardController extends Controller
                 ],
                 'leads' => [
                     'total' => $totalLeads,
-                    'byStatus' => $leadsByStatus,
-                    'byTemperature' => $leadsByTemperature,
+                    'byAiQualification' => $leadsByAiQualification,
+                    'byQualificationResult' => $leadsByQualificationResult,
+                    'byTreatmentStatus' => $leadsByTreatmentStatus,
                     'recent' => $recentLeads,
                     'today' => $leadsToday,
                 ],

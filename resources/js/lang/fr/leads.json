@@ -1,7 +1,7 @@
 {
-    "title": "CRM Leads",
+    "title": "Prospects",
     "description": "Contacts traités et scorés par votre Agent IA",
-    "leadsCount": "Leads",
+    "leadsCount": "Prospects",
 
     "search": {
         "placeholder": "Rechercher par nom ou téléphone...",

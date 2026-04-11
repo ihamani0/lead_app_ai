@@ -73,6 +73,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/agents/{agent}/clone', [AgentBotController::class, 'clone'])->name('agents.clone');
     Route::patch('/agents/{agent}/settings', [AgentBotController::class, 'updateSettings'])->name('agents.update-settings');
     Route::post('/agents/{agent}/reset-prompt', [AgentBotController::class, 'resetSystemPrompt'])->name('agents.reset-prompt');
+    Route::get('/agents/{agent}/prompt-history', [AgentBotController::class, 'promptHistory'])->name('agents.prompt-history');
+    Route::post('/agents/{agent}/restore-prompt/{version}', [AgentBotController::class, 'restorePrompt'])->name('agents.restore-prompt');
 
     // Legacy bot routes (keep for backward compatibility)
     Route::post('/instances/{id}/bot', [AgentBotController::class, 'storeLegacy'])->name('bot.store');
@@ -86,6 +88,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/leads/{id}', [LeadController::class, 'update'])->name('leads.update');
 
     Route::post('/leads/{id}/trigger-qualification', [LeadController::class, 'triggerQualification'])->name('leads.trigger-qualification');
+
+    Route::post('/leads/bulk-qualify', [LeadController::class, 'bulkQualify'])->name('leads.bulk-qualify');
 
     // Media Catalog
     Route::get('/media', [MediaAssetController::class, 'index'])->name('media.index');

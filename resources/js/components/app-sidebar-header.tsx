@@ -24,7 +24,7 @@ export function AppSidebarHeader({
                 <SidebarTrigger className="-ml-1" />
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
-            <div className="ml-auto flex items-center gap-4">
+            <div className="ml-auto  items-center gap-4 hidden md:flex">
                 <LanguageSwitcher
                     availableLocales={availableLocales}
                     currentLocale={locale}

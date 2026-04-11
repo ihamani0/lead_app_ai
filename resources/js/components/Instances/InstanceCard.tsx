@@ -87,15 +87,18 @@ export default function InstanceCard({ instance }: InstanceCardProps) {
 
                 {/* Action Buttons */}
                 {/* delete button */}
-                <div className="absolute top-3 right-3 z-20 opacity-0 transition group-hover:opacity-100">
-                    <button
-                        onClick={handleDelete}
-                        className="flex h-8 w-8 items-center justify-center rounded-full bg-destructive/10 text-destructive transition hover:scale-110"
-                        title={t('profil.deleteInstance')}
-                    >
-                        <Trash2 className="h-4 w-4" />
-                    </button>
-                </div>
+                <div className="absolute top-3 right-3 z-20 
+                opacity-100 sm:opacity-0 group-hover:opacity-100 
+                transition-opacity">
+                <button
+                    onClick={handleDelete}
+                    className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full 
+                            bg-destructive/10 text-destructive transition hover:scale-110"
+                    title={t('profil.deleteInstance')}
+                >
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                </button>
+            </div>
 
                 <CardHeader className="flex flex-row items-start justify-between px-6 pt-6">
                     <div className="flex flex-col gap-1">

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\AgentConfig;
+use App\Models\AgentSystemPromptHistory;
 use App\Models\EvolutionInstance;
 use App\Services\EvolutionService;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -48,7 +50,7 @@ class AgentBotController extends Controller
     /**
      * Create a standalone agent (no instance required).
      */
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -77,7 +79,7 @@ class AgentBotController extends Controller
     /**
      * Update AI agent settings and system prompt.
      */
-    public function update(Request $request, AgentConfig $agent): \Illuminate\Http\RedirectResponse
+    public function update(Request $request, AgentConfig $agent): RedirectResponse
     {
 
         if ($agent->tenant_id !== $request->user()->tenant_id) {
@@ -92,6 +94,14 @@ class AgentBotController extends Controller
         ]);
 
         try {
+            // Record history if system prompt is being changed (using hash comparison)
+            $promptChanged = $request->filled('system_prompt')
+                && $agent->hasSystemPromptChanged($request->system_prompt);
+
+            if ($promptChanged && $agent->system_prompt) {
+                AgentSystemPromptHistory::record($agent, 'Auto-saved before update');
+            }
+
             $agent->update([
                 'name' => $request->name ?? $agent->name,
                 'webhook_url' => $request->config_webhook_url ?? $agent->webhook_url,
@@ -120,7 +130,7 @@ class AgentBotController extends Controller
     /**
      * Link an instance to an agent.
      */
-    public function linkInstance(Request $request, AgentConfig $agent, EvolutionService $evoService): \Illuminate\Http\RedirectResponse
+    public function linkInstance(Request $request, AgentConfig $agent, EvolutionService $evoService): RedirectResponse
     {
 
         if ($agent->tenant_id !== $request->user()->tenant_id) {
@@ -173,7 +183,7 @@ class AgentBotController extends Controller
     /**
      * Unlink an instance from an agent (keeps agent config intact).
      */
-    public function unlinkInstance(Request $request, AgentConfig $agent, EvolutionService $evoService): \Illuminate\Http\RedirectResponse
+    public function unlinkInstance(Request $request, AgentConfig $agent, EvolutionService $evoService): RedirectResponse
     {
         if ($agent->tenant_id !== $request->user()->tenant_id) {
             abort(403);
@@ -215,7 +225,7 @@ class AgentBotController extends Controller
     /**
      * Toggle the AI agent status (pause/resume).
      */
-    public function toggle(Request $request, AgentConfig $agent, EvolutionService $evoService): \Illuminate\Http\RedirectResponse
+    public function toggle(Request $request, AgentConfig $agent, EvolutionService $evoService): RedirectResponse
     {
         if ($agent->tenant_id !== $request->user()->tenant_id) {
             abort(403);
@@ -244,7 +254,7 @@ class AgentBotController extends Controller
     /**
      * Delete an agent entirely.
      */
-    public function destroy(Request $request, AgentConfig $agent): \Illuminate\Http\RedirectResponse
+    public function destroy(Request $request, AgentConfig $agent): RedirectResponse
     {
         if ($agent->tenant_id !== $request->user()->tenant_id) {
             abort(403);
@@ -268,7 +278,7 @@ class AgentBotController extends Controller
 
     // ─── Legacy methods (for backward compatibility with old instance-based routes) ───
 
-    public function storeLegacy(Request $request, string $instanceId, EvolutionService $evoService): \Illuminate\Http\RedirectResponse
+    public function storeLegacy(Request $request, string $instanceId, EvolutionService $evoService): RedirectResponse
     {
         $request->validate(['webhook_url' => 'required|url']);
 
@@ -491,6 +501,55 @@ class AgentBotController extends Controller
             return back()->with('success', 'System prompt reset to default.');
         } catch (Exception $e) {
             return back()->withErrors(['error' => 'Failed to reset prompt: '.$e->getMessage()]);
+        }
+    }
+
+    /**
+     * Get prompt history for an agent (JSON response).
+     */
+    public function promptHistory(Request $request, string $agentId)
+    {
+        $agent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
+            ->findOrFail($agentId);
+
+        $history = $agent->history()->get();
+
+        return response()->json([
+            'history' => $history,
+        ]);
+    }
+
+    /**
+     * Restore system prompt to a specific version.
+     */
+    public function restorePrompt(Request $request, string $agentId, int $version): RedirectResponse
+    {
+        $agent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
+            ->findOrFail($agentId);
+
+        $historyRecord = $agent->history()->where('version', $version)->first();
+
+        if (! $historyRecord) {
+            return back()->withErrors(['error' => 'Version not found.']);
+        }
+
+        try {
+            if ($agent->system_prompt) {
+                AgentSystemPromptHistory::record($agent, 'Auto-saved before restore to v'.$version);
+            }
+
+            $agent->update([
+                'system_prompt' => $historyRecord->system_prompt,
+            ]);
+
+            if ($agent->isLinked() && $agent->instance) {
+                $evoService = app(EvolutionService::class);
+                $evoService->updateN8nBot($agent->instance, $agent);
+            }
+
+            return back()->with('success', "Restored to version {$version}.");
+        } catch (Exception $e) {
+            return back()->withErrors(['error' => 'Failed to restore prompt: '.$e->getMessage()]);
         }
     }
 }

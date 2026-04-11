@@ -37,9 +37,9 @@ export interface MediaSummary extends SummaryData {
 export interface LeadsReportData {
     reportType?: string;
     summary: LeadsSummary;
-    byStatus: Record<string, number>;
-    byTemperature: Record<string, number>;
-    bySource: Record<string, number>;
+    byAiQualification: Record<string, number>;
+    byQualificationResult: Record<string, number>;
+    byTreatmentStatus: Record<string, number>;
     byInstance: Record<string, number>;
 }
 

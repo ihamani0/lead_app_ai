@@ -235,7 +235,7 @@ export default function AgentInstanceManager({
             </Card>
 
             {/* Instance Requirements Info */}
-            <Card>
+            {/* <Card>
                 <CardHeader>
                     <CardTitle>{t('agents.config.requirements')}</CardTitle>
                 </CardHeader>
@@ -246,7 +246,7 @@ export default function AgentInstanceManager({
                         <li>{t('agents.config.req3')}</li>
                     </ul>
                 </CardContent>
-            </Card>
+            </Card> */}
         </div>
     );
 }

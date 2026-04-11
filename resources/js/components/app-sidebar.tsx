@@ -1,10 +1,9 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     BookOpen,
     Bot,
     Image,
     LayoutGrid,
-    Phone,
     Users,
     BarChart3,
     Settings,
@@ -30,10 +29,22 @@ import { edit, index as indexProfil } from '@/routes/profile';
 import { index as indexReports } from '@/routes/reports';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
+import { LanguageSwitcher } from './language-switcher';
 import { NavFooter } from './nav-footer';
+import { NavUser } from './nav-user';
+import { Separator } from './ui/separator';
+import { WhatsAppIcon } from './ui/WhatsAppIcon';
+
+type PageProps = {
+    locale: string;
+    availableLocales: string[];
+};
 
 export function AppSidebar() {
     const { t } = useTranslation();
+
+    const page = usePage<PageProps>();
+    const { locale, availableLocales } = page.props;
 
     const mainNavItems: NavItem[] = [
         {
@@ -43,15 +54,17 @@ export function AppSidebar() {
         },
 
         {
-            title: t('messages.profile'),
-            href: indexProfil().url,
-            icon: Phone,
-        },
-        {
             title: t('messages.agents'),
             href: indexAgent().url,
             icon: Bot,
         },
+
+        {
+            title: t('messages.whatsapp'),
+            href: indexProfil().url,
+            icon: WhatsAppIcon,
+        },
+
         {
             title: t('messages.leads'),
             href: indexLeads().url,
@@ -95,7 +108,7 @@ export function AppSidebar() {
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarHeader>
-
+            <Separator className="my-4" />
             <SidebarContent>
                 <NavMain items={mainNavItems} />
             </SidebarContent>
@@ -103,6 +116,17 @@ export function AppSidebar() {
             <SidebarFooter>
                 <NavFooter items={footerNavItems} className="mt-auto" />
                 {/* <NavUser /> */}
+
+                <Separator className="my-4 md:hidden" />
+                <div className='flex justify-start md:hidden'>
+                    <LanguageSwitcher
+                        availableLocales={availableLocales}
+                        currentLocale={locale}
+                    />
+                </div>
+                <div className="flex flex-col gap-4 md:hidden">
+                    <NavUser />
+                </div>
             </SidebarFooter>
         </Sidebar>
     );

@@ -2,14 +2,14 @@ import { History, MessageCircle, Clock, Search } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
 
-interface Props {
-    agent: {
-        id: string;
-        name: string | null;
-    };
-}
+// interface Props {
+//     agent: {
+//         id: string;
+//         name: string | null;
+//     };
+// }
 
-export default function AgentConversationLogs({ agent: _agent }: Props) {
+export default function AgentConversationLogs() {
     const { t } = useTranslation();
 
     return (

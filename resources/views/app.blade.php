@@ -33,7 +33,7 @@
         <title inertia>{{ config('app.name', 'Crew') }}</title>
 
         {{-- <link rel="icon" href="/favicon.ico" sizes="any"> --}}
-        <link rel="icon" href="/bot.svg" type="image/svg+xml">
+        <link rel="icon" href="/logo.ico" type="image/svg+xml">
          
 
         <link rel="preconnect" href="https://fonts.bunny.net">

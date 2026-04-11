@@ -39,9 +39,9 @@ class ReportController extends Controller
     {
         $leads = Lead::where('tenant_id', $tenantId)->get();
 
-        $byStatus = $leads->groupBy('status')->map(fn ($g) => $g->count());
-        $byTemperature = $leads->groupBy('temperature')->map(fn ($g) => $g->count());
-        $bySource = $leads->groupBy('source')->map(fn ($g) => $g->count());
+        $byAiQualification = $leads->groupBy('ai_qualification_status')->map(fn ($g) => $g->count());
+        $byQualificationResult = $leads->groupBy('qualification_result')->map(fn ($g) => $g->count());
+        $byTreatmentStatus = $leads->groupBy('treatment_status')->map(fn ($g) => $g->count());
         $byInstance = $leads->groupBy('instance_id')
             ->map(fn ($g) => $g->count())
             ->mapWithKeys(function ($count, $instanceId) {
@@ -61,9 +61,9 @@ class ReportController extends Controller
                 'last30days' => $last30Days->count(),
                 'avgPerDay' => $last30Days->count() > 0 ? round($last30Days->count() / 30, 1) : 0,
             ],
-            'byStatus' => $byStatus,
-            'byTemperature' => $byTemperature,
-            'bySource' => $bySource,
+            'byAiQualification' => $byAiQualification,
+            'byQualificationResult' => $byQualificationResult,
+            'byTreatmentStatus' => $byTreatmentStatus,
             'byInstance' => $byInstance,
         ];
     }

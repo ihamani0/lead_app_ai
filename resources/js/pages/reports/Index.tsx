@@ -1,5 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import { Users, Phone, Bot, Image } from 'lucide-react';
+import { Users, Phone, Bot, Image, ChartArea } from 'lucide-react';
 import { useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -62,15 +62,35 @@ export default function ReportsIndex({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('reports.title')} />
-            <div className="flex flex-col gap-6 p-6">
-                <div>
-                    <h1 className="text-xl font-bold md:text-2xl lg:text-3xl">
-                        {t('reports.title')}
-                    </h1>
-                    <p className="text-sm text-muted-foreground md:text-base">
-                        {t('reports.description')}
-                    </p>
-                </div>
+            <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
+                <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500 via-green-600 to-teal-700 p-4 shadow-xl ring-1 ring-emerald-400/30 sm:p-5 md:p-6 dark:from-emerald-700 
+                dark:via-green-800 dark:to-teal-800
+                    dark:ring-emerald-400/30">
+
+                        <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            {/* LEFT */}
+                            <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    
+                                    <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
+                                    <ChartArea className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                                    </div>
+
+                                    <h1 className="text-lg font-semibold text-white sm:text-xl md:text-3xl">
+                                    {t('reports.title')}
+                                    </h1>
+                                </div>
+
+                                <p className="text-xs text-white/80 sm:text-sm md:text-base max-w-xs sm:max-w-md">
+                                {t('reports.description')}
+                                </p>
+                            </div>
+                            {/* Right */}
+                                            
+                            
+                        </div>
+                    </div>
+
 
                 <Tabs value={activeTab} onValueChange={handleTabChange}>
                     <TabsList className="grid w-full grid-cols-4">

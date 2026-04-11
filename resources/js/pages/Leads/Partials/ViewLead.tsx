@@ -3,6 +3,7 @@ import {
     BrainCircuit,
     Calendar,
     Eye,
+    MessageCircle,
     MessageSquare,
     Phone,
     Sparkles,
@@ -37,7 +38,7 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="w-full max-w-lg gap-0 overflow-hidden border-border bg-background p-0">
+            <DialogContent className="w-full max-w-2xl  gap-0 overflow-hidden border-border bg-background p-0" style={{maxWidth:"612px"}}>
                 {/* Header with linear background */}
                 <div className="relative bg-linear-to-br from-violet-500/10 via-purple-500/5 to-blue-500/10 p-6 pb-4 dark:from-violet-950/50 dark:via-purple-950/30 dark:to-blue-950/50">
                     <div className="bg-grid-white/10 dark:bg-grid-white/5 absolute inset-0 mask-[linear-linear(0deg,white,rgba(255,255,255,0.6))]"></div>
@@ -146,38 +147,65 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                                 <div className="flex items-center gap-2 text-sm font-medium text-foreground">
                                     <div className="h-4 w-1 rounded-full bg-linear-to-b from-blue-500 to-cyan-500" />
                                     <Sparkles className="h-3.5 w-3.5 text-blue-500" />
-                                    AI Qualification
+                                    Qualification IA
                                 </div>
 
                                 <div className="space-y-3">
-                                    {/* Temperature Badge */}
+                                    {/* AI Qualification Status */}
                                     <div className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm">
                                         <span className="text-sm font-medium text-foreground">
-                                            Lead Temperature
+                                            Statut de qualification IA
                                         </span>
-                                        {getTempBadge(selectedLead.temperature)}
+                                        <Badge
+                                            variant={
+                                                selectedLead.ai_qualification_status ===
+                                                'QUALIFIE'
+                                                    ? 'default'
+                                                    : 'secondary'
+                                            }
+                                            className={
+                                                selectedLead.ai_qualification_status ===
+                                                'QUALIFIE'
+                                                    ? 'bg-green-500'
+                                                    : ''
+                                            }
+                                        >
+                                            {selectedLead.ai_qualification_status ===
+                                            'QUALIFIE'
+                                                ? 'Qualifié'
+                                                : 'Non qualifié'}
+                                        </Badge>
+                                    </div>
+
+                                    {/* Qualification Result */}
+                                    <div className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm">
+                                        <span className="text-sm font-medium text-foreground">
+                                            Résultat de qualification
+                                        </span>
+                                        {getTempBadge(
+                                            selectedLead.qualification_result?.toLowerCase() ||
+                                                'cold',
+                                        )}
                                     </div>
 
                                     {/* Confidence Score */}
                                     <div className="space-y-3 rounded-xl border bg-card p-4 shadow-sm">
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm font-medium text-foreground">
-                                                AI Confidence Score
+                                                Score de qualification
                                             </span>
                                             <Badge
                                                 variant="secondary"
                                                 className="font-bold tabular-nums"
                                             >
-                                                {((selectedLead.qualification_score ||
-                                                    0) *
-                                                    100) /
-                                                    10}
-                                                %
+                                                {selectedLead.qualification_score ??
+                                                    0}
+                                                /10
                                             </Badge>
                                         </div>
                                         <Progress
                                             value={
-                                                ((selectedLead.qualification_score ||
+                                                ((selectedLead.qualification_score ??
                                                     0) *
                                                     100) /
                                                 10
@@ -185,6 +213,141 @@ export default function ViewLead({ selectedLead }: { selectedLead: Lead }) {
                                             className="h-2 bg-secondary"
                                         />
                                     </div>
+
+                                    {/* Treatment Status */}
+                                    <div className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm">
+                                        <span className="text-sm font-medium text-foreground">
+                                            Statut de traitement
+                                        </span>
+                                        <Badge
+                                            variant={
+                                                selectedLead.treatment_status ===
+                                                'TRAITE'
+                                                    ? 'default'
+                                                    : 'outline'
+                                            }
+                                            className={
+                                                selectedLead.treatment_status ===
+                                                'TRAITE'
+                                                    ? 'bg-blue-500'
+                                                    : ''
+                                            }
+                                        >
+                                            {selectedLead.treatment_status ===
+                                            'TRAITE'
+                                                ? 'Traité'
+                                                : 'Non traité'}
+                                        </Badge>
+                                    </div>
+
+                                    {/* Qualified At */}
+                                    <div className="flex items-center justify-between rounded-xl border bg-card p-4 shadow-sm">
+                                        <span className="text-sm font-medium text-foreground">
+                                            Date qualification IA
+                                        </span>
+                                        <span className="text-xs text-muted-foreground">
+                                            {selectedLead.qualified_at
+                                                ? new Date(
+                                                      selectedLead.qualified_at,
+                                                  ).toLocaleString('fr-FR', {
+                                                      day: '2-digit',
+                                                      month: '2-digit',
+                                                      year: 'numeric',
+                                                      hour: '2-digit',
+                                                      minute: '2-digit',
+                                                  })
+                                                : '-'}
+                                        </span>
+                                    </div>
+
+                                    {/* Notes */}
+                                    {selectedLead.notes && (
+                                        <div className="rounded-xl border bg-card p-4 shadow-sm">
+                                            <div className="mb-2 text-sm font-medium text-foreground">
+                                                Notes
+                                            </div>
+                                            <p className="text-sm text-muted-foreground">
+                                                {selectedLead.notes}
+                                            </p>
+                                        </div>
+                                    )}
+
+                                    {/* Conversation History */}
+                                    {selectedLead.recent_messages &&
+                                        selectedLead.recent_messages.length >
+                                            0 && (
+                                            <div className="space-y-4">
+                                                <div className="flex items-center gap-2 text-sm font-medium text-foreground">
+                                                    <div className="h-4 w-1 rounded-full bg-linear-to-b from-violet-500 to-purple-500" />
+                                                    <MessageCircle className="h-4 w-4 text-violet-500" />
+                                                    Conversation
+                                                </div>
+
+                                                <div className="max-h-[300px] space-y-3 overflow-y-auto rounded-xl border bg-card p-4">
+                                                    {selectedLead.recent_messages.map(
+                                                        (msg, index) => (
+                                                            <div
+                                                                key={index}
+                                                                className={`flex flex-col gap-1 ${
+                                                                    msg.direction ===
+                                                                    'client'
+                                                                        ? 'items-start'
+                                                                        : 'items-end'
+                                                                }`}
+                                                            >
+                                                                <div
+                                                                    className={`flex items-center gap-2 ${
+                                                                        msg.direction ===
+                                                                        'client'
+                                                                            ? 'flex-row'
+                                                                            : 'flex-row-reverse'
+                                                                    }`}
+                                                                >
+                                                                    <Badge
+                                                                        className={
+                                                                            msg.direction ===
+                                                                            'client'
+                                                                                ? 'bg-blue-500 text-white'
+                                                                                : 'bg-violet-500 text-white'
+                                                                        }
+                                                                    >
+                                                                        {msg.direction ===
+                                                                        'client'
+                                                                            ? '👤 Client'
+                                                                            : '🤖 AI'}
+                                                                    </Badge>
+                                                                    <span className="text-xs text-muted-foreground">
+                                                                        {new Date(
+                                                                            msg.timestamp,
+                                                                        ).toLocaleString(
+                                                                            'fr-FR',
+                                                                            {
+                                                                                day: '2-digit',
+                                                                                month: '2-digit',
+                                                                                hour: '2-digit',
+                                                                                minute: '2-digit',
+                                                                            },
+                                                                        )}
+                                                                    </span>
+                                                                </div>
+                                                                <div
+                                                                    className={`rounded-lg p-3 text-sm ${
+                                                                        msg.direction ===
+                                                                        'client'
+                                                                            ? 'bg-blue-50 text-foreground dark:bg-blue-950/30'
+                                                                            : 'bg-violet-50 text-foreground dark:bg-violet-950/30'
+                                                                    }`}
+                                                                >
+                                                                    {
+                                                                        msg.message
+                                                                    }
+                                                                </div>
+                                                            </div>
+                                                        ),
+                                                    )}
+                                                </div>
+                                            </div>
+                                        )}
 
                                     {/* AI Summary Card */}
                                     <div className="relative overflow-hidden rounded-xl border border-blue-500/20 bg-linear-to-br from-blue-50/50 to-cyan-50/50 p-4 shadow-sm dark:from-blue-950/20 dark:to-cyan-950/20">

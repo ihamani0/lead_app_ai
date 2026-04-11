@@ -144,8 +144,8 @@ export default function AgentOverview({ agent }: Props) {
                         </div>
                         <div>
                             <p className="text-muted-foreground">Provider</p>
-                            <p className="font-medium uppercase">
-                                {agent.provider}
+                            <p className="font-mono ">
+                                 MyAiCore
                             </p>
                         </div>
                         <div>

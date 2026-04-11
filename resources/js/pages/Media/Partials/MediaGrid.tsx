@@ -1,5 +1,5 @@
 // components/media/MediaGrid.tsx
-import { Image as ImageIcon, Video, FileText } from 'lucide-react';
+import { Image as ImageIcon, Video } from 'lucide-react';
 import { useTranslation } from '@/hooks/use-translation';
 import type { Asset } from '@/types';
 import { AssetCard } from './AssetCard';
@@ -28,9 +28,6 @@ export function MediaGrid({
                     )}
                     {emptyType === 'video' && (
                         <Video className="h-8 w-8 text-muted-foreground" />
-                    )}
-                    {emptyType === 'other' && (
-                        <FileText className="h-8 w-8 text-muted-foreground" />
                     )}
                     {emptyType === 'media' && (
                         <ImageIcon className="h-8 w-8 text-muted-foreground" />

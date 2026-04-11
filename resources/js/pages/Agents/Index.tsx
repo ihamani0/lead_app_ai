@@ -81,41 +81,54 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('agents.title')} />
 
-            <div className="py-12">
-                <div className="sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
+                <div className="space-y-5">
                     {/* Header - Purple/Violet Gradient */}
-                    <div className="relative mb-8 overflow-hidden rounded-3xl bg-linear-to-br from-violet-600 via-purple-700 to-indigo-800 p-8 shadow-2xl ring-1 ring-violet-400/30 md:p-12 dark:from-violet-900 dark:via-purple-900 dark:to-indigo-900 dark:ring-violet-700/50">
-                        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-20" />
-                        <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-violet-400/20 blur-3xl" />
-                        <div className="blur-3l absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-purple-400/20" />
-                        <div className="relative z-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="rounded-2xl border border-white/30 bg-white/20 p-3 shadow-lg backdrop-blur-md">
-                                        <Bot className="h-8 w-8 text-white" />
-                                    </div>
-                                    <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-lg md:text-4xl lg:text-5xl">
-                                        {t('agents.title')}
-                                    </h1>
-                                </div>
-                                <p className="max-w-xl text-sm font-light text-white/90 md:text-base lg:text-lg">
-                                    {t('agents.subtitle')}
-                                </p>
+                    <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-violet-600 via-purple-700 to-indigo-800 p-4 shadow-xl ring-1 ring-violet-400/30 sm:p-5 md:p-6 
+                    dark:from-violet-700 dark:via-purple-800 dark:to-indigo-800 dark:ring-violet-400/30">
+
+                    {/* Decorative glow */}
+                    <div className="absolute -top-8 -right-8 h-14 w-14 rounded-full bg-violet-400/20 blur-2xl" />
+                    <div className="absolute -bottom-8 -left-8 h-14 w-14 rounded-full bg-purple-400/20 blur-2xl" />
+
+                    <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+                        {/* LEFT */}
+                        <div className="space-y-1">
+                        <div className="flex items-center gap-2">
+                            
+                            <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
+                            <Bot className="h-5 w-5 text-white sm:h-6 sm:w-6" />
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-xs font-medium text-white shadow-lg backdrop-blur-md md:text-sm">
-                                    <Sparkles className="h-4 w-4" />
-                                    <span>
-                                        {agents.length}{' '}
-                                        {t('agents.agentsCount')}
-                                    </span>
-                                </div>
-                                <CreateAgentDialog
-                                    open={createOpen}
-                                    onOpenChange={setCreateOpen}
-                                />
-                            </div>
+
+                            <h1 className="text-lg font-semibold text-white sm:text-xl md:text-3xl">
+                            {t('agents.title')}
+                            </h1>
                         </div>
+
+                        <p className="text-xs text-white/80 sm:text-sm md:text-base max-w-xs sm:max-w-md">
+                            {t('agents.subtitle')}
+                        </p>
+                        </div>
+
+                        {/* RIGHT */}
+                        <div className="flex flex-wrap items-center justify-between gap-2 sm:flex-nowrap sm:justify-end">
+                        
+                        <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] text-white sm:px-3 sm:text-xs">
+                            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                            <span>
+                            {agents.length} {t('agents.agentsCount')}
+                            </span>
+                        </div>
+
+                        <CreateAgentDialog
+                            open={createOpen}
+                            onOpenChange={setCreateOpen}
+                        />
+
+                        </div>
+
+                    </div>
                     </div>
 
                     {/* Available Instances Alert */}
@@ -176,8 +189,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                             variant="outline"
                                                             className="mt-1 h-5 border-slate-200 text-[10px] font-medium tracking-wider uppercase dark:border-slate-700"
                                                         >
-                                                            {agent.provider ||
-                                                                'AI Core'}
+                                                            {'MyAiCore'}
                                                         </Badge>
                                                     </div>
                                                 </div>
@@ -238,10 +250,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                             </div>
 
                                             {/* Knowledge Base Count */}
-                                            {agent.knowledge_bases_count !==
-                                                undefined &&
-                                                agent.knowledge_bases_count >
-                                                    0 && (
+                                            
                                                     <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
                                                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-slate-700">
                                                             <FileText className="h-4 w-4 text-slate-500 dark:text-slate-400" />
@@ -254,17 +263,17 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                             </span>
                                                             <span className="text-xs font-bold tracking-tight text-slate-700 md:text-sm dark:text-slate-200">
                                                                 {
-                                                                    agent.knowledge_bases_count
+                                                                    agent?.knowledge_bases_count
                                                                 }{' '}
                                                                 document
-                                                                {agent.knowledge_bases_count !==
+                                                                {agent?.knowledge_bases_count !==
                                                                 1
                                                                     ? 's'
                                                                     : ''}
                                                             </span>
                                                         </div>
                                                     </div>
-                                                )}
+                                                
 
                                             {/* System Prompt Preview */}
                                             <div className="relative rounded-xl border border-slate-100 bg-white/50 p-4 dark:border-slate-800 dark:bg-slate-900/50">

@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Run the pruning command daily at 2:00 AM
 Schedule::command('model:prune')->dailyAt('02:00');
+
+// Auto-qualify unprocessed leads daily at 2:00 AM
+Schedule::command('leads:qualify-unprocessed')->dailyAt('02:00');

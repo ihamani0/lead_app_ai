@@ -1,5 +1,5 @@
 // components/media/StatsCards.tsx
-import { Image as ImageIcon, Video, FileText } from 'lucide-react';
+import { Image as ImageIcon, Video } from 'lucide-react';
 import type { Asset } from '@/types';
 
 interface StatsCardsProps {
@@ -9,9 +9,6 @@ interface StatsCardsProps {
 export function StatsCards({ assets }: StatsCardsProps) {
     const images = assets.filter((a) => a.type === 'image').length;
     const videos = assets.filter((a) => a.type === 'video').length;
-    const others = assets.filter(
-        (a) => a.type !== 'image' && a.type !== 'video',
-    ).length;
 
     const stats = [
         {
@@ -30,18 +27,10 @@ export function StatsCards({ assets }: StatsCardsProps) {
             border: 'border-blue-500/20',
             text: 'text-blue-600 dark:text-blue-400',
         },
-        {
-            icon: FileText,
-            label: 'Documents',
-            count: others,
-            gradient: 'from-orange-500/10 to-amber-500/10',
-            border: 'border-orange-500/20',
-            text: 'text-orange-600 dark:text-orange-400',
-        },
     ];
 
     return (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 gap-4">
             {stats.map((stat) => (
                 <div
                     key={stat.label}

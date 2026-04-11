@@ -98,10 +98,10 @@ export function LanguageSwitcher({ availableLocales, currentLocale }: Props) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2">
-                    <Languages className="h-4 w-4" />
+                <Button variant="ghost" size="lg" className="gap-2">
                     <FlagIcon locale={currentLocale} />
                     {getLanguageLabel(currentLocale)}
+                    <Languages className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

@@ -164,7 +164,7 @@ export default function AgentBlockList({ agent }: Props) {
                 </CardContent>
             </Card>
 
-            {/* Info */}
+            {/* Info
             <Card>
                 <CardHeader>
                     <CardTitle>{t('agents.config.blocklistInfo')}</CardTitle>
@@ -173,7 +173,7 @@ export default function AgentBlockList({ agent }: Props) {
                     <p>{t('agents.config.blocklistTip1')}</p>
                     <p>{t('agents.config.blocklistTip2')}</p>
                 </CardContent>
-            </Card>
+            </Card> */}
         </div>
     );
 }

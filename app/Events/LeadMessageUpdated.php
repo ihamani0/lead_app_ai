@@ -2,44 +2,34 @@
 
 namespace App\Events;
 
-use Illuminate\Broadcasting\Channel;
+use App\Models\Lead;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class QrCodeUpdated implements ShouldBroadcast
+class LeadMessageUpdated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    /**
-     * Create a new event instance.
-     */
-    public function __construct(
-        public string $instance,
-        public string $qrcode,
+    public function __construct(public Lead $lead) {}
 
-    ) {
-        //
-    }
-
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return array<int, Channel>
-     */
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('instance.'.$this->instance),
+            new PrivateChannel('lead.'.$this->lead->id),
         ];
     }
 
     public function broadcastWith(): array
     {
         return [
-            'qrCode' => $this->qrcode,
+            'lead' => [
+                'id' => $this->lead->id,
+                'last_activity_at' => $this->lead->last_activity_at?->toISOString(),
+                'recent_messages' => $this->lead->recent_messages,
+            ],
         ];
     }
 }

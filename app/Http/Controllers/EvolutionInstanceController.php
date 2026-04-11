@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Events\InstanceConnectionUpdated;
-use App\Jobs\ReconcileInstanceStatus;
 use App\Models\EvolutionInstance;
 use App\Models\Tenant;
 use App\Services\EvolutionService;
@@ -131,8 +130,6 @@ class EvolutionInstanceController extends Controller
 
         $instance->update(['status' => 'connecting']);
         broadcast(new InstanceConnectionUpdated($instance));
-
-        
 
         return back()->with('success', __('messages.success.instance_restarting'));
     }

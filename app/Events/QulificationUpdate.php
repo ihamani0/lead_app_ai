@@ -9,18 +9,15 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class QrCodeUpdated implements ShouldBroadcast
+class QulificationUpdate implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct(
-        public string $instance,
-        public string $qrcode,
-
-    ) {
+    public function __construct(public $lead)
+    {
         //
     }
 
@@ -32,14 +29,14 @@ class QrCodeUpdated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('instance.'.$this->instance),
+            new PrivateChannel('lead'),
         ];
     }
 
     public function broadcastWith(): array
     {
         return [
-            'qrCode' => $this->qrcode,
+            'lead' => $this->lead,
         ];
     }
 }

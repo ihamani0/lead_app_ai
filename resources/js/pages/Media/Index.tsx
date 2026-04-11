@@ -55,41 +55,55 @@ export default function Index({ assets }: MediaIndexProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('media.title')} />
 
-            <div className="min-h-screen bg-linear-to-b from-background to-muted/20">
-                <div className="space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+            <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
+                <div className="space-y-5">
                     {/* Header - Violet/Purple Gradient */}
-                    <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-blue-600 via-indigo-700 to-cyan-700 p-8 shadow-2xl ring-1 ring-blue-400/30 md:p-12 dark:from-blue-900 dark:via-indigo-900 dark:to-cyan-900 dark:ring-blue-700/50">
-                        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-20" />
-                        <div className="relative z-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-                            <div className="space-y-3">
-                                <div className="flex items-center gap-3">
-                                    <div className="rounded-2xl border border-white/30 bg-white/20 p-3 shadow-lg backdrop-blur-md">
-                                        <Image className="h-8 w-8 text-white" />
-                                    </div>
-                                    <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-lg md:text-4xl lg:text-5xl">
-                                        {t('media.title')}
-                                    </h1>
-                                </div>
-                                <p className="max-w-xl text-sm font-light text-white/90 md:text-base lg:text-lg">
-                                    {t('media.description')}
-                                </p>
-                            </div>
-                            <div className="flex items-center gap-4">
-                                <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-md">
-                                    <Files className="h-4 w-4" />
-                                    <span>
-                                        {assets.length} {t('media.assetsCount')}
-                                    </span>
-                                </div>
-                                <UploadDialog
-                                    open={uploadOpen}
-                                    onOpenChange={setUploadOpen}
-                                />
-                            </div>
+
+                  <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-blue-500 to-cyan-500 p-4 shadow-xl ring-1 ring-blue-400/30 sm:p-5 md:p-6 
+                dark:from-blue-700 dark:to-cyan-700 dark:ring-blue-600/40">
+
+                  {/* Subtle pattern */}
+                  <div className="absolute inset-0 bg-[url('image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.08%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-12 dark:opacity-8" />
+
+                  <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+
+                    {/* LEFT */}
+                    <div className="space-y-1.5 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-sm">
+                          <Image className="h-5 w-5 text-white sm:h-6 sm:w-6" />
                         </div>
+                        <h1 className="text-lg font-semibold text-white sm:text-xl md:text-3xl leading-tight">
+                          {t('media.title')}
+                        </h1>
+                      </div>
+                      <p className="max-w-xs sm:max-w-md text-xs sm:text-sm md:text-base text-white/90 font-light">
+                        {t('media.description')}
+                      </p>
                     </div>
 
+                    {/* RIGHT */}
+                    <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                      {/* Badge */}
+                      <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] sm:text-xs font-medium text-white backdrop-blur-sm">
+                        <Files className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                        <span className="whitespace-nowrap">
+                          {assets.length} {t('media.assetsCount')}
+                        </span>
+                      </div>
+
+                      {/* Upload Dialog */}
+                      <div className="shrink-0">
+                        <UploadDialog open={uploadOpen} onOpenChange={setUploadOpen} />
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+
                     <StatsCards assets={assets} />
+                    
                     <MediaTabs
                         assets={assets}
                         onDelete={handleDelete}

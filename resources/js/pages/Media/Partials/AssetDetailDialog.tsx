@@ -8,31 +8,74 @@ import {
     Calendar,
     Check,
     Copy,
+    Eye,
 } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription,
-    DialogFooter,
-} from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
+
 import { Separator } from '@/components/ui/separator';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { getGradient } from '@/lib/mediaHelpers';
 import { cn } from '@/lib/utils';
 import type { Asset } from '@/types';
 import { MediaIcon } from './AssetCard';
-import { MetadataItem } from './MetadataItem';
-
 interface AssetDetailDialogProps {
     asset: Asset | null;
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onDelete: (id: string) => void;
+}
+
+
+interface MetadataRowProps {
+  icon: ReactNode
+  label: string
+  value: ReactNode
+  capitalize?: boolean
+  truncate?: boolean
+  onCopy?: () => void
+  copied?: boolean
+}
+
+ function MetadataRow({
+  icon,
+  label,
+  value,
+  capitalize = false,
+  truncate = false,
+  onCopy,
+  copied,
+}: MetadataRowProps) {
+  return (
+    <div className="flex items-start justify-between gap-3 w-full max-w-full">
+      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase shrink-0">
+        {icon} {label}
+      </div>
+      <div className="flex items-center gap-1.5 min-w-0">
+        <span
+          className={cn(
+            "text-sm break-words text-right",
+            capitalize && "capitalize",
+            truncate && "truncate max-w-[140px] sm:max-w-[200px]"
+          )}
+        >
+          {value || <span className="text-muted-foreground/60 italic">—</span>}
+        </span>
+        {onCopy && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-5 w-5 shrink-0 -mr-1"
+            onClick={onCopy}
+            aria-label={`Copy ${label}`}
+          >
+            {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
+          </Button>
+        )}
+      </div>
+    </div>
+  )
 }
 
 export function AssetDetailDialog({
@@ -68,16 +111,18 @@ export function AssetDetailDialog({
     };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent
+        <Sheet open={open} onOpenChange={onOpenChange}>
+            <SheetContent
+                side="right"
+                className="flex w-full max-w-full flex-col rounded-t-2xl border-none p-0 shadow-2xl"
+                style={{ boxSizing: 'border-box' }}
                 onClick={(e) => e.stopPropagation()}
-                className="gap-0 overflow-hidden p-0 sm:max-w-2xl md:max-w-4xl lg:max-w-6xl xl:max-w-7xl"
             >
-                <div className="flex h-[85vh] flex-col md:grid md:h-[80vh] md:grid-cols-2">
+                {/* 📱 Thumbnail + Preview Section */}
+                <div className="relative flex shrink-0 flex-col items-center justify-center gap-3 border-b border-border/50 bg-linear-to-br from-muted/40 to-background p-4">
                     <div
                         className={cn(
-                            'relative flex shrink-0 items-center justify-center',
-                            'h-[35vh] md:h-full',
+                            'relative flex aspect-video w-full max-w-xs items-center justify-center overflow-hidden rounded-xl shadow-inner sm:max-w-sm',
                             'bg-linear-to-br',
                             getGradient(asset.type),
                         )}
@@ -86,174 +131,187 @@ export function AssetDetailDialog({
                             <img
                                 src={asset.url}
                                 alt={asset.category}
-                                className="h-full w-full object-contain p-4"
+                                className="h-full w-full object-contain p-2"
                             />
                         ) : asset.type === 'video' ? (
                             <video
                                 src={asset.url}
-                                controls
-                                className="h-full w-full object-contain p-4"
-                                style={{
-                                    aspectRatio: '16/9',
-                                    objectFit: 'contain',
-                                }}
+                                className="h-full w-full object-contain p-2"
                             />
                         ) : (
-                            <div className="flex flex-col items-center gap-4">
-                                <div className="rounded-3xl border border-border bg-background/90 p-8 shadow-2xl backdrop-blur-xl dark:bg-background/50">
-                                    <MediaIcon
-                                        type={asset.type}
-                                        className="h-12 w-12"
-                                    />
-                                </div>
-                                <span className="text-base font-semibold tracking-widest text-muted-foreground uppercase md:text-lg">
+                            <div className="flex flex-col items-center gap-3 p-6 text-white/90">
+                                <MediaIcon
+                                    type={asset.type}
+                                    className="h-14 w-14 drop-shadow-md"
+                                />
+                                <span className="text-xs font-semibold tracking-widest uppercase drop-shadow">
                                     {asset.type} Document
                                 </span>
                             </div>
                         )}
                     </div>
 
-                    <div className="flex h-full min-h-0 flex-col overflow-hidden">
-                        <DialogHeader className="shrink-0 p-4 pb-3 md:p-6 md:pb-4">
-                            <DialogTitle className="flex items-center gap-2 text-base font-semibold md:text-xl">
-                                <MediaIcon
-                                    type={asset.type}
-                                    className="h-5 w-5"
-                                />
-                                Asset Details
-                            </DialogTitle>
-                            <DialogDescription className="text-xs md:text-base">
-                                Media information and metadata
-                            </DialogDescription>
-                        </DialogHeader>
-
-                        <ScrollArea className="flex-1 px-4 md:px-6">
-                            <div className="space-y-4 pb-6 md:space-y-6">
-                                <div className="flex flex-col gap-2 sm:flex-row">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        className="flex-1 gap-2 text-sm"
-                                        onClick={handleOpenExternal}
-                                    >
-                                        <ExternalLink className="h-4 w-4" />
-                                        Open
-                                    </Button>
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        size="sm"
-                                        className="flex-1 gap-2 text-sm"
-                                        onClick={handleCopy(asset.url, 'url')}
-                                    >
-                                        {isCopied('url') ? (
-                                            <Check className="h-4 w-4" />
-                                        ) : (
-                                            <Copy className="h-4 w-4" />
-                                        )}
-                                        {isCopied('url')
-                                            ? 'Copied'
-                                            : 'Copy URL'}
-                                    </Button>
-                                </div>
-
-                                <Separator />
-
-                                <div className="space-y-4">
-                                    <MetadataItem
-                                        icon={<Tag className="h-4 w-4" />}
-                                        label="Category"
-                                        value={asset.category}
-                                        onCopy={handleCopy(
-                                            asset.category,
-                                            'category',
-                                        )}
-                                        copied={isCopied('category')}
-                                    />
-
-                                    <MetadataItem
-                                        icon={<FileType className="h-4 w-4" />}
-                                        label="Type"
-                                        value={asset.type}
-                                        capitalize
-                                    />
-
-                                    <MetadataItem
-                                        icon={<Link2 className="h-4 w-4" />}
-                                        label="External URL"
-                                        value={asset.external_url || 'None'}
-                                        truncate
-                                        onCopy={
-                                            asset.external_url
-                                                ? handleCopy(
-                                                      asset.external_url,
-                                                      'external',
-                                                  )
-                                                : undefined
-                                        }
-                                        copied={isCopied('external')}
-                                    />
-
-                                    {asset.created_at && (
-                                        <MetadataItem
-                                            icon={
-                                                <Calendar className="h-4 w-4" />
-                                            }
-                                            label="Created"
-                                            value={new Date(
-                                                asset.created_at,
-                                            ).toLocaleDateString('en-US', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric',
-                                                hour: '2-digit',
-                                                minute: '2-digit',
-                                            })}
-                                        />
-                                    )}
-                                </div>
-
-                                <Separator />
-
-                                <div className="space-y-2">
-                                    <Label className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
-                                        Caption / Description
-                                    </Label>
-                                    <div className="rounded-lg border border-border/50 bg-muted/50 p-3 text-xs leading-relaxed md:text-sm">
-                                        {asset.caption || (
-                                            <span className="text-muted-foreground italic">
-                                                No caption provided
-                                            </span>
-                                        )}
-                                    </div>
-                                </div>
-
-                                <div className="rounded-lg border border-primary/10 bg-primary/5 p-3 text-xs text-primary">
-                                    <span className="font-semibold">
-                                        AI Reference:
-                                    </span>{' '}
-                                    Use category "{asset.category}" in your
-                                    agent prompts to send this media.
-                                </div>
-                            </div>
-                        </ScrollArea>
-
-                        <DialogFooter className="border-t border-border/50 p-4 pt-2 md:p-6">
-                            <Button
-                                type="button"
-                                variant="destructive"
-                                size="sm"
-                                onClick={handleDelete}
-                                className="gap-2 text-sm"
-                            >
-                                <Trash2 className="h-4 w-4" />
-                                Delete Asset
-                            </Button>
-                        </DialogFooter>
-                    </div>
+                    <Button
+                        variant="default"
+                        size="sm"
+                        className="w-full gap-2 sm:w-auto"
+                        onClick={() =>
+                            window.open(
+                                asset.url,
+                                '_blank',
+                                'noopener,noreferrer',
+                            )
+                        }
+                    >
+                        <Eye className="h-4 w-4" />
+                        Preview in New Tab
+                    </Button>
                 </div>
-            </DialogContent>
-        </Dialog>
+
+                {/* 📜 Scrollable Details Section */}
+                <div className="w-full max-w-full flex-1 space-y-4 overflow-y-auto px-4 py-4">
+                    <div className="space-y-1">
+                        <h3 className="flex items-center gap-2 text-lg font-semibold">
+                            <MediaIcon
+                                type={asset.type}
+                                className="h-5 w-5 shrink-0"
+                            />
+                            <span className="truncate">Asset Details</span>
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                            Media information and metadata
+                        </p>
+                    </div>
+
+                    <Separator />
+
+                    {/* Quick Actions */}
+                    <div className="grid w-full grid-cols-2 gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full gap-2 truncate"
+                            onClick={handleOpenExternal}
+                        >
+                            <ExternalLink className="h-4 w-4 shrink-0" /> Open
+                            Source
+                        </Button>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full gap-2 truncate"
+                            onClick={() => handleCopy(asset.url, 'url')}
+                        >
+                            {isCopied('url') ? (
+                                <Check className="h-4 w-4" />
+                            ) : (
+                                <Copy className="h-4 w-4" />
+                            )}
+                            {isCopied('url') ? 'Copied' : 'Copy URL'}
+                        </Button>
+                    </div>
+
+                    <Separator />
+
+                    {/* Metadata (Inline for zero overflow) */}
+                    <div className="w-full max-w-full space-y-3">
+                        <MetadataRow
+                            icon={<Tag className="h-4 w-4 shrink-0" />}
+                            label="Category"
+                            value={asset.category}
+                            onCopy={() =>
+                                handleCopy(asset.category, 'category')
+                            }
+                            copied={isCopied('category')}
+                        />
+                        <MetadataRow
+                            icon={<FileType className="h-4 w-4 shrink-0" />}
+                            label="Type"
+                            value={asset.type}
+                            capitalize
+                        />
+
+                        {/* URL with bulletproof wrapping */}
+                        <div className="w-full max-w-full space-y-1.5">
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase">
+                                    <Link2 className="h-3.5 w-3.5 shrink-0" />{' '}
+                                    Direct URL
+                                </div>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-6 w-6 shrink-0"
+                                    onClick={() => handleCopy(asset.url, 'url')}
+                                >
+                                    {isCopied('url') ? (
+                                        <Check className="h-3 w-3" />
+                                    ) : (
+                                        <Copy className="h-3 w-3" />
+                                    )}
+                                </Button>
+                            </div>
+                            <div className="w-full rounded-md border bg-muted/30 p-2 font-mono text-[10px] leading-relaxed break-all select-all sm:text-xs">
+                                {asset.url}
+                            </div>
+                        </div>
+
+                        {/* {asset.external_url && (
+              <MetadataRow icon={<Link2 className="h-4 w-4 shrink-0" />} label="External URL" value={asset.external_url} truncate onCopy={() => handleCopy(asset.external_url, 'external')} copied={isCopied('external')} />
+            )} */}
+
+                        {asset.created_at && (
+                            <MetadataRow
+                                icon={<Calendar className="h-4 w-4 shrink-0" />}
+                                label="Created"
+                                value={new Date(
+                                    asset.created_at,
+                                ).toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                })}
+                            />
+                        )}
+                    </div>
+
+                    <Separator />
+
+                    {/* Caption */}
+                    <div className="w-full max-w-full space-y-1.5">
+                        <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
+                            Caption / Description
+                        </p>
+                        <div className="w-full rounded-md border border-border/50 bg-muted/30 p-3 text-sm leading-relaxed wrap-break-word">
+                            {asset.caption || (
+                                <span className="text-muted-foreground italic">
+                                    No caption provided
+                                </span>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* AI Reference */}
+                    <div className="w-full max-w-full rounded-md border border-primary/10 bg-primary/5 p-3 text-xs wrap-break-word text-primary">
+                        <span className="font-semibold">AI Reference:</span> Use
+                        category "{asset.category}" in your agent prompts to
+                        send this media.
+                    </div>
+
+                    {/* Delete */}
+                    <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={handleDelete}
+                        className="mt-2 w-full gap-2 sm:w-auto"
+                    >
+                        <Trash2 className="h-4 w-4 shrink-0" /> Delete Asset
+                    </Button>
+                </div>
+            </SheetContent>
+        </Sheet>
     );
 }
+ 

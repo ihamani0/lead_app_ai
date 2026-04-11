@@ -1,4 +1,5 @@
 import { Head, router } from '@inertiajs/react';
+import { useEcho } from '@laravel/echo-react';
 import {
     Flame,
     Search,
@@ -8,7 +9,9 @@ import {
     Users,
     Loader2,
     Sparkles,
-    Info,
+    CheckCircle,
+    CheckSquare,
+    Square,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Pagination from '@/components/pagination';
@@ -33,7 +36,7 @@ import {
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 
-import { index, triggerQualification } from '@/routes/leads';
+import { index, triggerQualification, bulkQualify } from '@/routes/leads';
 import type { EvolutionInstance, Lead as LeadType } from '@/types';
 import EditLead from './Partials/EditLead';
 import ViewLead from './Partials/ViewLead';
@@ -44,10 +47,27 @@ type Props = {
     instances: EvolutionInstance[];
 };
 
-export default function LeadsIndex({ leads, filters, instances }: Props) {
+export default function LeadsIndex({
+    leads: initialLeads,
+    filters,
+    instances,
+}: Props) {
     const { t } = useTranslation();
 
-    // Styling helper for Temperature
+    const [leads, setLeads] = useState<LeadType[]>(initialLeads.data);
+
+    useEffect(() => {
+        setLeads(initialLeads.data);
+    }, [initialLeads.data]);
+
+    useEcho('lead.*', ['QulificationUpdate', 'LeadMessageUpdated'], (event) => {
+        const updatedLead = event.lead;
+        setLeads((prevLeads) =>
+            prevLeads.map((lead) =>
+                lead.id === updatedLead.id ? { ...lead, ...updatedLead } : lead,
+            ),
+        );
+    });
 
     const [params, setParams] = useState({
         search: filters?.search || '',
@@ -65,6 +85,47 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
         null,
     );
 
+    const [selectedLeads, setSelectedLeads] = useState<Set<string | number>>(
+        new Set(),
+    );
+    const [bulkTriggering, setBulkTriggering] = useState(false);
+
+    const handleSelectLead = (leadId: string | number) => {
+        setSelectedLeads((prev) => {
+            const newSet = new Set(prev);
+            if (newSet.has(leadId)) {
+                newSet.delete(leadId);
+            } else {
+                newSet.add(leadId);
+            }
+            return newSet;
+        });
+    };
+
+    const handleSelectAll = () => {
+        if (selectedLeads.size === leads.length) {
+            setSelectedLeads(new Set());
+        } else {
+            setSelectedLeads(new Set(leads.map((l) => l.id)));
+        }
+    };
+
+    const handleBulkQualify = () => {
+        if (selectedLeads.size === 0) return;
+        setBulkTriggering(true);
+        router.post(
+            bulkQualify().url,
+            { lead_ids: Array.from(selectedLeads) },
+            {
+                preserveScroll: true,
+                onFinish: () => {
+                    setBulkTriggering(false);
+                    setSelectedLeads(new Set());
+                },
+            },
+        );
+    };
+
     const handleTriggerQualification = (leadId: string | number) => {
         setTriggeringLeadId(String(leadId));
         router.post(
@@ -79,7 +140,6 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
         );
     };
 
-    // 2. Automatically apply filters when state changes (with debounce)
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
@@ -90,19 +150,17 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
             router.get(index().url, params, {
                 preserveState: true,
                 preserveScroll: true,
-                replace: true, // Prevents filling up browser history with every keystroke
+                replace: true,
             });
-        }, 400); // 400ms delay
+        }, 400);
 
         return () => clearTimeout(timeoutId);
     }, [params]);
 
-    // Handle input changes easily
     const handleChange = (key: string, value: string) => {
         setParams((prev) => ({ ...prev, [key]: value }));
     };
 
-    // Clear filters
     const clearFilters = () => {
         setParams({
             search: '',
@@ -115,8 +173,20 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
         });
     };
 
-    const getTempBadge = (temp: string) => {
-        switch (temp?.toUpperCase()) {
+    const formatDateTime = (dateString: string | null) => {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    };
+
+    const getQualificationResultBadge = (result: string | null) => {
+        switch (result?.toUpperCase()) {
             case 'HOT':
                 return (
                     <Badge className="border-red-200 bg-red-100 text-red-800">
@@ -136,114 +206,65 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
                     </Badge>
                 );
             default:
-                return <Badge variant="outline">New</Badge>;
+                return <Badge variant="outline">-</Badge>;
         }
     };
 
-    const getStatusBadge = (status: string) => {
+    const getTreatmentStatusBadge = (status: string | null) => {
         switch (status) {
-            case 'QUALIFYING':
-                return (
-                    <Badge className="border-purple-200 bg-purple-100 text-purple-800">
-                        <Loader2 className="mr-1 h-3 w-3 animate-spin" />
-                        Qualifying
-                    </Badge>
-                );
-            case 'QUALIFIED':
-                return (
-                    <Badge className="border-green-200 bg-green-100 text-green-800">
-                        Qualified
-                    </Badge>
-                );
-            case 'IN_PROGRESS':
-                return <Badge variant="secondary">In Progress</Badge>;
-            case 'WON':
+            case 'TRAITE':
                 return (
                     <Badge className="border-emerald-200 bg-emerald-100 text-emerald-800">
-                        Won
+                        <CheckCircle className="mr-1 h-3 w-3" /> Traité
                     </Badge>
                 );
-            case 'LOST':
-                return <Badge variant="destructive">Lost</Badge>;
-            case 'NEW':
-                return <Badge variant="outline">New</Badge>;
+            case 'NON_TRAITE':
+                return (
+                    <Badge className="border-amber-200 bg-amber-100 text-amber-800">
+                        Non traité
+                    </Badge>
+                );
             default:
-                return <Badge variant="secondary">{status}</Badge>;
+                return <Badge variant="outline">-</Badge>;
         }
     };
 
-    const StatusInfoTooltip = () => (
+    const getNotesPreview = (notes: string | null) => {
+        if (!notes) return <span className="text-muted-foreground">-</span>;
+        const preview =
+            notes.length > 50 ? notes.substring(0, 50) + '...' : notes;
+        return (
+            <TooltipProvider>
+                <Tooltip>
+                    <TooltipTrigger asChild>
+                        <span className="cursor-help border-b border-dotted border-muted-foreground">
+                            {preview}
+                        </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                        <p>{notes}</p>
+                    </TooltipContent>
+                </Tooltip>
+            </TooltipProvider>
+        );
+    };
+
+    const TooltipHeader = ({
+        children,
+        text,
+    }: {
+        children: React.ReactNode;
+        text: string;
+    }) => (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 px-2 text-xs text-muted-foreground hover:text-foreground"
-                    >
-                        <Info className="mr-1 h-3 w-3" />
-                        {t('leads.statusInfo.button')}
-                    </Button>
+                    <span className="cursor-help border-b border-dotted border-muted-foreground">
+                        {children}
+                    </span>
                 </TooltipTrigger>
-                <TooltipContent className="w-auto bg-background p-3 text-foreground">
-                    <div className="text-xs">
-                        <p className="mb-2 font-semibold">
-                            {t('leads.statusInfo.title')}
-                        </p>
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="border-b">
-                                    <th className="pr-2 pb-1 font-medium">
-                                        {t('leads.statusInfo.n8nStatus')}
-                                    </th>
-                                    <th className="pr-2 pb-1 font-medium">
-                                        {t('leads.statusInfo.dbStatus')}
-                                    </th>
-                                    <th className="pb-1 font-medium">
-                                        {t('leads.statusInfo.meaning')}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td className="py-1 pr-2 text-red-600">
-                                        HOT
-                                    </td>
-                                    <td className="py-1 pr-2">QUALIFIED</td>
-                                    <td className="py-1">
-                                        {t('leads.statusInfo.hot')}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className="py-1 pr-2 text-orange-600">
-                                        WARM
-                                    </td>
-                                    <td className="py-1 pr-2">IN_PROGRESS</td>
-                                    <td className="py-1">
-                                        {t('leads.statusInfo.warm')}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className="py-1 pr-2 text-blue-600">
-                                        COLD
-                                    </td>
-                                    <td className="py-1 pr-2">IN_PROGRESS</td>
-                                    <td className="py-1">
-                                        {t('leads.statusInfo.cold')}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td className="py-1 pr-2 text-gray-600">
-                                        PENDING
-                                    </td>
-                                    <td className="py-1 pr-2">NEW</td>
-                                    <td className="py-1">
-                                        {t('leads.statusInfo.pending')}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                <TooltipContent>
+                    <p className="text-xs">{text}</p>
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
@@ -252,271 +273,327 @@ export default function LeadsIndex({ leads, filters, instances }: Props) {
     return (
         <AppLayout>
             <Head title={t('leads.title')} />
-            <div className="space-y-6 py-12 sm:px-6 lg:px-8">
-                {/* Header - Emerald/Green Gradient */}
-                <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-emerald-600 via-teal-700 to-cyan-800 p-8 shadow-2xl ring-1 ring-emerald-400/30 md:p-12 dark:from-emerald-900 dark:via-teal-900 dark:to-cyan-900 dark:ring-emerald-700/50">
-                    <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.1%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22%2F%3E%3C%2Fg%3E%3C%2Fg%3E%3C%2Fsvg%3E')] opacity-20" />
-                    <div className="relative z-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-                        <div className="space-y-3">
-                            <div className="flex items-center gap-3">
-                                <div className="rounded-2xl border border-white/30 bg-white/20 p-3 shadow-lg backdrop-blur-md">
-                                    <Users className="h-8 w-8 text-white" />
+            <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
+                <div className="space-y-6">
+                    <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500 to-teal-600 p-4 shadow-xl ring-1 ring-emerald-400/30 sm:p-5 md:p-6 dark:from-emerald-700 dark:to-teal-700 dark:ring-emerald-600/40">
+                        <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="min-w-0 space-y-1.5">
+                                <div className="flex items-center gap-2">
+                                    <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-sm">
+                                        <Users className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                                    </div>
+                                    <h1 className="text-lg leading-tight font-semibold text-white sm:text-xl md:text-3xl">
+                                        {t('leads.title')}
+                                    </h1>
                                 </div>
-                                <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-lg md:text-4xl lg:text-5xl">
-                                    {t('leads.title')}
-                                </h1>
+                                <p className="max-w-xs text-xs font-light text-white/90 sm:max-w-md sm:text-sm md:text-base">
+                                    {t('leads.description')}
+                                </p>
                             </div>
-                            <p className="max-w-xl text-sm font-light text-white/90 md:text-base lg:text-lg">
-                                {t('leads.description')}
-                            </p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-2 rounded-full border border-white/30 bg-white/20 px-4 py-2 text-xs font-medium text-white shadow-lg backdrop-blur-md md:text-sm">
-                                <Users className="h-4 w-4" />
-                                <span>
-                                    {leads.data.length} {t('leads.leadsCount')}
-                                </span>
+
+                            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-medium text-white backdrop-blur-sm sm:text-xs">
+                                    <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                    <span className="whitespace-nowrap">
+                                        {leads.length} {t('leads.leadsCount')}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-                    {/* Search Name/Phone */}
-                    <div className="relative">
-                        <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder={t('leads.search.placeholder')}
-                            className="pl-9"
-                            value={params.search}
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+                        <div className="relative">
+                            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder={t('leads.search.placeholder')}
+                                className="pl-9"
+                                value={params.search}
+                                onChange={(e) =>
+                                    handleChange('search', e.target.value)
+                                }
+                            />
+                        </div>
+
+                        <select
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            value={params.instance_id}
                             onChange={(e) =>
-                                handleChange('search', e.target.value)
+                                handleChange('instance_id', e.target.value)
+                            }
+                        >
+                            <option value="">
+                                {t('leads.search.allInstances')}
+                            </option>
+                            {instances.map((inst) => (
+                                <option key={inst.id} value={inst.id}>
+                                    {inst.display_name ||
+                                        inst.instance_name.split('-')[1] ||
+                                        inst.instance_name}
+                                </option>
+                            ))}
+                        </select>
+
+                        <select
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                            value={params.temperature}
+                            onChange={(e) =>
+                                handleChange('temperature', e.target.value)
+                            }
+                        >
+                            <option value="">
+                                {t('leads.search.allQualificationResults')}
+                            </option>
+                            <option value="UNQUALIFIED">
+                                ⏳ Non qualifiés
+                            </option>
+                            <option value="HOT">
+                                🔥 {t('leads.search.hot')}
+                            </option>
+                            <option value="WARM">
+                                ☀️ {t('leads.search.warm')}
+                            </option>
+                            <option value="COLD">
+                                ❄️ {t('leads.search.cold')}
+                            </option>
+                        </select>
+
+                        <Input
+                            type="number"
+                            placeholder={t('leads.search.minScore')}
+                            value={params.min_score}
+                            onChange={(e) =>
+                                handleChange('min_score', e.target.value)
+                            }
+                            min="0"
+                            max="10"
+                        />
+
+                        <Input
+                            type="date"
+                            title="Created After Date"
+                            value={params.date_from}
+                            onChange={(e) =>
+                                handleChange('date_from', e.target.value)
                             }
                         />
+
+                        <Input
+                            type="date"
+                            title="Created Before Date"
+                            value={params.date_to}
+                            onChange={(e) =>
+                                handleChange('date_to', e.target.value)
+                            }
+                        />
+
+                        {Object.values(params).some((val) => val !== '') && (
+                            <div className="flex justify-end pt-2">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={clearFilters}
+                                    className="text-red-500 hover:bg-red-50 hover:text-red-600"
+                                >
+                                    <X className="mr-1 h-4 w-4" />
+                                    {t('leads.search.clearFilters')}
+                                </Button>
+                            </div>
+                        )}
                     </div>
 
-                    {/* NEW: Instance Select */}
-                    <select
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                        value={params.instance_id}
-                        onChange={(e) =>
-                            handleChange('instance_id', e.target.value)
-                        }
-                    >
-                        <option value="">
-                            {t('leads.search.allInstances')}
-                        </option>
-                        {instances.map((inst) => (
-                            <option key={inst.id} value={inst.id}>
-                                {inst.display_name ||
-                                    inst.instance_name.split('-')[1] ||
-                                    inst.instance_name}
-                            </option>
-                        ))}
-                    </select>
-
-                    {/* Status Select */}
-                    <select
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                        value={params.status}
-                        onChange={(e) => handleChange('status', e.target.value)}
-                    >
-                        <option value="">
-                            {t('leads.search.allStatuses')}
-                        </option>
-                        <option value="NEW">{t('leads.search.new')}</option>
-                        <option value="IN_PROGRESS">
-                            {t('leads.search.inProgress')}
-                        </option>
-                        <option value="QUALIFIED">
-                            {t('leads.search.qualified')}
-                        </option>
-                        <option value="QUALIFYING">
-                            {t('leads.search.qualifying')}
-                        </option>
-                        <option value="WON">{t('leads.search.won')}</option>
-                    </select>
-
-                    {/* Temperature Select */}
-                    <select
-                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                        value={params.temperature}
-                        onChange={(e) =>
-                            handleChange('temperature', e.target.value)
-                        }
-                    >
-                        <option value="">
-                            {t('leads.search.allTemperatures')}
-                        </option>
-                        <option value="HOT">🔥 {t('leads.search.hot')}</option>
-                        <option value="WARM">
-                            ☀️ {t('leads.search.warm')}
-                        </option>
-                        <option value="COLD">
-                            ❄️ {t('leads.search.cold')}
-                        </option>
-                    </select>
-
-                    {/* Min Score */}
-                    <Input
-                        type="number"
-                        placeholder={t('leads.search.minScore')}
-                        value={params.min_score}
-                        onChange={(e) =>
-                            handleChange('min_score', e.target.value)
-                        }
-                        min="0"
-                        max="100"
-                    />
-
-                    {/* Date From */}
-                    <Input
-                        type="date"
-                        title="Created After Date"
-                        value={params.date_from}
-                        onChange={(e) =>
-                            handleChange('date_from', e.target.value)
-                        }
-                    />
-
-                    {/* Date To */}
-                    <Input
-                        type="date"
-                        title="Created Before Date"
-                        value={params.date_to}
-                        onChange={(e) =>
-                            handleChange('date_to', e.target.value)
-                        }
-                    />
-
-                    {/* Active Filters / Clear Button */}
-                    {Object.values(params).some((val) => val !== '') && (
-                        <div className="flex justify-end pt-2">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={clearFilters}
-                                className="text-red-500 hover:bg-red-50 hover:text-red-600"
-                            >
-                                <X className="mr-1 h-4 w-4" />{' '}
-                                {t('leads.search.clearFilters')}
-                            </Button>
-                        </div>
-                    )}
-                </div>
-
-                <div className="overflow-hidden rounded-xl border bg-white shadow-sm dark:bg-background">
-                    <Table>
-                        <TableHeader className="bg-slate-50 dark:bg-background dark:text-foreground">
-                            <TableRow>
-                                <TableHead>
-                                    {t('leads.table.contact')}
-                                </TableHead>
-                                <TableHead>
-                                    {t('leads.table.status')}
-                                    <StatusInfoTooltip />
-                                </TableHead>
-                                <TableHead>
-                                    {t('leads.table.temperature')}
-                                </TableHead>
-                                <TableHead className="w-[200px]">
-                                    {t('leads.table.aiScore')}
-                                </TableHead>
-                                <TableHead>
-                                    {t('leads.table.lastActive')}
-                                </TableHead>
-                                <TableHead className="text-right">
-                                    {t('leads.table.actions')}
-                                </TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {leads.data.map((lead) => (
-                                <TableRow key={lead.id}>
-                                    <TableCell>
-                                        <p className="text-sm font-medium text-slate-900 md:text-base dark:text-foreground">
-                                            {lead.name}
-                                        </p>
-                                        <p className="text-xs text-slate-500 md:text-sm dark:text-foreground">
-                                            +{lead.phone}
-                                        </p>
-                                    </TableCell>
-                                    <TableCell>
-                                        {getStatusBadge(lead.status)}
-                                    </TableCell>
-                                    <TableCell>
-                                        {getTempBadge(lead.temperature)}
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <Progress
-                                                value={
-                                                    ((lead.qualification_score ||
-                                                        0) *
-                                                        100) /
-                                                    10
-                                                }
-                                                className="h-2"
-                                            />
-                                            <span className="w-8 text-xs font-medium">
-                                                {((lead.qualification_score ||
-                                                    0) *
-                                                    100) /
-                                                    10}
-                                                %
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-xs text-slate-500">
-                                        {new Date(
-                                            lead.updated_at,
-                                        ).toLocaleDateString()}
-                                    </TableCell>
-                                    <TableCell className="space-x-1 text-right">
-                                        {/* Create this Show page next if you want detailed views */}
-                                        <ViewLead selectedLead={lead} />
-                                        <EditLead lead={lead} />
-                                        <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            onClick={() =>
-                                                handleTriggerQualification(
-                                                    lead.id,
-                                                )
-                                            }
-                                            disabled={
-                                                triggeringLeadId === lead.id
-                                            }
-                                            title={t(
-                                                'leads.actions.triggerQualification',
-                                            )}
-                                        >
-                                            {triggeringLeadId === lead.id ? (
-                                                <Loader2 className="h-4 w-4 animate-spin" />
-                                            ) : (
-                                                <Sparkles className="h-4 w-4 text-yellow-500" />
-                                            )}
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
-                            ))}
-                            {leads.data.length === 0 && (
+                    <div className="overflow-hidden rounded-lg border bg-white px-2 shadow-sm dark:bg-background">
+                        {selectedLeads.size > 0 && (
+                            <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2">
+                                <span className="text-sm text-muted-foreground">
+                                    {selectedLeads.size} sélectionné(s)
+                                </span>
+                                <Button
+                                    size="sm"
+                                    onClick={handleBulkQualify}
+                                    disabled={bulkTriggering}
+                                    className="ml-auto"
+                                >
+                                    {bulkTriggering ? (
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                    ) : (
+                                        <Sparkles className="mr-2 h-4 w-4" />
+                                    )}
+                                    Qualifier
+                                </Button>
+                            </div>
+                        )}
+                        <Table>
+                            <TableHeader className="bg-slate-50 dark:bg-background dark:text-foreground">
                                 <TableRow>
-                                    <TableCell
-                                        colSpan={6}
-                                        className="py-8 text-center text-muted-foreground"
-                                    >
-                                        {t('leads.empty.title')}!{' '}
-                                        {t('leads.empty.description')}
-                                    </TableCell>
+                                    <TableHead className="w-10">
+                                        <button
+                                            onClick={handleSelectAll}
+                                            className="flex items-center justify-center"
+                                        >
+                                            {selectedLeads.size ===
+                                                leads.length &&
+                                            leads.length > 0 ? (
+                                                <CheckSquare className="h-4 w-4 text-primary" />
+                                            ) : (
+                                                <Square className="h-4 w-4 text-muted-foreground" />
+                                            )}
+                                        </button>
+                                    </TableHead>
+                                    <TableHead>
+                                        {t('leads.table.contact')}
+                                    </TableHead>
+                                    <TableHead>
+                                        <TooltipHeader text="Résultat de qualification automatique: HOT/WARM/COLD">
+                                            Résultat qualification
+                                        </TooltipHeader>
+                                    </TableHead>
+                                    <TableHead>
+                                        <TooltipHeader text="Score de qualification IA (0-10)">
+                                            Score
+                                        </TooltipHeader>
+                                    </TableHead>
+                                    <TableHead>
+                                        <TooltipHeader text="Statut de traitement commercial: Traité ou Non traité">
+                                            Statut traitement
+                                        </TooltipHeader>
+                                    </TableHead>
+                                    <TableHead>
+                                        <TooltipHeader text="Notes ajoutées manuellement sur le lead">
+                                            Notes
+                                        </TooltipHeader>
+                                    </TableHead>
+                                    <TableHead>
+                                        <TooltipHeader text="Date du dernier message WhatsApp">
+                                            Dernier msg WhatsApp
+                                        </TooltipHeader>
+                                    </TableHead>
+                                    <TableHead>
+                                        <TooltipHeader text="Date de dernière qualification IA">
+                                            Date qualification IA
+                                        </TooltipHeader>
+                                    </TableHead>
+                                    <TableHead className="text-right">
+                                        {t('leads.table.actions')}
+                                    </TableHead>
                                 </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+                            </TableHeader>
+                            <TableBody>
+                                {leads.map((lead) => (
+                                    <TableRow key={lead.id}>
+                                        <TableCell>
+                                            <button
+                                                onClick={() =>
+                                                    handleSelectLead(lead.id)
+                                                }
+                                                className="flex items-center justify-center"
+                                            >
+                                                {selectedLeads.has(lead.id) ? (
+                                                    <CheckSquare className="h-4 w-4 text-primary" />
+                                                ) : (
+                                                    <Square className="h-4 w-4 text-muted-foreground" />
+                                                )}
+                                            </button>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                {lead.is_new && (
+                                                    <Badge className="bg-red-500 px-1.5 py-0.5 text-[10px] text-white">
+                                                        NEW
+                                                    </Badge>
+                                                )}
+                                                <p className="text-sm font-medium text-slate-900 md:text-base dark:text-foreground">
+                                                    {lead.name}
+                                                </p>
+                                            </div>
+                                            <p className="text-xs text-slate-500 md:text-sm dark:text-foreground">
+                                                +{lead.phone}
+                                            </p>
+                                        </TableCell>
+                                        <TableCell>
+                                            {getQualificationResultBadge(
+                                                lead.qualification_result,
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                <Progress
+                                                    value={
+                                                        ((lead.qualification_score ??
+                                                            0) *
+                                                            100) /
+                                                        10
+                                                    }
+                                                    className="h-2"
+                                                />
+                                                <span className="w-8 text-xs font-medium">
+                                                    {lead.qualification_score ??
+                                                        0}
+                                                    /10
+                                                </span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell>
+                                            {getTreatmentStatusBadge(
+                                                lead.treatment_status,
+                                            )}
+                                        </TableCell>
+                                        <TableCell className="max-w-[150px]">
+                                            {getNotesPreview(lead.notes)}
+                                        </TableCell>
+                                        <TableCell className="text-xs text-slate-500">
+                                            {formatDateTime(
+                                                lead.last_activity_at,
+                                            )}
+                                        </TableCell>
+                                        <TableCell className="text-xs text-slate-500">
+                                            {formatDateTime(lead.qualified_at)}
+                                        </TableCell>
+                                        <TableCell className="space-x-1 text-right">
+                                            <ViewLead selectedLead={lead} />
+                                            <EditLead lead={lead} />
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                onClick={() =>
+                                                    handleTriggerQualification(
+                                                        lead.id,
+                                                    )
+                                                }
+                                                disabled={
+                                                    triggeringLeadId === lead.id
+                                                }
+                                                title={t(
+                                                    'leads.actions.triggerQualification',
+                                                )}
+                                            >
+                                                {triggeringLeadId ===
+                                                lead.id ? (
+                                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <Sparkles className="h-4 w-4 text-yellow-500" />
+                                                )}
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))}
+                                {leads.length === 0 && (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={8}
+                                            className="py-8 text-center text-muted-foreground"
+                                        >
+                                            {t('leads.empty.title')}!{' '}
+                                            {t('leads.empty.description')}
+                                        </TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </div>
 
-                {/* Add Pagination Component here if needed */}
-                <Pagination links={leads.links} />
+                    <Pagination links={initialLeads.links} />
+                </div>
             </div>
         </AppLayout>
     );

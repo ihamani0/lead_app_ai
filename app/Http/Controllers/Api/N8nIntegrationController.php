@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\QulificationUpdate;
 use App\Http\Controllers\Controller;
 use App\Models\EvolutionInstance;
 use App\Models\KnowledgeBase;
@@ -20,8 +21,6 @@ class N8nIntegrationController extends Controller
     // 1. AI TOOL: Update CRM (Qualification)
     public function updateLead(Request $request)
     {
-        // n8n sends: { "instance": "...", "phone": "...", "temperature": "HOT", "score": 85, "summary": "Wants a pool", "status": "HOT" }
-
         $request->validate([
             'instance' => 'required',
             'phone' => 'required',
@@ -31,22 +30,19 @@ class N8nIntegrationController extends Controller
         $lead = Lead::where('tenant_id', $tenantId)->where('phone', $request->phone)->first();
 
         if ($lead) {
-            // Map N8n status to DB status
-            $statusMap = [
-                'HOT' => 'QUALIFIED',
-                'WARM' => 'IN_PROGRESS',
-                'COLD' => 'IN_PROGRESS',
-                'PENDING' => 'NEW',
-            ];
-
-            $newStatus = $statusMap[$request->temperature] ?? 'NEW';
+            // Convert score from 0-100 to 0-10
+            $score = $request->qualification_score !== null ? (int) ($request->qualification_score / 10) : $lead->qualification_score;
 
             $lead->update([
-                'temperature' => $request->temperature ?? $lead->temperature,
-                'qualification_score' => $request->score ?? $lead->qualification_score,
-                'ai_summary' => $request->summary ?? $lead->ai_summary,
-                'status' => $newStatus,
+                'qualification_result' => $request->qualification_result ?? $lead->qualification_result,
+                'qualification_score' => $score,
+                'ai_summary' => $request->ai_summary ?? $lead->ai_summary,
+                'ai_qualification_status' => 'QUALIFIE',
+                'is_new' => false,
+                'qualified_at' => now(),
             ]);
+
+            event(new QulificationUpdate($lead));
 
             // Example of merging custom data (e.g., budget extracted by AI)
             if ($request->has('custom_data')) {
@@ -56,7 +52,7 @@ class N8nIntegrationController extends Controller
             }
         }
 
-        return response()->json(['status' => 'success', 'lead' => $lead]);
+        return response()->json(['status' => 'success']);
     }
 
     // 2. AI TOOL: Fetch Media

@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\QrCodeUpdated;
 use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
 use Ihamani0\LaravelEvolutionApi\Facades\EvolutionApi;
@@ -57,17 +58,17 @@ class EvolutionService
         // 2. If successful, Evolution returns the QR code in the response body!
         if ($response->successful()) {
             $data = $response->json();
-            
+
             // Extract the raw code
             $qrCode = $data['code'] ?? null;
 
             // 3. Instantly broadcast it to the frontend!
             // This guarantees the UI updates immediately even if the webhook is delayed.
             if ($qrCode) {
-                broadcast(new \App\Events\QrCodeUpdated($instanceName, $qrCode));
+                broadcast(new QrCodeUpdated($instanceName, $qrCode));
             }
         } else {
-            Log::error("Failed to fetch QR for {$instanceName}: " . $response->body());
+            Log::error("Failed to fetch QR for {$instanceName}: ".$response->body());
         }
     }
 

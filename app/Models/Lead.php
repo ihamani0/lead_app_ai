@@ -15,27 +15,56 @@ class Lead extends Model
     protected $casts = [
         'custom_data' => 'array',
         'qualification_score' => 'integer',
+        'ai_qualification_status' => 'string',
+        'qualification_result' => 'string',
+        'treatment_status' => 'string',
+        'is_new' => 'boolean',
+        'qualified_at' => 'datetime',
+        'last_activity_at' => 'datetime',
+        'recent_messages' => 'array',
+        'last_qualification_attempt_at' => 'datetime',
+    ];
+
+    public const AI_QUALIFICATION_STATUS = [
+        'NON_QUALIFIE' => 'Non qualifié',
+        'QUALIFIE' => 'Qualifié',
+    ];
+
+    public const QUALIFICATION_RESULTS = [
+        'HOT' => 'Hot',
+        'WARM' => 'Warm',
+        'COLD' => 'Cold',
+    ];
+
+    public const TREATMENT_STATUSES = [
+        'TRAITE' => 'Traité',
+        'NON_TRAITE' => 'Non traité',
     ];
 
     // Scopes
     public function scopeHot($query)
     {
-        return $query->where('status', 'hot');
+        return $query->where('qualification_result', 'HOT');
     }
 
-    public function scopeByStatus($query, $status)
+    public function scopeByQualificationResult($query, $result)
     {
-        return $query->where('status', $status);
+        return $query->where('qualification_result', $result);
     }
 
     public function scopeQualified($query)
     {
-        return $query->whereIn('temperature', ['HOT', 'WARM', 'COLD']);
+        return $query->whereIn('qualification_result', ['HOT', 'WARM', 'COLD']);
     }
 
     public function scopeNewLeads($query)
     {
-        return $query->where('status', 'NEW');
+        return $query->where('is_new', true);
+    }
+
+    public function scopeProcessed($query)
+    {
+        return $query->where('is_new', false);
     }
 
     // Relations

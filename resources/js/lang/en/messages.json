@@ -1,7 +1,7 @@
 {
     "welcome": "Welcome",
     "dashboard": "Dashboard",
-    "profile": "Profile",
+    "whatsapp": "Whatsapp",
     "settings": "Settings",
     "logout": "Logout",
     "login": "Login",
@@ -16,7 +16,7 @@
     "french": "French",
     "agents": "Agents",
     "leads": "Leads",
-    "media_assets": "Media Assets",
+    "media_assets": "Media",
     "documentation": "Knowledge Base",
     "success": {
         "agent_created": "Agent created successfully",
@@ -30,4 +30,5 @@
         "no_found_agent": "Agent not found",
         "document_uploaded": "Failed to upload document"
     }
+     
 }

@@ -37,7 +37,17 @@ class LeadController extends Controller
             // New Filter: Instance Name
             ->when($request->instance_id, fn ($q, $instance) => $q->where('instance_id', $instance))
             ->when($request->status, fn ($q, $status) => $q->where('status', $status))
-            ->when($request->temperature, fn ($q, $temp) => $q->where('temperature', $temp))
+            ->when($request->temperature, function ($q, $temp) {
+                if ($temp === 'UNQUALIFIED') {
+                    return $q->where(function ($sub) {
+                        $sub->where('is_new', true)
+                            ->orWhere('ai_qualification_status', 'NON_QUALIFIE')
+                            ->orWhereNull('ai_qualification_status');
+                    });
+                }
+
+                return $q->where('qualification_result', $temp);
+            })
             ->when($request->date_from, fn ($q, $date) => $q->whereDate('created_at', '>=', $date))
             ->when($request->date_to, fn ($q, $date) => $q->whereDate('created_at', '<=', $date))
             ->when($request->min_score, fn ($q, $score) => $q->where('qualification_score', '>=', $score))
@@ -56,7 +66,16 @@ class LeadController extends Controller
     public function update(Request $request, $id)
     {
         $lead = Lead::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
-        $lead->update($request->only(['name', 'status', 'temperature']));
+
+        $lead->update($request->only([
+            'name',
+            'status',
+            'temperature',
+            'qualification_result',
+            'qualification_score',
+            'treatment_status',
+            'notes',
+        ]));
 
         return back()->with('success', __('messages.success.lead_udated_manually'));
     }
@@ -78,5 +97,54 @@ class LeadController extends Controller
         ]);
 
         return back()->with('success', __('messages.success.qualification_in_progress'));
+    }
+
+    public function bulkQualify(Request $request)
+    {
+        $leadIds = $request->input('lead_ids', []);
+
+        $leads = Lead::where('tenant_id', $request->user()->tenant_id)
+            ->whereIn('id', $leadIds)
+            ->with('instance')
+            ->get();
+
+        $successCount = 0;
+        $failedCount = 0;
+
+        foreach ($leads as $lead) {
+            try {
+                $webhookUrl = config('services.n8n.n8n_base_url').'/webhook/lead/qualification';
+
+                $response = Http::withHeaders([
+                    'X-N8N-API-KEY' => config('services.n8n.api_key'),
+                ])->post($webhookUrl, [
+                    'instanceName' => $lead->instance->instance_name,
+                    'phone' => $lead->phone,
+                ]);
+
+                if ($response->successful()) {
+                    $lead->update([
+                        'is_new' => false,
+                        'last_qualification_attempt_at' => now(),
+                    ]);
+                    $successCount++;
+                } else {
+                    $failedCount++;
+                }
+
+                usleep(500000);
+
+            } catch (\Exception $e) {
+                $failedCount++;
+            }
+        }
+
+        $message = "Qualification déclenchée: {$successCount} succès, {$failedCount} échecs.";
+
+        if ($request->expectsJson()) {
+            return response()->json(['success' => true, 'message' => $message]);
+        }
+
+        return back()->with('success', $message);
     }
 }

@@ -27,12 +27,7 @@ export function MediaTabs({ assets, onDelete, onSelect }: MediaTabsProps) {
             icon: ImageIcon,
         },
         { value: 'videos', label: 'Videos', count: videos.length, icon: Video },
-        // {
-        //     value: 'other',
-        //     label: 'Other',
-        //     count: others.length,
-        //     icon: FileText,
-        // },
+
     ];
 
     return (

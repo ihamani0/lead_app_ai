@@ -28,17 +28,17 @@ export function CreateAgentDialog({
 }: CreateAgentDialogProps) {
     const { t } = useTranslation();
 
-    const form = useForm({
+    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         name: '',
         system_prompt: '',
         webhook_url: '',
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
-        form.post(store().url, {
+            post(store().url, {
             onSuccess: () => {
-                form.reset();
+                reset();
                 onOpenChange(false);
             },
         });
@@ -46,8 +46,8 @@ export function CreateAgentDialog({
 
     useEffect(() => {
         if (!open) {
-            form.reset();
-            form.clearErrors();
+                reset();
+                clearErrors();
         }
     }, [open]);
 
@@ -79,16 +79,16 @@ export function CreateAgentDialog({
                             <Input
                                 id="agent-name"
                                 placeholder={t('agents.agent_name_placeholder')}
-                                value={form.data.name}
+                                value={data.name}
                                 onChange={(e) =>
-                                    form.setData('name', e.target.value)
+                                    setData('name', e.target.value)
                                 }
-                                disabled={form.processing}
+                                disabled={processing}
                                 required
                             />
-                            {form.errors.name && (
+                            {errors.name && (
                                 <p className="text-sm text-destructive">
-                                    {form.errors.name}
+                                    {errors.name}
                                 </p>
                             )}
                         </div>
@@ -102,19 +102,19 @@ export function CreateAgentDialog({
                                 placeholder={t(
                                     'agents.system_prompt_placeholder',
                                 )}
-                                value={form.data.system_prompt}
+                                value={data.system_prompt}
                                 onChange={(e) =>
-                                    form.setData(
+                                    setData(
                                         'system_prompt',
                                         e.target.value,
                                     )
                                 }
-                                disabled={form.processing}
+                                disabled={processing}
                                 rows={4}
                             />
-                            {form.errors.system_prompt && (
+                            {errors.system_prompt && (
                                 <p className="text-sm text-destructive">
-                                    {form.errors.system_prompt}
+                                    {errors.system_prompt}
                                 </p>
                             )}
                         </div>
@@ -129,15 +129,15 @@ export function CreateAgentDialog({
                                 placeholder={t(
                                     'agents.webhook_url_placeholder',
                                 )}
-                                value={form.data.webhook_url}
+                                value={data.webhook_url}
                                 onChange={(e) =>
-                                    form.setData('webhook_url', e.target.value)
+                                    setData('webhook_url', e.target.value)
                                 }
-                                disabled={form.processing}
+                                disabled={processing}
                             />
-                            {form.errors.webhook_url && (
+                            {errors.webhook_url && (
                                 <p className="text-sm text-destructive">
-                                    {form.errors.webhook_url}
+                                    {errors.webhook_url}
                                 </p>
                             )}
                         </div>
@@ -148,12 +148,12 @@ export function CreateAgentDialog({
                             type="button"
                             variant="outline"
                             onClick={() => onOpenChange(false)}
-                            disabled={form.processing}
+                            disabled={processing}
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={form.processing}>
-                            {form.processing ? (
+                        <Button type="submit" disabled={processing}>
+                            {processing ? (
                                 <>
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                     Creating...

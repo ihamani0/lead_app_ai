@@ -115,6 +115,10 @@ export type LeadStatus =
 
 export type LeadTemperature = 'cold' | 'warm' | 'hot';
 
+export type AiQualificationStatus = 'NON_QUALIFIE' | 'QUALIFIE';
+export type QualificationResult = 'HOT' | 'WARM' | 'COLD';
+export type TreatmentStatus = 'TRAITE' | 'NON_TRAITE';
+
 export interface Lead {
     id: string | number;
     name: string;
@@ -122,6 +126,18 @@ export interface Lead {
     status: LeadStatus;
     temperature: LeadTemperature;
     qualification_score: number | null;
+    ai_qualification_status: AiQualificationStatus | null;
+    qualification_result: QualificationResult | null;
+    treatment_status: TreatmentStatus | null;
+    notes: string | null;
+    qualified_at: string | null;
+    last_activity_at: string | null;
+    recent_messages: Array<{
+        direction: 'client' | 'ai';
+        message: string;
+        timestamp: string;
+    }> | null;
+    is_new: boolean;
     updated_at: string;
     created_at: string;
     ai_summary: string;

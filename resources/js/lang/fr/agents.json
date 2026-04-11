@@ -114,6 +114,14 @@
         "uploadDocs": "Téléchargez des documents dans la base de connaissances",
 
         "comingSoon": "Bientôt disponible",
-        "logsPlaceholder": "L'historique des conversations affichera toutes les interactions avec cet agent, y compris l'historique des messages, les temps de réponse et les métriques de performance."
+        "logsPlaceholder": "L'historique des conversations affichera toutes les interactions avec cet agent, y compris l'historique des messages, les temps de réponse et les métriques de performance.",
+
+        "history": "Historique",
+        "promptHistory": "Historique des invites",
+        "restore": "Restaurer",
+        "restoreConfirm": "Êtes-vous sûr de vouloir restaurer la version {{version}}?",
+        "noHistory": "Aucun historique. Enregistrez des modifications pour créer la première sauvegarde.",
+        "downloadPrompt": "Télécharger",
+        "failedToLoadHistory": "Échec du chargement de l'historique"
     }
 }

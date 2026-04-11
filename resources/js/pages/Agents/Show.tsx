@@ -115,7 +115,7 @@ export default function AgentShow({ agent, availableInstances }: Props) {
             case 'knowledge':
                 return <AgentKnowledgeBase agent={agent} />;
             case 'logs':
-                return <AgentConversationLogs agent={agent} />;
+                return <AgentConversationLogs />;
             default:
                 return null;
         }
@@ -210,7 +210,7 @@ export default function AgentShow({ agent, availableInstances }: Props) {
 
             <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
                 {/* Desktop Sidebar */}
-                <div className="hidden w-64 shrink-0 border-r bg-card md:block">
+                <div className="hidden w-64 shrink-0 border-r bg-card dark:bg-background/10 md:block">
                     <div className="flex h-full flex-col">
                         {/* Back button */}
                         <div className="border-b p-4">

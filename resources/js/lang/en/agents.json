@@ -114,6 +114,14 @@
         "uploadDocs": "Upload documents in Knowledge Base",
 
         "comingSoon": "Coming Soon",
-        "logsPlaceholder": "Conversation logs will show all interactions with this agent, including message history, response times, and performance metrics."
+        "logsPlaceholder": "Conversation logs will show all interactions with this agent, including message history, response times, and performance metrics.",
+
+        "history": "History",
+        "promptHistory": "Prompt History",
+        "restore": "Restore",
+        "restoreConfirm": "Are you sure you want to restore to version {{version}}?",
+        "noHistory": "No history yet. Save changes to create the first backup.",
+        "downloadPrompt": "Download",
+        "failedToLoadHistory": "Failed to load history"
     }
 }
