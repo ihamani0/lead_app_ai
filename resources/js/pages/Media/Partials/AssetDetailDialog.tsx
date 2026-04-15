@@ -1,4 +1,5 @@
 // components/media/AssetDetailDialog.tsx
+import axios from 'axios';
 import {
     ExternalLink,
     Trash2,
@@ -9,15 +10,19 @@ import {
     Check,
     Copy,
     Eye,
+    Star,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Switch } from '@/components/ui/switch';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { getGradient } from '@/lib/mediaHelpers';
 import { cn } from '@/lib/utils';
+import media from '@/routes/media';
 import type { Asset } from '@/types';
 import { MediaIcon } from './AssetCard';
 interface AssetDetailDialogProps {
@@ -25,57 +30,65 @@ interface AssetDetailDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onDelete: (id: string) => void;
+    onToggleDefault?: (id: string, isDefault: boolean) => void;
 }
-
 
 interface MetadataRowProps {
-  icon: ReactNode
-  label: string
-  value: ReactNode
-  capitalize?: boolean
-  truncate?: boolean
-  onCopy?: () => void
-  copied?: boolean
+    icon: ReactNode;
+    label: string;
+    value: ReactNode;
+    capitalize?: boolean;
+    truncate?: boolean;
+    onCopy?: () => void;
+    copied?: boolean;
 }
 
- function MetadataRow({
-  icon,
-  label,
-  value,
-  capitalize = false,
-  truncate = false,
-  onCopy,
-  copied,
+function MetadataRow({
+    icon,
+    label,
+    value,
+    capitalize = false,
+    truncate = false,
+    onCopy,
+    copied,
 }: MetadataRowProps) {
-  return (
-    <div className="flex items-start justify-between gap-3 w-full max-w-full">
-      <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase shrink-0">
-        {icon} {label}
-      </div>
-      <div className="flex items-center gap-1.5 min-w-0">
-        <span
-          className={cn(
-            "text-sm break-words text-right",
-            capitalize && "capitalize",
-            truncate && "truncate max-w-[140px] sm:max-w-[200px]"
-          )}
-        >
-          {value || <span className="text-muted-foreground/60 italic">—</span>}
-        </span>
-        {onCopy && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-5 w-5 shrink-0 -mr-1"
-            onClick={onCopy}
-            aria-label={`Copy ${label}`}
-          >
-            {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
-          </Button>
-        )}
-      </div>
-    </div>
-  )
+    return (
+        <div className="flex w-full max-w-full items-start justify-between gap-3">
+            <div className="flex shrink-0 items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase">
+                {icon} {label}
+            </div>
+            <div className="flex min-w-0 items-center gap-1.5">
+                <span
+                    className={cn(
+                        'text-right text-sm break-words',
+                        capitalize && 'capitalize',
+                        truncate && 'max-w-[140px] truncate sm:max-w-[200px]',
+                    )}
+                >
+                    {value || (
+                        <span className="text-muted-foreground/60 italic">
+                            —
+                        </span>
+                    )}
+                </span>
+                {onCopy && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="-mr-1 h-5 w-5 shrink-0"
+                        onClick={onCopy}
+                        aria-label={`Copy ${label}`}
+                    >
+                        {copied ? (
+                            <Check className="h-3 w-3" />
+                        ) : (
+                            <Copy className="h-3 w-3" />
+                        )}
+                    </Button>
+                )}
+            </div>
+        </div>
+    );
 }
 
 export function AssetDetailDialog({
@@ -83,10 +96,27 @@ export function AssetDetailDialog({
     open,
     onOpenChange,
     onDelete,
+    onToggleDefault,
 }: AssetDetailDialogProps) {
     const { copy, isCopied } = useClipboard();
+    const [isUpdatingDefault, setIsUpdatingDefault] = useState(false);
 
     if (!asset) return null;
+
+    const handleToggleDefault = async () => {
+        if (!onToggleDefault) return;
+        setIsUpdatingDefault(true);
+        try {
+            const response = await axios.post(
+                media.toggleDefault(asset.id).url,
+            );
+            onToggleDefault(asset.id, response.data.is_default);
+        } catch (error) {
+            console.error('Failed to toggle default:', error);
+        } finally {
+            setIsUpdatingDefault(false);
+        }
+    };
 
     const handleCopy =
         (text: string, field: string) => (e: React.MouseEvent) => {
@@ -293,6 +323,21 @@ export function AssetDetailDialog({
                         </div>
                     </div>
 
+                    {/* AI Default Toggle */}
+                    <div className="flex w-full max-w-full items-center justify-between rounded-md border border-amber-500/20 bg-amber-500/5 p-3">
+                        <div className="flex items-center gap-2">
+                            <Star className="h-4 w-4 shrink-0 text-amber-500" />
+                            <span className="text-sm text-amber-700 dark:text-amber-400">
+                                AI Default
+                            </span>
+                        </div>
+                        <Switch
+                            checked={asset.is_default ?? false}
+                            onCheckedChange={handleToggleDefault}
+                            disabled={isUpdatingDefault}
+                        />
+                    </div>
+
                     {/* AI Reference */}
                     <div className="w-full max-w-full rounded-md border border-primary/10 bg-primary/5 p-3 text-xs wrap-break-word text-primary">
                         <span className="font-semibold">AI Reference:</span> Use
@@ -314,4 +359,3 @@ export function AssetDetailDialog({
         </Sheet>
     );
 }
- 

@@ -189,7 +189,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                             variant="outline"
                                                             className="mt-1 h-5 border-slate-200 text-[10px] font-medium tracking-wider uppercase dark:border-slate-700"
                                                         >
-                                                            {'MyAiCore'}
+                                                            {'MyIaCore'}
                                                         </Badge>
                                                     </div>
                                                 </div>

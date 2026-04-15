@@ -31,6 +31,17 @@ class MediaAssetController extends Controller
         ]);
     }
 
+    public function toggleDefault(Request $request, $id)
+    {
+        $asset = MediaAsset::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
+
+        $asset->update(['is_default' => ! $asset->is_default]);
+
+        return response()->json([
+            'is_default' => $asset->fresh()->is_default,
+        ]);
+    }
+
     public function store(Request $request)
     {
 

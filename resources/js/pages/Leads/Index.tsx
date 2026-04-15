@@ -12,6 +12,7 @@ import {
     CheckCircle,
     CheckSquare,
     Square,
+    MessageCircle,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Pagination from '@/components/pagination';
@@ -60,8 +61,19 @@ export default function LeadsIndex({
         setLeads(initialLeads.data);
     }, [initialLeads.data]);
 
-    useEcho('lead.*', ['QulificationUpdate', 'LeadMessageUpdated'], (event) => {
+    useEcho('lead', ['QulificationUpdate'], (event) => {
         const updatedLead = event.lead;
+
+        setLeads((prevLeads) =>
+            prevLeads.map((lead) =>
+                lead.id === updatedLead.id ? { ...lead, ...updatedLead } : lead,
+            ),
+        );
+    });
+
+    useEcho('lead', ['LeadMessageUpdated'], (event) => {
+        const updatedLead = event.lead;
+
         setLeads((prevLeads) =>
             prevLeads.map((lead) =>
                 lead.id === updatedLead.id ? { ...lead, ...updatedLead } : lead,
@@ -183,6 +195,16 @@ export default function LeadsIndex({
             hour: '2-digit',
             minute: '2-digit',
         });
+    };
+
+    const formatMessageTime = (timestamp: string) => {
+        const diff = Date.now() - new Date(timestamp).getTime();
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'now';
+        if (mins < 60) return `${mins}m`;
+        const hours = Math.floor(mins / 60);
+        if (hours < 24) return `${hours}h`;
+        return `${Math.floor(hours / 24)}d`;
     };
 
     const getQualificationResultBadge = (result: string | null) => {
@@ -406,7 +428,8 @@ export default function LeadsIndex({
                         {selectedLeads.size > 0 && (
                             <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2">
                                 <span className="text-sm text-muted-foreground">
-                                    {selectedLeads.size} sélectionné(s)
+                                    {selectedLeads.size}{' '}
+                                    {t('leads.table.selected')}
                                 </span>
                                 <Button
                                     size="sm"
@@ -419,7 +442,7 @@ export default function LeadsIndex({
                                     ) : (
                                         <Sparkles className="mr-2 h-4 w-4" />
                                     )}
-                                    Qualifier
+                                    {t('leads.actions.triggerQualification')}
                                 </Button>
                             </div>
                         )}
@@ -441,36 +464,69 @@ export default function LeadsIndex({
                                         </button>
                                     </TableHead>
                                     <TableHead>
-                                        {t('leads.table.contact')}
+                                        <div className="flex items-center gap-1">
+                                            {t('leads.table.contact')}
+                                        </div>
                                     </TableHead>
                                     <TableHead>
-                                        <TooltipHeader text="Résultat de qualification automatique: HOT/WARM/COLD">
-                                            Résultat qualification
+                                        <TooltipHeader
+                                            text={t(
+                                                'leads.table.result_tooltip',
+                                            )}
+                                        >
+                                            {t('leads.table.result')}
                                         </TooltipHeader>
                                     </TableHead>
                                     <TableHead>
-                                        <TooltipHeader text="Score de qualification IA (0-10)">
-                                            Score
+                                        <TooltipHeader
+                                            text={t(
+                                                'leads.table.aiScore_tooltip',
+                                            )}
+                                        >
+                                            {t('leads.table.aiScore')}
                                         </TooltipHeader>
                                     </TableHead>
                                     <TableHead>
-                                        <TooltipHeader text="Statut de traitement commercial: Traité ou Non traité">
-                                            Statut traitement
+                                        <TooltipHeader
+                                            text={t(
+                                                'leads.table.status_tooltip',
+                                            )}
+                                        >
+                                            {t('leads.table.status')}
                                         </TooltipHeader>
                                     </TableHead>
                                     <TableHead>
-                                        <TooltipHeader text="Notes ajoutées manuellement sur le lead">
-                                            Notes
+                                        <TooltipHeader
+                                            text={t(
+                                                'leads.table.notes_tooltip',
+                                            )}
+                                        >
+                                            {t('leads.table.notes')}
+                                        </TooltipHeader>
+                                    </TableHead>
+                                    <TableHead className="w-[100px]">
+                                        <TooltipHeader text={t('leads.table.lastMessage_tooltip')}>
+                                            {t('leads.table.lastMessage')}
                                         </TooltipHeader>
                                     </TableHead>
                                     <TableHead>
-                                        <TooltipHeader text="Date du dernier message WhatsApp">
-                                            Dernier msg WhatsApp
+                                        <TooltipHeader
+                                            text={t(
+                                                'leads.table.date_lastMessage_tooltip',
+                                            )}
+                                        >
+                                            {t('leads.table.lastActive')}
                                         </TooltipHeader>
                                     </TableHead>
                                     <TableHead>
-                                        <TooltipHeader text="Date de dernière qualification IA">
-                                            Date qualification IA
+                                        <TooltipHeader
+                                            text={t(
+                                                'leads.table.lastQualificationDate_tooltip',
+                                            )}
+                                        >
+                                            {t(
+                                                'leads.table.lastQualificationDate',
+                                            )}
                                         </TooltipHeader>
                                     </TableHead>
                                     <TableHead className="text-right">
@@ -541,10 +597,64 @@ export default function LeadsIndex({
                                         <TableCell className="max-w-[150px]">
                                             {getNotesPreview(lead.notes)}
                                         </TableCell>
-                                        <TableCell className="text-xs text-slate-500">
-                                            {formatDateTime(
-                                                lead.last_activity_at,
+                                        <TableCell className="max-w-[200px]">
+                                            {lead.recent_messages &&
+                                            lead.recent_messages.length > 0 ? (
+                                                <div className="flex items-center gap-2">
+                                                    <Badge
+                                                        className={
+                                                            lead
+                                                                .recent_messages[0]
+                                                                .direction ===
+                                                            'client'
+                                                                ? 'bg-emerald-500 hover:bg-emerald-600'
+                                                                : 'bg-teal-500 hover:bg-teal-600'
+                                                        }
+                                                    >
+                                                        {lead.recent_messages[0]
+                                                            .direction ===
+                                                        'client'
+                                                            ? '👤'
+                                                            : '🤖'}
+                                                    </Badge>
+                                                    <div className="min-w-0 flex-1">
+                                                        <p className="truncate text-xs">
+                                                            {lead
+                                                                .recent_messages[0]
+                                                                .message
+                                                                .length > 30
+                                                                ? lead.recent_messages[0].message.substring(
+                                                                      0,
+                                                                      30,
+                                                                  ) + '...'
+                                                                : lead
+                                                                      .recent_messages[0]
+                                                                      .message}
+                                                        </p>
+                                                        <p className="text-[10px] text-muted-foreground">
+                                                            {formatMessageTime(
+                                                                lead
+                                                                    .recent_messages[0]
+                                                                    .timestamp,
+                                                            )}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <span className="text-xs text-muted-foreground">
+                                                    -
+                                                </span>
                                             )}
+                                        </TableCell>
+
+                                        <TableCell className="w-[100px] text-xs text-slate-500">
+                                            {lead.recent_messages &&
+                                            lead.recent_messages.length > 0
+                                                ? formatMessageTime(
+                                                      lead.recent_messages[0]
+                                                          .timestamp,
+                                                  )
+                                                : '-'}
                                         </TableCell>
                                         <TableCell className="text-xs text-slate-500">
                                             {formatDateTime(lead.qualified_at)}

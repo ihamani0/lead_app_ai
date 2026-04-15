@@ -1,6 +1,12 @@
 // components/media/AssetCard.tsx
 import type { LucideIcon } from 'lucide-react';
-import { Trash2, Image as ImageIcon, Video, FileText } from 'lucide-react';
+import {
+    Trash2,
+    Image as ImageIcon,
+    Video,
+    FileText,
+    Star,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -101,20 +107,28 @@ export function AssetCard({ asset, onDelete, onClick }: AssetCardProps) {
                     </div>
                 )}
 
-
                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition-colors duration-300 group-hover:bg-black/20 group-hover:opacity-100 sm:group-hover:opacity-100 dark:group-hover:bg-black/40">
                     <span className="translate-y-2 transform rounded-full bg-white/90 px-3 py-1.5 text-xs font-medium shadow-lg transition-transform group-hover:translate-y-0 sm:px-4 sm:py-2 sm:text-sm dark:bg-black/80">
                         View Details
                     </span>
                 </div>
 
-                <div className="absolute top-2 left-2 sm:top-3 sm:left-3">
+                <div className="absolute top-2 left-2 flex gap-1 sm:top-3 sm:left-3">
                     <Badge
                         variant="secondary"
                         className="border-0 bg-background/80 px-1.5 py-0.5 text-[10px] font-medium shadow-sm backdrop-blur-md sm:px-2.5 sm:py-0.5 sm:text-xs dark:bg-black/60"
                     >
                         {asset.category}
                     </Badge>
+                    {asset.is_default && (
+                        <Badge
+                            variant="secondary"
+                            className="border-0 bg-amber-500/80 px-1.5 py-0.5 text-[10px] font-medium shadow-sm backdrop-blur-md sm:px-2.5 sm:py-0.5 sm:text-xs dark:bg-amber-600/80"
+                        >
+                            <Star className="mr-0.5 h-3 w-3 fill-current" />
+                            Default
+                        </Badge>
+                    )}
                 </div>
             </div>
 
@@ -137,7 +151,7 @@ export function AssetCard({ asset, onDelete, onClick }: AssetCardProps) {
                     className={cn(
                         'h-8 w-8 shrink-0 rounded-md',
                         'text-muted-foreground transition-colors',
-                        'hover:bg-destructive/10 hover:text-destructive'
+                        'hover:bg-destructive/10 hover:text-destructive',
                     )}
                 >
                     <Trash2 className="h-4 w-4" />

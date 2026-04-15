@@ -15,7 +15,6 @@ class EvolutionWebhookController extends Controller
 {
     public function handle(Request $request)
     {
-
         Log::info('Evolution Webhook received', ['payload' => $request->all()]);
 
         $payload = $request->all();
@@ -40,7 +39,6 @@ class EvolutionWebhookController extends Controller
                 return response()->json(['error' => 'QR data missing'], 400);
             }
 
-            // Evolution API provides base64 image data directly
             $qrCode = $qrData['code'] ?? null;
 
             broadcast(new QrCodeUpdated($instanceName, $qrCode));
@@ -57,12 +55,9 @@ class EvolutionWebhookController extends Controller
             $state = $payload['data']['state'] ?? 'close';
             $statusReason = $payload['data']['statusReason'] ?? null;
 
-            // State Machine Logic
             $status = match ($state) {
                 'open' => 'connected',
                 'connecting' => 'connecting',
-                // 401 or 'device_removed' means the user explicitly logged out from their phone.
-                // Any other code (like 428, 500) is a temporary network drop, Evolution will auto-reconnect.
                 'close' => ($statusReason == 401 || $statusReason === 'device_removed') ? 'disconnected' : 'connecting',
                 default => 'disconnected',
             };
@@ -94,69 +89,122 @@ class EvolutionWebhookController extends Controller
 
         /*
         |--------------------------------------------------------------------------
-        | MESSAGES UPSERT - Update last activity & conversation history
+        | MESSAGES UPSERT - Incoming messages from clients
         |--------------------------------------------------------------------------
         */
         if ($event === 'messages.upsert') {
-            $messages = $payload['data']['messages'] ?? [];
+            $msg = $payload['data'] ?? [];
 
-            foreach ($messages as $msg) {
-                // Extract message content from various message types
-                $messageText = null;
-                $messageData = $msg['message'] ?? [];
+            $messageText = $this->extractMessageText($msg['message'] ?? []);
 
-                // Try different message types
-                if (isset($messageData['conversation'])) {
-                    $messageText = $messageData['conversation'];
-                } elseif (isset($messageData['extendedTextMessage']['text'])) {
-                    $messageText = $messageData['extendedTextMessage']['text'];
-                } elseif (isset($messageData['imageMessage']['caption'])) {
-                    $messageText = $messageData['imageMessage']['caption'];
-                } elseif (isset($messageData['videoMessage']['caption'])) {
-                    $messageText = $messageData['videoMessage']['caption'];
-                }
-
-                if (! $messageText) {
-                    continue;
-                }
-
-                // Determine direction: fromMe = false means client message
+            if ($messageText) {
                 $direction = ($msg['key']['fromMe'] ?? true) ? 'ai' : 'client';
-
-                // Extract phone from remoteJid
-                $phone = $msg['key']['remoteJid'] ?? null;
-                $phone = $phone ? preg_replace('/@.*$/', '', $phone) : null;
+                $phone = $this->normalizePhone($msg['key']['remoteJid'] ?? null);
 
                 if ($phone) {
-                    // Find lead by phone (match last 10 digits to handle various formats)
-                    $lead = Lead::where('phone', 'like', "%{$phone}")->first();
-
-                    if ($lead) {
-                        // Build new message entry
-                        $newMessage = [
-                            'direction' => $direction,
-                            'message' => $messageText,
-                            'timestamp' => now()->toISOString(),
-                        ];
-
-                        // Get existing messages, prepend new, keep last 5
-                        $recentMessages = $lead->recent_messages ?? [];
-                        array_unshift($recentMessages, $newMessage);
-                        $recentMessages = array_slice($recentMessages, 0, 5);
-
-                        $lead->update([
-                            'last_activity_at' => now(),
-                            'recent_messages' => $recentMessages,
-                        ]);
-
-                        // Broadcast real-time update
-                        event(new LeadMessageUpdated($lead));
-                        Log::info("Lead {$lead->id} message updated from {$direction}");
-                    }
+                    $this->saveMessage($phone, $direction, $messageText);
                 }
             }
         }
 
+        /*
+        |--------------------------------------------------------------------------
+        | SEND MESSAGE - Outgoing AI messages
+        |--------------------------------------------------------------------------
+        */
+        if ($event === 'send.message') {
+            $msg = $payload['data'] ?? [];
+            $messageText = $this->extractMessageText($msg['message'] ?? []);
+
+            if (! $messageText) {
+                return response()->json(['status' => 'success']);
+            }
+
+            $phone = $this->normalizePhone($msg['key']['remoteJid'] ?? null);
+
+            if ($phone) {
+                $this->saveMessage($phone, 'ai', $messageText);
+            }
+        }
+
         return response()->json(['status' => 'success']);
+    }
+
+    private function extractMessageText(array $messageData): ?string
+    {
+        if (isset($messageData['conversation'])) {
+            return $messageData['conversation'];
+        }
+
+        if (isset($messageData['extendedTextMessage']['text'])) {
+            return $messageData['extendedTextMessage']['text'];
+        }
+
+        if (isset($messageData['imageMessage']['caption'])) {
+            return $messageData['imageMessage']['caption'];
+        }
+
+        if (isset($messageData['videoMessage']['caption'])) {
+            return $messageData['videoMessage']['caption'];
+        }
+
+        return null;
+    }
+
+    private function normalizePhone(?string $remoteJid): ?string
+    {
+        if (! $remoteJid) {
+            return null;
+        }
+
+        $phone = preg_replace('/@.*$/', '', $remoteJid);
+
+        if (! $phone) {
+            return null;
+        }
+
+        // Remove all non-digits
+        $digits = preg_replace('/[^0-9]/', '', $phone);
+
+        // Remove leading 0
+        if (str_starts_with($digits, '0')) {
+            $digits = substr($digits, 1);
+        }
+
+        // Return clean digits without + to match DB format (e.g., "213697096705")
+        return $digits;
+    }
+
+    private function saveMessage(string $phone, string $direction, string $messageText): void
+    {
+        // Match exact phone or phone with country code prefix
+        $lead = Lead::where(function ($query) use ($phone) {
+            $query->where('phone', $phone)
+                ->orWhere('phone', 'like', $phone.'%');
+        })->first();
+
+        if (! $lead) {
+            Log::warning("Lead not found for phone: {$phone}");
+
+            return;
+        }
+
+        $newMessage = [
+            'direction' => $direction,
+            'message' => $messageText,
+            'timestamp' => now()->toISOString(),
+        ];
+
+        $recentMessages = $lead->recent_messages ?? [];
+        array_unshift($recentMessages, $newMessage);
+        $recentMessages = array_slice($recentMessages, 0, 5);
+
+        $lead->update([
+            'last_activity_at' => now(),
+            'recent_messages' => $recentMessages,
+        ]);
+
+        event(new LeadMessageUpdated($lead));
+        Log::info("Lead {$lead->id} message updated from {$direction}: ".substr($messageText, 0, 50));
     }
 }

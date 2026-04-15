@@ -21,6 +21,8 @@ class N8nIntegrationController extends Controller
     // 1. AI TOOL: Update CRM (Qualification)
     public function updateLead(Request $request)
     {
+        Log::info('request updateLead', $request->all());
+
         $request->validate([
             'instance' => 'required',
             'phone' => 'required',
@@ -29,28 +31,36 @@ class N8nIntegrationController extends Controller
 
         $lead = Lead::where('tenant_id', $tenantId)->where('phone', $request->phone)->first();
 
-        if ($lead) {
-            // Convert score from 0-100 to 0-10
-            $score = $request->qualification_score !== null ? (int) ($request->qualification_score / 10) : $lead->qualification_score;
-
-            $lead->update([
-                'qualification_result' => $request->qualification_result ?? $lead->qualification_result,
-                'qualification_score' => $score,
-                'ai_summary' => $request->ai_summary ?? $lead->ai_summary,
-                'ai_qualification_status' => 'QUALIFIE',
-                'is_new' => false,
-                'qualified_at' => now(),
-            ]);
-
-            event(new QulificationUpdate($lead));
-
-            // Example of merging custom data (e.g., budget extracted by AI)
-            if ($request->has('custom_data')) {
-                $custom = $lead->custom_data ?? [];
-                $custom = [...$custom, ...$request->custom_data];
-                $lead->update(['custom_data' => $custom]);
-            }
+        if (! $lead) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead not found',
+            ], 404);
         }
+
+        // 0-10
+        $score = $request->qualification_score ?? $lead->qualification_score;
+
+        $data = [
+            'qualification_result' => $request->qualification_result ?? $lead->qualification_result,
+            'qualification_score' => $score,
+            'ai_summary' => $request->ai_summary ?? $lead->ai_summary,
+            'ai_qualification_status' => $request->ai_qualification_status ?? $lead->ai_qualification_status,
+            'is_new' => false,
+            'qualified_at' => now(),
+        ];
+
+        if ($request->has('custom_data')) {
+            $custom = is_array($lead->custom_data)
+                ? $lead->custom_data
+                : json_decode($lead->custom_data ?? '[]', true);
+
+            $data['custom_data'] = array_merge($custom, $request->custom_data);
+        }
+
+        $lead->update($data);
+
+        event(new QulificationUpdate($lead));
 
         return response()->json(['status' => 'success']);
     }
@@ -83,6 +93,14 @@ class N8nIntegrationController extends Controller
         }
 
         $assets = $query->get();
+
+        if ($assets->isEmpty()) {
+            $assets = MediaAsset::where('tenant_id', $tenantId)
+                ->where('is_active', true)
+                ->where('is_default', true)
+                ->limit(5)
+                ->get();
+        }
 
         $formattedAssets = $assets->map(fn ($asset) => [
             'type' => $asset->type,
