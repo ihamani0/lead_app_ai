@@ -97,6 +97,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/media/presign', [MediaAssetController::class, 'presign'])->name('media.presign');
     Route::post('/media/finalize', [MediaAssetController::class, 'finalize'])->name('media.finalize');
     Route::delete('/media/{id}', [MediaAssetController::class, 'destroy'])->name('media.destroy');
+    Route::post('/media/{id}/toggle-default', [MediaAssetController::class, 'toggleDefault'])->name('media.toggle-default');
 
     Route::get('/knowledge', [KnowledgeBaseController::class, 'index'])->name('knowledge.index');
     Route::post('/knowledge', [KnowledgeBaseController::class, 'store'])->name('knowledge.store');
