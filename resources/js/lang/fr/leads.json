@@ -19,13 +19,25 @@
         "minScore": "Score IA min (0-100)",
         "clearFilters": "Effacer les filtres"
     },
-
     "table": {
+        "selected":"sélectionné(s)",
+        "result":"Résultat",
+        "result_tooltip":"Résultat de qualification automatique: HOT/WARM/COLD",
+        "aiScore":"Score",
+        "aiScore_tooltip":"Score de qualification IA (0-10)",
+        "status":"Traitement",
+        "status_tooltip":"Statut de traitement commercial: Traité ou Non traité",
         "contact": "Contact",
-        "status": "Statut",
         "temperature": "Température",
-        "aiScore": "Score IA",
         "lastActive": "Dernière activité",
+        "lastMessage": "Message",
+        "lastMessage_tooltip": "Dernier message",  
+        "date_lastMessage_tooltip": "Date du dernier message",  
+        "notes": "Notes",
+        "notes_tooltip": "Notes ajoutées manuellement sur le lead",
+        "lastActive_tooltip": "Date du dernier message WhatsApp",
+        "lastQualificationDate": "Date qualification IA",
+        "lastQualificationDate_tooltip": "Date de dernière qualification IA",
         "actions": "Actions"
     },
 

@@ -21,11 +21,24 @@
     },
 
     "table": {
+        "selected":"selected",
+        "result":"Result",
+        "result_tooltip":"Automatic qualification result: HOT/WARM/COLD",
+        "aiScore":"Score",
+        "aiScore_tooltip":"AI qualification score (0-10)",
+        "status":"Processing",
+        "status_tooltip":"Commercial processing status: Processed or Not processed",
         "contact": "Contact",
-        "status": "Status",
         "temperature": "Temperature",
-        "aiScore": "AI Score",
         "lastActive": "Last Active",
+        "lastMessage": "Last Message",
+        "lastMessage_tooltip": "Date of last WhatsApp message",
+        "date_lastMessage_tooltip": "Date Of Last Message",  
+        "notes": "Notes",
+        "notes_tooltip": "Notes added manually on the lead",
+        "lastActive_tooltip": "Date of last WhatsApp message",
+        "lastQualificationDate": "AI Qualification Date",
+        "lastQualificationDate_tooltip": "Date of last AI qualification",
         "actions": "Actions"
     },
 
