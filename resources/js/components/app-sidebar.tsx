@@ -7,6 +7,7 @@ import {
     Users,
     BarChart3,
     Settings,
+    Shield,
 } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
 // import { NavUser } from '@/components/nav-user';
@@ -38,6 +39,14 @@ import { WhatsAppIcon } from './ui/WhatsAppIcon';
 type PageProps = {
     locale: string;
     availableLocales: string[];
+    auth: {
+        user: {
+            id: string;
+            name: string;
+            email: string;
+            is_super_admin: boolean;
+        };
+    };
 };
 
 export function AppSidebar() {
@@ -95,6 +104,16 @@ export function AppSidebar() {
         },
     ];
 
+    const superAdminNavItems: NavItem[] = [
+        {
+            title: 'Super Admin',
+            href: '/super-admin/tenants',
+            icon: Shield,
+        },
+    ];
+
+    const isSuperAdmin = page.props.auth?.user?.is_super_admin;
+
     return (
         <Sidebar collapsible="offcanvas" variant="inset">
             <SidebarHeader>
@@ -111,6 +130,12 @@ export function AppSidebar() {
             <Separator className="my-4" />
             <SidebarContent>
                 <NavMain items={mainNavItems} />
+                {isSuperAdmin && (
+                    <>
+                        <Separator className="my-4" />
+                        <NavMain items={superAdminNavItems} />
+                    </>
+                )}
             </SidebarContent>
 
             <SidebarFooter>

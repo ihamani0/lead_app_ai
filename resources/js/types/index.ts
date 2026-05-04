@@ -89,6 +89,7 @@ export interface Asset {
     updated_at?: string;
     name?: string;
     size?: string;
+    is_default?: boolean;
 }
 
 export interface MediaFormData {
@@ -143,4 +144,24 @@ export interface Lead {
     ai_summary: string;
     custom_data: string;
     instance?: EvolutionInstance;
+}
+
+export interface Tenant {
+    id: string;
+    name: string;
+    slug: string;
+    plan: string;
+    is_active: boolean;
+    token_balance: number;
+    token_limit: number | null;
+    settings: Record<string, unknown> | null;
+    created_at: string;
+    updated_at: string;
+    users_count?: number;
+    users?: Array<{
+        id: string;
+        name: string;
+        email: string;
+        role: string;
+    }>;
 }

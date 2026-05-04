@@ -39,6 +39,7 @@ class EvolutionService
                     'CONNECTION_UPDATE',
                     'MESSAGES_UPSERT',
                     'QRCODE_UPDATED',
+                    'SEND_MESSAGE'
                 ],
             ],
         ]);

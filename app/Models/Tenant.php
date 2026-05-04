@@ -23,10 +23,15 @@ class Tenant extends Authenticatable
         'plan',
         'is_active',
         'settings',
+        'token_balance',
+        'token_limit',
     ];
 
     protected $casts = [
         'settings' => 'array',
+        'is_active' => 'boolean',
+        'token_balance' => 'integer',
+        'token_limit' => 'integer',
     ];
 
     public function users()
