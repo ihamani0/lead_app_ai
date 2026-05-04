@@ -3,7 +3,6 @@
 return [
 
     'success' => [
-
         'instance_create' => 'Instance created successfully!',
         'instance_restor' => 'Instance restored! Fetch QR code to reconnect.',
         'instance_restarting' => 'Instance restarting...',
@@ -40,5 +39,44 @@ return [
         'no_found_agent' => 'No active agent found.',
         'document_uploaded' => 'Failed to trigger AI ingestion.',
 
+    ],
+
+    'super_admin' => [
+        'dashboard' => [
+            'title' => 'Super Admin Dashboard',
+            'subtitle' => 'System overview and tenant management',
+            'stats' => [
+                'total_tenants' => 'Total Tenants',
+                'active' => 'active',
+                'inactive' => 'inactive',
+                'total_users' => 'Total Users',
+                'total_tokens' => 'Total Tokens',
+                'token_rate' => 'Rate',
+                'low_tokens' => 'Low Token Alerts',
+                'tenants_below' => 'tenants below 10K tokens',
+                'plan_distribution' => 'Plan Distribution',
+                'quick_actions' => 'Quick Actions',
+            ],
+            'recent_tenants' => 'Recent Tenants',
+            'table' => [
+                'name' => 'Name',
+                'slug' => 'Slug',
+                'plan' => 'Plan',
+                'status' => 'Status',
+                'users' => 'Users',
+                'tokens' => 'Token Balance',
+                'actions' => 'Actions',
+            ],
+            'actions' => [
+                'manage_tenants' => 'Manage Tenants',
+                'manage_plans' => 'Manage Plans',
+                'manage' => 'Manage',
+            ],
+            'status' => [
+                'active' => 'Active',
+                'inactive' => 'Inactive',
+            ],
+            'no_tenants' => 'No tenants found.',
+        ],
     ],
 ];

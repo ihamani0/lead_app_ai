@@ -17,7 +17,7 @@ return [
         'updated_agent' => 'Paramètres de l\'agent mis à jour avec succès !',
         'disconnected_agent' => 'Agent IA déconnecté.',
 
-        'lead_udated_manually' => 'Prospect mis à jour manuellement.',
+        'lead_updated_manually' => 'Prospect mis à jour manuellement.',
 
         'document_deleted' => 'Document supprimé avec succès.',
         'document_uploaded' => 'Document téléchargé ! L\'IA est en train de le traiter.',
@@ -40,5 +40,44 @@ return [
         'no_found_agent' => 'Aucun agent actif trouvé.',
         'document_uploaded' => 'Échec du déclenchement de l\'ingestion IA.',
 
+    ],
+
+    'super_admin' => [
+        'dashboard' => [
+            'title' => 'Tableau de bord Super Admin',
+            'subtitle' => 'Vue d\'ensemble du système et gestion des tenants',
+            'stats' => [
+                'total_tenants' => 'Total Tenants',
+                'active' => 'actif',
+                'inactive' => 'inactif',
+                'total_users' => 'Total Utilisateurs',
+                'total_tokens' => 'Total Jetons',
+                'token_rate' => 'Taux',
+                'low_tokens' => 'Alertes jetons faibles',
+                'tenants_below' => 'tenants en dessous de 10K jetons',
+                'plan_distribution' => 'Distribution des plans',
+                'quick_actions' => 'Actions rapides',
+            ],
+            'recent_tenants' => 'Tenants récents',
+            'table' => [
+                'name' => 'Nom',
+                'slug' => 'Slug',
+                'plan' => 'Plan',
+                'status' => 'Statut',
+                'users' => 'Utilisateurs',
+                'tokens' => 'Solde jetons',
+                'actions' => 'Actions',
+            ],
+            'actions' => [
+                'manage_tenants' => 'Gérer les tenants',
+                'manage_plans' => 'Gérer les plans',
+                'manage' => 'Gérer',
+            ],
+            'status' => [
+                'active' => 'Actif',
+                'inactive' => 'Inactif',
+            ],
+            'no_tenants' => 'Aucun tenant trouvé.',
+        ],
     ],
 ];
