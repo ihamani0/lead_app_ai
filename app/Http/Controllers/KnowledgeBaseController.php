@@ -57,13 +57,13 @@ class KnowledgeBaseController extends Controller
 
         $document->addMediaFromRequest('file')->toMediaCollection('documents');
 
-        $n8nWebhookUrl = config('services.n8n.n8n_base_url').'webhook/ingest/document';
+        $DocumentWebhookUrl = config('services.document.webhook_url');
 
         try {
             Http::withHeaders([
                 'X-N8N-API-KEY' => config('services.n8n.api_key'),
             ])
-                ->post($n8nWebhookUrl, [
+                ->post($DocumentWebhookUrl, [
                     'document_id' => $document->id,
                     'tenant_id' => (string) $document->tenant_id,
                     'agent_config_id' => $document->agent_config_id,

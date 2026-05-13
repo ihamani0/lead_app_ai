@@ -162,7 +162,7 @@ class AgentBotController extends Controller
                 // Update agent with new instance
                 $agent->update([
                     'evolution_instance_id' => $instance->id,
-                    'webhook_url' => 'https://n8n.crewflare.site/webhook/trigger-n8n-webhook',
+                    'webhook_url' => config('services.whatsapp.webhook_url'),
                     'is_active' => true,
                 ]);
 

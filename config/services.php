@@ -42,4 +42,11 @@ return [
         'api_key' => env('OPENROUTER_API_KEY'),
     ],
 
+    'whatsapp' => [
+        'webhook_url' => env('WHATSAPP_WEBHOOK_URL'),
+    ],
+
+    'document' => [
+        'webhook_url' => env('DOCUMENT_WEBHOOK_URL'),
+    ],
 ];
