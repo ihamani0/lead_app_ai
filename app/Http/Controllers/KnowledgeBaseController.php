@@ -57,7 +57,7 @@ class KnowledgeBaseController extends Controller
 
         $document->addMediaFromRequest('file')->toMediaCollection('documents');
 
-        $n8nWebhookUrl = config('services.n8n.n8n_base_url').'/ingest/document';
+        $n8nWebhookUrl = config('services.n8n.n8n_base_url').'webhook/ingest/document';
 
         try {
             Http::withHeaders([
