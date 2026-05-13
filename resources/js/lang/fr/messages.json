@@ -1,6 +1,6 @@
 {
     "welcome": "Bienvenue",
-    "dashboard": "Tableau de bord",
+    "dashboard": "Accueil",
     "whatsapp": "Whatsapp",
     "settings": "Paramètres",
     "logout": "Déconnexion",
@@ -14,8 +14,8 @@
     "language": "Langue",
     "english": "Anglais",
     "french": "Français",
-    "agents": "Agents",
+    "agents": "Mon Ai",
     "leads": "Prospects",
-    "media_assets": "Média",
+    "media_assets": "Bibliotheque",
     "documentation": "Base de connaissances"
 }

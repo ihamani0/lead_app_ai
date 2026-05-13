@@ -1,5 +1,6 @@
 import { Transition } from '@headlessui/react';
 import { Head, Link, usePage, useForm } from '@inertiajs/react';
+// import axios from 'axios';
 import DeleteUser from '@/components/delete-user';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
@@ -39,6 +40,10 @@ export default function Profile({
             preserveScroll: true,
         });
     };
+
+    // const handleResetTour = (tourName: string) => {
+    //     axios.post(`/api/tour/${tourName}/reset`);
+    // };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -144,6 +149,13 @@ export default function Profile({
                         </div>
                     </form>
                 </div>
+
+                {/* <Button
+                    variant="outline"
+                    onClick={() => handleResetTour('dashboard')}
+                >
+                    Reset Dashboard Tour
+                </Button> */}
 
                 <DeleteUser />
             </SettingsLayout>

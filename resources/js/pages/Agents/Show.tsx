@@ -189,7 +189,10 @@ export default function AgentShow({ agent, availableInstances }: Props) {
             </div>
 
             {/* Mobile Tab Navigation */}
-            <div className="border-b bg-card md:hidden">
+            <div
+                className="border-b bg-card md:hidden"
+                data-tour="agent-tabs-mobile"
+            >
                 <div className="flex overflow-x-auto px-2 py-1">
                     {navItems.map((item) => (
                         <button
@@ -208,20 +211,24 @@ export default function AgentShow({ agent, availableInstances }: Props) {
                 </div>
             </div>
 
+            {/* Main Layout - Desktop and Mobile combined */}
             <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
                 {/* Desktop Sidebar */}
-                <div className="hidden w-64 shrink-0 border-r bg-card dark:bg-background/10 md:block">
+                <div
+                    className="hidden w-64 shrink-0 border-r bg-card md:block dark:bg-background/10"
+                    data-tour="agent-tabs-desktop"
+                >
                     <div className="flex h-full flex-col">
                         {/* Back button */}
                         <div className="border-b p-4">
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="w-full justify-start gap-2"
+                                className="w-full justify-start"
                                 onClick={() => router.get('/agents')}
                             >
-                                <ChevronLeft className="h-4 w-4" />
-                                {t('agents.config.backToAgents')}
+                                <ChevronLeft className="mr-2 h-4 w-4" />
+                                {t('agents.config.back')}
                             </Button>
                         </div>
 
@@ -289,33 +296,33 @@ export default function AgentShow({ agent, availableInstances }: Props) {
                             </div>
                         </div>
 
-                        {/* Navigation */}
-                        <nav className="flex-1 overflow-y-auto p-2">
-                            <ul className="space-y-1">
-                                {navItems.map((item) => (
-                                    <li key={item.id}>
-                                        <button
-                                            onClick={() =>
-                                                setActiveTab(item.id as TabId)
-                                            }
-                                            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors ${
-                                                activeTab === item.id
-                                                    ? 'bg-primary/10 text-primary'
-                                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-                                            }`}
-                                        >
-                                            <item.icon className="h-4 w-4" />
-                                            {item.label}
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </nav>
+                        {/* Nav Items */}
+                        <div className="flex-1 overflow-y-auto p-2">
+                            {navItems.map((item) => (
+                                <button
+                                    key={item.id}
+                                    onClick={() =>
+                                        setActiveTab(item.id as TabId)
+                                    }
+                                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                                        activeTab === item.id
+                                            ? 'bg-primary/10 text-primary'
+                                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                                    }`}
+                                >
+                                    <item.icon className="h-4 w-4" />
+                                    {item.label}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
 
-                {/* Main content */}
-                <div className="flex-1 overflow-y-auto p-4 md:p-6">
+                {/* Content Area */}
+                <div
+                    className="flex-1 overflow-y-auto p-4 md:p-6"
+                    data-tour="agent-content"
+                >
                     <div className="mx-auto max-w-6xl">{renderContent()}</div>
                 </div>
             </div>

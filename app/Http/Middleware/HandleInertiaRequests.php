@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Http\Controllers\TranslationController;
+use App\Models\TourProgress;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -37,6 +38,7 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         $locale = $request->user()?->tenant?->settings['locale'] ?? 'en';
+        $user = $request->user();
 
         return [
             ...parent::share($request),
@@ -44,19 +46,23 @@ class HandleInertiaRequests extends Middleware
             'locale' => $locale,
             'availableLocales' => ['en', 'fr'],
             'langVersion' => app(TranslationController::class)->getVersion($locale),
+            'route_name' => $request->route()?->getName(),
             'auth' => [
-                'user' => $request->user() ? [
-                    'id' => $request->user()->id,
-                    'name' => $request->user()->name,
-                    'email' => $request->user()->email,
-                    'role' => $request->user()->role,
-
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'is_super_admin' => $user->is_super_admin,
                     'tenant' => [
-                        'name' => $request->user()->tenant->name,
-                        'slug' => $request->user()->tenant->slug,
-                        'plan' => $request->user()->tenant->plan,
+                        'name' => $user->tenant->name,
+                        'slug' => $user->tenant->slug,
+                        'plan' => $user->tenant->plan,
+                        'is_low_credit' => $user->tenant->is_low_credit,
+                        'credit' => $user->tenant->credit_in_dollars,
                     ],
                 ] : null,
+                'tours' => ($user && ! $user->is_super_admin) ? $this->getTourProgress($user) : [],
             ],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
 
@@ -66,5 +72,23 @@ class HandleInertiaRequests extends Middleware
                 'info' => session('info'),
             ],
         ];
+    }
+
+    protected function getTourProgress($user): array
+    {
+        if (! $user) {
+            return [];
+        }
+
+        return TourProgress::forUser($user->id)
+            ->get()
+            ->mapWithKeys(fn ($tour) => [
+                $tour->tour_name => [
+                    'completed' => $tour->completed,
+                    'completed_steps' => $tour->completed_steps,
+                    'skipped_at' => $tour->skipped_at?->toIsoString(),
+                ],
+            ])
+            ->all();
     }
 }

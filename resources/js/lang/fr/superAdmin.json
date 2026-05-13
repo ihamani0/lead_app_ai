@@ -1,0 +1,156 @@
+{
+    "dashboard": {
+        "title": "Tableau de bord",
+        "totalTenants": "Total des tenants",
+        "activeTenants": "Tenants actifs",
+        "lowCreditTenants": "Tenants à faible crédit",
+        "avgDailyCost": "Coût quotidien moyen",
+        "dollarsRecharged": "Dollars rechargés"
+    },
+    "menu": {
+        "dashboard": "Tableau de bord",
+        "tenants": "Tenants",
+        "tenantsIndex": "Gestion des Tenants",
+        "tenantsCreate": "Ajouter un Tenant",
+        "tenantsShow": "Voir un Tenant",
+        "tenantsEdit": "Modifier un Tenant"
+    },
+    "tenants": {
+        "list": {
+            "title": "Gestion des Tenants",
+            "table": {
+                "headers": {
+                    "name": "Nom",
+                    "slug": "Slug",
+                    "plan": "Plan",
+                    "status": "Statut",
+                    "actions": "Actions"
+                },
+                "actions": {
+                    "view": "Voir",
+                    "edit": "Modifier",
+                    "delete": "Supprimer"
+                }
+            }
+        },
+        "create": {
+            "title": "Ajouter un Tenant",
+            "form": {
+                "fields": {
+                    "name": "Nom",
+                    "slug": "Slug",
+                    "plan": "Plan",
+                    "dollar_limit": "Limite de dollars",
+                    "is_active": "Actif"
+                },
+                "buttons": {
+                    "submit": "Créer"
+                }
+            }
+        },
+        "edit": {
+            "title": "Modifier un Tenant",
+            "form": {
+                "fields": {
+                    "name": "Nom",
+                    "slug": "Slug",
+                    "plan": "Plan",
+                    "dollar_limit": "Limite de dollars",
+                    "is_active": "Actif"
+                },
+                "buttons": {
+                    "submit": "Mettre à jour"
+                }
+            }
+        },
+        "show": {
+            "title": "Tenant : {name}",
+            "tabs": {
+                "overview": "Aperçu",
+                "usage": "Utilisation",
+                "transactions": "Transactions",
+                "users": "Utilisateurs",
+                "model": "Modèle"
+            },
+            "sections": {
+                "information": "Informations sur le Tenant",
+                "credit_balance": "Solde de crédit",
+                "add_credit": "Ajouter des crédits",
+                "usage_statistics": "Statistiques d'utilisation",
+                "daily_usage": "Utilisation quotidienne",
+                "recent_transactions": "Transactions récentes",
+                "model_configuration": "Configuration du modèle"
+            },
+            "messages": {
+                "low_credit_alert": "Le tenant a un solde de crédit faible",
+                "no_transactions": "Aucune transaction récente",
+                "no_usage_data": "Aucune donnée d'utilisation disponible"
+            },
+            "buttons": {
+                "add_credit": "Ajouter des crédits",
+                "update_model": "Mettre à jour le modèle"
+            },
+            "forms": {
+                "add_credit": {
+                    "title": "Ajouter des crédits",
+                    "fields": {
+                        "type": "Type",
+                        "dollar_amount": "Montant en dollars",
+                        "description": "Description"
+                    },
+                    "buttons": {
+                        "submit": "Ajouter des crédits"
+                    }
+                },
+                "update_model": {
+                    "title": "Mettre à jour le modèle",
+                    "fields": {
+                        "model": "Modèle"
+                    },
+                    "buttons": {
+                        "submit": "Mettre à jour le modèle"
+                    }
+                }
+            },
+            "charts": {
+                "usage_over_time": "Utilisation au fil du temps",
+                "daily_costs": "Coûts quotidiens",
+                "monthly_usage": "Utilisation mensuelle"
+            },
+            "tables": {
+                "daily_usage": {
+                    "headers": {
+                        "date": "Date",
+                        "total_tokens": "Tokens totaux",
+                        "input_tokens": "Tokens d'entrée",
+                        "output_tokens": "Tokens de sortie",
+                        "total_cost": "Coût total",
+                        "millicents_recharged": "Millicents rechargés",
+                        "transactions": "Transactions"
+                    }
+                },
+                "transactions": {
+                    "headers": {
+                        "id": "ID",
+                        "date": "Date",
+                        "tokens": "Tokens",
+                        "cost": "Coût",
+                        "type": "Type",
+                        "reference_type": "Type de référence"
+                    }
+                },
+                "users": {
+                    "headers": {
+                        "name": "Nom",
+                        "email": "Email",
+                        "role": "Rôle"
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "create_tenant": "Créer un tenant",
+        "view_tenants": "Voir les tenants"
+    }
+}

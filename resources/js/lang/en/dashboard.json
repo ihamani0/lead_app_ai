@@ -1,5 +1,6 @@
 {
-    "title": "Dashboard",
+    "title": "Home",
+    "welcome": "Welcome",
     "stats": {
         "totalLeads": "Total Leads",
         "instances": "WhatsApp Instances",

@@ -25,7 +25,7 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
                             size='lg'
                         
                         >
-                            <Link href={item.href} prefetch>
+                            <Link href={item.href} prefetch data-tour={item['data-tour']}>
                                 {item.icon && <item.icon style={{width:'20px',height:'20px'}}/>}
                                 <span className="text-base">{item.title}</span>
                             </Link>

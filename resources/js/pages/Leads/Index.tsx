@@ -324,8 +324,8 @@ export default function LeadsIndex({
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-                        <div className="relative">
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4" data-tour="leads-filters">
+                        <div className="relative" data-tour="leads-search">
                             <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder={t('leads.search.placeholder')}
@@ -424,9 +424,9 @@ export default function LeadsIndex({
                         )}
                     </div>
 
-                    <div className="overflow-hidden rounded-lg border bg-white px-2 shadow-sm dark:bg-background">
+                    <div className="overflow-hidden rounded-lg border bg-white px-2 shadow-sm dark:bg-background" data-tour="leads-table">
                         {selectedLeads.size > 0 && (
-                            <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2">
+                            <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2" data-tour="leads-actions">
                                 <span className="text-sm text-muted-foreground">
                                     {selectedLeads.size}{' '}
                                     {t('leads.table.selected')}

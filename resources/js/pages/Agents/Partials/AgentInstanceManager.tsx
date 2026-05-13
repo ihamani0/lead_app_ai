@@ -10,8 +10,6 @@ import {
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -56,9 +54,6 @@ export default function AgentInstanceManager({
     const [selectedInstanceId, setSelectedInstanceId] = useState<string>(
         agent.instance?.id || '',
     );
-
-    const [webhook, setWebhook] = useState<string>('');
-
     const [isLinking, setIsLinking] = useState(false);
     const [isUnlinking, setIsUnlinking] = useState(false);
 
@@ -74,9 +69,10 @@ export default function AgentInstanceManager({
     const handleLink = () => {
         if (!selectedInstanceId) return;
         setIsLinking(true);
+        // webhook_url is omitted – backend will use its default
         router.post(
             agents.linkInstance(agent.id).url,
-            { instance_id: selectedInstanceId, webhook_url: webhook },
+            { instance_id: selectedInstanceId },
             { onFinish: () => setIsLinking(false) },
         );
     };
@@ -205,18 +201,8 @@ export default function AgentInstanceManager({
                                 </SelectContent>
                             </Select>
 
-                            <div>
-                                <Label>
-                                    Url <span className="text-red-500">*</span>
-                                </Label>
-                                <Input
-                                    value={webhook}
-                                    onChange={(e) => setWebhook(e.target.value)}
-                                    placeholder={
-                                        'http://example.com/webhook/trigger'
-                                    }
-                                />
-                            </div>
+                            {/* Webhook input removed – backend will use default URL */}
+
                             <Button
                                 onClick={handleLink}
                                 disabled={!selectedInstanceId || isLinking}
@@ -233,20 +219,6 @@ export default function AgentInstanceManager({
                     )}
                 </CardContent>
             </Card>
-
-            {/* Instance Requirements Info */}
-            {/* <Card>
-                <CardHeader>
-                    <CardTitle>{t('agents.config.requirements')}</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <ul className="list-disc space-y-2 pl-5 text-sm text-muted-foreground">
-                        <li>{t('agents.config.req1')}</li>
-                        <li>{t('agents.config.req2')}</li>
-                        <li>{t('agents.config.req3')}</li>
-                    </ul>
-                </CardContent>
-            </Card> */}
         </div>
     );
 }

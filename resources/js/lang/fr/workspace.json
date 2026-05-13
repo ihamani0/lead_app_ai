@@ -1,0 +1,73 @@
+{
+    "title": "Espaces de travail",
+    "description": "Gérez vos espaces de travail et invitez des membres",
+    "create": "Créer un espace",
+    "create_description": "Créer un nouvel espace de travail pour collaborer avec votre équipe",
+    "empty": {
+        "title": "Aucun espace de travail",
+        "description": "Créez votre premier espace de travail pour commencer à collaborer"
+    },
+    "form": {
+        "name": "Nom de l'espace",
+        "name_placeholder": "ex: Équipe commerciale, Marketing, etc.",
+        "description": "Description",
+        "description_placeholder": "Brève description de cet espace (optionnel)"
+    },
+    "tabs": {
+        "overview": "Aperçu",
+        "members": "Membres",
+        "roles": "Rôles",
+        "settings": "Paramètres"
+    },
+    "overview": {
+        "title": "Aperçu de l'espace",
+        "members": "Membres",
+        "your_role": "Votre rôle",
+        "created": "Créé le :date",
+        "active_members": "Membres actifs dans cet espace"
+    },
+    "members": {
+        "title": "Membres de l'équipe",
+        "description": ":count membres dans cet espace",
+        "invite": "Inviter un membre",
+        "invite_title": "Inviter un nouveau membre",
+        "invite_description": "Envoyer une invitation pour rejoindre cet espace",
+        "email": "Adresse e-mail",
+        "role": "Rôle",
+        "select_role": "Sélectionner un rôle",
+        "send_invite": "Envoyer l'invitation",
+        "remove": "Supprimer le membre",
+        "empty": "Aucun membre pour l'instant. Invitez quelqu'un pour commencer.",
+        "table": {
+            "member": "Membre",
+            "role": "Rôle",
+            "joined": "Rejoint le"
+        }
+    },
+    "roles": {
+        "title": "Rôles et permissions",
+        "description": "Gérez les rôles et leurs permissions",
+        "create": "Créer un rôle",
+        "default": "Par défaut",
+        "empty": "Aucun rôle défini pour l'instant"
+    },
+    "settings": {
+        "general": {
+            "title": "Paramètres généraux",
+            "description": "Modifiez les informations de votre espace",
+            "name": "Nom de l'espace",
+            "description_label": "Description"
+        },
+        "danger": {
+            "title": "Zone dangereuse",
+            "description": "Une fois supprimé, un espace de travail ne peut pas être récupéré.",
+            "delete": "Supprimer l'espace"
+        }
+    },
+    "common": {
+        "cancel": "Annuler",
+        "save": "Enregistrer",
+        "edit": "Modifier",
+        "delete": "Supprimer"
+    }
+}

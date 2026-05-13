@@ -31,7 +31,6 @@ export function CreateAgentDialog({
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         name: '',
         system_prompt: '',
-        webhook_url: '',
     });
 
     const handleSubmit = (e: React.SubmitEvent) => {
@@ -119,28 +118,6 @@ export function CreateAgentDialog({
                             )}
                         </div>
 
-                        <div className="space-y-2">
-                            <Label htmlFor="webhook-url">
-                                {t('agents.webhook_url')}
-                            </Label>
-                            <Input
-                                id="webhook-url"
-                                type="url"
-                                placeholder={t(
-                                    'agents.webhook_url_placeholder',
-                                )}
-                                value={data.webhook_url}
-                                onChange={(e) =>
-                                    setData('webhook_url', e.target.value)
-                                }
-                                disabled={processing}
-                            />
-                            {errors.webhook_url && (
-                                <p className="text-sm text-destructive">
-                                    {errors.webhook_url}
-                                </p>
-                            )}
-                        </div>
                     </div>
 
                     <DialogFooter className="mt-6">

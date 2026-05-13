@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\EvolutionInstance;
 use App\Models\Lead;
+use App\Models\Tenant;
 use Illuminate\Http\Request;
 
 class LeadIntegrationController extends Controller
@@ -125,6 +126,7 @@ class LeadIntegrationController extends Controller
             ->firstOrFail();
 
         $agentConfig = $instance->agentConfig;
+        $tenant = Tenant::findOrFail($tenantId);
 
         return response()->json([
             'status' => $agentConfig->is_active,
@@ -137,6 +139,7 @@ class LeadIntegrationController extends Controller
                 'settings' => $agentConfig->settings,
             ],
             'system_prompt' => $agentConfig->system_prompt, // Only once here
+            'has_sufficient_tokens' => ! $tenant->isBelowThreshold(),
         ]);
     }
 }

@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class Tenant extends Authenticatable
 {
-    use HasApiTokens , HasUlids;
-    //
+    use HasApiTokens, HasUlids, Notifiable;
 
     protected $table = 'tenants';
 
@@ -23,15 +23,18 @@ class Tenant extends Authenticatable
         'plan',
         'is_active',
         'settings',
-        'token_balance',
-        'token_limit',
+        'credit_millicents',
+        'dollar_limit',
+        'is_low_credit',
+        'llm_model_id',
     ];
 
     protected $casts = [
         'settings' => 'array',
         'is_active' => 'boolean',
-        'token_balance' => 'integer',
-        'token_limit' => 'integer',
+        'credit_millicents' => 'integer',
+        'dollar_limit' => 'integer',
+        'is_low_credit' => 'boolean',
     ];
 
     public function users()
@@ -47,5 +50,25 @@ class Tenant extends Authenticatable
     public function leads()
     {
         return $this->hasMany(Lead::class);
+    }
+
+    public function tokenTransactions()
+    {
+        return $this->hasMany(TokenTransaction::class);
+    }
+
+    public function llmModel()
+    {
+        return $this->belongsTo(LlmModel::class, 'llm_model_id');
+    }
+
+    public function isBelowThreshold(): bool
+    {
+        return $this->credit_millicents < (config('services.token.threshold', 10) * 1000);
+    }
+
+    public function getCreditInDollarsAttribute(): float
+    {
+        return $this->credit_millicents / 100_000;
     }
 }
