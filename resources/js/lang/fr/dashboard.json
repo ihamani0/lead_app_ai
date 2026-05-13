@@ -1,5 +1,6 @@
 {
-    "title": "Tableau de Bord",
+    "title": "Accueil",
+    "welcome": "Bienvenue",
     "stats": {
         "totalLeads": "Total Leads",
         "instances": "Instances WhatsApp",

@@ -182,7 +182,7 @@ export default function KnowledgeBaseIndex({
                 <div className="space-y-10">
                     {/* Header - Stone Gradient (Dark for both modes) */}
                         <div className="relative block overflow-hidden rounded-2xl bg-linear-to-br from-stone-600 via-stone-700 to-stone-800 p-4 shadow-xl ring-1 ring-stone-400/30 sm:p-5 md:p-6 
-                        dark:from-stone-700 dark:via-stone-800 dark:to-stone-800 dark:ring-stone-400/30">
+                        dark:from-stone-700 dark:via-stone-800 dark:to-stone-800 dark:ring-stone-400/30" data-tour="kb-header">
 
                         {/* Background */}
                         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg...%3E')] opacity-15 dark:opacity-10" />
@@ -228,7 +228,7 @@ export default function KnowledgeBaseIndex({
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                         {/* Upload Card */}
-                        <div className="lg:col-span-4">
+                        <div className="lg:col-span-4" data-tour="kb-upload">
                             <Card className="overflow-hidden border-0 bg-white/80 shadow-2xl ring-1 ring-white/50 backdrop-blur-xl dark:bg-slate-900/80 dark:ring-white/10">
                                 <div className="absolute inset-0 bg-card text-foreground" />
 

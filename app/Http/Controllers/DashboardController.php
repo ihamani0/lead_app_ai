@@ -6,6 +6,9 @@ use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
 use App\Models\Lead;
 use App\Models\MediaAsset;
+use App\Models\Tenant;
+use App\Models\TokenTransaction;
+use App\Models\TokenTransactionDaily;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -60,6 +63,27 @@ class DashboardController extends Controller
             $query->where('tenant_id', $tenantId);
         })->where('is_active', true)->count();
 
+        // Token Stats
+        $tenant = Tenant::find($request->user()->tenant_id);
+        $tokenStats = [
+            'credit' => (int) $tenant->credit_millicents,
+            'is_low_credit' => (bool) $tenant->is_low_credit,
+            'threshold' => config('services.token.threshold', 10) * 1000,
+            'model' => $tenant->llmModel?->display_name ?? 'DeepSeek (Default)',
+        ];
+
+        // Last 30 days daily usage for chart
+        $tokenDailyUsage = TokenTransactionDaily::where('tenant_id', $tenantId)
+            ->where('date', '>=', now()->subDays(30)->toDateString())
+            ->orderBy('date')
+            ->get();
+
+        // Last 10 transactions
+        $recentTransactions = TokenTransaction::where('tenant_id', $tenantId)
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get();
+
         // Recent leads for the list
         $recentLeadsList = Lead::where('tenant_id', $tenantId)
             ->with('instance')
@@ -92,6 +116,9 @@ class DashboardController extends Controller
                 ],
             ],
             'recentLeads' => $recentLeadsList,
+            'token_stats' => $tokenStats,
+            'token_daily_usage' => $tokenDailyUsage,
+            'token_transactions' => $recentTransactions,
         ]);
     }
 }

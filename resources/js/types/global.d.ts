@@ -5,6 +5,10 @@ declare global {
         name: string;
         auth: Auth;
         sidebarOpen: boolean;
+        locale: string;               // already used, make it explicit
+        langVersion: number;          // already used
+        availableLocales: string[];   // optional, if you use them
+        route_name: string;
         [key: string]: unknown;
     };
 

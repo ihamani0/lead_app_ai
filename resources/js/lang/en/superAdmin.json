@@ -1,0 +1,156 @@
+{
+    "dashboard": {
+        "title": "Dashboard",
+        "totalTenants": "Total Tenants",
+        "activeTenants": "Active Tenants",
+        "lowCreditTenants": "Low Credit Tenants",
+        "avgDailyCost": "Avg Daily Cost",
+        "dollarsRecharged": "Dollars Recharged"
+    },
+    "menu": {
+        "dashboard": "Dashboard",
+        "tenants": "Tenants",
+        "tenantsIndex": "Tenant Management",
+        "tenantsCreate": "Add Tenant",
+        "tenantsShow": "View Tenant",
+        "tenantsEdit": "Edit Tenant"
+    },
+    "tenants": {
+        "list": {
+            "title": "Tenant Management",
+            "table": {
+                "headers": {
+                    "name": "Name",
+                    "slug": "Slug",
+                    "plan": "Plan",
+                    "status": "Status",
+                    "actions": "Actions"
+                },
+                "actions": {
+                    "view": "View",
+                    "edit": "Edit",
+                    "delete": "Delete"
+                }
+            }
+        },
+        "create": {
+            "title": "Add Tenant",
+            "form": {
+                "fields": {
+                    "name": "Name",
+                    "slug": "Slug",
+                    "plan": "Plan",
+                    "dollar_limit": "Dollar Limit",
+                    "is_active": "Active"
+                },
+                "buttons": {
+                    "submit": "Create"
+                }
+            }
+        },
+        "edit": {
+            "title": "Edit Tenant",
+            "form": {
+                "fields": {
+                    "name": "Name",
+                    "slug": "Slug",
+                    "plan": "Plan",
+                    "dollar_limit": "Dollar Limit",
+                    "is_active": "Active"
+                },
+                "buttons": {
+                    "submit": "Update"
+                }
+            }
+        },
+        "show": {
+            "title": "Tenant: {name}",
+            "tabs": {
+                "overview": "Overview",
+                "usage": "Usage",
+                "transactions": "Transactions",
+                "users": "Users",
+                "model": "Model"
+            },
+            "sections": {
+                "information": "Tenant Information",
+                "credit_balance": "Credit Balance",
+                "add_credit": "Add Credits",
+                "usage_statistics": "Usage Statistics",
+                "daily_usage": "Daily Usage",
+                "recent_transactions": "Recent Transactions",
+                "model_configuration": "Model Configuration"
+            },
+            "messages": {
+                "low_credit_alert": "Tenant has low credit balance",
+                "no_transactions": "No recent transactions",
+                "no_usage_data": "No usage data available"
+            },
+            "buttons": {
+                "add_credit": "Add Credits",
+                "update_model": "Update Model"
+            },
+            "forms": {
+                "add_credit": {
+                    "title": "Add Credits",
+                    "fields": {
+                        "type": "Type",
+                        "dollar_amount": "Dollar Amount",
+                        "description": "Description"
+                    },
+                    "buttons": {
+                        "submit": "Add Credits"
+                    }
+                },
+                "update_model": {
+                    "title": "Update Model",
+                    "fields": {
+                        "model": "Model"
+                    },
+                    "buttons": {
+                        "submit": "Update Model"
+                    }
+                }
+            },
+            "charts": {
+                "usage_over_time": "Usage Over Time",
+                "daily_costs": "Daily Costs",
+                "monthly_usage": "Monthly Usage"
+            },
+            "tables": {
+                "daily_usage": {
+                    "headers": {
+                        "date": "Date",
+                        "total_tokens": "Total Tokens",
+                        "input_tokens": "Input Tokens",
+                        "output_tokens": "Output Tokens",
+                        "total_cost": "Total Cost",
+                        "millicents_recharged": "Millicents Recharged",
+                        "transactions": "Transactions"
+                    }
+                },
+                "transactions": {
+                    "headers": {
+                        "id": "ID",
+                        "date": "Date",
+                        "tokens": "Tokens",
+                        "cost": "Cost",
+                        "type": "Type",
+                        "reference_type": "Reference Type"
+                    }
+                },
+                "users": {
+                    "headers": {
+                        "name": "Name",
+                        "email": "Email",
+                        "role": "Role"
+                    }
+                }
+            }
+        }
+    },
+    "actions": {
+        "create_tenant": "Create Tenant",
+        "view_tenants": "View Tenants"
+    }
+}

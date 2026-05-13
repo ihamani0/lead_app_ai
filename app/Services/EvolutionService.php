@@ -39,7 +39,7 @@ class EvolutionService
                     'CONNECTION_UPDATE',
                     'MESSAGES_UPSERT',
                     'QRCODE_UPDATED',
-                    'SEND_MESSAGE'
+                    'SEND_MESSAGE',
                 ],
             ],
         ]);
@@ -146,6 +146,7 @@ class EvolutionService
             'expire' => (int) ($settings['expire'] ?? 0),
             'keywordFinish' => $settings['keywordFinish'] ?? '#STOP',
             'delayMessage' => (int) ($settings['delayMessage'] ?? 1000),
+            'debounceTime' => (int) ($settings['debounceTime'] ?? 4),
             'unknownMessage' => $settings['unknownMessage'] ?? '',
             'listeningFromMe' => (bool) ($settings['listeningFromMe'] ?? false),
             'stopBotFromMe' => (bool) ($settings['stopBotFromMe'] ?? true),

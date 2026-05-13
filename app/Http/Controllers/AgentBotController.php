@@ -139,7 +139,6 @@ class AgentBotController extends Controller
 
         $request->validate([
             'instance_id' => 'required|exists:evolution_instances,id',
-            'webhook_url' => 'required|url',
         ]);
 
         $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
@@ -163,7 +162,7 @@ class AgentBotController extends Controller
                 // Update agent with new instance
                 $agent->update([
                     'evolution_instance_id' => $instance->id,
-                    'webhook_url' => $request->webhook_url,
+                    'webhook_url' => "https://n8n.crewflare.site/webhook/trigger-n8n-webhook",
                     'is_active' => true,
                 ]);
 

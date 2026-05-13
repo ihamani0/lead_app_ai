@@ -10,6 +10,7 @@ class AgentSystemPromptHistory extends Model
     use HasUlids;
 
     protected $table = 'agent_system_prompt_history';
+
     protected $guarded = [];
 
     protected $casts = [

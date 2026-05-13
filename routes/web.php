@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AgentBotController;
 use App\Http\Controllers\Api\EvolutionWebhookController;
+use App\Http\Controllers\Api\TourController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvolutionInstanceController;
 use App\Http\Controllers\KnowledgeBaseController;
@@ -107,6 +108,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Reports
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+
+    Route::get('/api/tour/status', [TourController::class, 'status'])
+        ->name('tour.status');
+    Route::post('/api/tour/{tourName}/step', [TourController::class, 'completeStep'])
+        ->name('tour.step');
+    Route::post('/api/tour/{tourName}/complete', [TourController::class, 'complete'])
+        ->name('tour.complete');
+    Route::post('/api/tour/{tourName}/skip', [TourController::class, 'skip'])
+        ->name('tour.skip');
+    Route::post('/api/tour/{tourName}/reset', [TourController::class, 'reset'])
+        ->name('tour.reset');
 });
 
 Route::get('/create-n8n-token', function () {

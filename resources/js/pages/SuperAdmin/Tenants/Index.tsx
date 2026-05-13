@@ -1,12 +1,19 @@
 import { Link } from '@inertiajs/react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from '@/components/ui/table';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
+import admin from '@/routes/admin';
 import type { Tenant } from '@/types';
-import type { PageProps } from '@/types';
 
-type IndexProps = PageProps & {
+type IndexProps = SharedPageProps & {
     tenants: Tenant[];
 };
 
@@ -40,7 +47,9 @@ export default function Index({ tenants }: IndexProps) {
                         <TableBody>
                             {tenants.map((tenant) => (
                                 <TableRow key={tenant.id}>
-                                    <TableCell className="font-medium">{tenant.name}</TableCell>
+                                    <TableCell className="font-medium">
+                                        {tenant.name}
+                                    </TableCell>
                                     <TableCell>{tenant.slug}</TableCell>
                                     <TableCell>
                                         <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
@@ -55,23 +64,42 @@ export default function Index({ tenants }: IndexProps) {
                                                     : 'bg-red-100 text-red-800'
                                             }`}
                                         >
-                                            {tenant.is_active ? 'Active' : 'Inactive'}
+                                            {tenant.is_active
+                                                ? 'Active'
+                                                : 'Inactive'}
                                         </span>
                                     </TableCell>
                                     <TableCell>
-                                        <span className="font-mono">{formatNumber(tenant.token_balance || 0)}</span>
+                                        <span className="font-mono">
+                                            {formatNumber(
+                                                tenant.token_balance || 0,
+                                            )}
+                                        </span>
                                     </TableCell>
-                                    <TableCell>{tenant.users_count || 0}</TableCell>
                                     <TableCell>
-                                        <Button asChild variant="outline" size="sm">
-                                            <Link href={`/super-admin/tenants/${tenant.slug}`}>Manage</Link>
+                                        {tenant.users_count || 0}
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button
+                                            asChild
+                                            variant="outline"
+                                            size="sm"
+                                        >
+                                            <Link
+                                                href={admin.tenant.show(tenant.id).url}
+                                            >
+                                                Manage
+                                            </Link>
                                         </Button>
                                     </TableCell>
                                 </TableRow>
                             ))}
                             {tenants.length === 0 && (
                                 <TableRow>
-                                    <TableCell colSpan={7} className="text-center">
+                                    <TableCell
+                                        colSpan={7}
+                                        className="text-center"
+                                    >
                                         No tenants found.
                                     </TableCell>
                                 </TableRow>

@@ -22,7 +22,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { useTranslation } from '@/hooks/use-translation';
 import {
-    getStatusColor,
     calculatePercentage,
     getChartColor,
 } from '@/lib/utils';

@@ -1,9 +1,12 @@
 import { usePage } from '@inertiajs/react';
+ 
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { LanguageSwitcher } from './language-switcher';
 import { NavUser } from './nav-user';
+import { Badge } from './ui/badge';
+import CreditCardNav from './CreditCardNav';
 
 type PageProps = {
     locale: string;
@@ -16,8 +19,12 @@ export function AppSidebarHeader({
     breadcrumbs?: BreadcrumbItemType[];
 }) {
     const page = usePage<PageProps>();
-    const { locale, availableLocales } = page.props;
+    const { locale, availableLocales, auth } = page.props;
 
+    const { user } = auth;
+
+     
+    
     return (
         <header className="flex h-16 shrink-0 items-center gap-2 border-b border-sidebar-border/50 px-6 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 md:px-4">
             <div className="flex items-center gap-2">
@@ -25,6 +32,9 @@ export function AppSidebarHeader({
                 <Breadcrumbs breadcrumbs={breadcrumbs} />
             </div>
             <div className="ml-auto  items-center gap-4 hidden md:flex">
+
+                 
+                <CreditCardNav user={user} />
                 <LanguageSwitcher
                     availableLocales={availableLocales}
                     currentLocale={locale}

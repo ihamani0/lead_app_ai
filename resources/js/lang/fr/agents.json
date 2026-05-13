@@ -32,7 +32,7 @@
     "create_agent_description": "Créez un nouvel agent IA. Vous pouvez lier une instance WhatsApp plus tard.",
     "agent_name": "Nom de l'agent",
     "agent_name_placeholder": "ex: Bot Ventes, Agent Support",
-    "system_prompt": "Invite système",
+    "system_prompt": "Système prompt",
     "system_prompt_placeholder": "Vous êtes un assistant utile...",
     "webhook_url": "URL du webhook",
     "webhook_url_placeholder": "https://votre-instance-n8n.com/webhook/...",
@@ -68,7 +68,7 @@
         "logsDesc": "Voir l'historique (bientôt disponible)",
         "backToAgents": "Retour aux agents",
         "clone": "Dupliquer",
-
+        "back": "Retour",
         "linkedInstance": "Instance liée",
         "knowledgeBases": "Bases de connaissances",
         "documents": "documents",

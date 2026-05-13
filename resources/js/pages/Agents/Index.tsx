@@ -121,10 +121,12 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                             </span>
                         </div>
 
-                        <CreateAgentDialog
-                            open={createOpen}
-                            onOpenChange={setCreateOpen}
-                        />
+                        <div data-tour="agents-create">
+                            <CreateAgentDialog
+                                open={createOpen}
+                                onOpenChange={setCreateOpen}
+                            />
+                        </div>
 
                         </div>
 
@@ -169,6 +171,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                     <Card
                                         key={agent.id}
                                         className="group relative overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-xl dark:bg-slate-900/40 dark:backdrop-blur-sm"
+                                        data-tour="agent-card"
                                     >
                                         <CardHeader className="pb-4">
                                             <div className="flex items-start justify-between">

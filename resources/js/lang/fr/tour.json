@@ -1,0 +1,19 @@
+{
+   
+    "sidebar_dashboard": "Naviguez entre les différentes sections de l’application ici.",
+    "stats_leads": "Suivez votre total de leads et les nouveaux leads du jour.",
+    "stats_instances": "Surveillez l’état de connexion de vos instances WhatsApp.",
+    "token_balance": "Votre solde de crédits IA pour les requêtes au modèle de langage.",
+    "recent_leads": "Consultez vos leads les plus récents et leur statut.",
+    "leads_search": "Recherchez et filtrez vos leads par nom, téléphone ou statut.",
+    "leads_table": "Visualisez tous vos leads. Cliquez pour voir les détails.",
+    "leads_filters": "Filtrez par statut de qualification, température ou traitement.",
+    "leads_actions": "Actions groupées pour qualifier ou mettre à jour plusieurs leads.",
+    "instances_header": "Connectez et gérez vos instances WhatsApp ici.",
+    "create_instance": "Cliquez ici pour connecter un nouveau numéro WhatsApp.",
+    "instance_card": "Chaque carte montre l’état de l’instance. Cliquez pour le QR code.",
+    "agents_create": "Créez des agents IA pour automatiser les conversations.",
+    "agent_card": "Visualisez et configurez vos agents IA ici.",
+    "settings_nav": "Gérez votre profil, mot de passe et paramètres de sécurité."
+   
+}

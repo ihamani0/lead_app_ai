@@ -1,0 +1,128 @@
+<?php
+
+use App\Models\User;
+use Jurager\Teams\Models\Ability;
+use Jurager\Teams\Models\Group;
+use Jurager\Teams\Models\Invitation;
+use Jurager\Teams\Models\Membership;
+use Jurager\Teams\Models\Permission;
+use Jurager\Teams\Models\Role;
+use Jurager\Teams\Models\Team;
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Middleware Configuration
+    |--------------------------------------------------------------------------
+    | Customize middleware behavior and handling of unauthorized requests.
+    */
+    'middleware' => [
+
+        // Whether to automatically register team middleware in the service provider.
+        'register' => true,
+
+        // Response method upon unauthorized access: abort or redirect.
+        'handling' => 'abort',
+
+        // Handlers for unauthorized access, aligned with the handling method.
+        'handlers' => [
+            'abort' => [
+                'code' => 403,
+                'message' => 'User does not have any of the necessary access rights.',
+            ],
+            'redirect' => [
+                'url' => '/home',
+                'message' => [
+                    'key' => 'error',
+                    'content' => '',
+                ],
+            ],
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Model Bindings
+    |--------------------------------------------------------------------------
+    | Define the models used for team functionalities and role-based access.
+    */
+    'models' => [
+        'user' => User::class,
+        'team' => Team::class,
+        'ability' => Ability::class,
+        'permission' => Permission::class,
+        'group' => Group::class,
+        'invitation' => Invitation::class,
+        'membership' => Membership::class,
+        'role' => Role::class,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Database Tables
+    |--------------------------------------------------------------------------
+    | Specify table names linked to team-related models.
+    */
+    'tables' => [
+        'teams' => 'teams',
+        'team_user' => 'team_user',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Foreign Keys
+    |--------------------------------------------------------------------------
+    | Foreign keys for table relationships in package models.
+    */
+    'foreign_keys' => [
+        'team_id' => 'team_id',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Request Lifecycle
+    |--------------------------------------------------------------------------
+    | Configure request lifecycle options
+    */
+    'request' => [
+        // Enabling this option caches the permission decision for the request
+        'cache_decisions' => false,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Invitations
+    |--------------------------------------------------------------------------
+    | Configures the team invitation feature, allowing users to be invited to join teams.
+    */
+    'invitations' => [
+
+        'enabled' => true,
+
+        'routes' => [
+            // DISABLED: We use our own routes in web.php
+            'register' => false,
+            'url' => '/invitation/{invitation_id}/accept',
+            'prefix' => '/',
+            'middleware' => 'web',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Wildcard Permissions
+    |--------------------------------------------------------------------------
+    | Configure wildcard permission nodes, allowing you to specify super admin
+    | permission node(s) that allows a user to perform all actions on a team.
+    */
+    'wildcards' => [
+        'enabled' => false,
+        'nodes' => [
+            '*',
+            '*.*',
+            'all',
+        ],
+    ],
+
+];

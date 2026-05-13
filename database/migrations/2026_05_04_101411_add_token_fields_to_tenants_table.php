@@ -12,8 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('tenants', function (Blueprint $table) {
-            $table->integer('token_balance')->default(0)->after('is_active');
-            $table->integer('token_limit')->nullable()->after('token_balance');
+            $table->ulid('llm_model_id')->nullable();
+            $table->foreign('llm_model_id')->references('id')->on('llm_models')->nullOnDelete();
+            $table->bigInteger('credit_millicents')->default(0);
+            $table->bigInteger('dollar_limit')->default(100)->after('credit_millicents');
+            $table->boolean('is_low_credit')->default(false)->after('dollar_limit');
         });
     }
 
@@ -23,7 +26,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('tenants', function (Blueprint $table) {
-            $table->dropColumn(['token_balance', 'token_limit']);
+            $table->dropForeign(['llm_model_id']);
+            $table->dropColumn(['credit_millicents', 'llm_model_id', 'dollar_limit', 'is_low_credit']);
         });
     }
 };

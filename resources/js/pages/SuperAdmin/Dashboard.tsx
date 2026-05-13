@@ -1,231 +1,242 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Link } from '@inertiajs/react';
-import { BarChart3, Users, Activity, CreditCard, TrendingUp, AlertTriangle } from 'lucide-react';
+import {
+    PlusCircle,
+    RefreshCw,
+    Users,
+    Activity,
+    AlertTriangle,
+    DollarSign,
+} from 'lucide-react';
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { SummaryCard } from '@/components/ui/SummaryCard';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-import type { Tenant } from '@/types';
-import type { PageProps } from '@/types';
+import admin from '@/routes/admin';
 
-type DashboardProps = PageProps & {
+type DashboardProps = SharedPageProps & {
     stats: {
         total_tenants: number;
         active_tenants: number;
-        inactive_tenants: number;
-        total_users: number;
-        total_tokens: number;
-        tenants_with_low_tokens: number;
+        tenants_with_low_credit: number;
+        avg_daily_cost: number;
+        total_dollars_recharged: number;
     };
     plan_distribution: Record<string, number>;
-    recent_tenants: (Tenant & { users_count: number })[];
-    token_rate: number;
+    top_consumers: Array<{
+        tenant: { name: string; id: string };
+        total: number;
+    }>;
+    recent_tenants: Array<{
+        id: string;
+        name: string;
+        plan: string;
+        is_active: boolean;
+    }>;
 };
 
 export default function Dashboard({
     stats,
     plan_distribution,
+    top_consumers,
     recent_tenants,
-    token_rate,
 }: DashboardProps) {
     const { t } = useTranslation();
+    const [openRouterCredits, setOpenRouterCredits] = useState<{
+        total_credits: number;
+        total_usage: number;
+    } | null>(null);
+    const [loadingCredits, setLoadingCredits] = useState(false);
 
-    const formatNumber = (num: number): string => {
-        return new Intl.NumberFormat('en-US').format(num);
-    };
-
-    const getPlanBadgeVariant = (plan: string) => {
-        switch (plan) {
-            case 'enterprise':
-                return 'default';
-            case 'pro':
-                return 'secondary';
-            default:
-                return 'outline';
+    const fetchOpenRouterCredits = async () => {
+        setLoadingCredits(true);
+        try {
+            const response = await fetch('/super-admin/openrouter/credits');
+            const data = await response.json();
+            if (data.total_credits !== undefined) {
+                setOpenRouterCredits(data);
+            }
+        } catch (error) {
+            console.error('Failed to fetch credits:', error);
+        } finally {
+            setLoadingCredits(false);
         }
     };
 
     return (
         <AppLayout>
-            <div className="container mx-auto space-y-6 py-6">
-                <div>
-                    <h1 className="text-2xl font-bold">{t('super_admin.dashboard.title', 'Super Admin Dashboard')}</h1>
-                    <p className="text-muted-foreground">
-                        {t('super_admin.dashboard.subtitle', 'System overview and tenant management')}
-                    </p>
+            <div className="container mx-auto py-6">
+                <h1 className="mb-6 text-2xl font-bold">
+                    Super Admin Dashboard
+                </h1>
+
+                <div className="w-full mb-3">
+                    {/* OpenRouter Credits Card */}
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between pb-2">
+                            <CardTitle className="text-xl">
+                                OpenRouter Credit
+                            </CardTitle>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={fetchOpenRouterCredits}
+                                disabled={loadingCredits}
+                            >
+                                <RefreshCw
+                                    className={`mr-2 h-4 w-4 ${loadingCredits ? 'animate-spin' : ''}`}
+                                />
+                                Refresh
+                            </Button>
+                        </CardHeader>
+                        <CardContent>
+                            {openRouterCredits ? (
+                                <div className="space-y-1">
+                                    <p className="text-4xl font-bold text-green-600">
+                                        $
+                                        {openRouterCredits.total_credits.toFixed(
+                                            2,
+                                        )}
+                                    </p>
+                                    <p className="text-base text-muted-foreground">
+                                        Used: $
+                                        {openRouterCredits.total_usage.toFixed(
+                                            2,
+                                        )}
+                                    </p>
+                                </div>
+                            ) : (
+                                <p className="text-sm text-muted-foreground">
+                                    Click refresh to load
+                                </p>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+                {/* Stats Cards */}
+                <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <SummaryCard
+                        title={t('superAdmin.dashboard.totalTenants')}
+                        value={stats.total_tenants}
+                        icon={Users}
+                        color="blue"
+                    />
+                    <SummaryCard
+                        title={t('superAdmin.dashboard.activeTenants')}
+                        value={stats.active_tenants}
+                        icon={Activity}
+                        color="emerald"
+                    />
+                    <SummaryCard
+                        title={t('superAdmin.dashboard.lowCreditTenants')}
+                        value={stats.tenants_with_low_credit}
+                        icon={AlertTriangle}
+                        color="destructive"
+                    />
+                    <SummaryCard
+                        title={t('superAdmin.dashboard.avgDailyCost')}
+                        value={`$${(stats.avg_daily_cost / 100_000).toFixed(2)}`}
+                        icon={DollarSign}
+                        color="purple"
+                    />
+                    <SummaryCard
+                        title={t('superAdmin.dashboard.dollarsRecharged')}
+                        value={`$${((stats.total_dollars_recharged ?? 0) / 100_000).toFixed(2)}`}
+                        icon={PlusCircle}
+                        color="blue"
+                    />
                 </div>
 
-                {/* Stats Cards */}
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {/* Plan Distribution & Top Consumers */}
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">
-                                {t('super_admin.dashboard.stats.total_tenants', 'Total Tenants')}
-                            </CardTitle>
-                            <Users className="h-4 w-4 text-muted-foreground" />
+                        <CardHeader>
+                            <CardTitle>Plan Distribution</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatNumber(stats.total_tenants)}</div>
-                            <p className="text-xs text-muted-foreground">
-                                {stats.active_tenants} {t('super_admin.dashboard.stats.active', 'active')},{' '}
-                                {stats.inactive_tenants} {t('super_admin.dashboard.stats.inactive', 'inactive')}
-                            </p>
+                            {Object.entries(plan_distribution).map(
+                                ([plan, count]) => (
+                                    <div
+                                        key={plan}
+                                        className="flex justify-between border-b py-2"
+                                    >
+                                        <span className="capitalize">
+                                            {plan}
+                                        </span>
+                                        <span className="font-medium">
+                                            {count}
+                                        </span>
+                                    </div>
+                                ),
+                            )}
                         </CardContent>
                     </Card>
 
                     <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">
-                                {t('super_admin.dashboard.stats.total_users', 'Total Users')}
-                            </CardTitle>
-                            <Users className="h-4 w-4 text-muted-foreground" />
+                        <CardHeader>
+                            <CardTitle>Top Consumers (Last 30 Days)</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{formatNumber(stats.total_users)}</div>
+                            {top_consumers.map((item, idx) => (
+                                <Link
+                                    key={idx}
+                                    href={
+                                        admin.tenant.show(item.tenant?.id).url
+                                    }
+                                    className="flex justify-between border-b py-2 hover:text-blue-600"
+                                >
+                                    <span>
+                                        {item.tenant?.name ?? 'Unknown'}
+                                    </span>
+                                    <span className="font-medium">
+                                        ${((item.total ?? 0) / 100000)}
+                                    </span>
+                                </Link>
+                            ))}
                         </CardContent>
                     </Card>
+                </div>
 
+                {/* Recent Tenants */}
+                <div className="mt-6">
                     <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">
-                                {t('super_admin.dashboard.stats.total_tokens', 'Total Tokens')}
-                            </CardTitle>
-                            <Activity className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">{formatNumber(stats.total_tokens)}</div>
-                            <p className="text-xs text-muted-foreground">
-                                {t('super_admin.dashboard.stats.token_rate', 'Rate')}: $1 = {formatNumber(token_rate)}
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">
-                                {t('super_admin.dashboard.stats.low_tokens', 'Low Token Alerts')}
-                            </CardTitle>
-                            <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-orange-600">
-                                {formatNumber(stats.tenants_with_low_tokens)}
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                                {t('super_admin.dashboard.stats.tenants_below', 'tenants below 10K tokens')}
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">
-                                {t('super_admin.dashboard.stats.plan_distribution', 'Plan Distribution')}
-                            </CardTitle>
-                            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+                        <CardHeader>
+                            <CardTitle>Recent Tenants</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2">
-                                {Object.entries(plan_distribution).map(([plan, count]) => (
-                                    <div key={plan} className="flex items-center justify-between">
-                                        <Badge variant={getPlanBadgeVariant(plan)} className="capitalize">
-                                            {plan}
-                                        </Badge>
-                                        <span className="text-sm font-medium">{formatNumber(count)}</span>
-                                    </div>
+                                {recent_tenants.map((tenant) => (
+                                    <Link
+                                        key={tenant.id}
+                                        href={admin.tenant.show(tenant?.id).url}
+                                        className="flex items-center justify-between rounded-lg border p-3 hover:bg-muted"
+                                    >
+                                        <span className="font-medium">
+                                            {tenant.name}
+                                        </span>
+                                        <div className="flex items-center gap-4">
+                                            <span className="text-sm capitalize">
+                                                {tenant.plan}
+                                            </span>
+                                            <span
+                                                className={
+                                                    tenant.is_active
+                                                        ? 'text-green-600'
+                                                        : 'text-red-600'
+                                                }
+                                            >
+                                                {tenant.is_active
+                                                    ? 'Active'
+                                                    : 'Inactive'}
+                                            </span>
+                                        </div>
+                                    </Link>
                                 ))}
                             </div>
                         </CardContent>
                     </Card>
-
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">
-                                {t('super_admin.dashboard.stats.quick_actions', 'Quick Actions')}
-                            </CardTitle>
-                            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent className="space-y-2">
-                            <Button asChild className="w-full" variant="outline" size="sm">
-                                <Link href="/super-admin/tenants">
-                                    {t('super_admin.dashboard.actions.manage_tenants', 'Manage Tenants')}
-                                </Link>
-                            </Button>
-                            <Button asChild className="w-full" variant="outline" size="sm">
-                                <Link href="/super-admin/plans">
-                                    {t('super_admin.dashboard.actions.manage_plans', 'Manage Plans')}
-                                </Link>
-                            </Button>
-                        </CardContent>
-                    </Card>
                 </div>
-
-                {/* Recent Tenants Table */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>{t('super_admin.dashboard.recent_tenants', 'Recent Tenants')}</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>{t('super_admin.dashboard.table.name', 'Name')}</TableHead>
-                                    <TableHead>{t('super_admin.dashboard.table.slug', 'Slug')}</TableHead>
-                                    <TableHead>{t('super_admin.dashboard.table.plan', 'Plan')}</TableHead>
-                                    <TableHead>{t('super_admin.dashboard.table.status', 'Status')}</TableHead>
-                                    <TableHead>{t('super_admin.dashboard.table.users', 'Users')}</TableHead>
-                                    <TableHead>{t('super_admin.dashboard.table.tokens', 'Token Balance')}</TableHead>
-                                    <TableHead>{t('super_admin.dashboard.table.actions', 'Actions')}</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {recent_tenants.map((tenant) => (
-                                    <TableRow key={tenant.id}>
-                                        <TableCell className="font-medium">{tenant.name}</TableCell>
-                                        <TableCell>{tenant.slug}</TableCell>
-                                        <TableCell>
-                                            <Badge variant={getPlanBadgeVariant(tenant.plan)} className="capitalize">
-                                                {tenant.plan}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell>
-                                            <span
-                                                className={`rounded-full px-2 py-1 text-xs font-semibold ${
-                                                    tenant.is_active
-                                                        ? 'bg-green-100 text-green-800'
-                                                        : 'bg-red-100 text-red-800'
-                                                }`}
-                                            >
-                                                {tenant.is_active
-                                                    ? t('super_admin.dashboard.status.active', 'Active')
-                                                    : t('super_admin.dashboard.status.inactive', 'Inactive')}
-                                            </span>
-                                        </TableCell>
-                                        <TableCell>{tenant.users_count || 0}</TableCell>
-                                        <TableCell>
-                                            <span className="font-mono">{formatNumber(tenant.token_balance || 0)}</span>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Button asChild variant="outline" size="sm">
-                                                <Link href={`/super-admin/tenants/${tenant.slug}`}>
-                                                    {t('super_admin.dashboard.actions.manage', 'Manage')}
-                                                </Link>
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                                {recent_tenants.length === 0 && (
-                                    <TableRow>
-                                        <TableCell colSpan={7} className="text-center text-muted-foreground">
-                                            {t('super_admin.dashboard.no_tenants', 'No tenants found.')}
-                                        </TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </CardContent>
-                </Card>
             </div>
         </AppLayout>
     );

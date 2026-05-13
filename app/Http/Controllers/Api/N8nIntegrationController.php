@@ -117,10 +117,14 @@ class N8nIntegrationController extends Controller
 
     public function download(Request $request, $id)
     {
+        Log::info('download request', ['document_id' => $id, 'tenant_id' => $request->tenant_id]);
+
         $document = KnowledgeBase::where('tenant_id', $request->tenant_id)
             ->findOrFail($id);
 
         $file_path = $document->getFirstMediaPath('documents');
+
+        Log::info('file path found', ['path' => $file_path]);
 
         return response()->download($file_path);
     }
