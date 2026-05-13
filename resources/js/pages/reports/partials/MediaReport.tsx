@@ -74,8 +74,8 @@ export function MediaReport({ data }: MediaReportProps) {
                                         outerRadius={80}
                                         paddingAngle={2}
                                         dataKey="value"
-                                        label={({ name, percent }: any) =>
-                                            `${name} ${((percent || 0) * 100).toFixed(0)}%`
+                                        label={({ name, percent }: { name?: string; percent?: number }) =>
+                                            `${name ?? ''} ${((percent || 0) * 100).toFixed(0)}%`
                                         }
                                     >
                                         {typeData.map((entry, index) => (

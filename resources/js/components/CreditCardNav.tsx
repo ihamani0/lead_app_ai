@@ -7,11 +7,6 @@ const CreditCardNav = ({ user } : {user:User}) => {
   const isLow = user?.tenant?.is_low_credit;
   const formattedCredit = credit.toFixed(2);
 
-  // Dynamic classes based on low credit status
-  const cardClasses = isLow
-    ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200 shadow-red-100'
-    : 'bg-gradient-to-r from-slate-50 to-white border-slate-200 shadow-slate-200/50';
-
   const textClasses = isLow
     ? 'text-red-700'
     : 'text-slate-800';

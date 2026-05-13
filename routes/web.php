@@ -9,6 +9,7 @@ use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\MediaAssetController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\Team\TeamController;
 use App\Http\Controllers\TranslationController;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Route;
@@ -55,6 +56,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/{id}', [EvolutionInstanceController::class, 'destroy'])->name('instances.destroy');
     // Admin only
     Route::delete('/{id}/force', [EvolutionInstanceController::class, 'forceDestroy'])->name('instances.force-destroy');
+
+    // Teams / Workspaces
+    Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
+    Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
+    Route::get('/teams/{team:slug}', [TeamController::class, 'show'])->name('teams.show');
+    Route::put('/teams/{team:slug}', [TeamController::class, 'update'])->name('teams.update');
+    Route::delete('/teams/{team:slug}', [TeamController::class, 'destroy'])->name('teams.destroy');
+    Route::post('/teams/{team:slug}/invite', [TeamController::class, 'invite'])->name('teams.invite');
 
     // Agent Index
     Route::get('/agents', [AgentBotController::class, 'index'])->name('agents.index');

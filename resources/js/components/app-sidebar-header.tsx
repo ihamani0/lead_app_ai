@@ -3,10 +3,9 @@ import { usePage } from '@inertiajs/react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
+import CreditCardNav from './CreditCardNav';
 import { LanguageSwitcher } from './language-switcher';
 import { NavUser } from './nav-user';
-import { Badge } from './ui/badge';
-import CreditCardNav from './CreditCardNav';
 
 type PageProps = {
     locale: string;

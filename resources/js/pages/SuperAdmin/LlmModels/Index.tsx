@@ -21,7 +21,6 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 
 interface LlmModel {
@@ -42,8 +41,6 @@ interface PageProps {
 }
 
 export default function Index({ models }: PageProps) {
-    const { t } = useTranslation();
-
     const createForm = useForm({
         name: '',
         display_name: '',

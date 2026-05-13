@@ -4,7 +4,7 @@
 
 
 export const getChartTheme = (isDark: boolean) => ({
-  mode: isDark ? 'dark' : 'light' as const,
+  mode: isDark ? 'dark' as const : 'light' as const,
   palette: isDark ? 'palette4' : 'palette1',
   monochrome: {
     enabled: false,

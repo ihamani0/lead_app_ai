@@ -12,7 +12,6 @@ import {
     CheckCircle,
     CheckSquare,
     Square,
-    MessageCircle,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Pagination from '@/components/pagination';
@@ -44,6 +43,7 @@ import ViewLead from './Partials/ViewLead';
 
 type Props = {
     leads: { data: LeadType[]; links: PaginationLink[] };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filters: any;
     instances: EvolutionInstance[];
 };

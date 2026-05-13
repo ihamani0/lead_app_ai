@@ -8,7 +8,6 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import admin from '@/routes/admin';
 import type { Tenant } from '@/types';
@@ -18,8 +17,6 @@ type IndexProps = SharedPageProps & {
 };
 
 export default function Index({ tenants }: IndexProps) {
-    const { t } = useTranslation();
-
     const formatNumber = (num: number): string => {
         return new Intl.NumberFormat('en-US').format(num);
     };

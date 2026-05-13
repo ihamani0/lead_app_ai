@@ -1,4 +1,3 @@
-import { router } from '@inertiajs/react';
 import axios from 'axios';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +11,7 @@ interface UseTourOptions {
 }
 
 export function useTour({ toursData, routeName }: UseTourOptions) {
-    const { t, i18n } = useTranslation();
+    const { t } = useTranslation();
     const tourConfig = getTourForRoute(routeName);
     const tourProgress = tourConfig ? toursData[tourConfig.name] : undefined;
 
@@ -30,7 +29,7 @@ export function useTour({ toursData, routeName }: UseTourOptions) {
             ...step,
             content: t(step.content as string),
         }));
-    }, [tourConfig, t, i18n.language]);
+    }, [tourConfig, t]);
 
     const handleTourEnd = useCallback(
         (status: string) => {
@@ -68,7 +67,7 @@ export function useTour({ toursData, routeName }: UseTourOptions) {
         [tourConfig],
     );
 
-    const { Tour, on, state } = useJoyride({
+    const { Tour, state } = useJoyride({
         run,
         steps: translatedSteps,
         continuous: true,
@@ -83,14 +82,13 @@ export function useTour({ toursData, routeName }: UseTourOptions) {
             arrowColor: '#ffffff',
             targetWaitTimeout: 3000,
             scrollOffset: 20,
-            scrollToFirstStep: false,
             skipScroll: false,
         },
         onEvent: (data) => {
             console.log('[Joyride Event]', data.type, data.status);
 
-            if (data.type === 'step:after' && data.step?.index !== undefined) {
-                handleStepAfter(data.step.index, data.step);
+            if (data.type === 'step:after' && data.index !== undefined) {
+                handleStepAfter(data.index, data.step);
             }
 
             if (data.type === 'tour:end') {

@@ -1,6 +1,6 @@
 // src/pages/dashboard/index.tsx
 import { Head, Link, usePage } from '@inertiajs/react';
-import { Users, Phone, Bot, Image, AlertTriangle, CheckCircle, ArrowRight } from 'lucide-react';
+import { Users, Phone, Bot, Image, ArrowRight } from 'lucide-react';
 import Chart from 'react-apexcharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -35,12 +35,6 @@ interface DashboardProps {
         agents: { total: number; active: number };
     };
     recentLeads: RecentLead[];
-    token_stats: {
-        credit: number;
-        is_low_credit: boolean;
-        threshold: number;
-        model: string;
-    };
     token_daily_usage: Array<{
         date: string;
         total_tokens_used: number;
@@ -61,7 +55,7 @@ interface DashboardProps {
     }>;
 }
 
-export default function Dashboard({ stats, recentLeads, token_stats, token_daily_usage, token_transactions }: DashboardProps) {
+export default function Dashboard({ stats, recentLeads, token_daily_usage, token_transactions }: DashboardProps) {
     const { t } = useTranslation();
     const { auth } = usePage().props;
     const user = auth.user;

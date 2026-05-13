@@ -149,7 +149,7 @@ class AgentBotController extends Controller
         }
 
         try {
-            return DB::transaction(function () use ($agent, $instance, $request, $evoService) {
+            return DB::transaction(function () use ($agent, $instance, $evoService) {
                 // If agent was previously linked to another instance, unlink first
                 if ($agent->isLinked() && $agent->instance) {
                     try {
@@ -162,7 +162,7 @@ class AgentBotController extends Controller
                 // Update agent with new instance
                 $agent->update([
                     'evolution_instance_id' => $instance->id,
-                    'webhook_url' => "https://n8n.crewflare.site/webhook/trigger-n8n-webhook",
+                    'webhook_url' => 'https://n8n.crewflare.site/webhook/trigger-n8n-webhook',
                     'is_active' => true,
                 ]);
 

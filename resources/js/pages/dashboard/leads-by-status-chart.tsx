@@ -55,6 +55,7 @@ function StatusBar({
     total: number;
     label: string;
 }) {
+    void label;
     const entries = Object.entries(data).filter(([, count]) => count > 0);
 
     if (entries.length === 0) {
