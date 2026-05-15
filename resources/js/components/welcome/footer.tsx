@@ -2,6 +2,7 @@
 import type { TFunction } from 'i18next';
 import { Instagram, Linkedin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { privacy, terms } from '@/routes';
 import { ThemeToggle } from '../theme-toggle';
 
 interface FooterProps {
@@ -54,12 +55,12 @@ export function Footer({ t }: FooterProps) {
             title: 'Legal',
             links: [
                 {
-                    href: '#',
+                    href: terms().url,
                     labelKey: 'welcome.footer.terms',
                     label: 'Terms & Conditions',
                 },
                 {
-                    href: '#',
+                    href: privacy().url,
                     labelKey: 'welcome.footer.privacy',
                     label: 'Privacy Notice',
                 },

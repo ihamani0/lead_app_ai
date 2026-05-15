@@ -9,6 +9,7 @@ declare global {
         langVersion: number;          // already used
         availableLocales: string[];   // optional, if you use them
         route_name: string;
+        support_email: string;
         [key: string]: unknown;
     };
 

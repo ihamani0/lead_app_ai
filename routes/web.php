@@ -3,6 +3,7 @@
 use App\Http\Controllers\AgentBotController;
 use App\Http\Controllers\Api\EvolutionWebhookController;
 use App\Http\Controllers\Api\TourController;
+use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvolutionInstanceController;
 use App\Http\Controllers\KnowledgeBaseController;
@@ -15,6 +16,13 @@ use App\Models\Tenant;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
+
+Route::prefix('auth')->middleware('guest')->group(function () {
+    Route::get('/google/redirect', [SocialiteController::class, 'redirectToGoogle'])
+        ->name('auth.google.redirect');
+    Route::get('/google/callback', [SocialiteController::class, 'handleGoogleCallback'])
+        ->name('auth.google.callback');
+});
 
 Route::post('/webhooks/evolution', [EvolutionWebhookController::class, 'handle'])
     ->name('webhooks.evolution');
@@ -31,6 +39,9 @@ Route::get('/', function () {
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home')->middleware('guest');
+
+Route::get('/terms', fn () => Inertia::render('legal/terms'))->name('terms');
+Route::get('/privacy', fn () => Inertia::render('legal/privacy'))->name('privacy');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 

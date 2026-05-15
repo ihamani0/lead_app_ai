@@ -123,4 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'support_email' => env('SUPPORT_EMAIL', 'support@crewflare.site'),
 ];

@@ -43,6 +43,7 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'name' => config('app.name'),
+            'support_email' => config('app.support_email'),
             'locale' => $locale,
             'availableLocales' => ['en', 'fr'],
             'langVersion' => app(TranslationController::class)->getVersion($locale),

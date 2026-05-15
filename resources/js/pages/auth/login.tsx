@@ -1,12 +1,13 @@
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
+import GoogleLoginButton from '@/components/auth/google-login-button';
 import InputError from '@/components/input-error';
-import TextLink from '@/components/text-link';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Spinner } from '@/components/ui/spinner';
-import AuthLayout from '@/layouts/auth-layout';
+import AuthSplitLayout from '@/layouts/auth/auth-split-layout';
 import { register } from '@/routes';
 import login from '@/routes/login';
 import { request } from '@/routes/password';
@@ -22,13 +23,15 @@ export default function Login({
     canResetPassword,
     canRegister,
 }: Props) {
+    const [showPassword, setShowPassword] = useState(false);
+
     const form = useForm({
         email: '',
         password: '',
         remember: false,
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
         form.post(login.store.url(), {
             onSuccess: () => {
@@ -38,53 +41,66 @@ export default function Login({
     };
 
     return (
-        <AuthLayout
-            title="Log in to your account"
-            description="Enter your email and password below to log in"
+        <AuthSplitLayout
+            title="Welcome Back!"
+            description={
+                <>
+                    Don&apos;t have an account?{' '}
+                    {canRegister ? (
+                        <Link
+                            href={register()}
+                            className="font-medium text-[#4C3BCF] underline underline-offset-2 hover:text-[#3B2EAD]"
+                        >
+                            Create a new account now
+                        </Link>
+                    ) : (
+                        'Create a new account now'
+                    )}
+                </>
+            }
+            brandPosition="left"
         >
             <Head title="Log in" />
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                <div className="grid gap-6">
-                    <div className="grid gap-2">
-                        <Label htmlFor="email">Email address</Label>
-                        <Input
-                            id="email"
-                            type="email"
-                            name="email"
-                            required
-                            autoFocus
-                            tabIndex={1}
-                            autoComplete="email"
-                            placeholder="email@example.com"
-                            value={form.data.email}
-                            onChange={(e) =>
-                                form.setData('email', e.target.value)
-                            }
-                            disabled={form.processing}
-                        />
-                        <InputError message={form.errors.email} />
-                    </div>
+            {status && (
+                <div className="mb-6 text-center text-sm font-medium text-green-600">
+                    {status}
+                </div>
+            )}
 
-                    <div className="grid gap-2">
-                        <div className="flex items-center">
-                            <Label htmlFor="password">Password</Label>
-                            {canResetPassword && (
-                                <TextLink
-                                    href={request()}
-                                    className="ml-auto text-sm"
-                                    tabIndex={5}
-                                >
-                                    Forgot password?
-                                </TextLink>
-                            )}
-                        </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-1.5">
+                    <Label htmlFor="email" className="sr-only">
+                        Email address
+                    </Label>
+                    <Input
+                        id="email"
+                        type="email"
+                        name="email"
+                        required
+                        autoFocus
+                        autoComplete="email"
+                        placeholder="your@email.com"
+                        value={form.data.email}
+                        onChange={(e) =>
+                            form.setData('email', e.target.value)
+                        }
+                        disabled={form.processing}
+                        className="h-12 rounded-[10px] border-[#E2E2E7] bg-[#F7F7F8] pl-4 text-[15px] text-[#0F0F10] placeholder:text-[#6B6B80] focus:bg-white focus:ring-[3px] focus:ring-[#4C3BCF]/12"
+                    />
+                    <InputError message={form.errors.email} />
+                </div>
+
+                <div className="space-y-1.5">
+                    <Label htmlFor="password" className="sr-only">
+                        Password
+                    </Label>
+                    <div className="relative">
                         <Input
                             id="password"
-                            type="password"
+                            type={showPassword ? 'text' : 'password'}
                             name="password"
                             required
-                            tabIndex={2}
                             autoComplete="current-password"
                             placeholder="Password"
                             value={form.data.password}
@@ -92,51 +108,73 @@ export default function Login({
                                 form.setData('password', e.target.value)
                             }
                             disabled={form.processing}
+                            className="h-12 rounded-[10px] border-[#E2E2E7] bg-[#F7F7F8] pl-4 pr-11 text-[15px] text-[#0F0F10] placeholder:text-[#6B6B80] focus:bg-white focus:ring-[3px] focus:ring-[#4C3BCF]/12"
                         />
-                        <InputError message={form.errors.password} />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword((prev) => !prev)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B6B80] hover:text-[#0F0F10]"
+                            tabIndex={-1}
+                        >
+                            {showPassword ? (
+                                <EyeOff className="size-5" />
+                            ) : (
+                                <Eye className="size-5" />
+                            )}
+                        </button>
                     </div>
-
-                    <div className="flex items-center space-x-3">
-                        <Checkbox
-                            id="remember"
-                            name="remember"
-                            tabIndex={3}
-                            checked={form.data.remember}
-                            onCheckedChange={(checked) =>
-                                form.setData('remember', checked as boolean)
-                            }
-                            disabled={form.processing}
-                        />
-                        <Label htmlFor="remember">Remember me</Label>
-                    </div>
-
-                    <Button
-                        type="submit"
-                        className="mt-4 w-full"
-                        tabIndex={4}
-                        disabled={form.processing}
-                        data-test="login-button"
-                    >
-                        {form.processing && <Spinner />}
-                        Log in
-                    </Button>
+                    <InputError message={form.errors.password} />
                 </div>
 
-                {canRegister && (
-                    <div className="text-center text-sm text-muted-foreground">
-                        Don't have an account?{' '}
-                        <TextLink href={register()} tabIndex={5}>
-                            Sign up
-                        </TextLink>
-                    </div>
-                )}
+                <div className="flex items-center gap-2">
+                    <Checkbox
+                        id="remember"
+                        name="remember"
+                        checked={form.data.remember}
+                        onCheckedChange={(checked) =>
+                            form.setData('remember', checked as boolean)
+                        }
+                        disabled={form.processing}
+                    />
+                    <Label
+                        htmlFor="remember"
+                        className="text-sm text-[#6B6B80]"
+                    >
+                        Remember me
+                    </Label>
+                </div>
+
+                <Button
+                    type="submit"
+                    disabled={form.processing}
+                    className="h-12 w-full rounded-[10px] bg-[#0F0F10] text-[15px] font-bold text-white hover:bg-[#0F0F10]/90"
+                >
+                    Login Now
+                </Button>
             </form>
 
-            {status && (
-                <div className="mb-4 text-center text-sm font-medium text-green-600">
-                    {status}
+            <div className="relative my-6">
+                <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-[#E2E2E7]" />
                 </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-white px-3 text-[#6B6B80]">or</span>
+                </div>
+            </div>
+
+            <GoogleLoginButton label="Login with Google" />
+
+            {canResetPassword && (
+                <p className="mt-6 text-center text-sm text-[#6B6B80]">
+                    Forgot password?{' '}
+                    <Link
+                        href={request()}
+                        className="font-medium text-[#4C3BCF] underline underline-offset-2 hover:text-[#3B2EAD]"
+                    >
+                        Click here
+                    </Link>
+                </p>
             )}
-        </AuthLayout>
+        </AuthSplitLayout>
     );
 }

@@ -10,5 +10,6 @@ export type AuthLayoutProps = {
     children?: ReactNode;
     name?: string;
     title?: string;
-    description?: string;
+    description?: string | ReactNode;
+    brandPosition?: 'left' | 'right';
 };
