@@ -87,7 +87,6 @@ export default function AuthSplitLayout({
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <img src="/logo-white.png" alt="MyIA" className="h-8 w-8" />
-                        <span className="text-lg font-bold">MyIA</span>
                     </div>
                     <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/10 p-0.5 backdrop-blur-md">
                         {['en', 'fr'].map((lang) => (
@@ -202,9 +201,6 @@ export default function AuthSplitLayout({
 
     const formPanel = (
         <div className="flex min-h-svh flex-col bg-white px-6 py-8 lg:px-12 xl:px-20">
-            <div className="flex items-center justify-end gap-2 ">
-                <img src="/logo-black.png" alt="MyIA" className="h-6 w-6" />
-            </div>
             <div className="mt-12 flex flex-1 flex-col justify-center lg:mt-16">
                 <div className="mx-auto w-full max-w-md lg:mx-0">
                     <h1 className="text-[28px] font-bold tracking-tight text-[#0F0F10]">
