@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\AgentConfig;
 use App\Models\KnowledgeBase;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -13,47 +13,53 @@ use Inertia\Inertia;
 
 class KnowledgeBaseController extends Controller
 {
+    use WorkspaceScoped;
+
     public function index(Request $request)
     {
-        $tenant_id = Auth::user()->tenant_id;
+        $query = $this->scopedQuery($request, KnowledgeBase::class)
+            ->with('agent')
+            ->latest();
 
-        $query = KnowledgeBase::with('agent')->where('tenant_id', $tenant_id)->latest();
-
-        // Filter by agent if provided
         if ($request->filled('agent_id')) {
             $query->where('agent_config_id', $request->agent_id);
         }
 
         $documents = $query->get();
 
-        $agents = AgentConfig::where('tenant_id', $tenant_id)
+        $agents = $this->scopedQuery($request, AgentConfig::class)
             ->select('id', 'name')
             ->get();
+
+        $roleCode = $this->getRoleCode($request);
+        $canManage = in_array($roleCode, ['owner', 'admin', 'member']);
 
         return Inertia::render('KnowledgeBase/Index', [
             'documents' => $documents,
             'agents' => $agents,
+            'canCreate' => $canManage,
+            'canManage' => $canManage,
         ]);
     }
 
     public function store(Request $request)
     {
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
         $request->validate([
             'file' => 'required|file|mimes:pdf,txt,docx|max:30720',
             'name' => 'required|string|max:255',
             'agent_config_id' => 'required|ulid|exists:agent_configs,id',
         ]);
 
-        // Verify agent belongs to tenant
-        $agent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($request->agent_config_id);
+        $this->findScoped($request, AgentConfig::class, $request->agent_config_id);
 
-        $document = KnowledgeBase::create([
+        $document = KnowledgeBase::create($this->withTeam($request, [
             'tenant_id' => $request->user()->tenant_id,
             'name' => $request->name,
             'agent_config_id' => $request->agent_config_id,
             'status' => 'processing',
-        ]);
+        ]));
 
         $document->addMediaFromRequest('file')->toMediaCollection('documents');
 
@@ -78,20 +84,22 @@ class KnowledgeBaseController extends Controller
         }
     }
 
-    public function download(Request $request, $id)
+    public function download(Request $request)
     {
-        $document = KnowledgeBase::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin', 'member', 'viewer']);
+
+        $document = $this->findScoped($request, KnowledgeBase::class, $request->route('id'));
 
         $file_path = $document->getFirstMediaPath('documents');
 
         return response()->download($file_path);
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request)
     {
-        $document = KnowledgeBase::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $document = $this->findScoped($request, KnowledgeBase::class, $request->route('id'));
 
         // Clean up vector embeddings in document_chunks
         try {

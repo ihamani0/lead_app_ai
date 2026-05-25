@@ -1,0 +1,99 @@
+{
+    "title": "AI Agent Setup Wizard",
+    "welcome_overlay": {
+        "title": "Bienvenue sur Votre Assistant IA !",
+        "subtitle": "Commencez en quelques minutes — connectez WhatsApp, configurez votre IA et automatisez vos conversations.",
+        "step1": "Connecter WhatsApp",
+        "step2": "Configurer l'Agent IA",
+        "step3": "Entraîner la Base de Connaissances",
+        "description": "Votre assistant IA gérera les conversations clients, qualifiera les leads et fournira un support 24h/24 et 7j/7 automatiquement.",
+        "start_setup": "Commencer",
+        "go_to_dashboard": "Aller au Tableau de Bord"
+    },
+    "back_to_agents": "Back to Agents",
+    "steps": {
+        "create_instance": "Create Instance",
+        "connect_whatsapp": "Connect WhatsApp",
+        "configure_agent": "Configure Agent",
+        "knowledge_base": "Knowledge Base"
+    },
+    "step1": {
+        "title": "Create WhatsApp Instance",
+        "description": "First, let's create a new WhatsApp instance for your AI agent.",
+        "instance_name": "Instance Name",
+        "instance_name_placeholder": "e.g., my-business-whatsapp",
+        "display_name": "Display Name",
+        "display_name_placeholder": "e.g., My Business",
+        "phone_number": "Phone Number",
+        "phone_placeholder": "e.g., 212612345678",
+        "phone_hint": "Optional. You can add this later after connecting.",
+        "creating": "Creating...",
+        "create_button": "Create Instance",
+        "error_create": "Failed to create instance"
+    },
+    "step2": {
+        "title": "Connect WhatsApp",
+        "description": "Scan the QR code with your WhatsApp app to connect this instance.",
+        "generating": "Generating...",
+        "generate_qr": "Generate QR Code",
+        "generating_qr": "Generating QR code...",
+        "waiting_scan": "Waiting for scan...",
+        "refresh_qr": "Refresh QR Code",
+        "connected": "✓ Connected successfully!",
+        "proceeding": "Proceeding to next step...",
+        "error_qr": "Failed to generate QR code",
+        "no_instance": "No instance available. Please go back to Step 1.",
+        "how_to_title": "How to connect:",
+        "step1": "Open WhatsApp on your phone",
+        "step2": "Go to Settings → Linked Devices",
+        "step3": "Tap \"Link a Device\" and scan the QR code"
+    },
+    "step3": {
+        "title": "Configure Your AI Agent",
+        "description": "Set up your agent's personality and behavior.",
+        "agent_name": "Agent Name",
+        "agent_name_placeholder": "e.g., Sales Assistant",
+        "agent_name_required": "Veuillez entrer un nom d'agent avant de finaliser la configuration.",
+        "language": "Language",
+        "tone": "Communication Tone",
+        "objective": "Primary Objective",
+        "prompt_preview": "System Prompt Preview",
+        "prompt_hint": "This prompt will be automatically generated based on your selections."
+    },
+    "step4": {
+        "title": "Knowledge Base (Optional)",
+        "description": "Upload documents to train your AI agent. You can skip this and add knowledge later.",
+        "drop_files": "Drop files here or click to upload",
+        "supported_formats": "PDF, DOCX, TXT (max 30MB)",
+        "browse_files": "Browse Files",
+        "uploaded_files": "Uploaded Files",
+        "info_title": "Knowledge Base",
+        "info_description": "Your AI agent will use these documents to provide accurate, context-aware responses. You can add more documents later from the agent settings."
+    },
+    "navigation": {
+        "back": "Back",
+        "next": "Next",
+        "skip": "Skip for now",
+        "complete": "Complete Setup",
+        "creating": "Creating..."
+    },
+    "objectives": {
+        "answer_questions": "Answer customer questions",
+        "generate_leads": "Generate leads",
+        "customer_support": "Provide customer support",
+        "sales_assistant": "Sales assistant"
+    },
+    "tones": {
+        "professional": "Professional",
+        "friendly": "Friendly",
+        "neutral": "Neutral",
+        "dynamic": "Dynamic"
+    },
+    "languages": {
+        "en": "English",
+        "fr": "French",
+        "ar": "Arabic",
+        "es": "Spanish",
+        "de": "German"
+    }
+}

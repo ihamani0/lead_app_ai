@@ -77,4 +77,9 @@ class Lead extends Model
     {
         return $this->belongsTo(EvolutionInstance::class, 'instance_id', 'id');
     }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
 }

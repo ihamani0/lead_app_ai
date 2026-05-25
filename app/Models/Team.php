@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Database\Factories\TeamFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -10,25 +12,18 @@ use Jurager\Teams\Traits\HasMembers;
 
 class Team extends Model
 {
-    use HasMembers;
+    /** @use HasFactory<TeamFactory> */
+    use HasFactory, HasMembers;
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array<string>
      */
-    protected $fillable = ['user_id', 'tenant_id', 'name', 'slug'];
+    protected $fillable = ['user_id', 'name', 'slug', 'description'];
 
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
     protected $with = ['roles.permissions', 'groups.permissions'];
 
-    /**
-     * Creates a new instance of the model.
-     */
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -40,7 +35,6 @@ class Team extends Model
         static::creating(function (Team $team) {
             if (empty($team->slug)) {
                 $team->slug = Str::slug($team->name).'-'.
-                            $team->tenant_id.'-'.
                             now()->format('ymdHis');
             }
         });
@@ -53,11 +47,21 @@ class Team extends Model
         }
         $pivot = $this->users()->where('user_id', $user->id)->first();
 
-        return $pivot ? $this->roles()->find($pivot->pivot->role_id) : null;
+        return $pivot ? $this->roles()->find($pivot->membership->role_id) : null;
     }
 
-    public function tenant()
+    public function leads()
     {
-        return $this->belongsTo(Tenant::class, 'tenant_id', 'id');
+        return $this->hasMany(Lead::class);
+    }
+
+    public function instances()
+    {
+        return $this->hasMany(EvolutionInstance::class);
+    }
+
+    public function agents()
+    {
+        return $this->hasMany(AgentConfig::class);
     }
 }

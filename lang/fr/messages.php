@@ -27,6 +27,19 @@ return [
 
         'agent_created' => 'Agent créé avec succès !',
 
+        'user_added_to_team' => 'Utilisateur ajouté au workspace avec succès',
+        'invitation_sent' => 'Invitation envoyée avec succès',
+        'invitation_removed' => 'Invitation annulée avec succès.',
+        'joined_team' => 'Vous avez rejoint le workspace !',
+        'member_role_updated' => 'Rôle du membre mis à jour avec succès.',
+        'member_removed' => 'Membre retiré du workspace.',
+        'role_created' => 'Rôle créé avec succès.',
+        'role_updated' => 'Rôle mis à jour avec succès.',
+        'role_deleted' => 'Rôle supprimé avec succès.',
+        'workspace_created' => 'Workspace créé avec succès.',
+        'workspace_updated' => 'Workspace mis à jour avec succès.',
+        'workspace_deleted' => 'Workspace supprimé avec succès.',
+
     ],
 
     'error' => [
@@ -39,6 +52,19 @@ return [
 
         'no_found_agent' => 'Aucun agent actif trouvé.',
         'document_uploaded' => 'Échec du déclenchement de l\'ingestion IA.',
+        'user_exist' => 'le utilisateure est deja exsist',
+
+        'user_already_exist' => 'Un compte avec ce mail existe deja. Veuillez vous connecter pour accepter linvitation',
+        'role_not_found' => 'Role non trouve',
+        'user_not_found' => 'User non trouve',
+        'cross_tenant_invite_not_allowed' => 'Vous ne pouvez pas inviter des utilisateurs d\'un autre locataire.',
+        'user_already_member' => 'Cet utilisateur est déjà membre.',
+        'user_not_member' => "Cet utilisateur n'est pas membre de ce workspace.",
+        'invitation_already_accepted' => 'Cette invitation a déjà été acceptée.',
+        'invitation_expired' => 'Cette invitation a expiré.',
+        'cannot_remove_owner' => 'Impossible de supprimer le propriétaire du workspace.',
+        'cannot_delete_owner_role' => 'Impossible de supprimer le rôle propriétaire.',
+        'invitation_accept_failed' => 'Échec de l\'acceptation de l\'invitation : :message',
 
     ],
 

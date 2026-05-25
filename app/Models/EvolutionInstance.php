@@ -12,6 +12,7 @@ class EvolutionInstance extends Model
 
     protected $fillable = [
         'tenant_id',
+        'team_id',
         'instance_name',
         'display_name',
         'phone_number',
@@ -44,6 +45,11 @@ class EvolutionInstance extends Model
     public function agentConfig()
     {
         return $this->hasOne(AgentConfig::class, 'evolution_instance_id');
+    }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 
     public function hasAgent(): bool

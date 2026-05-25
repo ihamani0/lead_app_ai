@@ -13,13 +13,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
-import { forceDestroy } from '@/routes/instances';
+import { forceDestroy } from '@/routes/workspaces/instances';
 
 interface ForceDeleteDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     instanceId: string;
     instanceName: string;
+    slug?: string;
 }
 
 export function ForceDeleteDialog({
@@ -27,6 +28,7 @@ export function ForceDeleteDialog({
     onOpenChange,
     instanceId,
     instanceName,
+    slug,
 }: ForceDeleteDialogProps) {
     const { t } = useTranslation();
     const [confirmText, setConfirmText] = useState('');
@@ -37,7 +39,7 @@ export function ForceDeleteDialog({
     const handleDelete = () => {
         if (!isConfirmed) return;
         setProcessing(true);
-        router.delete(forceDestroy({ id: instanceId }), {
+        router.delete(slug ? forceDestroy({ slug, id: instanceId }) : '#', {
             preserveScroll: true,
             onSuccess: () => {
                 setConfirmText('');

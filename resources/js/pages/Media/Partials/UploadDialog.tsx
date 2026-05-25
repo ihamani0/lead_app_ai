@@ -28,8 +28,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { cn } from '@/lib/utils';
-import media from '@/routes/media';
+import media from '@/routes/workspaces/media';
 
 import type { Asset, PresignResponse } from '@/types';
 
@@ -96,6 +97,7 @@ function FileIcon({ type }: { type: string | undefined }) {
     return <FileText className="h-5 w-5 text-muted-foreground" />;
 }
 
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UppyFileType = any;
 
@@ -124,6 +126,12 @@ function UppyUploadInner({
     isUploading,
     progress,
 }: UppyUploadInnerProps) {
+    const activeWorkspace = useActiveWorkspace();
+    const slugRef = useRef(activeWorkspace?.slug);
+    useEffect(() => {
+        slugRef.current = activeWorkspace?.slug;
+    }, [activeWorkspace?.slug]);
+
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Always-current ref for mediaType — avoids stale closure bugs in callbacks
@@ -151,42 +159,42 @@ function UppyUploadInner({
 
         instance.use(AwsS3, {
             shouldUseMultipart: false,
+            
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            getUploadParameters: async (file: any) => {
-                try {
-                    const response = await axios.post(media.presign().url, {
-                        filename: file.name,
-                        mime_type: file.type,
-                        size: Math.ceil((file.size ?? 0) / 1024),
-                    });
+            getUploadParameters: (file: any) => {
+                const payload = {
+                    filename: file.name,
+                    mime_type: file.type,
+                    size: Math.ceil((file.size ?? 0) / 1024),
+                };
 
-                    const presign: PresignResponse = response.data;
-                    instance.setFileMeta(file.id, { s3_key: presign.key });
+                return new Promise((resolve, reject) => {
+                    axios
+                        .post(
+                            media.presign({ slug: slugRef.current ?? '' }).url,
+                            payload,
+                        )
+                        .then((response) => {
+                            const presign = response.data as PresignResponse;
+                            instance.setFileMeta(file.id, { s3_key: presign.key });
 
-                    // ─── FIX: Remove forbidden headers before giving them to Uppy ───
-                    const safeHeaders = { ...presign.headers };
-                    delete safeHeaders['Host'];
-                    delete safeHeaders['host']; // delete lowercase just in case
+                            const safeHeaders = { ...presign.headers };
+                            delete safeHeaders['Host'];
+                            delete safeHeaders['host'];
 
-                    return {
-                        method: 'PUT' as const,
-                        url: presign.url,
-                        headers: safeHeaders,
-                    };
-                } catch (error) {
-                    if (
-                        axios.isAxiosError(error) &&
-                        error.response?.data?.message
-                    ) {
-                        console.error(
-                            '[Presign] Error:',
-                            error.response.data.message,
-                        );
-                        throw new Error(error.response.data.message);
-                    }
-                    console.error('[Presign] Error:', error);
-                    throw error;
-                }
+                            resolve({
+                                method: 'PUT' as const,
+                                url: presign.url,
+                                headers: safeHeaders,
+                            });
+                        })
+                        .catch((error) => {
+                            const msg =
+                                error.response?.data?.message || 'Presign failed';
+                            console.error('[Presign] Error:', msg);
+                            reject(new Error(msg));
+                        });
+                });
             },
         });
 
@@ -202,6 +210,7 @@ function UppyUploadInner({
 
     // ─── FIX: Single canonical effect for file list changes ──────────────────
     // We subscribe via useUppyState and derive everything from it.
+    
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const files = useUppyState(uppy, (state: any) => state.files);
 
@@ -242,6 +251,7 @@ function UppyUploadInner({
 
     // ─── Progress tracking ────────────────────────────────────────────────────
     useEffect(() => {
+        
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const handleProgress = (progress: any) => {
             onUploadProgress(progress);
@@ -255,46 +265,37 @@ function UppyUploadInner({
     // ─── Upload success → finalize ────────────────────────────────────────────
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const handleSuccess = async (file: any) => {
-            try {
-                // The S3 key is stored by the AwsS3 plugin under file.meta.key
-                const s3Key = file.meta?.s3_key;
+        const handleSuccess = (file: any) => {
+            const s3Key = file.meta?.s3_key;
 
-                if (!s3Key) {
-                    throw new Error(
-                        'Missing S3 key. Presign step may have failed.',
-                    );
-                }
-
-                const response = await axios.post(media.finalize().url, {
-                    category: category.toLowerCase().trim(),
-                    type: mediaType,
-                    s3_key: s3Key,
-                    mime_type: file.type || 'application/octet-stream',
-                    caption: caption || null,
-                });
-
-                const result = response.data;
-                onUploadComplete(result.asset);
-            } catch (error) {
-                if (
-                    axios.isAxiosError(error) &&
-                    error.response?.data?.message
-                ) {
-                    console.error(
-                        '[Finalize] Error:',
-                        error.response.data.message,
-                    );
-                    onUploadError(new Error(error.response.data.message));
-                } else {
-                    console.error('[Finalize] Error:', error);
-                    onUploadError(
-                        error instanceof Error
-                            ? error
-                            : new Error('Upload failed. Please try again.'),
-                    );
-                }
+            if (!s3Key) {
+                console.error('Missing S3 key. Presign step may have failed.');
+                return;
             }
+
+            const payload = {
+                category: category.toLowerCase().trim(),
+                type: mediaType,
+                s3_key: s3Key,
+                mime_type: file.type || 'application/octet-stream',
+                caption: caption,
+            };
+
+            axios
+                .post(
+                    media.finalize({ slug: slugRef.current ?? '' }).url,
+                    payload,
+                )
+                .then((response) => {
+                    const { asset } = response.data as { asset: Asset };
+                    onUploadComplete(asset);
+                })
+                .catch((error) => {
+                    const msg =
+                        error.response?.data?.message || 'Finalize failed';
+                    console.error('[Finalize] Error:', msg);
+                    onUploadError(new Error(msg));
+                });
         };
 
         uppy.on('upload-success', handleSuccess);
@@ -305,6 +306,7 @@ function UppyUploadInner({
 
     // ─── Upload error ─────────────────────────────────────────────────────────
     useEffect(() => {
+        
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const handleError = (_file: any, error: Error) => {
             console.error('[S3] Upload error:', error);

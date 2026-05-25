@@ -8,12 +8,13 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Jurager\Teams\Traits\HasTeams;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use AuthMustVerifyEmail, HasFactory, Notifiable , TwoFactorAuthenticatable;
+    use AuthMustVerifyEmail, HasFactory, HasTeams, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +31,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'google_id',
         'google_token',
         'google_refresh_token',
+        'has_password',
+        'welcome_dismissed_at',
     ];
 
     /**
@@ -58,7 +61,14 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
             'is_super_admin' => 'boolean',
+            'has_password' => 'boolean',
+            'welcome_dismissed_at' => 'datetime',
         ];
+    }
+
+    public function hasPassword(): bool
+    {
+        return $this->has_password;
     }
 
     public function tenant()

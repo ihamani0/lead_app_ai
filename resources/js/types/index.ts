@@ -1,7 +1,8 @@
 export type * from './auth';
 export type * from './navigation';
 export type * from './ui';
-export type * from './workspace';
+export type { Workspace, WorkspaceMember, WorkspaceRole, WorkspaceInvitation, WorkspacePermissions, WorkspaceUser } from './workspace';
+export { DEFAULT_PERMISSIONS, PERMISSION_GROUPS } from './workspace';
 
 export type InstanceStatus = 'connecting' | 'connected' | 'disconnected';
 

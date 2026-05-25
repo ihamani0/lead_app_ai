@@ -9,8 +9,9 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
-import knowledge from '@/routes/knowledge';
+import knowledge from '@/routes/workspaces/knowledge';
 
 interface KnowledgeBase {
     id: string;
@@ -31,6 +32,7 @@ interface Props {
 }
 
 export default function AgentKnowledgeBase({ agent }: Props) {
+    const activeWorkspace = useActiveWorkspace();
 
     console.log(agent);
     const { t } = useTranslation();
@@ -147,7 +149,7 @@ export default function AgentKnowledgeBase({ agent }: Props) {
                         {t('agents.config.documents')}
                     </CardTitle>
                     <Button asChild variant="outline" size="sm">
-                        <Link href={knowledge.index().url}>
+                        <Link href={knowledge.index({ slug: activeWorkspace!.slug }).url}>
                             <ExternalLink className="mr-2 h-4 w-4" />
                             {t('agents.config.manageAll')}
                         </Link>
@@ -183,7 +185,7 @@ export default function AgentKnowledgeBase({ agent }: Props) {
                             <BookOpen className="mx-auto mb-2 h-8 w-8 opacity-50" />
                             <p>{t('agents.config.noDocuments')}</p>
                             <Button asChild variant="link" className="mt-2">
-                                <Link href={knowledge.index().url}>
+                                <Link href={knowledge.index({ slug: activeWorkspace!.slug }).url}>
                                     {t('agents.config.uploadDocs')}
                                 </Link>
                             </Button>

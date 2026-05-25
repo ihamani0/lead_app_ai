@@ -1,24 +1,16 @@
 import { Transition } from '@headlessui/react';
-import { Head, Link, usePage, useForm } from '@inertiajs/react';
-// import axios from 'axios';
+import { Link, usePage, useForm } from '@inertiajs/react';
 import DeleteUser from '@/components/delete-user';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import AppLayout from '@/layouts/app-layout';
+import { useTranslation } from '@/hooks/use-translation';
 import SettingsLayout from '@/layouts/settings/layout';
+import WorkspaceLayout from '@/layouts/workspace-layout';
 import { edit } from '@/routes/profile';
 import { send } from '@/routes/verification';
-import type { BreadcrumbItem } from '@/types';
-
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Profile settings',
-        href: edit().url,
-    },
-];
 
 export default function Profile({
     mustVerifyEmail,
@@ -27,6 +19,7 @@ export default function Profile({
     mustVerifyEmail: boolean;
     status?: string;
 }) {
+    const { t } = useTranslation();
     const { auth } = usePage().props;
 
     const form = useForm({
@@ -41,27 +34,23 @@ export default function Profile({
         });
     };
 
-    // const handleResetTour = (tourName: string) => {
-    //     axios.post(`/api/tour/${tourName}/reset`);
-    // };
-
     return (
-        <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Profile settings" />
-
-            <h1 className="sr-only">Profile Settings</h1>
+        <WorkspaceLayout title={t('settings.profile.title')}>
+            <h1 className="sr-only">{t('settings.profile.title')}</h1>
 
             <SettingsLayout>
                 <div className="space-y-6">
                     <Heading
                         variant="small"
-                        title="Profile information"
-                        description="Update your name and email address"
+                        title={t('settings.profile.heading')}
+                        description={t('settings.profile.headingDescription')}
                     />
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
+                            <Label htmlFor="name">
+                                {t('settings.profile.name')}
+                            </Label>
 
                             <Input
                                 id="name"
@@ -72,7 +61,7 @@ export default function Profile({
                                 }
                                 required
                                 autoComplete="name"
-                                placeholder="Full name"
+                                placeholder={t('settings.profile.namePlaceholder')}
                             />
 
                             <InputError
@@ -82,7 +71,9 @@ export default function Profile({
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
+                            <Label htmlFor="email">
+                                {t('settings.profile.email')}
+                            </Label>
 
                             <Input
                                 id="email"
@@ -94,7 +85,7 @@ export default function Profile({
                                 }
                                 required
                                 autoComplete="username"
-                                placeholder="Email address"
+                                placeholder={t('settings.profile.emailPlaceholder')}
                             />
 
                             <InputError
@@ -107,21 +98,19 @@ export default function Profile({
                             auth.user.email_verified_at === null && (
                                 <div>
                                     <p className="-mt-4 text-xs text-muted-foreground md:text-sm">
-                                        Your email address is unverified.{' '}
+                                        {t('settings.profile.emailUnverified')}{' '}
                                         <Link
                                             href={send()}
                                             as="button"
                                             className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                         >
-                                            Click here to resend the
-                                            verification email.
+                                            {t('settings.profile.resendVerification')}
                                         </Link>
                                     </p>
 
                                     {status === 'verification-link-sent' && (
                                         <div className="mt-2 text-xs font-medium text-green-600 md:text-sm">
-                                            A new verification link has been
-                                            sent to your email address.
+                                            {t('settings.profile.verificationSent')}
                                         </div>
                                     )}
                                 </div>
@@ -132,7 +121,7 @@ export default function Profile({
                                 disabled={form.processing}
                                 data-test="update-profile-button"
                             >
-                                Save
+                                {t('settings.profile.save')}
                             </Button>
 
                             <Transition
@@ -143,22 +132,15 @@ export default function Profile({
                                 leaveTo="opacity-0"
                             >
                                 <p className="text-xs text-neutral-600 md:text-sm">
-                                    Saved
+                                    {t('settings.profile.saved')}
                                 </p>
                             </Transition>
                         </div>
                     </form>
                 </div>
 
-                {/* <Button
-                    variant="outline"
-                    onClick={() => handleResetTour('dashboard')}
-                >
-                    Reset Dashboard Tour
-                </Button> */}
-
                 <DeleteUser />
             </SettingsLayout>
-        </AppLayout>
+        </WorkspaceLayout>
     );
 }

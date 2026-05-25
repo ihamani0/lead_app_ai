@@ -2,9 +2,10 @@
 import { Head, router } from '@inertiajs/react';
 import { Image, Files } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-import { destroy } from '@/routes/media';
+import { destroy } from '@/routes/workspaces/media';
 import type { Asset, BreadcrumbItem } from '@/types';
 
 import { AssetDetailDialog } from './Partials/AssetDetailDialog';
@@ -15,10 +16,13 @@ import { UploadDialog } from './Partials/UploadDialog';
 
 interface MediaIndexProps {
     assets: Asset[];
+    canCreate: boolean;
+    canManage: boolean;
 }
 
-export default function Index({ assets }: MediaIndexProps) {
+export default function Index({ assets, canCreate, canManage }: MediaIndexProps) {
     const { t } = useTranslation();
+    const activeWorkspace = useActiveWorkspace();
 
     // Local state for instant UI updates (preserves scroll, no refresh)
     const [assetsList, setAssetsList] = useState(assets);
@@ -52,7 +56,7 @@ export default function Index({ assets }: MediaIndexProps) {
             // Remove from local state (instant UI update)
             setAssetsList((prev) => prev.filter((a) => a.id !== id));
             setSelectedAsset((prev) => (prev?.id === id ? null : prev));
-            router.delete(destroy(id).url);
+            router.delete(destroy({ slug: activeWorkspace!.slug, id }).url);
         }
     };
 
@@ -87,9 +91,6 @@ export default function Index({ assets }: MediaIndexProps) {
                     {/* Header - Violet/Purple Gradient */}
 
                     <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-blue-500 to-cyan-500 p-4 shadow-xl ring-1 ring-blue-400/30 sm:p-5 md:p-6 dark:from-blue-700 dark:to-cyan-700 dark:ring-blue-600/40">
-                        {/* Subtle pattern */}
-                        <div className="absolute inset-0 bg-[url('image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http://www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%23ffffff%22%20fill-opacity%3D%220.08%22%3E%3Cpath%20d%3D%22M36%2034v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6%2034v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6%204V0H4v4H0v2h4v4h2V6h4V4H6z%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-12 dark:opacity-8" />
-
                         <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             {/* LEFT */}
                             <div className="min-w-0 space-y-1.5">
@@ -118,12 +119,14 @@ export default function Index({ assets }: MediaIndexProps) {
                                 </div>
 
                                 {/* Upload Dialog */}
-                                <div className="shrink-0">
-                                    <UploadDialog
-                                        open={uploadOpen}
-                                        onOpenChange={setUploadOpen}
-                                    />
-                                </div>
+                                {canCreate && (
+                                    <div className="shrink-0">
+                                        <UploadDialog
+                                            open={uploadOpen}
+                                            onOpenChange={setUploadOpen}
+                                        />
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -134,6 +137,7 @@ export default function Index({ assets }: MediaIndexProps) {
                         assets={assetsList}
                         onDelete={handleDelete}
                         onSelect={handleSelectAsset}
+                        canManage={canManage}
                     />
 
                     <AssetDetailDialog
@@ -142,6 +146,7 @@ export default function Index({ assets }: MediaIndexProps) {
                         onOpenChange={setDetailOpen}
                         onDelete={handleDelete}
                         onToggleDefault={handleToggleDefault}
+                        canManage={canManage}
                     />
                 </div>
             </div>

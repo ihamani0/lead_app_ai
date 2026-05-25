@@ -27,14 +27,14 @@ class LeadIntegrationController extends Controller
             'phone' => 'required',
         ]);
         // n8n sends: { "instance": "tenant-slug-xyz", "phone": "551199..." }
-        $tenantId = $this->getTenantIdFromInstance($request->input('instance'));
+        $instance = EvolutionInstance::where('instance_name', $request->input('instance'))->firstOrFail();
         $phone = $request->input('phone');
-        $instance_id = EvolutionInstance::where('instance_name', $request->input('instance'))->firstOrFail()->id;
 
         $lead = Lead::firstOrCreate(
-            ['tenant_id' => $tenantId, 'phone' => $phone],
+            ['tenant_id' => $instance->tenant_id, 'phone' => $phone],
             [
-                'instance_id' => $instance_id,
+                'instance_id' => $instance->id,
+                'team_id' => $instance->team_id,
                 'name' => $request->input('name', 'UNKNOW'),
                 'status' => 'NEW',
                 'contact_status' => 'REPONDU',
@@ -73,12 +73,10 @@ class LeadIntegrationController extends Controller
             'phone' => 'required',
         ]);
 
-        $tenantId = $this->getTenantIdFromInstance($request->input('instance'));
-
-        $instance_id = EvolutionInstance::where('instance_name', $request->input('instance'))->firstOrFail()->id;
+        $instance = EvolutionInstance::where('instance_name', $request->input('instance'))->firstOrFail();
 
         $lead = Lead::updateOrCreate(
-            ['tenant_id' => $tenantId, 'phone' => $request->input('phone')],
+            ['tenant_id' => $instance->tenant_id, 'phone' => $request->input('phone')],
             [
                 'name' => $request->input('name', 'UNKNOW'),
                 'status' => 'NEW',
@@ -87,7 +85,8 @@ class LeadIntegrationController extends Controller
                 'source' => $request->input('source'),
                 'contact_status' => 'ATTENTE_REPONSE',
                 'phone' => $request->input('phone'),
-                'instance_id' => $instance_id,
+                'instance_id' => $instance->id,
+                'team_id' => $instance->team_id,
             ]
         );
 

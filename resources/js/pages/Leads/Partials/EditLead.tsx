@@ -14,10 +14,12 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { update } from '@/routes/leads';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
+import { update } from '@/routes/workspaces/leads';
 import type { Lead } from '@/types';
 
 export default function EditLead({ lead }: { lead: Lead }) {
+    const activeWorkspace = useActiveWorkspace();
     const [isOpen, setIsOpen] = useState(false);
 
     const { data, setData, put, processing, errors } = useForm<{
@@ -36,7 +38,7 @@ export default function EditLead({ lead }: { lead: Lead }) {
 
     const submit = (e: React.SubmitEvent) => {
         e.preventDefault();
-        put(update(lead.id).url, {
+        put(update({ slug: activeWorkspace!.slug, id: lead.id }).url, {
             preserveScroll: true,
             onSuccess: () => {
                 setIsOpen(false);

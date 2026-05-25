@@ -10,9 +10,10 @@ interface MediaTabsProps {
     assets: Asset[];
     onDelete: (id: string) => void;
     onSelect: (asset: Asset) => void;
+    canManage?: boolean;
 }
 
-export function MediaTabs({ assets, onDelete, onSelect }: MediaTabsProps) {
+export function MediaTabs({ assets, onDelete, onSelect, canManage = true }: MediaTabsProps) {
     const [activeTab, setActiveTab] = useState('all');
 
     const images = assets.filter((a) => a.type === 'image');
@@ -54,6 +55,7 @@ export function MediaTabs({ assets, onDelete, onSelect }: MediaTabsProps) {
                     onDelete={onDelete}
                     onSelect={onSelect}
                     emptyType="media"
+                    canManage={canManage}
                 />
             </TabsContent>
 
@@ -63,6 +65,7 @@ export function MediaTabs({ assets, onDelete, onSelect }: MediaTabsProps) {
                     onDelete={onDelete}
                     onSelect={onSelect}
                     emptyType="image"
+                    canManage={canManage}
                 />
             </TabsContent>
 
@@ -72,6 +75,7 @@ export function MediaTabs({ assets, onDelete, onSelect }: MediaTabsProps) {
                     onDelete={onDelete}
                     onSelect={onSelect}
                     emptyType="video"
+                    canManage={canManage}
                 />
             </TabsContent>
 

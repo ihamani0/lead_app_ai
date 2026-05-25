@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Team;
 
 use App\Http\Controllers\Controller;
+use App\Models\AgentConfig;
+use App\Models\EvolutionInstance;
+use App\Models\Lead;
 use App\Models\Team;
 use App\Models\User;
 use App\Services\TeamService;
@@ -17,16 +20,56 @@ class TeamController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $tenant = $user->tenant;
 
-        $teams = Team::where('tenant_id', $tenant->id)
-            ->with(['owner', 'users', 'roles'])
-            ->get();
+        $teamIds = $user->allTeams()->pluck('id');
+        $teams = Team::with(['owner', 'users', 'roles'])
+            ->whereIn('id', $teamIds)
+            ->get()
+            ->map(function ($team) use ($user) {
+                $role = $team->userAuthorization($user);
 
-        // dd($teams);
+                return [
+                    'id' => $team->id,
+                    'name' => $team->name,
+                    'description' => $team->description,
+                    'slug' => $team->slug,
+                    'owner_id' => $team->user_id,
+                    'created_at' => $team->created_at,
+                    'updated_at' => $team->updated_at,
+                    'owner' => $team->owner,
+                    'members_count' => $team->users->count(),
+                    'user_role' => $role ? [
+                        'name' => $role->name,
+                        'code' => $role->code,
+                        'description' => $role->description ?? '',
+                    ] : null,
+                ];
+            });
+
+        // Page-level KPIs
+        $totalLeads = Lead::where('tenant_id', $user->tenant_id)->count();
+        $hotLeads = Lead::where('tenant_id', $user->tenant_id)
+            ->where('qualification_result', 'HOT')
+            ->count();
+        $connectedInstances = EvolutionInstance::where('tenant_id', $user->tenant_id)
+            ->where('status', 'connected')
+            ->count();
+        $activeAgents = AgentConfig::where('tenant_id', $user->tenant_id)
+            ->where('is_active', true)
+            ->count();
+
+            
+
         return Inertia::render('Workspace/Index', [
             'workspaces' => $teams,
             'canCreate' => true,
+            'stats' => [
+                'total_workspaces' => $teams->count(),
+                'total_leads' => $totalLeads,
+                'hot_leads' => $hotLeads,
+                'connected_instances' => $connectedInstances,
+                'active_agents' => $activeAgents,
+            ],
         ]);
     }
 
@@ -34,18 +77,21 @@ class TeamController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
         ]);
 
         $user = $request->user();
-        $tenant = $user->tenant;
 
         $team = Team::create([
-            'user_id' => $user->id, // / Package automatically adds user as OWNER here
-            'tenant_id' => $tenant->id,
+            'user_id' => $user->id,
             'name' => $validated['name'],
+            'description' => $validated['description'] ?? null,
         ]);
 
-        return redirect()->route('teams.show', $team->slug);
+        $this->teamService->createDefaultRoles($team);
+
+        return redirect()->route('workspaces.dashboard', $team->slug)
+            ->with('success', __('messages.success.workspace_created'));
     }
 
     // | Relation | Purpose |
@@ -60,17 +106,13 @@ class TeamController extends Controller
         $user = $request->user();
 
         $team = Team::with([
-            'owner',                           // The team owner (user_id)
-            'users.user',                      // All members + their user data
-            'roles.permissions',                           // Team roles (admin, editor, etc.)
-            'invitations' => function ($query) {  // Pending invitations only
-                $query->whereNull('accepted_at')
-                    ->where('expires_at', '>', now());
-            },
+            'owner',
+            'users',
+            'roles.permissions',
+            'invitations.role',
         ])->where('slug', $slug)->first();
 
-        // Ensures the user can only access teams within their own tenant.
-        if ($team->tenant_id !== $user->tenant_id) {
+        if (! $team->hasUser($user)) {
             abort(403);
         }
 
@@ -79,24 +121,56 @@ class TeamController extends Controller
             $workspaceRole->description = 'Team owner';
         } else {
             $pivot = $team->users()->where('user_id', $user->id)->first();
-            $workspaceRole = $pivot ? $team->roles()->find($pivot->pivot->role_id) : null;
+            $workspaceRole = $pivot ? $team->roles()->find($pivot->membership->role_id) : null;
         }
 
-        $roles = $team->roles->map(function ($role) {
+        $roles = $team->roles->map(function ($role) use ($team) {
             return [
                 'id' => $role->id,
+                'workspace_id' => (string) $team->id,
                 'code' => $role->code,
                 'name' => $role->name,
                 'description' => $role->description,
-                'permissions' => $role->permissions->pluck('code')->toArray(),
+                'permissions' => $role->permissions->map(fn ($perm) => [
+                    'code' => $perm->code,
+                    'name' => $perm->name,
+                ])->values()->toArray(),
+                'is_default' => in_array($role->code, ['owner', 'admin', 'member', 'viewer']),
             ];
         });
+
+        $ownerRole = $team->roles()->where('code', 'owner')->first();
+
+        $members = $team->users->map(fn ($user) => [
+            'id' => $user->id,
+            'user_id' => $user->id,
+            'workspace_id' => (string) $team->id,
+            'role_id' => $user->membership->role_id,
+            'user' => $user,
+            'role' => $team->roles()->find($user->membership->role_id),
+            'created_at' => $user->membership->created_at->toISOString(),
+        ]);
+
+        $members->prepend([
+            'id' => $team->owner->id,
+            'user_id' => $team->owner->id,
+            'workspace_id' => (string) $team->id,
+            'role_id' => $ownerRole?->id,
+            'user' => $team->owner,
+            'role' => [
+                'id' => $ownerRole?->id,
+                'code' => 'owner',
+                'name' => 'Owner',
+                'description' => 'Team owner',
+            ],
+            'created_at' => $team->created_at->toISOString(),
+        ]);
 
         return Inertia::render('Workspace/Show', [
             'workspace' => $team,
             'workspaceRole' => $workspaceRole,
-            'members' => $team->users,      // Members with pivot data
-            'roles' => $roles,        // Available roles
+            'members' => $members,
+            'roles' => $roles,
             'canManageTeam' => in_array($workspaceRole?->code, ['owner', 'admin']),
             'canInvite' => in_array($workspaceRole?->code, ['owner', 'admin']),
         ]);
@@ -105,14 +179,15 @@ class TeamController extends Controller
     public function update(Request $request, $slug)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string|max:500',
         ]);
 
         $user = $request->user();
 
         $team = Team::where('slug', $slug)->firstOrFail();
 
-        if ($team->tenant_id !== $user->tenant_id) {
+        if (! $team->hasUser($user)) {
             abort(403);
         }
 
@@ -122,7 +197,7 @@ class TeamController extends Controller
             abort(403);
         }
 
-        $team->update(['name' => $validated['name']]);
+        $team->update($validated);
 
         return back();
     }
@@ -132,16 +207,15 @@ class TeamController extends Controller
         $user = $request->user();
         $team = Team::where('slug', $slug)->firstOrFail();
 
-        if ($team->tenant_id !== $user->tenant_id) {
+        if (! $team->hasUser($user)) {
             abort(403);
         }
 
-        // Owner check (no pivot check needed - only owner can delete)
         if ($user->id !== $team->user_id) {
             abort(403);
         }
 
-        $team->purge();  // Built-in method: detaches users + deletes team
+        $team->purge();
 
         return redirect()->route('teams.index');
     }
@@ -156,7 +230,7 @@ class TeamController extends Controller
         $user = $request->user();
         $team = Team::where('slug', $slug)->firstOrFail();
 
-        if ($team->tenant_id !== $user->tenant_id) {
+        if (! $team->hasUser($user)) {
             abort(403);
         }
 
@@ -173,19 +247,12 @@ class TeamController extends Controller
         $email = $validated['email'];
         $existingUser = User::where('email', $email)->first();
 
-        if ($existingUser && $existingUser->tenant_id === $team->tenant_id) {
+        // if ($existingUser && $existingUser->tenant_id !== $user->tenant_id) {
+        //     return back()->with('error', __('messages.error.cross_tenant_invite_not_allowed'));
+        // }
 
-            if ($team->hasUser($existingUser)) {
-                return back()->with('error', __('messages.error.user_already_member'));
-            }
-
-            $team->addUser($existingUser, $validated['role_code']);
-
-            return back()->with('success', __('messages.success.user_added_to_team'));
-        }
-
-        if ($existingUser) {
-            return back()->with('error', __('messages.error.user_belongs_to_another_organization'));
+        if ($existingUser && $team->hasUser($existingUser)) {
+            return back()->with('error', __('messages.error.user_already_member'));
         }
 
         $team->inviteUser($email, $validated['role_code']);

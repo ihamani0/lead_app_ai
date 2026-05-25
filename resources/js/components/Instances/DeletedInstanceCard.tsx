@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
-import { restore } from '@/routes/instances';
+import { restore } from '@/routes/workspaces/instances';
 import { ForceDeleteDialog } from './ForceDeleteDialog';
 
 interface DeletedInstance {
@@ -19,15 +19,18 @@ interface DeletedInstance {
 
 interface DeletedInstanceCardProps {
     instance: DeletedInstance;
+    slug?: string;
+    canManage?: boolean;
 }
 
-export function DeletedInstanceCard({ instance }: DeletedInstanceCardProps) {
+export function DeletedInstanceCard({ instance, slug, canManage = true }: DeletedInstanceCardProps) {
     const { t } = useTranslation();
     const [deleteOpen, setDeleteOpen] = useState(false);
 
     const handleRestore = () => {
+        if (!slug) return;
         router.post(
-            restore({ id: instance.instance_name }),
+            restore({ slug, id: instance.instance_name }),
             {},
             { preserveScroll: true },
         );
@@ -94,24 +97,26 @@ export function DeletedInstanceCard({ instance }: DeletedInstanceCardProps) {
                         </p>
                     )}
 
-                    <div className="flex gap-2">
-                        <Button
-                            onClick={handleRestore}
-                            className="flex-1 gap-2 bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
-                            size="sm"
-                        >
-                            <RotateCcw className="h-4 w-4" />
-                            {t('profil.restore')}
-                        </Button>
-                        <Button
-                            onClick={() => setDeleteOpen(true)}
-                            variant="outline"
-                            className="gap-2 text-red-600 hover:bg-red-100 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-900/30"
-                            size="sm"
-                        >
-                            <Trash2 className="h-4 w-4" />
-                        </Button>
-                    </div>
+                    {canManage && (
+                        <div className="flex gap-2">
+                            <Button
+                                onClick={handleRestore}
+                                className="flex-1 gap-2 bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-600"
+                                size="sm"
+                            >
+                                <RotateCcw className="h-4 w-4" />
+                                {t('profil.restore')}
+                            </Button>
+                            <Button
+                                onClick={() => setDeleteOpen(true)}
+                                variant="outline"
+                                className="gap-2 text-red-600 hover:bg-red-100 hover:text-red-700 dark:text-red-400 dark:hover:bg-red-900/30"
+                                size="sm"
+                            >
+                                <Trash2 className="h-4 w-4" />
+                            </Button>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
 
@@ -120,6 +125,7 @@ export function DeletedInstanceCard({ instance }: DeletedInstanceCardProps) {
                 onOpenChange={setDeleteOpen}
                 instanceId={instance.id}
                 instanceName={instance.display_name || instance.instance_name}
+                slug={slug}
             />
         </>
     );

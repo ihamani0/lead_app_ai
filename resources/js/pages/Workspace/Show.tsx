@@ -4,37 +4,45 @@ import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import type { Workspace, WorkspaceMember, WorkspaceRole } from '@/types';
 import { TabNavigation } from './Partials/TabNavigation';
-import { WorkspaceMembers } from './Partials/WorkspaceMembers';
 import { WorkspaceOverview } from './Partials/WorkspaceOverview';
 import { WorkspaceRoles } from './Partials/WorkspaceRoles';
 import { WorkspaceSettings } from './Partials/WorkspaceSettings';
 
 interface WorkspaceShowProps {
-    workspace: Workspace;
-    workspaceRole: object;
+    workspace: Workspace & { users_count?: number };
+    workspaceRole: { code?: string; name?: string; description?: string } | null;
     members: WorkspaceMember[];
     roles: WorkspaceRole[];
     canManageTeam: boolean;
     canInvite: boolean;
 }
 
-type TabType = 'overview' | 'members' | 'roles' | 'settings';
+type TabType = 'overview' | 'roles' | 'settings';
 
 export default function WorkspaceShow({
     workspace,
+    workspaceRole,
     members,
     roles,
     canManageTeam,
-    canInvite,
 }: WorkspaceShowProps) {
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<TabType>('overview');
 
-     
+    const workspaceWithMeta = {
+        ...workspace,
+        members_count: members.length,
+        user_role: workspaceRole
+            ? {
+                  code: workspaceRole.code ?? '',
+                  name: workspaceRole.name ?? workspaceRole.code ?? '',
+                  description: workspaceRole.description ?? '',
+              }
+            : undefined,
+    } as Workspace;
 
     const tabs: { id: TabType; label: string; visible: boolean }[] = [
         { id: 'overview', label: t('workspace.tabs.overview'), visible: true },
-        { id: 'members', label: t('workspace.tabs.members'), visible: true },
         { id: 'roles', label: t('workspace.tabs.roles'), visible: canManageTeam },
         {
             id: 'settings',
@@ -48,22 +56,13 @@ export default function WorkspaceShow({
     const renderContent = () => {
         switch (activeTab) {
             case 'overview':
-                return <WorkspaceOverview workspace={workspace} />;
-            case 'members':
-                return (
-                    <WorkspaceMembers
-                        workspace={workspace}
-                        members={members}
-                        roles={roles}
-                        canInvite={canInvite}
-                    />
-                );
+                return <WorkspaceOverview workspace={workspaceWithMeta} />;
             case 'roles':
                 return <WorkspaceRoles workspace={workspace} roles={roles} />;
             case 'settings':
                 return <WorkspaceSettings workspace={workspace} />;
             default:
-                return <WorkspaceOverview workspace={workspace} />;
+                return <WorkspaceOverview workspace={workspaceWithMeta} />;
         }
     };
 

@@ -9,6 +9,7 @@ interface MediaGridProps {
     onDelete: (id: string) => void;
     onSelect: (asset: Asset) => void;
     emptyType: string;
+    canManage?: boolean;
 }
 
 export function MediaGrid({
@@ -16,6 +17,7 @@ export function MediaGrid({
     onDelete,
     onSelect,
     emptyType,
+    canManage = true,
 }: MediaGridProps) {
     const { t } = useTranslation();
 
@@ -51,6 +53,7 @@ export function MediaGrid({
                     asset={asset}
                     onDelete={onDelete}
                     onClick={() => onSelect(asset)}
+                    canManage={canManage}
                 />
             ))}
         </div>

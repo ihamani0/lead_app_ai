@@ -34,10 +34,11 @@ import {
     TableRow,
 } from '@/components/ui/table';
 
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-import { store, destroy } from '@/routes/knowledge';
-import web from '@/routes/knowledge/web';
+import workspaces from '@/routes/workspaces';
+import knowledge from '@/routes/workspaces/knowledge';
 import type { BreadcrumbItem, AgentConfig } from '@/types';
 
 type DocumentStatus = 'indexed' | 'processing' | 'failed';
@@ -54,12 +55,17 @@ interface KnowledgeDocument {
 interface KnowledgeBaseIndexProps {
     documents: KnowledgeDocument[];
     agents: AgentConfig[];
+    canCreate: boolean;
+    canManage: boolean;
 }
 
 export default function KnowledgeBaseIndex({
     documents,
     agents,
+    canCreate,
+    canManage,
 }: KnowledgeBaseIndexProps) {
+    const activeWorkspace = useActiveWorkspace();
     const { t } = useTranslation();
 
     const breadcrumbs: BreadcrumbItem[] = [
@@ -127,7 +133,7 @@ export default function KnowledgeBaseIndex({
 
     const submit = (e: React.SubmitEvent) => {
         e.preventDefault();
-        post(store().url, {
+        post(knowledge.store({ slug: activeWorkspace!.slug }).url, {
             forceFormData: true,
             onSuccess: () => {
                 reset();
@@ -145,7 +151,7 @@ export default function KnowledgeBaseIndex({
                     'Are you sure you want to delete this document?',
             )
         ) {
-            router.delete(destroy(id).url);
+            router.delete(knowledge.destroy({ slug: activeWorkspace!.slug, id }).url);
         }
     };
 
@@ -228,6 +234,7 @@ export default function KnowledgeBaseIndex({
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                         {/* Upload Card */}
+                        {canCreate && (
                         <div className="lg:col-span-4" data-tour="kb-upload">
                             <Card className="overflow-hidden border-0 bg-white/80 shadow-2xl ring-1 ring-white/50 backdrop-blur-xl dark:bg-slate-900/80 dark:ring-white/10">
                                 <div className="absolute inset-0 bg-card text-foreground" />
@@ -444,7 +451,7 @@ export default function KnowledgeBaseIndex({
                                                     variant="outline"
                                                     className="w-full gap-2 border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/30"
                                                 >
-                                                    <a href="/agents">
+                                                    <a href={activeWorkspace ? workspaces.agents.index({ slug: activeWorkspace.slug }).url : '#'}>
                                                         <Sparkles className="h-4 w-4" />
                                                         {t(
                                                             'knowledgeBase.createAgentFirst',
@@ -486,6 +493,7 @@ export default function KnowledgeBaseIndex({
                                 </CardContent>
                             </Card>
                         </div>
+                        )}
 
                         {/* Documents Table */}
                         <div className="lg:col-span-8">
@@ -688,8 +696,8 @@ export default function KnowledgeBaseIndex({
                                                             <div className="flex items-center justify-end gap-1">
                                                                 <a
                                                                     href={
-                                                                        web.download(
-                                                                            doc.id,
+                                                                        knowledge.web.download(
+                                                                            { slug: activeWorkspace!.slug, id: doc.id },
                                                                         ).url
                                                                     }
                                                                     
@@ -700,19 +708,21 @@ export default function KnowledgeBaseIndex({
                                                                 >
                                                                     <Download className="h-4 w-4" />
                                                                 </a>
-                                                                <button
-                                                                    onClick={() =>
-                                                                        handleDelete(
-                                                                            doc.id,
-                                                                        )
-                                                                    }
-                                                                    className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-900/30 dark:hover:text-rose-400"
-                                                                    title={t(
-                                                                        'knowledgeBase.delete',
-                                                                    )}
-                                                                >
-                                                                    <Trash2 className="h-4 w-4" />
-                                                                </button>
+                                                                {canManage && (
+                                                                    <button
+                                                                        onClick={() =>
+                                                                            handleDelete(
+                                                                                doc.id,
+                                                                            )
+                                                                        }
+                                                                        className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-rose-100 hover:text-rose-600 dark:hover:bg-rose-900/30 dark:hover:text-rose-400"
+                                                                        title={t(
+                                                                            'knowledgeBase.delete',
+                                                                        )}
+                                                                    >
+                                                                        <Trash2 className="h-4 w-4" />
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         </TableCell>
                                                     </TableRow>

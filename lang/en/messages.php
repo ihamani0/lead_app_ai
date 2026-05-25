@@ -26,6 +26,19 @@ return [
 
         'agent_created' => 'Agent created successfully!',
 
+        'user_added_to_team' => 'User Added To Workspace Successfully',
+        'invitation_sent' => 'Invitation sent successfully',
+        'invitation_removed' => 'Invitation cancelled successfully.',
+        'joined_team' => 'You joined the team!',
+        'member_role_updated' => 'Member role updated successfully.',
+        'member_removed' => 'Member removed from team.',
+        'role_created' => 'Role created successfully.',
+        'role_updated' => 'Role updated successfully.',
+        'role_deleted' => 'Role deleted successfully.',
+        'workspace_created' => 'Workspace created successfully.',
+        'workspace_updated' => 'Workspace updated successfully.',
+        'workspace_deleted' => 'Workspace deleted successfully.',
+
     ],
 
     'error' => [
@@ -37,7 +50,19 @@ return [
         'instance_recreate' => 'Failed to recreate in Evolution: :message',
 
         'no_found_agent' => 'No active agent found.',
+        'user_exist' => 'An account with this email already exists. Please log in first to accept the invitation.',
         'document_uploaded' => 'Failed to trigger AI ingestion.',
+        'user_already_exist' => 'An account with this email already exists. Please log in first to accept the invitation.',
+        'role_not_found' => 'Role not found.',
+        'user_not_found' => 'User not found.',
+        'cross_tenant_invite_not_allowed' => 'You cannot invite users from different tenants.',
+        'user_already_member' => 'User is already a member.',
+        'user_not_member' => 'User is not a member of this workspace.',
+        'invitation_already_accepted' => 'This invitation has already been accepted.',
+        'invitation_expired' => 'This invitation has expired.',
+        'cannot_remove_owner' => 'Cannot remove the workspace owner.',
+        'cannot_delete_owner_role' => 'Cannot delete the owner role.',
+        'invitation_accept_failed' => 'Failed to accept invitation: :message',
 
     ],
 

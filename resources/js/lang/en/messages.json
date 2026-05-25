@@ -18,6 +18,11 @@
     "leads": "Leads",
     "media_assets": "Media",
     "documentation": "Knowledge Base",
+    "greeting": {
+        "morning": "Good Morning",
+        "afternoon": "Good Afternoon",
+        "evening": "Good Evening"
+    },
     "success": {
         "agent_created": "Agent created successfully",
         "connected_agent": "Agent connected successfully",
@@ -30,5 +35,4 @@
         "no_found_agent": "Agent not found",
         "document_uploaded": "Failed to upload document"
     }
-     
 }

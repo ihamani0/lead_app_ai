@@ -20,11 +20,10 @@ import {
     CardContent,
     CardFooter,
 } from '@/components/ui/card';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-import { dashboard } from '@/routes';
-import agentsRoutes from '@/routes/agents';
-
+import workspaces from '@/routes/workspaces';
 import {
     type AgentConfig,
     type BreadcrumbItem,
@@ -37,14 +36,22 @@ import { LinkInstanceDialog } from './Partials/LinkInstanceDialog';
 type Props = {
     agents: AgentConfig[];
     availableInstances: EvolutionInstance[];
+    canCreate: boolean;
+    canManage: boolean;
 };
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Home', href: dashboard().url },
-    { title: 'Agents', href: '' },
-];
+export default function AgentIndex({ agents, availableInstances, canCreate, canManage }: Props) {
+    const activeWorkspace = useActiveWorkspace()!;
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Home',
+            href: activeWorkspace
+                ? workspaces.dashboard({ slug: activeWorkspace.slug }).url
+                : '',
+        },
+        { title: 'Agents', href: '' },
+    ];
 
-export default function AgentIndex({ agents, availableInstances }: Props) {
     const { t } = useTranslation();
     const [createOpen, setCreateOpen] = useState(false);
     const [linkOpen, setLinkOpen] = useState(false);
@@ -59,12 +66,12 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
 
     const handleDelete = (agentId: string) => {
         if (confirm('Delete this agent? This cannot be undone.')) {
-            router.delete(agentsRoutes.destroy(agentId).url);
+            router.delete(workspaces.agents.destroy({ slug: activeWorkspace.slug, agent: agentId }).url);
         }
     };
 
     const handleOpenConfig = (agentId: string) => {
-        router.get(agentsRoutes.show(agentId).url);
+        router.get(workspaces.agents.show({ slug: activeWorkspace.slug, agent: agentId }).url);
     };
 
     const handleUnlink = (agentId: string) => {
@@ -73,7 +80,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                 'Unlink this instance from the agent? The agent configuration will be preserved.',
             )
         ) {
-            router.post(`/agents/${agentId}/unlink-instance`);
+            router.post(workspaces.agents.unlinkInstance({ slug: activeWorkspace.slug, agent: agentId }).url);
         }
     };
 
@@ -84,53 +91,49 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
             <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
                 <div className="space-y-5">
                     {/* Header - Purple/Violet Gradient */}
-                    <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-violet-600 via-purple-700 to-indigo-800 p-4 shadow-xl ring-1 ring-violet-400/30 sm:p-5 md:p-6 
-                    dark:from-violet-700 dark:via-purple-800 dark:to-indigo-800 dark:ring-violet-400/30">
+                    <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-violet-600 via-purple-700 to-indigo-800 p-4 shadow-xl ring-1 ring-violet-400/30 sm:p-5 md:p-6 dark:from-violet-700 dark:via-purple-800 dark:to-indigo-800 dark:ring-violet-400/30">
+                        {/* Decorative glow */}
+                        <div className="absolute -top-8 -right-8 h-14 w-14 rounded-full bg-violet-400/20 blur-2xl" />
+                        <div className="absolute -bottom-8 -left-8 h-14 w-14 rounded-full bg-purple-400/20 blur-2xl" />
 
-                    {/* Decorative glow */}
-                    <div className="absolute -top-8 -right-8 h-14 w-14 rounded-full bg-violet-400/20 blur-2xl" />
-                    <div className="absolute -bottom-8 -left-8 h-14 w-14 rounded-full bg-purple-400/20 blur-2xl" />
+                        <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                            {/* LEFT */}
+                            <div className="space-y-1">
+                                <div className="flex items-center gap-2">
+                                    <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
+                                        <Bot className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                                    </div>
 
-                    <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                    <h1 className="text-lg font-semibold text-white sm:text-xl md:text-3xl">
+                                        {t('agents.title')}
+                                    </h1>
+                                </div>
 
-                        {/* LEFT */}
-                        <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                            
-                            <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
-                            <Bot className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                                <p className="max-w-xs text-xs text-white/80 sm:max-w-md sm:text-sm md:text-base">
+                                    {t('agents.subtitle')}
+                                </p>
                             </div>
 
-                            <h1 className="text-lg font-semibold text-white sm:text-xl md:text-3xl">
-                            {t('agents.title')}
-                            </h1>
-                        </div>
+                            {/* RIGHT */}
+                            <div className="flex flex-wrap items-center justify-between gap-2 sm:flex-nowrap sm:justify-end">
+                                <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] text-white sm:px-3 sm:text-xs">
+                                    <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                    <span>
+                                        {agents.length}{' '}
+                                        {t('agents.agentsCount')}
+                                    </span>
+                                </div>
 
-                        <p className="text-xs text-white/80 sm:text-sm md:text-base max-w-xs sm:max-w-md">
-                            {t('agents.subtitle')}
-                        </p>
+                                {canCreate && (
+                                    <div data-tour="agents-create">
+                                        <CreateAgentDialog
+                                            open={createOpen}
+                                            onOpenChange={setCreateOpen}
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </div>
-
-                        {/* RIGHT */}
-                        <div className="flex flex-wrap items-center justify-between gap-2 sm:flex-nowrap sm:justify-end">
-                        
-                        <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] text-white sm:px-3 sm:text-xs">
-                            <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                            <span>
-                            {agents.length} {t('agents.agentsCount')}
-                            </span>
-                        </div>
-
-                        <div data-tour="agents-create">
-                            <CreateAgentDialog
-                                open={createOpen}
-                                onOpenChange={setCreateOpen}
-                            />
-                        </div>
-
-                        </div>
-
-                    </div>
                     </div>
 
                     {/* Available Instances Alert */}
@@ -253,30 +256,29 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                             </div>
 
                                             {/* Knowledge Base Count */}
-                                            
-                                                    <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
-                                                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-slate-700">
-                                                            <FileText className="h-4 w-4 text-slate-500 dark:text-slate-400" />
-                                                        </div>
-                                                        <div className="flex flex-col">
-                                                            <span className="text-[10px] font-medium text-slate-400 uppercase">
-                                                                {t(
-                                                                    'agents.knowledge_base_count',
-                                                                )}
-                                                            </span>
-                                                            <span className="text-xs font-bold tracking-tight text-slate-700 md:text-sm dark:text-slate-200">
-                                                                {
-                                                                    agent?.knowledge_bases_count
-                                                                }{' '}
-                                                                document
-                                                                {agent?.knowledge_bases_count !==
-                                                                1
-                                                                    ? 's'
-                                                                    : ''}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                
+
+                                            <div className="flex items-center gap-3 rounded-xl bg-slate-50 p-3 dark:bg-slate-800/50">
+                                                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white shadow-sm dark:bg-slate-700">
+                                                    <FileText className="h-4 w-4 text-slate-500 dark:text-slate-400" />
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] font-medium text-slate-400 uppercase">
+                                                        {t(
+                                                            'agents.knowledge_base_count',
+                                                        )}
+                                                    </span>
+                                                    <span className="text-xs font-bold tracking-tight text-slate-700 md:text-sm dark:text-slate-200">
+                                                        {
+                                                            agent?.knowledge_bases_count
+                                                        }{' '}
+                                                        document
+                                                        {agent?.knowledge_bases_count !==
+                                                        1
+                                                            ? 's'
+                                                            : ''}
+                                                    </span>
+                                                </div>
+                                            </div>
 
                                             {/* System Prompt Preview */}
                                             <div className="relative rounded-xl border border-slate-100 bg-white/50 p-4 dark:border-slate-800 dark:bg-slate-900/50">
@@ -296,7 +298,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
 
                                         <CardFooter className="flex flex-col gap-2 border-t bg-slate-50/50 p-4 dark:border-slate-800 dark:bg-transparent">
                                             <div className="flex w-full gap-2">
-                                                {isLinked ? (
+                                                {isLinked && canManage && (
                                                     <>
                                                         <Button
                                                             variant="outline"
@@ -329,23 +331,7 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                             )}
                                                         </Button>
                                                     </>
-                                                ) : (
-                                                    <Button
-                                                        variant="default"
-                                                        size="sm"
-                                                        className="w-full gap-1 text-xs"
-                                                        onClick={() =>
-                                                            handleOpenLink(
-                                                                agent,
-                                                            )
-                                                        }
-                                                    >
-                                                        <Link2 className="h-3.5 w-3.5" />
-                                                        {t(
-                                                            'agents.link_instance',
-                                                        )}
-                                                    </Button>
-                                                )}
+                                                ) }
                                             </div>
                                             <div className="flex w-full gap-2">
                                                 <Button
@@ -361,16 +347,18 @@ export default function AgentIndex({ agents, availableInstances }: Props) {
                                                     <Settings className="h-3.5 w-3.5" />
                                                     {t('agents.config.title')}
                                                 </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="gap-1 text-xs text-destructive hover:bg-destructive/10"
-                                                    onClick={() =>
-                                                        handleDelete(agent.id)
-                                                    }
-                                                >
-                                                    <Trash2 className="h-3.5 w-3.5" />
-                                                </Button>
+                                                {canManage && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="gap-1 text-xs text-destructive hover:bg-destructive/10"
+                                                        onClick={() =>
+                                                            handleDelete(agent.id)
+                                                        }
+                                                    >
+                                                        <Trash2 className="h-3.5 w-3.5" />
+                                                    </Button>
+                                                )}
                                             </div>
                                         </CardFooter>
                                     </Card>

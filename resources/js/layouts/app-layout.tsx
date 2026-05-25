@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
-import { Toaster } from 'sonner';
+// import { Toaster } from 'sonner';
 // import { GuidedTour } from '@/components/guided-tour';
 import { useFlash } from '@/hooks/use-flash';
 import i18n from '@/i18n';
@@ -37,7 +37,7 @@ export default function AppLayout({
             /> */}
             {children}
 
-            <Toaster position="top-center" />
+            {/* <Toaster position="top-center" /> */}
         </AppLayoutTemplate>
     );
 }

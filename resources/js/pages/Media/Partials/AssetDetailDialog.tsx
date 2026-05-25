@@ -19,10 +19,11 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { getGradient } from '@/lib/mediaHelpers';
 import { cn } from '@/lib/utils';
-import media from '@/routes/media';
+import media from '@/routes/workspaces/media';
 import type { Asset } from '@/types';
 import { MediaIcon } from './AssetCard';
 interface AssetDetailDialogProps {
@@ -31,6 +32,7 @@ interface AssetDetailDialogProps {
     onOpenChange: (open: boolean) => void;
     onDelete: (id: string) => void;
     onToggleDefault?: (id: string, isDefault: boolean) => void;
+    canManage?: boolean;
 }
 
 interface MetadataRowProps {
@@ -97,25 +99,31 @@ export function AssetDetailDialog({
     onOpenChange,
     onDelete,
     onToggleDefault,
+    canManage = true,
 }: AssetDetailDialogProps) {
+    const activeWorkspace = useActiveWorkspace();
     const { copy, isCopied } = useClipboard();
     const [isUpdatingDefault, setIsUpdatingDefault] = useState(false);
 
     if (!asset) return null;
 
-    const handleToggleDefault = async () => {
+    const handleToggleDefault = () => {
         if (!onToggleDefault) return;
         setIsUpdatingDefault(true);
-        try {
-            const response = await axios.post(
-                media.toggleDefault(asset.id).url,
-            );
-            onToggleDefault(asset.id, response.data.is_default);
-        } catch (error) {
-            console.error('Failed to toggle default:', error);
-        } finally {
-            setIsUpdatingDefault(false);
-        }
+        axios
+            .post(
+                media.toggleDefault({ slug: activeWorkspace!.slug, id: asset.id }).url,
+            )
+            .then((response) => {
+                const { is_default } = response.data as { is_default: boolean };
+                onToggleDefault(asset.id, is_default);
+            })
+            .catch((error) => {
+                console.error('Failed to toggle default:', error);
+            })
+            .finally(() => {
+                setIsUpdatingDefault(false);
+            });
     };
 
     const handleCopy =
@@ -324,19 +332,21 @@ export function AssetDetailDialog({
                     </div>
 
                     {/* AI Default Toggle */}
-                    <div className="flex w-full max-w-full items-center justify-between rounded-md border border-amber-500/20 bg-amber-500/5 p-3">
-                        <div className="flex items-center gap-2">
-                            <Star className="h-4 w-4 shrink-0 text-amber-500" />
-                            <span className="text-sm text-amber-700 dark:text-amber-400">
-                                AI Default
-                            </span>
+                    {canManage && (
+                        <div className="flex w-full max-w-full items-center justify-between rounded-md border border-amber-500/20 bg-amber-500/5 p-3">
+                            <div className="flex items-center gap-2">
+                                <Star className="h-4 w-4 shrink-0 text-amber-500" />
+                                <span className="text-sm text-amber-700 dark:text-amber-400">
+                                    AI Default
+                                </span>
+                            </div>
+                            <Switch
+                                checked={asset.is_default ?? false}
+                                onCheckedChange={handleToggleDefault}
+                                disabled={isUpdatingDefault}
+                            />
                         </div>
-                        <Switch
-                            checked={asset.is_default ?? false}
-                            onCheckedChange={handleToggleDefault}
-                            disabled={isUpdatingDefault}
-                        />
-                    </div>
+                    )}
 
                     {/* AI Reference */}
                     <div className="w-full max-w-full rounded-md border border-primary/10 bg-primary/5 p-3 text-xs wrap-break-word text-primary">
@@ -346,14 +356,16 @@ export function AssetDetailDialog({
                     </div>
 
                     {/* Delete */}
-                    <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={handleDelete}
-                        className="mt-2 w-full gap-2 sm:w-auto"
-                    >
-                        <Trash2 className="h-4 w-4 shrink-0" /> Delete Asset
-                    </Button>
+                    {canManage && (
+                        <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={handleDelete}
+                            className="mt-2 w-full gap-2 sm:w-auto"
+                        >
+                            <Trash2 className="h-4 w-4 shrink-0" /> Delete Asset
+                        </Button>
+                    )}
                 </div>
             </SheetContent>
         </Sheet>

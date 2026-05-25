@@ -1,31 +1,51 @@
-import { Link, usePage } from '@inertiajs/react';
-import { ChevronDown, Check, Plus, Briefcase } from 'lucide-react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { ChevronsUpDown, Check, Plus, Briefcase } from 'lucide-react';
+import { useState } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem,
+    CommandList,
+    CommandSeparator,
+} from '@/components/ui/command';
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
-import { cn } from '@/lib/utils';
-import { index as teamsIndex, show as teamsShow } from '@/routes/teams';
+import { index as teamsIndex } from '@/routes/teams';
+import workspacesRoutes from '@/routes/workspaces';
 import type { Workspace } from '@/types';
 
 type PageProps = {
-    currentWorkspace?: Workspace;
-    workspaces?: Workspace[];
+    auth: {
+        user: {
+            tenant: {
+                plan: string;
+            };
+        };
+        workspaces?: Workspace[];
+    };
 };
 
 export function WorkspaceSelector() {
     const { t } = useTranslation();
     const page = usePage<PageProps>();
-    const { currentWorkspace, workspaces = [] } = page.props;
+    const { auth } = page.props;
+    const activeWorkspace = useActiveWorkspace();
+    const [open, setOpen] = useState(false);
 
-    if (!currentWorkspace) {
+    const plan = auth?.user?.tenant?.plan ?? '';
+    const workspaces = auth?.workspaces ?? [];
+
+    if (!activeWorkspace) {
         return (
             <Button variant="outline" size="sm" asChild className="gap-2">
                 <Link href={teamsIndex().url}>
@@ -37,76 +57,108 @@ export function WorkspaceSelector() {
     }
 
     return (
-        <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+        <Popover open={open} onOpenChange={setOpen}>
+            <PopoverTrigger asChild>
                 <Button
                     variant="outline"
                     size="sm"
-                    className="min-w-[200px] justify-start gap-2"
+                    role="combobox"
+                    aria-expanded={open}
+                    className="min-w-[200px] justify-between gap-2"
                 >
-                    <Avatar className="size-5">
-                        <AvatarFallback className="text-[10px]">
-                            {currentWorkspace.name.slice(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                    </Avatar>
-                    <span className="flex-1 truncate text-left">
-                        {currentWorkspace.name}
-                    </span>
-                    <ChevronDown className="size-4 text-muted-foreground" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[250px]">
-                <DropdownMenuLabel>{t('workspace.title')}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-
-                {workspaces.map((workspace) => (
-                    <DropdownMenuItem
-                        key={workspace.id}
-                        asChild
-                        className={cn(
-                            'cursor-pointer',
-                            currentWorkspace?.id === workspace.id &&
-                                'bg-accent',
+                    <div className="flex min-w-0 items-center gap-2">
+                        <Avatar className="size-5 shrink-0">
+                            <AvatarFallback className="text-[10px]">
+                                {activeWorkspace.name.slice(0, 2).toUpperCase()}
+                            </AvatarFallback>
+                        </Avatar>
+                        <span className="truncate">
+                            {activeWorkspace.name}
+                        </span>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1">
+                        {plan && (
+                            <Badge
+                                variant="secondary"
+                                className="px-1.5 py-0 text-[10px] font-semibold uppercase"
+                            >
+                                {plan}
+                            </Badge>
                         )}
-                    >
-                        <Link
-                            href={teamsShow({ team: workspace.id }).url}
-                            className="flex items-center gap-2"
+                        <ChevronsUpDown className="size-3.5 text-muted-foreground" />
+                    </div>
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent align="start" className="w-[280px] p-0">
+                <Command>
+                    <CommandInput placeholder={t('workspace.search', 'Find organization...')} />
+                    <CommandList>
+                        <CommandEmpty>
+                            {t('workspace.no_results', 'No organization found.')}
+                        </CommandEmpty>
+                        <CommandGroup heading={t('workspace.title')}>
+                            {workspaces.map((workspace) => (
+                                <CommandItem
+                                    key={workspace.id}
+                                    value={workspace.name}
+                                    onSelect={() => {
+                                        setOpen(false);
+                                        if (workspace.id !== activeWorkspace.id) {
+                                            router.visit(workspacesRoutes.dashboard({ slug: workspace.slug }));
+                                        }
+                                    }}
+                                >
+                                    <div className="flex w-full items-center gap-2">
+                                        <Avatar className="size-6 shrink-0">
+                                            <AvatarFallback className="text-xs">
+                                                {workspace.name.slice(0, 2).toUpperCase()}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex min-w-0 flex-1 flex-col">
+                                            <span className="text-sm font-medium">
+                                                {workspace.name}
+                                            </span>
+                                            {workspace.description && (
+                                                <span className="truncate text-xs text-muted-foreground">
+                                                    {workspace.description}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex shrink-0 items-center gap-1.5">
+                                            {plan && (
+                                                <Badge
+                                                    variant="secondary"
+                                                    className="px-1.5 py-0 text-[10px] font-semibold uppercase"
+                                                >
+                                                    {plan}
+                                                </Badge>
+                                            )}
+                                            {activeWorkspace.id === workspace.id && (
+                                                <Check className="size-4 text-primary" />
+                                            )}
+                                        </div>
+                                    </div>
+                                </CommandItem>
+                            ))}
+                        </CommandGroup>
+                        <CommandSeparator />
+                        <CommandItem
+                            onSelect={() => {
+                                setOpen(false);
+                            }}
+                            asChild
                         >
-                            <Avatar className="size-6">
-                                <AvatarFallback className="text-xs">
-                                    {workspace.name.slice(0, 2).toUpperCase()}
-                                </AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col">
-                                <span className="text-sm">
-                                    {workspace.name}
-                                </span>
-                                {workspace.user_role && (
-                                    <span className="text-xs text-muted-foreground">
-                                        {workspace.user_role.name}
-                                    </span>
-                                )}
-                            </div>
-                            {currentWorkspace?.id === workspace.id && (
-                                <Check className="ml-auto size-4" />
-                            )}
-                        </Link>
-                    </DropdownMenuItem>
-                ))}
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem asChild className="cursor-pointer">
-                    <Link
-                        href={teamsIndex().url}
-                        className="flex items-center gap-2"
-                    >
-                        <Plus className="size-4" />
-                        <span>{t('workspace.create')}</span>
-                    </Link>
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-        </DropdownMenu>
+                            <Link
+                                href={teamsIndex().url}
+                                className="flex items-center gap-2"
+                            >
+                                <Plus className="size-4" />
+                                <span>{t('workspace.create')}</span>
+                            </Link>
+                        </CommandItem>
+                    </CommandList>
+                </Command>
+            </PopoverContent>
+        </Popover>
     );
 }

@@ -1,6 +1,17 @@
 import { useForm } from '@inertiajs/react';
 import { Settings, Save } from 'lucide-react';
 import { useState } from 'react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -37,13 +48,16 @@ export function WorkspaceSettings({ workspace }: WorkspaceSettingsProps) {
         });
     };
 
+    const [deleteOpen, setDeleteOpen] = useState(false);
     const { delete: destroyWorkspace } = useForm({});
     const handleDelete = () => {
-        if (confirm('Are you sure?')) {
-            destroyWorkspace(teamsDestroy({ slug: workspace.slug }).url);
-        }
+        setDeleteOpen(true);
     };
 
+    const confirmDelete = () => {
+        destroyWorkspace(teamsDestroy({ slug: workspace.slug }).url);
+        setDeleteOpen(false);
+    };
 
     return (
         <div className="space-y-6">
@@ -144,9 +158,29 @@ export function WorkspaceSettings({ workspace }: WorkspaceSettingsProps) {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button variant="destructive" onClick={handleDelete}>
-                        {t('workspace.settings.danger.delete')}
-                    </Button>
+                    <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+                        <AlertDialogTrigger asChild>
+                            <Button variant="destructive" onClick={handleDelete}>
+                                {t('workspace.settings.danger.delete')}
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    {t('workspace.settings.danger.delete_confirm')}
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    {t('workspace.settings.danger.delete_confirm_description')}
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+                                <AlertDialogAction variant="destructive" onClick={confirmDelete}>
+                                    {t('workspace.settings.danger.delete')}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </CardContent>
             </Card>
         </div>

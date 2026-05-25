@@ -1,5 +1,4 @@
 import { Head, Link, usePage } from '@inertiajs/react';
-import { home } from '@/routes';
 
 const sections = [
     { id: 'acceptance', title: '1. Acceptance of Terms' },
@@ -25,7 +24,7 @@ export default function Terms() {
             <div className="min-h-screen bg-white">
                 <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
                     <Link
-                        href={home()}
+                        href="/"
                         className="inline-flex items-center gap-1.5 text-sm text-[#6B6B80] transition-colors hover:text-[#4C3BCF]"
                     >
                         <svg

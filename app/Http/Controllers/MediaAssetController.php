@@ -2,38 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\MediaAsset;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class MediaAssetController extends Controller
 {
-    public function index()
-    {
-        $tenant_id = Auth::user()->tenant_id;
+    use WorkspaceScoped;
 
-        $assets = MediaAsset::where('tenant_id', $tenant_id)
+    public function index(Request $request)
+    {
+        $assets = MediaAsset::where($this->scope($request))
             ->latest()
             ->get()
             ->map(function ($asset) {
-                // Append the resolved URL (Spatie or External) for the frontend
                 $asset->url = $asset->resolved_url;
 
                 return $asset;
             });
 
+        $roleCode = $this->getRoleCode($request);
+        $canManage = in_array($roleCode, ['owner', 'admin']);
+
+        // dd([
+        //     '$roleCode'=>$roleCode,
+        //     'assets' => $assets,
+        //     'canCreate' => $canManage,
+        //     'canManage' => $canManage,
+        // ]);
         return Inertia::render('Media/Index', [
             'assets' => $assets,
+            'canCreate' => $canManage,
+            'canManage' => $canManage,
         ]);
     }
 
-    public function toggleDefault(Request $request, $id)
+    public function toggleDefault(Request $request)
     {
-        $asset = MediaAsset::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin']);
+
+        $asset = $this->findScoped($request, MediaAsset::class, $request->route('id'));
 
         $asset->update(['is_default' => ! $asset->is_default]);
 
@@ -44,6 +56,7 @@ class MediaAssetController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorizeRole($request, ['owner', 'admin']);
 
         try {
 
@@ -56,14 +69,14 @@ class MediaAssetController extends Controller
                 'caption' => 'nullable|string|max:255',
             ]);
 
-            $asset = MediaAsset::create([
+            $asset = MediaAsset::create($this->withTeam($request, [
                 'tenant_id' => $request->user()->tenant_id,
                 'category' => strtolower(trim($request->category)),
                 'type' => $request->type,
                 'external_url' => $request->upload_method === 'url' ? $request->external_url : null,
                 'caption' => $request->caption,
                 'is_active' => true,
-            ]);
+            ]));
 
             // If file upload, process via Spatie MediaLibrary
             if ($request->upload_method === 'file' && $request->hasFile('file')) {
@@ -86,6 +99,8 @@ class MediaAssetController extends Controller
 
     public function presign(Request $request)
     {
+        $this->authorizeRole($request, ['owner', 'admin']);
+
         Log::info('Media presign request', [
             'tenant_id' => $request->user()->tenant_id,
             'filename' => $request->input('filename'),
@@ -131,6 +146,8 @@ class MediaAssetController extends Controller
 
     public function finalize(Request $request)
     {
+        $this->authorizeRole($request, ['owner', 'admin']);
+
         Log::info('Media finalize request', [
             'tenant_id' => $request->user()->tenant_id,
             's3_key' => $request->input('s3_key'),
@@ -157,13 +174,13 @@ class MediaAssetController extends Controller
                 return response()->json(['error' => 'Uploaded file not found. Please try again.'], 422);
             }
 
-            $asset = MediaAsset::create([
+            $asset = MediaAsset::create($this->withTeam($request, [
                 'tenant_id' => $request->user()->tenant_id,
                 'category' => strtolower(trim($validated['category'])),
                 'type' => $validated['type'],
                 'caption' => $validated['caption'],
                 'is_active' => true,
-            ]);
+            ]));
 
             Log::info('MediaAsset created', ['asset_id' => $asset->id]);
 
@@ -202,9 +219,11 @@ class MediaAssetController extends Controller
         }
     }
 
-    public function destroy(Request $request, $id)
+    public function destroy(Request $request)
     {
-        $asset = MediaAsset::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin']);
+
+        $asset = $this->findScoped($request, MediaAsset::class, $request->route('id'));
 
         // Spatie automatically deletes the physical file when the model is deleted
         $asset->delete();

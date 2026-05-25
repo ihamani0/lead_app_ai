@@ -39,15 +39,10 @@ export interface WorkspaceRole {
 
 export interface WorkspaceInvitation {
     id: number;
-    workspace_id: string;
     email: string;
     role_id: number;
-    token: string;
-    expires_at: string;
-    accepted_at: string | null;
-    created_by: number;
-    created_by_user?: User;
     role?: WorkspaceRole;
+    team_id: number;
 }
 
 export type { User } from './auth';
@@ -90,52 +85,63 @@ export const DEFAULT_PERMISSIONS: Record<string, string[]> = {
         'leads.*',
         'instances.*',
         'agents.*',
-        'reports.view',
-        'reports.export',
-        'team.manage',
-        'team.invite',
-        'team.roles',
+        'media.*',
+        'reports.*',
+        'knowledge.*',
+        'team.*',
     ],
     member: [
         'leads.view',
-        'leads.create',
-        'leads.edit',
+        'instances.*',
+        'agents.*',
+        'media.view',
+        'reports.view',
+        'knowledge.view',
+    ],
+    viewer: [
+        'leads.view',
         'instances.view',
         'agents.view',
+        'media.view',
         'reports.view',
+        'knowledge.view',
     ],
-    viewer: ['leads.view', 'instances.view', 'reports.view'],
 };
 
-export const PERMISSION_GROUPS = [
+export const PERMISSION_GROUPS: {
+    name: string;
+    key: string;
+    permissions: readonly string[];
+    wildcard: string;
+}[] = [
     {
         name: 'Leads',
         key: 'leads',
-        permissions: ['view', 'create', 'edit', 'delete'],
+        permissions: ['view', 'create', 'edit', 'delete'] as const,
         wildcard: 'leads.*',
     },
     {
         name: 'Instances',
         key: 'instances',
-        permissions: ['view', 'create', 'edit', 'delete'],
+        permissions: ['view', 'create', 'edit', 'delete'] as const,
         wildcard: 'instances.*',
     },
     {
         name: 'Agents',
         key: 'agents',
-        permissions: ['view', 'create', 'edit', 'delete'],
+        permissions: ['view', 'create', 'edit', 'delete'] as const,
         wildcard: 'agents.*',
     },
     {
         name: 'Reports',
         key: 'reports',
-        permissions: ['view', 'export'],
+        permissions: ['view', 'export'] as const,
         wildcard: 'reports.*',
     },
     {
         name: 'Team Management',
         key: 'team',
-        permissions: ['manage', 'invite', 'roles'],
+        permissions: ['manage', 'invite', 'roles'] as const,
         wildcard: 'team.*',
     },
 ] as const;

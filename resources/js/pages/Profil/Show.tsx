@@ -2,11 +2,11 @@
 import { Head, router } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import { useState, useCallback, useEffect, useRef } from 'react';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-import { dashboard } from '@/routes';
-import { restart } from '@/routes/instances';
-import { disconnect, fetchQr, index } from '@/routes/profile';
+import { dashboard } from '@/routes/workspaces';
+import { disconnect, fetchQr, index, restart } from '@/routes/workspaces/instances';
 import type { BreadcrumbItem, EvolutionInstance } from '@/types';
 
 import { ConnectingStatus } from './Partials/ConnectingStatus';
@@ -20,6 +20,8 @@ interface Props {
 
 export default function InstanceShow({ instance }: Props) {
     const { t } = useTranslation();
+    const activeWorkspace = useActiveWorkspace();
+    const slug = activeWorkspace?.slug;
 
     const [localInstance, setLocalInstance] = useState(instance);
     const [qrCode, setQrCode] = useState<string | null>(null);
@@ -70,8 +72,9 @@ export default function InstanceShow({ instance }: Props) {
         setQrCode(null);
         setLocalInstance((prev) => ({ ...prev, status: 'connecting' }));
 
+        if (!slug) return;
         router.post(
-            fetchQr(instance.id),
+            fetchQr({ slug, id: instance.id }),
             {},
             {
                 preserveScroll: true,
@@ -82,12 +85,13 @@ export default function InstanceShow({ instance }: Props) {
                 },
             },
         );
-    }, [instance.id]);
+    }, [instance.id, slug]);
 
     const handleDisconnect = useCallback(() => {
+        if (!slug) return;
         if (confirm('Disconnect this WhatsApp number?')) {
             router.post(
-                disconnect(localInstance.id),
+                disconnect({ slug, id: localInstance.id }),
                 {},
                 {
                     preserveScroll: true,
@@ -95,12 +99,13 @@ export default function InstanceShow({ instance }: Props) {
                 },
             );
         }
-    }, [localInstance.id]);
+    }, [localInstance.id, slug]);
 
     const handleRestart = useCallback(
         (e: React.MouseEvent) => {
             e.preventDefault();
             e.stopPropagation();
+            if (!slug) return;
             if (
                 confirm(
                     'Are you sure you want to restart this instance manually?',
@@ -108,7 +113,7 @@ export default function InstanceShow({ instance }: Props) {
             ) {
                 setIsRestarting(true);
                 router.put(
-                    restart(localInstance.id),
+                    restart({ slug, id: localInstance.id }),
                     {},
                     {
                         preserveScroll: true,
@@ -118,12 +123,12 @@ export default function InstanceShow({ instance }: Props) {
                 );
             }
         },
-        [localInstance.id],
+        [localInstance.id, slug],
     );
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Dashboard', href: dashboard().url },
-        { title: 'Instances', href: index().url },
+        { title: 'Dashboard', href: slug ? dashboard({ slug }).url : '#' },
+        { title: 'Instances', href: slug ? index({ slug }).url : '#' },
         {
             title: localInstance.display_name || localInstance.instance_name,
             href: '',

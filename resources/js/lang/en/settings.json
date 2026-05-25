@@ -1,0 +1,106 @@
+{
+    "userMenu": {
+        "accountSettings": "Account Settings",
+        "billing": "Billing",
+        "subscriptions": "Manage Subscriptions",
+        "security": "Security",
+        "preferences": "Preferences",
+        "logout": "Logout"
+    },
+    "account": {
+        "title": "Account Settings",
+        "description": "Manage your profile, password and security",
+        "profile": {
+            "title": "Profile",
+            "description": "Update your name and email address",
+            "name": "Name",
+            "email": "Email",
+            "save": "Save",
+            "saved": "Saved",
+            "emailUnverified": "Your email address is unverified.",
+            "verificationSent": "A verification link has been sent to your email."
+        },
+        "password": {
+            "title": "Password",
+            "description": "Ensure your account is using a long, random password to stay secure",
+            "current": "Current password",
+            "currentPlaceholder": "Current password",
+            "new": "New password",
+            "newPlaceholder": "New password",
+            "confirm": "Confirm password",
+            "confirmPlaceholder": "Confirm password",
+            "save": "Save password",
+            "saved": "Saved"
+        },
+        "appearance": {
+            "title": "Appearance",
+            "description": "Update your account's appearance settings"
+        },
+        "twoFactor": {
+            "title": "Two-Factor Authentication",
+            "description": "Manage your two-factor authentication settings",
+            "enabled": "Enabled",
+            "disabled": "Disabled",
+            "enable": "Enable 2FA",
+            "disable": "Disable 2FA",
+            "continueSetup": "Continue Setup",
+            "enabledDescription": "With two-factor authentication enabled, you will be prompted for a secure, random pin during login.",
+            "disabledDescription": "When you enable two-factor authentication, you will be prompted for a secure pin during login."
+        }
+    },
+    "billing": {
+        "title": "Billing",
+        "description": "Manage your subscription and billing details",
+        "currentPlan": "Current Plan",
+        "planDescription": "Your subscription and billing details",
+        "active": "Active",
+        "lowCredit": "Low Credit",
+        "comingSoon": "Billing dashboard coming soon",
+        "comingSoonDescription": "We're working on a full billing dashboard where you'll be able to manage your subscription, invoices, and payment methods.",
+        "estimatedArrival": "Estimated arrival: Q2 2026"
+    },
+    "profile": {
+        "title": "Profile Settings",
+        "heading": "Profile information",
+        "headingDescription": "Update your name and email address",
+        "name": "Name",
+        "namePlaceholder": "Full name",
+        "email": "Email address",
+        "emailPlaceholder": "Email address",
+        "save": "Save",
+        "saved": "Saved",
+        "emailUnverified": "Your email address is unverified.",
+        "resendVerification": "Click here to resend the verification email.",
+        "verificationSent": "A new verification link has been sent to your email address."
+    },
+    "password": {
+        "title": "Password Settings",
+        "heading": "Update password",
+        "headingDescription": "Ensure your account is using a long, random password to stay secure",
+        "current": "Current password",
+        "currentPlaceholder": "Current password",
+        "new": "New password",
+        "newPlaceholder": "New password",
+        "confirm": "Confirm password",
+        "confirmPlaceholder": "Confirm password",
+        "save": "Save password",
+        "saved": "Saved"
+    },
+    "appearance": {
+        "title": "Appearance Settings",
+        "heading": "Appearance settings",
+        "headingDescription": "Update your account's appearance settings"
+    },
+    "twoFactor": {
+        "title": "Two-Factor Authentication",
+        "heading": "Two-Factor Authentication",
+        "headingDescription": "Manage your two-factor authentication settings",
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "enable": "Enable 2FA",
+        "disable": "Disable 2FA",
+        "continueSetup": "Continue Setup",
+        "enabledDescription": "With two-factor authentication enabled, you will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
+        "disabledDescription": "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone."
+    }
+}

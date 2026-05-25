@@ -17,8 +17,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
-import agents from '@/routes/agents';
+import workspaces from '@/routes/workspaces';
 
 interface AgentWithRelations {
     id: string;
@@ -50,6 +51,7 @@ export default function AgentInstanceManager({
     agent,
     availableInstances,
 }: Props) {
+    const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
     const [selectedInstanceId, setSelectedInstanceId] = useState<string>(
         agent.instance?.id || '',
@@ -71,7 +73,7 @@ export default function AgentInstanceManager({
         setIsLinking(true);
         // webhook_url is omitted – backend will use its default
         router.post(
-            agents.linkInstance(agent.id).url,
+            workspaces.agents.linkInstance({ slug: activeWorkspace.slug, agent: agent.id }).url,
             { instance_id: selectedInstanceId },
             { onFinish: () => setIsLinking(false) },
         );
@@ -81,7 +83,7 @@ export default function AgentInstanceManager({
         if (!confirm(t('agents.config.unlinkConfirm'))) return;
         setIsUnlinking(true);
         router.post(
-            agents.unlinkInstance(agent.id).url,
+            workspaces.agents.unlinkInstance({ slug: activeWorkspace.slug, agent: agent.id }).url,
             {},
             { onFinish: () => setIsUnlinking(false) },
         );

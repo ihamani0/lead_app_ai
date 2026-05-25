@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\AgentConfig;
 use App\Models\AgentSystemPromptHistory;
 use App\Models\EvolutionInstance;
@@ -9,13 +10,14 @@ use App\Services\EvolutionService;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class AgentBotController extends Controller
 {
+    use WorkspaceScoped;
+
     protected $apiKey;
 
     public function __construct()
@@ -26,24 +28,30 @@ class AgentBotController extends Controller
     /**
      * Display a list of AI agents for the tenant.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $tenantId = Auth::user()->tenant_id;
+        $tenantId = $request->user()->tenant_id;
+        $team = $request->attributes->get('active_team');
 
-        $agents = AgentConfig::with(['instance', 'knowledgeBases'])
+        $agents = $this->scopedQuery($request, AgentConfig::class)
+            ->with(['instance', 'knowledgeBases'])
             ->withCount('knowledgeBases')
-            ->where('tenant_id', $tenantId)
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $availableInstances = EvolutionInstance::where('tenant_id', $tenantId)
+        $availableInstances = $this->scopedQuery($request, EvolutionInstance::class)
             ->where('status', 'connected')
             ->whereDoesntHave('agentConfig')
             ->get();
 
+        $roleCode = $this->getRoleCode($request);
+        $canManage = in_array($roleCode, ['owner', 'admin', 'member']);
+
         return Inertia::render('Agents/Index', [
             'agents' => $agents,
             'availableInstances' => $availableInstances,
+            'canCreate' => $canManage,
+            'canManage' => $canManage,
         ]);
     }
 
@@ -52,6 +60,8 @@ class AgentBotController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'system_prompt' => 'nullable|string',
@@ -59,14 +69,14 @@ class AgentBotController extends Controller
         ]);
 
         try {
-            AgentConfig::create([
+            AgentConfig::create($this->withTeam($request, [
                 'tenant_id' => $request->user()->tenant_id,
                 'name' => $request->name,
                 'system_prompt' => $request->system_prompt,
                 'webhook_url' => $request->webhook_url,
                 'is_active' => false,
                 'settings' => [],
-            ]);
+            ]));
 
             return back()->with('success', __('messages.success.agent_created'));
         } catch (Exception $e) {
@@ -79,12 +89,12 @@ class AgentBotController extends Controller
     /**
      * Update AI agent settings and system prompt.
      */
-    public function update(Request $request, AgentConfig $agent): RedirectResponse
+    public function update(Request $request): RedirectResponse
     {
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
 
-        if ($agent->tenant_id !== $request->user()->tenant_id) {
-            abort(403);
-        }
+        $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
+        $this->authorizeWorkspace($request, $agent);
 
         $request->validate([
             'name' => 'nullable|string|max:255',
@@ -130,19 +140,18 @@ class AgentBotController extends Controller
     /**
      * Link an instance to an agent.
      */
-    public function linkInstance(Request $request, AgentConfig $agent, EvolutionService $evoService): RedirectResponse
+    public function linkInstance(Request $request, EvolutionService $evoService): RedirectResponse
     {
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
 
-        if ($agent->tenant_id !== $request->user()->tenant_id) {
-            abort(403);
-        }
+        $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
+        $this->authorizeWorkspace($request, $agent);
 
         $request->validate([
             'instance_id' => 'required|exists:evolution_instances,id',
         ]);
 
-        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($request->instance_id);
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->instance_id);
 
         if ($instance->status !== 'connected') {
             return back()->withErrors(['error' => 'Instance must be connected before linking.']);
@@ -182,11 +191,12 @@ class AgentBotController extends Controller
     /**
      * Unlink an instance from an agent (keeps agent config intact).
      */
-    public function unlinkInstance(Request $request, AgentConfig $agent, EvolutionService $evoService): RedirectResponse
+    public function unlinkInstance(Request $request, EvolutionService $evoService): RedirectResponse
     {
-        if ($agent->tenant_id !== $request->user()->tenant_id) {
-            abort(403);
-        }
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
+        $this->authorizeWorkspace($request, $agent);
 
         if (! $agent->isLinked()) {
             return back()->withErrors(['error' => 'Agent is not linked to any instance.']);
@@ -224,11 +234,12 @@ class AgentBotController extends Controller
     /**
      * Toggle the AI agent status (pause/resume).
      */
-    public function toggle(Request $request, AgentConfig $agent, EvolutionService $evoService): RedirectResponse
+    public function toggle(Request $request, EvolutionService $evoService): RedirectResponse
     {
-        if ($agent->tenant_id !== $request->user()->tenant_id) {
-            abort(403);
-        }
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
+        $this->authorizeWorkspace($request, $agent);
 
         if (! $agent->isLinked()) {
             return back()->withErrors(['error' => 'Agent must be linked to an instance first.']);
@@ -253,11 +264,12 @@ class AgentBotController extends Controller
     /**
      * Delete an agent entirely.
      */
-    public function destroy(Request $request, AgentConfig $agent): RedirectResponse
+    public function destroy(Request $request): RedirectResponse
     {
-        if ($agent->tenant_id !== $request->user()->tenant_id) {
-            abort(403);
-        }
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
+        $this->authorizeWorkspace($request, $agent);
 
         try {
             if ($agent->isLinked() && $agent->instance) {
@@ -277,25 +289,28 @@ class AgentBotController extends Controller
 
     // ─── Legacy methods (for backward compatibility with old instance-based routes) ───
 
-    public function storeLegacy(Request $request, string $instanceId, EvolutionService $evoService): RedirectResponse
+    public function storeLegacy(Request $request, EvolutionService $evoService): RedirectResponse
     {
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
         $request->validate(['webhook_url' => 'required|url']);
 
-        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)->findOrFail($instanceId);
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
 
         try {
             return DB::transaction(function () use ($instance, $request, $evoService) {
                 $agent = AgentConfig::updateOrCreate(
-                    [
+                    $this->withTeam($request, [
                         'tenant_id' => $instance->tenant_id,
                         'evolution_instance_id' => $instance->id,
-                    ], [
+                    ]),
+                    $this->withTeam($request, [
                         'instance_name' => $instance->instance_name,
                         'name' => $instance->instance_name,
                         'webhook_url' => $request->webhook_url,
                         'is_active' => true,
                         'settings' => ['delayMessage' => 1200, 'keywordFinish' => '#STOP'],
-                    ]
+                    ])
                 );
 
                 $evoResponse = $evoService->connectN8nBot($instance, $agent);
@@ -308,10 +323,11 @@ class AgentBotController extends Controller
         }
     }
 
-    public function updateLegacy(Request $request, $instanceId, EvolutionService $evoService)
+    public function updateLegacy(Request $request, EvolutionService $evoService)
     {
-        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($instanceId);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
 
         $agent = $instance->agentConfig;
         if (! $agent) {
@@ -344,9 +360,11 @@ class AgentBotController extends Controller
         }
     }
 
-    public function toggleLegacy(Request $request, $instanceId, EvolutionService $evoService)
+    public function toggleLegacy(Request $request, EvolutionService $evoService)
     {
-        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)->findOrFail($instanceId);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
         $agent = $instance->agentConfig;
 
         try {
@@ -364,9 +382,11 @@ class AgentBotController extends Controller
         }
     }
 
-    public function destroyLegacy(Request $request, $instanceId, EvolutionService $evoService)
+    public function destroyLegacy(Request $request, EvolutionService $evoService)
     {
-        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)->findOrFail($instanceId);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
         $agent = $instance->agentConfig;
 
         try {
@@ -388,16 +408,16 @@ class AgentBotController extends Controller
     /**
      * Display agent detail page.
      */
-    public function show(Request $request, string $agentId): Response
+    public function show(Request $request): Response
     {
-        $tenantId = $request->user()->tenant_id;
+        $agentId = $request->route('agent');
 
-        $agent = AgentConfig::with(['instance', 'knowledgeBases'])
+        $agent = $this->scopedQuery($request, AgentConfig::class)
+            ->with(['instance', 'knowledgeBases'])
             ->withCount('knowledgeBases')
-            ->where('tenant_id', $tenantId)
             ->findOrFail($agentId);
 
-        $availableInstances = EvolutionInstance::where('tenant_id', $tenantId)
+        $availableInstances = $this->scopedQuery($request, EvolutionInstance::class)
             ->where('status', 'connected')
             ->where(function ($query) use ($agent) {
                 $query->whereDoesntHave('agentConfig')
@@ -416,12 +436,13 @@ class AgentBotController extends Controller
      */
     public function clone(Request $request)
     {
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
         $request->validate([
             'name' => 'nullable|string|max:255',
         ]);
 
-        $originalAgent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($request->route('agent'));
+        $originalAgent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
 
         try {
             $clonedAgent = $originalAgent->replicate();
@@ -430,6 +451,7 @@ class AgentBotController extends Controller
             $clonedAgent->is_active = false;
             $clonedAgent->webhook_url = null;
             $clonedAgent->evo_integration_id = null;
+            $clonedAgent->team_id = $this->withTeam($request, [])['team_id'] ?? $clonedAgent->team_id;
             $clonedAgent->save();
 
             return back()->with('success', 'Agent cloned successfully.');
@@ -441,8 +463,10 @@ class AgentBotController extends Controller
     /**
      * Update agent settings (blocklist, delay, etc).
      */
-    public function updateSettings(Request $request, string $agentId, EvolutionService $evoService)
+    public function updateSettings(Request $request, EvolutionService $evoService)
     {
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
         $request->validate([
             'settings' => 'nullable|array',
             'settings.blocklist' => 'nullable|array',
@@ -455,8 +479,7 @@ class AgentBotController extends Controller
             'settings.keepOpen' => 'nullable|boolean',
         ]);
 
-        $agent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($agentId);
+        $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
 
         try {
             DB::transaction(function () use ($agent, $request, $evoService) {
@@ -487,10 +510,11 @@ class AgentBotController extends Controller
     /**
      * Reset system prompt to default.
      */
-    public function resetSystemPrompt(Request $request, string $agentId)
+    public function resetSystemPrompt(Request $request)
     {
-        $agent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($agentId);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
 
         try {
             $agent->update([
@@ -506,10 +530,9 @@ class AgentBotController extends Controller
     /**
      * Get prompt history for an agent (JSON response).
      */
-    public function promptHistory(Request $request, string $agentId)
+    public function promptHistory(Request $request)
     {
-        $agent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($agentId);
+        $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
 
         $history = $agent->history()->get();
 
@@ -521,10 +544,11 @@ class AgentBotController extends Controller
     /**
      * Restore system prompt to a specific version.
      */
-    public function restorePrompt(Request $request, string $agentId, int $version): RedirectResponse
+    public function restorePrompt(Request $request, int $version): RedirectResponse
     {
-        $agent = AgentConfig::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($agentId);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
 
         $historyRecord = $agent->history()->where('version', $version)->first();
 

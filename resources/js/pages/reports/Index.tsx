@@ -3,9 +3,10 @@ import { Users, Phone, Bot, Image, ChartArea } from 'lucide-react';
 import { useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-import { index } from '@/routes/reports';
+import { index } from '@/routes/workspaces/reports';
 import type { BreadcrumbItem } from '@/types';
 import type {
     LeadsReportData,
@@ -47,10 +48,11 @@ export default function ReportsIndex({
     reportData,
     activeTab,
 }: ReportsIndexProps) {
+    const activeWorkspace = useActiveWorkspace();
     const { t } = useTranslation();
     const handleTabChange = useCallback((tab: string) => {
         router.get(
-            index().url,
+            index({ slug: activeWorkspace!.slug }).url,
             { tab },
             {
                 preserveState: true,

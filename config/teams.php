@@ -101,9 +101,8 @@ return [
         'enabled' => true,
 
         'routes' => [
-            // DISABLED: We use our own routes in web.php
-            'register' => false,
-            'url' => '/invitation/{invitation_id}/accept',
+            'register' => true,
+            'url' => '/invitation/{invitation}/accept',
             'prefix' => '/',
             'middleware' => 'web',
         ],

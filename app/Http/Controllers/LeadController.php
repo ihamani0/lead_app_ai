@@ -2,31 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\EvolutionInstance;
 use App\Models\Lead;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 
 class LeadController extends Controller
 {
+    use WorkspaceScoped;
+
     public function index(Request $request)
     {
-        $tenant_id = Auth::user()->tenant_id;
-
-        // 1. Capture the current filters from the URL
         $filters = $request->only([
             'search', 'status', 'temperature', 'date_from', 'date_to', 'min_score', 'instance_id',
         ]);
 
-        // 2. Fetch all instances for this tenant to populate the Dropdown
-        $instances = EvolutionInstance::where('tenant_id', $tenant_id)
+        $instances = $this->scopedQuery($request, EvolutionInstance::class)
             ->select('id', 'instance_name', 'phone_number')
             ->get();
 
-        // 3. Build the query
-        $leads = Lead::where('tenant_id', $tenant_id)
+        $leads = $this->scopedQuery($request, Lead::class)
             ->with(['instance:id,instance_name,phone_number'])
             ->when($request->search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
@@ -55,17 +52,22 @@ class LeadController extends Controller
             ->paginate(15)
             ->withQueryString();
 
+        $roleCode = $this->getRoleCode($request);
+
         return Inertia::render('Leads/Index', [
             'leads' => $leads,
-            'filters' => $filters, // Pass filters back to UI so inputs stay populated
+            'filters' => $filters,
             'instances' => $instances,
+            'canManage' => in_array($roleCode, ['owner', 'admin']),
         ]);
     }
 
     // Optional: Allow manual override
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $lead = Lead::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin']);
+
+        $lead = $this->findScoped($request, Lead::class, $request->route('id'));
 
         $lead->update($request->only([
             'name',
@@ -80,9 +82,11 @@ class LeadController extends Controller
         return back()->with('success', __('messages.success.lead_udated_manually'));
     }
 
-    public function triggerQualification(Request $request, $id)
+    public function triggerQualification(Request $request)
     {
-        $lead = Lead::where('tenant_id', $request->user()->tenant_id)->with('instance')->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin']);
+
+        $lead = $this->scopedQuery($request, Lead::class)->with('instance')->findOrFail($request->route('id'));
 
         // Set status to QUALIFYING before calling N8n
         $lead->update(['status' => 'QUALIFYING']);
@@ -101,9 +105,11 @@ class LeadController extends Controller
 
     public function bulkQualify(Request $request)
     {
+        $this->authorizeRole($request, ['owner', 'admin']);
+
         $leadIds = $request->input('lead_ids', []);
 
-        $leads = Lead::where('tenant_id', $request->user()->tenant_id)
+        $leads = $this->scopedQuery($request, Lead::class)
             ->whereIn('id', $leadIds)
             ->with('instance')
             ->get();

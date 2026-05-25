@@ -3,7 +3,7 @@ import { useForm } from '@inertiajs/react';
 import type { TFunction } from 'i18next';
 import { Loader2, PlusCircle } from 'lucide-react';
 import { useState } from 'react';
-import { store } from '@/routes/profile';
+import { store } from '@/routes/workspaces/instances';
 import { Button } from '../ui/button';
 import {
     Dialog,
@@ -17,7 +17,7 @@ import {
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
-export function CreateInstanceDialog({ t }: { t: TFunction }) {
+export function CreateInstanceDialog({ t, slug }: { t: TFunction; slug?: string }) {
     const [open, setOpen] = useState(false);
 
     const form = useForm({
@@ -29,7 +29,7 @@ export function CreateInstanceDialog({ t }: { t: TFunction }) {
     const onSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
 
-        form.post(store().url, {
+        form.post(slug ? store({ slug }).url : '#', {
             preserveScroll: true,
             onSuccess: () => {
                 form.reset();

@@ -50,4 +50,9 @@ class TokenTransactionDaily extends Model
     {
         return $this->belongsTo(LlmModel::class, 'llm_model_id');
     }
+
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
 }

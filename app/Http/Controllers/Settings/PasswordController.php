@@ -15,7 +15,9 @@ class PasswordController extends Controller
      */
     public function edit(): Response
     {
-        return Inertia::render('settings/password');
+        return Inertia::render('settings/password', [
+            'requiresCurrentPassword' => auth()->user()?->hasPassword() ?? true,
+        ]);
     }
 
     /**
@@ -25,6 +27,7 @@ class PasswordController extends Controller
     {
         $request->user()->update([
             'password' => $request->password,
+            'has_password' => true,
         ]);
 
         return back();

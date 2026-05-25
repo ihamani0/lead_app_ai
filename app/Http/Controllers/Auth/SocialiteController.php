@@ -5,14 +5,20 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Jurager\Teams\Support\Facades\Teams;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialiteController extends Controller
 {
-    public function redirectToGoogle()
+    public function redirectToGoogle(Request $request)
     {
+        if ($request->has('invitation')) {
+            session(['invitation_id' => $request->invitation]);
+        }
+
         return Socialite::driver('google')->redirect();
     }
 
@@ -55,6 +61,7 @@ class SocialiteController extends Controller
                 'email_verified_at' => now(),
                 'google_id' => $googleUser->id,
                 'password' => Str::random(32),
+                'has_password' => false,
             ]);
         }
 
@@ -66,6 +73,29 @@ class SocialiteController extends Controller
 
         Auth::login($user);
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $this->acceptPendingInvitation($user);
+
+        return redirect()->intended(route('teams.index'));
+    }
+
+    private function acceptPendingInvitation(User $user): void
+    {
+        if (! session('invitation_id')) {
+            return;
+        }
+
+        $invitationModel = Teams::model('invitation');
+        $invitation = $invitationModel::find(session('invitation_id'));
+
+        if ($invitation) {
+            try {
+                $invitation->team->addUser($user, $invitation->role_id);
+                $invitation->delete();
+            } catch (\RuntimeException $e) {
+                // Already a member, ignore
+            }
+        }
+
+        session()->forget('invitation_id');
     }
 }

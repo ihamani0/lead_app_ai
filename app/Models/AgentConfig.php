@@ -56,4 +56,9 @@ class AgentConfig extends Model
     {
         return md5($newPrompt ?? '') !== ($this->system_prompt_hash ?? '');
     }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
 }

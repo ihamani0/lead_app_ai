@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\InstanceConnectionUpdated;
+use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\EvolutionInstance;
 use App\Models\Tenant;
 use App\Services\EvolutionService;
@@ -15,12 +16,15 @@ use Inertia\Inertia;
 
 class EvolutionInstanceController extends Controller
 {
+    use WorkspaceScoped;
+
     public function index(Request $request)
     {
         $tenantId = $request->user()->tenant_id;
-
-        $instances = EvolutionInstance::active()
-            ->where('tenant_id', $tenantId)
+        $team = $request->attributes->get('active_team');
+        $scope = $team ? [['tenant_id', $tenantId], ['team_id', $team->id]] : [['tenant_id', $tenantId]];
+        $instances = $this->scopedQuery($request, EvolutionInstance::class)
+            ->active()
             ->orderByDesc('created_at')
             ->get([
                 'id',
@@ -31,8 +35,8 @@ class EvolutionInstanceController extends Controller
                 'created_at',
             ]);
 
-        $deletedInstances = EvolutionInstance::onlyTrashed()
-            ->where('tenant_id', $tenantId)
+        $deletedInstances = $this->scopedQuery($request, EvolutionInstance::class)
+            ->onlyTrashed()
             ->orderByDesc('deleted_at')
             ->get([
                 'id',
@@ -44,9 +48,14 @@ class EvolutionInstanceController extends Controller
                 'created_at',
             ]);
 
+        $roleCode = $this->getRoleCode($request);
+        $canManage = in_array($roleCode, ['owner', 'admin', 'member']);
+
         return Inertia::render('Profil/Index', [
             'instances' => $instances,
             'deletedInstances' => $deletedInstances,
+            'canCreate' => $canManage,
+            'canManage' => $canManage,
         ]);
     }
 
@@ -77,7 +86,7 @@ class EvolutionInstanceController extends Controller
                     );
                 }
 
-                EvolutionInstance::create([
+                EvolutionInstance::create($this->withTeam($request, [
                     'tenant_id' => $user->tenant_id,
                     'instance_name' => $evolutionInstanceName,
                     'display_name' => $request->display_name,
@@ -85,7 +94,7 @@ class EvolutionInstanceController extends Controller
                     'settings' => [
                         'token' => $instanceToken,
                     ],
-                ]);
+                ]));
 
                 return back()->with('success', __('messages.success.instance_create'));
             });
@@ -94,21 +103,24 @@ class EvolutionInstanceController extends Controller
         }
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request)
     {
-        $instance = EvolutionInstance::with('agentConfig')
-            ->where('tenant_id', $request->user()->tenant_id)
-            ->where('instance_name', $id)->first();
+        $this->authorizeRole($request, ['owner', 'admin', 'member', 'viewer']);
+
+        $instance = $this->scopedQuery($request, EvolutionInstance::class)
+            ->with('agentConfig')
+            ->where('instance_name', $request->route('id'))->first();
 
         return Inertia::render('Profil/Show', [
             'instance' => $instance,
         ]);
     }
 
-    public function fetchQr(Request $request, $id, EvolutionService $service)
+    public function fetchQr(Request $request, EvolutionService $service)
     {
-        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
 
         $settings = $instance->settings ?? [];
         $settings['was_connected'] = false;
@@ -122,9 +134,11 @@ class EvolutionInstanceController extends Controller
         return back();
     }
 
-    public function restart(Request $request, $id, EvolutionService $evolutionService)
+    public function restart(Request $request, EvolutionService $evolutionService)
     {
-        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
 
         $response = $evolutionService->restartInstance($instance->instance_name);
 
@@ -134,10 +148,11 @@ class EvolutionInstanceController extends Controller
         return back()->with('success', __('messages.success.instance_restarting'));
     }
 
-    public function disconnect(Request $request, $id, EvolutionService $evolutionService)
+    public function disconnect(Request $request, EvolutionService $evolutionService)
     {
-        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
 
         if ($instance->status === 'disconnected') {
             return back()->with('info', __('messages.success.instance_already_disconnected'));
@@ -176,10 +191,11 @@ class EvolutionInstanceController extends Controller
         }
     }
 
-    public function destroy(Request $request, $id, EvolutionService $evolutionService)
+    public function destroy(Request $request, EvolutionService $evolutionService)
     {
-        $instance = EvolutionInstance::where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($id);
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
 
         try {
             DB::transaction(function () use ($instance, $evolutionService) {
@@ -218,11 +234,13 @@ class EvolutionInstanceController extends Controller
         }
     }
 
-    public function forceDestroy(Request $request, $id, EvolutionService $evolutionService)
+    public function forceDestroy(Request $request, EvolutionService $evolutionService)
     {
+        $this->authorizeRole($request, ['owner', 'admin']);
+
         $instance = EvolutionInstance::withTrashed()
-            ->where('tenant_id', $request->user()->tenant_id)
-            ->findOrFail($id);
+            ->where($this->scope($request))
+            ->findOrFail($request->route('id'));
 
         try {
             $evolutionService->deleteInstance($instance->instance_name);
@@ -237,11 +255,13 @@ class EvolutionInstanceController extends Controller
     /**
      * RESTORE: Re-create in Evolution behind the scenes
      */
-    public function restore(Request $request, $id, EvolutionService $evolutionService)
+    public function restore(Request $request, EvolutionService $evolutionService)
     {
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
         $instance = EvolutionInstance::withTrashed()
-            ->where('tenant_id', $request->user()->tenant_id)
-            ->where('instance_name', $id)->first();
+            ->where($this->scope($request))
+            ->where('instance_name', $request->route('id'))->first();
 
         if (! $instance->trashed()) {
             return back()->with('info', __('messages.success.instance_not_deleted'));

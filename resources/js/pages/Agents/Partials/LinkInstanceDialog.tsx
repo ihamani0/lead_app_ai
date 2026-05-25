@@ -19,8 +19,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
-import { linkInstance } from '@/routes/agents';
+import workspaces from '@/routes/workspaces';
 import type { AgentConfig, EvolutionInstance } from '@/types';
 
 
@@ -37,6 +38,7 @@ export function LinkInstanceDialog({
     open,
     onOpenChange,
 }: LinkInstanceDialogProps) {
+    const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
 
     const form = useForm({
@@ -48,7 +50,7 @@ export function LinkInstanceDialog({
         e.preventDefault();
         if (!agent) return;
 
-        form.post(linkInstance(agent.id).url, {
+        form.post(workspaces.agents.linkInstance({ slug: activeWorkspace.slug, agent: agent.id }).url, {
             onSuccess: () => {
                 form.reset();
                 onOpenChange(false);

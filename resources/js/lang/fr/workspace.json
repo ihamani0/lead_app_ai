@@ -1,8 +1,15 @@
 {
     "title": "Espaces de travail",
+    "subtitle": "Gérez vos projets et qualifiez vos leads plus efficacement",
     "description": "Gérez vos espaces de travail et invitez des membres",
     "create": "Créer un espace",
+    "create_new": "Créer un nouvel espace",
     "create_description": "Créer un nouvel espace de travail pour collaborer avec votre équipe",
+    "singular": "espace de travail",
+    "plural": "espaces de travail",
+    "morning": "Bonjour",
+    "afternoon": "Bon après-midi",
+    "evening": "Bonsoir",
     "empty": {
         "title": "Aucun espace de travail",
         "description": "Créez votre premier espace de travail pour commencer à collaborer"
@@ -13,6 +20,23 @@
         "description": "Description",
         "description_placeholder": "Brève description de cet espace (optionnel)"
     },
+    "stats": {
+        "leads": "Leads",
+        "qualified": "Qualifiés",
+        "rate": "Taux",
+        "team": "Équipe",
+        "total_workspaces": "Total Espaces",
+        "total_leads": "Total Leads",
+        "credit": "Crédit",
+        "hot_leads": "Leads Hot",
+        "connected_instances": "WhatsApp Connectées",
+        "active_agents": "Agents Actifs"
+    },
+    "settings": "Paramètres",
+    "settings_description": "Modifiez les informations de votre espace",
+    "delete": "Supprimer",
+    "delete_title": "Supprimer l'espace",
+    "delete_description": "Êtes-vous sûr de vouloir supprimer :name ? Cette action est irréversible.",
     "tabs": {
         "overview": "Aperçu",
         "members": "Membres",
@@ -37,6 +61,10 @@
         "select_role": "Sélectionner un rôle",
         "send_invite": "Envoyer l'invitation",
         "remove": "Supprimer le membre",
+        "remove_confirm": "Êtes-vous sûr de vouloir supprimer ce membre ?",
+        "pending_invitations": "Invitations en attente",
+        "no_role": "Aucun rôle",
+        "expires": "Expire le :date",
         "empty": "Aucun membre pour l'instant. Invitez quelqu'un pour commencer.",
         "table": {
             "member": "Membre",
@@ -48,10 +76,20 @@
         "title": "Rôles et permissions",
         "description": "Gérez les rôles et leurs permissions",
         "create": "Créer un rôle",
+        "create_title": "Créer un nouveau rôle",
+        "create_description": "Définir un nouveau rôle avec des permissions personnalisées",
+        "edit_title": "Modifier le rôle",
+        "edit_description": "Mettre à jour le nom, la description et les permissions du rôle",
+        "delete_confirm": "Êtes-vous sûr de vouloir supprimer ce rôle ?",
+        "delete": "Supprimer le rôle",
+        "role_name": "Nom du rôle",
+        "role_code": "Code du rôle",
+        "role_description": "Description",
+        "permissions": "Permissions",
         "default": "Par défaut",
         "empty": "Aucun rôle défini pour l'instant"
     },
-    "settings": {
+    "settings_section": {
         "general": {
             "title": "Paramètres généraux",
             "description": "Modifiez les informations de votre espace",
@@ -61,9 +99,13 @@
         "danger": {
             "title": "Zone dangereuse",
             "description": "Une fois supprimé, un espace de travail ne peut pas être récupéré.",
-            "delete": "Supprimer l'espace"
+            "delete": "Supprimer l'espace",
+            "delete_confirm": "Êtes-vous absolument sûr ?",
+            "delete_confirm_description": "Cette action est irréversible. Toutes les données associées à cet espace seront définitivement supprimées."
         }
     },
+    "search": "Rechercher une organisation...",
+    "no_results": "Aucune organisation trouvée.",
     "common": {
         "cancel": "Annuler",
         "save": "Enregistrer",

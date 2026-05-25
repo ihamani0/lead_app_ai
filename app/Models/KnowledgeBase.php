@@ -22,4 +22,9 @@ class KnowledgeBase extends Model implements HasMedia
     {
         return $this->belongsTo(AgentConfig::class, 'agent_config_id');
     }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
 }

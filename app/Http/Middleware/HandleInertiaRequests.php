@@ -55,6 +55,7 @@ class HandleInertiaRequests extends Middleware
                     'email' => $user->email,
                     'role' => $user->role,
                     'is_super_admin' => $user->is_super_admin,
+                    'welcome_dismissed_at' => $user->welcome_dismissed_at?->toIsoString() ?? null,
                     'tenant' => [
                         'name' => $user->tenant->name,
                         'slug' => $user->tenant->slug,
@@ -64,7 +65,17 @@ class HandleInertiaRequests extends Middleware
                     ],
                 ] : null,
                 'tours' => ($user && ! $user->is_super_admin) ? $this->getTourProgress($user) : [],
+                'workspaces' => $user ? $user->allTeams()->values() : [],
             ],
+            'activeWorkspace' => function () use ($request) {
+                $team = $request->attributes->get('active_team');
+
+                return $team ? [
+                    'id' => $team->id,
+                    'name' => $team->name,
+                    'slug' => $team->slug,
+                ] : null;
+            },
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
 
             'flash' => fn () => [

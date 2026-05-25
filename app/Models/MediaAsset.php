@@ -35,4 +35,9 @@ class MediaAsset extends Model implements HasMedia
     {
         return $this->belongsTo(Tenant::class);
     }
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
 }

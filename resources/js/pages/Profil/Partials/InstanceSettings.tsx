@@ -4,8 +4,9 @@ import { Copy, Check, Server, Bot, ExternalLink } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
-import agents from '@/routes/agents';
+import workspaces from '@/routes/workspaces';
 import type { AgentConfig } from '@/types';
 
 interface Props {
@@ -21,6 +22,7 @@ export function InstanceSettings({
     connectedAt,
     agentConfig,
 }: Props) {
+    const activeWorkspace = useActiveWorkspace();
     const { t } = useTranslation();
     const [copied, setCopied] = useState(false);
 
@@ -132,7 +134,7 @@ export function InstanceSettings({
                                 size="sm"
                                 className="gap-2"
                             >
-                                <Link href={agents.show(agentConfig.id).url}>
+                                <Link href={activeWorkspace ? workspaces.agents.show({ slug: activeWorkspace.slug, agent: agentConfig.id }).url : '#'}>
                                     {t('agents.config.title')}
                                     <ExternalLink className="h-3.5 w-3.5" />
                                 </Link>
@@ -156,7 +158,7 @@ export function InstanceSettings({
                                 </div>
                             </div>
                             <Button asChild variant="ghost" size="sm">
-                                <Link href="/agents">
+                                <Link href={activeWorkspace ? workspaces.agents.index({ slug: activeWorkspace.slug }).url : '#'}>
                                     {t('agents.title')}
                                     <ExternalLink className="ml-2 h-3.5 w-3.5" />
                                 </Link>

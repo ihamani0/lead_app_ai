@@ -12,8 +12,9 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
-import agents from '@/routes/agents';
+import workspaces from '@/routes/workspaces';
 
 import type { AgentConfig, EvolutionInstance } from '@/types';
 
@@ -33,6 +34,7 @@ interface Props {
 }
 
 export default function AgentBlockList({ agent }: Props) {
+    const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
     const [newPhone, setNewPhone] = useState('');
     const [isSaving, setIsSaving] = useState(false);
@@ -55,7 +57,7 @@ export default function AgentBlockList({ agent }: Props) {
         const updatedBlocklist = [...blocklist, cleanPhoneNumber(newPhone)];
 
         router.patch(
-            agents.updateSettings(agent.id).url,
+            workspaces.agents.updateSettings({ slug: activeWorkspace.slug, agent: agent.id }).url,
             { settings: { blocklist: updatedBlocklist } },
             {
                 onFinish: () => {
@@ -71,7 +73,7 @@ export default function AgentBlockList({ agent }: Props) {
         const updatedBlocklist = blocklist.filter((p) => p !== phone);
 
         router.patch(
-            agents.updateSettings(agent.id).url,
+            workspaces.agents.updateSettings({ slug: activeWorkspace.slug, agent: agent.id }).url,
             { settings: { blocklist: updatedBlocklist } },
             { onFinish: () => setIsSaving(false) },
         );

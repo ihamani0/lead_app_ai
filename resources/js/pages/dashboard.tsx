@@ -1,7 +1,7 @@
-// src/pages/dashboard/index.tsx
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Users, Phone, Bot, Image, ArrowRight } from 'lucide-react';
 import Chart from 'react-apexcharts';
+import { DashboardWelcomeOverlay } from '@/components/dashboard/DashboardWelcomeOverlay';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { SummaryCard } from '@/components/ui/SummaryCard';
@@ -9,8 +9,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import { formatBytes } from '@/lib/utils';
-import { dashboard } from '@/routes';
-import { index as indexAgent } from '@/routes/agents';
 import type { BreadcrumbItem } from '@/types';
 import { InstanceStatusChart } from './dashboard/instance-status-chart';
 import { LeadActivityTimeline } from './dashboard/lead-activity-timeline';
@@ -61,12 +59,14 @@ export default function Dashboard({ stats, recentLeads, token_daily_usage, token
     const user = auth.user;
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: t('dashboard.title'), href: dashboard().url },
+        { title: t('dashboard.title'), href: "dashboard().url" },
     ];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('dashboard.title')} />
+
+            <DashboardWelcomeOverlay />
 
             <div className="flex flex-col gap-6 p-6 bg-gray-50 min-h-screen">
                 {/* Header with greeting and AI status */}
@@ -80,7 +80,7 @@ export default function Dashboard({ stats, recentLeads, token_daily_usage, token
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <Link href={indexAgent().url} className="text-indigo-600 hover:text-indigo-700 font-medium text-sm flex items-center gap-1">
+                        <Link href={"indexAgent().url"} className="text-indigo-600 hover:text-indigo-700 font-medium text-sm flex items-center gap-1">
                             Voir mon IA
                             <ArrowRight className="h-4 w-4" />
                         </Link>

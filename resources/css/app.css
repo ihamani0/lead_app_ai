@@ -1,126 +1,288 @@
 @import url('https://fonts.googleapis.com/css2?family=Geist:wght@800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap');
 @import 'tailwindcss';
-
 @import 'tw-animate-css';
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-
- 
 @custom-variant dark (&:is(.dark *));
 
+/*
+  MyiA Design Tokens — adapted from workspace_dashboard + dashboard screenshots
+  Colors converted to oklch to match Tailwind v4 / shadcn convention.
+
+  Brand:      Indigo-violet  #6C63FF → oklch(0.5720 0.2440 277.0)
+  Success:    Teal-green     #22C48A → oklch(0.6980 0.1720 161.0)
+  Warning:    Amber          #F5A623 → oklch(0.7680 0.1620 68.0)
+  Info:       Sky-blue       #4DA9FF → oklch(0.6980 0.1520 234.0)
+  Destructive:Red            #C42020 → oklch(0.4820 0.2020 27.0)
+*/
+
 :root {
-  --background: oklch(0.9842 0.0034 247.8575);
-  --foreground: oklch(0.2795 0.0368 260.0310);
-  --card: oklch(0.9940 0 0);
-  --card-foreground: oklch(0 0 0);
-  --popover: oklch(0.9911 0 0);
-  --popover-foreground: oklch(0 0 0);
-  --primary: oklch(0.5393 0.2713 286.7462);
-  --primary-foreground: oklch(1.0000 0 0);
-  --secondary: oklch(0.9540 0.0063 255.4755);
-  --secondary-foreground: oklch(0.1344 0 0);
-  --muted: oklch(0.9702 0 0);
-  --muted-foreground: oklch(0.4386 0 0);
-  --accent: oklch(0.9393 0.0288 266.3680);
-  --accent-foreground: oklch(0.5445 0.1903 259.4848);
-  --destructive: oklch(0.6290 0.1902 23.0704);
-  --destructive-foreground: oklch(1.0000 0 0);
-  --border: oklch(0.9300 0.0094 286.2156);
-  --input: oklch(0.9401 0 0);
-  --ring: oklch(57.021% 0.21152 272.834);
-  --chart-1: oklch(0.7459 0.1483 156.4499);
-  --chart-2: oklch(0.5393 0.2713 286.7462);
-  --chart-3: oklch(0.7336 0.1758 50.5517);
-  --chart-4: oklch(0.5828 0.1809 259.7276);
-  --chart-5: oklch(0.5590 0 0);
-  --sidebar: oklch(0.9670 0.0029 264.5419);
-  --sidebar-foreground: oklch(0.2795 0.0368 260.0310);
-  --sidebar-primary: oklch(0.5854 0.2041 277.1173);
-  --sidebar-primary-foreground: oklch(1.0000 0 0);
-  --sidebar-accent: oklch(0.9299 0.0334 272.7879);
-  --sidebar-accent-foreground: oklch(0.3729 0.0306 259.7328);
-  --sidebar-border: oklch(0.8717 0.0093 258.3382);
-  --sidebar-ring: oklch(0.5854 0.2041 277.1173);
+  /* ── Page & surface ───────────────────────────────────── */
+  --background: oklch(0.9760 0.0020 264.0);
+  /* #F7F7F8 — page bg          */
+  --foreground: oklch(0.1500 0.0050 264.0);
+  /* #111111 — primary text      */
+
+  --card: oklch(1.0000 0.0000 0.0);
+  /* #FFFFFF — card surface      */
+  --card-foreground: oklch(0.1500 0.0050 264.0);
+  /* #111111                     */
+
+  --popover: oklch(1.0000 0.0000 0.0);
+  /* #FFFFFF                     */
+  --popover-foreground: oklch(0.1500 0.0050 264.0);
+
+  /* ── Brand primary — Indigo/Violet ───────────────────── */
+  --primary: oklch(0.5720 0.2440 277.0);
+  /* #6C63FF                     */
+  --primary-foreground: oklch(1.0000 0.0000 0.0);
+  /* #FFFFFF                     */
+
+  /* ── Secondary — light violet tint ───────────────────── */
+  --secondary: oklch(0.9600 0.0120 277.0);
+  /* #F3F2FF — hover/subtle bg   */
+  --secondary-foreground: oklch(0.1500 0.0050 264.0);
+  /* #111111                     */
+
+  /* ── Muted ────────────────────────────────────────────── */
+  --muted: oklch(0.9760 0.0020 264.0);
+  /* #F7F7F8                     */
+  --muted-foreground: oklch(0.4980 0.0200 264.0);
+  /* #6B6B80 — labels/subtitles  */
+
+  /* ── Accent — active nav bg ───────────────────────────── */
+  --accent: oklch(0.9400 0.0310 277.0);
+  /* #EBE9FD — active nav item   */
+  --accent-foreground: oklch(0.4200 0.1800 277.0);
+  /* #5B4CC4 — text on accent    */
+
+  /* ── Destructive ──────────────────────────────────────── */
+  --destructive: oklch(0.4820 0.2020 27.0);
+  /* #C42020                     */
+  --destructive-foreground: oklch(1.0000 0.0000 0.0);
+
+  /* ── Border & Input ───────────────────────────────────── */
+  --border: oklch(0.9200 0.0080 264.0);
+  /* #E8E8EC                     */
+  --input: oklch(0.9200 0.0080 264.0);
+  --ring: oklch(0.5720 0.2440 277.0);
+  /* #6C63FF                     */
+
+  /* ── Sidebar ──────────────────────────────────────────── */
+  --sidebar: oklch(0.9820 0.0010 264.0);
+  /* #F9F9FA — sidebar bg        */
+  --sidebar-foreground: oklch(0.1500 0.0050 264.0);
+  /* #111111                     */
+  --sidebar-primary: oklch(0.5720 0.2440 277.0);
+  /* #6C63FF                     */
+  --sidebar-primary-foreground: oklch(1.0000 0.0000 0.0);
+  --sidebar-accent: oklch(0.9400 0.0310 277.0);
+  /* #EBE9FD — active nav bg     */
+  --sidebar-accent-foreground: oklch(0.4200 0.1800 277.0);
+  /* #5B4CC4                     */
+  --sidebar-border: oklch(0.9200 0.0080 264.0);
+  /* #E8E8EC                     */
+  --sidebar-ring: oklch(0.5720 0.2440 277.0);
+  /* #6C63FF                     */
+
+  /* ── Semantic extras (not in base shadcn, add as needed) ─ */
+  /* Success  → used for "Actif" badges, positive deltas      */
+  --success: oklch(0.6980 0.1720 161.0);
+  /* #22C48A                     */
+  --success-foreground: oklch(0.4200 0.1200 161.0);
+  /* #1A7A55                     */
+  --success-muted: oklch(0.9500 0.0420 161.0);
+  /* #E8FAF4                     */
+
+  /* Warning  → used for "En pause" badges                    */
+  --warning: oklch(0.7680 0.1620 68.0);
+  /* #F5A623                     */
+  --warning-foreground: oklch(0.5200 0.1100 68.0);
+  /* #B5770D                     */
+  --warning-muted: oklch(0.9700 0.0380 80.0);
+  /* #FEF5E7                     */
+
+  /* Info     → "Nouveau" badges, links                       */
+  --info: oklch(0.6980 0.1520 234.0);
+  /* #4DA9FF                     */
+  --info-foreground: oklch(0.3900 0.1100 240.0);
+  /* #1A5FA8                     */
+  --info-muted: oklch(0.9600 0.0300 234.0);
+  /* #EBF5FF                     */
+
+  /* ── Chart palette ───────────────────────────────────────
+     Maps MyiA avatar/workspace colors to chart slots         */
+  --chart-1: oklch(0.6980 0.1720 161.0);
+  /* teal   — HillsGarden/success*/
+  --chart-2: oklch(0.5720 0.2440 277.0);
+  /* violet — brand primary      */
+  --chart-3: oklch(0.7680 0.1620 68.0);
+  /* amber  — Marketing/warning  */
+  --chart-4: oklch(0.6980 0.1520 234.0);
+  /* blue   — info               */
+  --chart-5: oklch(0.4820 0.2020 27.0);
+  /* red    — destructive        */
+
+  /* ── Typography ──────────────────────────────────────────
+     System-ui / Inter (no custom font detected in MyiA)      */
   --font-sans: Plus Jakarta Sans, sans-serif;
   --font-serif: Lora, serif;
   --font-mono: IBM Plex Mono, monospace;
   --font-display: Plus Jakarta Sans, sans-serif;
-  --radius: 1rem;
+
+  /* ── Radius ───────────────────────────────────────────────
+     MyiA uses 8px cards, 12px modals, 20px badges
+     Setting base radius to 0.5rem (8px) — tighter than before */
+  --radius: 0.5rem;
+
+  /* ── Shadows ─────────────────────────────────────────────
+     MyiA uses very subtle shadows — cards feel flat          */
   --shadow-x: 0px;
-  --shadow-y: 2px;
+  --shadow-y: 1px;
   --shadow-blur: 3px;
   --shadow-spread: 0px;
-  --shadow-opacity: 0.16;
-  --shadow-color: hsl(0 0% 0%);
-  --shadow-2xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
-  --shadow-xs: 0px 2px 3px 0px hsl(0 0% 0% / 0.08);
-  --shadow-sm: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
-  --shadow: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 1px 2px -1px hsl(0 0% 0% / 0.16);
-  --shadow-md: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 2px 4px -1px hsl(0 0% 0% / 0.16);
-  --shadow-lg: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 4px 6px -1px hsl(0 0% 0% / 0.16);
-  --shadow-xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.16), 0px 8px 10px -1px hsl(0 0% 0% / 0.16);
-  --shadow-2xl: 0px 2px 3px 0px hsl(0 0% 0% / 0.40);
-  --tracking-normal: -0.025em;
+  --shadow-opacity: 0.08;
+  --shadow-color: hsl(264 20% 10%);
+
+  --shadow-2xs: 0px 1px 2px 0px hsl(264 20% 10% / 0.04);
+  --shadow-xs: 0px 1px 3px 0px hsl(264 20% 10% / 0.06);
+  --shadow-sm: 0px 1px 3px 0px hsl(264 20% 10% / 0.08), 0px 1px 2px -1px hsl(264 20% 10% / 0.06);
+  --shadow: 0px 2px 4px 0px hsl(264 20% 10% / 0.08), 0px 1px 2px -1px hsl(264 20% 10% / 0.06);
+  --shadow-md: 0px 3px 6px 0px hsl(264 20% 10% / 0.08), 0px 2px 4px -1px hsl(264 20% 10% / 0.06);
+  --shadow-lg: 0px 4px 8px 0px hsl(264 20% 10% / 0.08), 0px 3px 6px -1px hsl(264 20% 10% / 0.06);
+  --shadow-xl: 0px 6px 12px 0px hsl(264 20% 10% / 0.08), 0px 4px 8px -1px hsl(264 20% 10% / 0.06);
+  --shadow-2xl: 0px 8px 16px 0px hsl(264 20% 10% / 0.14);
+
+  --tracking-normal: -0.015em;
   --spacing: 0.27rem;
 }
 
+/* ── Avatar color slots ───────────────────────────────────────
+   Each maps to one of the 8 MyiA pastel+saturated pairs.
+   Use these as Tailwind utilities via @layer utilities below.  */
+:root {
+  /* violet  — HillsGarden "H"  */
+  --avatar-violet-bg: oklch(0.9300 0.0320 277.0);
+  /* #E8E4FD */
+  --avatar-violet-fg: oklch(0.4200 0.1800 277.0);
+  /* #5B4CC4 */
+
+  /* teal    — BlueResidence "B", Amine Benali "AB" */
+  --avatar-teal-bg: oklch(0.9200 0.0480 161.0);
+  /* #D4F0E5 */
+  --avatar-teal-fg: oklch(0.4200 0.1200 161.0);
+  /* #1A7A55 */
+
+  /* amber   — Marketing "M" */
+  --avatar-amber-bg: oklch(0.9400 0.0480 68.0);
+  /* #FDEBD5 */
+  --avatar-amber-fg: oklch(0.5500 0.1500 55.0);
+  /* #C4691A */
+
+  /* blue    — VillaPrestige "V", Issam "IL" */
+  --avatar-blue-bg: oklch(0.9300 0.0320 234.0);
+  /* #E0EDFC */
+  --avatar-blue-fg: oklch(0.3900 0.1100 240.0);
+  /* #1A5FA8 */
+
+  /* mint    — E-commerce "E" */
+  --avatar-mint-bg: oklch(0.9400 0.0400 148.0);
+  /* #E4F5EC */
+  --avatar-mint-fg: oklch(0.4400 0.1200 148.0);
+  /* #207A4A */
+
+  /* red     — RénovationPlus "R", Sara "SA" */
+  --avatar-red-bg: oklch(0.9300 0.0350 27.0);
+  /* #FCE4E4 */
+  --avatar-red-fg: oklch(0.4820 0.2020 27.0);
+  /* #C42020 */
+}
+
 .dark {
-  --background: oklch(0.2077 0.0398 265.7549);
-  --foreground: oklch(0.9288 0.0126 255.5078);
-  --card: oklch(0.2795 0.0368 260.0310);
-  --card-foreground: oklch(0.9288 0.0126 255.5078);
-  --popover: oklch(0.2795 0.0368 260.0310);
-  --popover-foreground: oklch(0.9288 0.0126 255.5078);
-  --primary: oklch(0.6801 0.1583 276.9349);
-  --primary-foreground: oklch(0.2077 0.0398 265.7549);
-  --secondary: oklch(0.3351 0.0331 260.9120);
-  --secondary-foreground: oklch(0.8717 0.0093 258.3382);
-  --muted: oklch(0.2427 0.0381 259.9437);
-  --muted-foreground: oklch(0.7137 0.0192 261.3246);
-  --accent: oklch(0.3729 0.0306 259.7328);
-  --accent-foreground: oklch(0.8717 0.0093 258.3382);
-  --destructive: oklch(0.6368 0.2078 25.3313);
-  --destructive-foreground: oklch(0.2077 0.0398 265.7549);
-  --border: oklch(0.4461 0.0263 256.8018);
-  --input: oklch(0.4461 0.0263 256.8018);
-  --ring: oklch(0.6801 0.1583 276.9349);
-  --chart-1: oklch(0.6801 0.1583 276.9349);
-  --chart-2: oklch(0.5854 0.2041 277.1173);
-  --chart-3: oklch(0.5106 0.2301 276.9656);
-  --chart-4: oklch(0.4568 0.2146 277.0229);
-  --chart-5: oklch(0.3984 0.1773 277.3662);
-  --sidebar: oklch(0.2795 0.0368 260.0310);
-  --sidebar-foreground: oklch(0.9288 0.0126 255.5078);
-  --sidebar-primary: oklch(0.6801 0.1583 276.9349);
-  --sidebar-primary-foreground: oklch(0.2077 0.0398 265.7549);
-  --sidebar-accent: oklch(0.3729 0.0306 259.7328);
-  --sidebar-accent-foreground: oklch(0.8717 0.0093 258.3382);
-  --sidebar-border: oklch(0.4461 0.0263 256.8018);
-  --sidebar-ring: oklch(0.6801 0.1583 276.9349);
+  /* ── Page & surface ─────────────────────────────────────── */
+  --background: oklch(0.2000 0.0280 264.0);
+  --foreground: oklch(0.9400 0.0080 264.0);
+
+  --card: oklch(0.2500 0.0300 264.0);
+  --card-foreground: oklch(0.9400 0.0080 264.0);
+
+  --popover: oklch(0.2500 0.0300 264.0);
+  --popover-foreground: oklch(0.9400 0.0080 264.0);
+
+  /* ── Brand primary — lighter in dark mode ───────────────── */
+  --primary: oklch(0.6800 0.1900 277.0);
+  --primary-foreground: oklch(0.1500 0.0280 264.0);
+
+  /* ── Secondary ──────────────────────────────────────────── */
+  --secondary: oklch(0.3000 0.0280 264.0);
+  --secondary-foreground: oklch(0.9000 0.0080 264.0);
+
+  /* ── Muted ───────────────────────────────────────────────── */
+  --muted: oklch(0.2600 0.0280 264.0);
+  --muted-foreground: oklch(0.6400 0.0140 264.0);
+
+  /* ── Accent ─────────────────────────────────────────────── */
+  --accent: oklch(0.3200 0.0480 277.0);
+  --accent-foreground: oklch(0.8400 0.0200 277.0);
+
+  /* ── Destructive ─────────────────────────────────────────── */
+  --destructive: oklch(0.5800 0.2200 27.0);
+  --destructive-foreground: oklch(0.1500 0.0280 264.0);
+
+  /* ── Border & Input ──────────────────────────────────────── */
+  --border: oklch(0.3800 0.0200 264.0);
+  --input: oklch(0.3800 0.0200 264.0);
+  --ring: oklch(0.6800 0.1900 277.0);
+
+  /* ── Sidebar ─────────────────────────────────────────────── */
+  --sidebar: oklch(0.2500 0.0300 264.0);
+  --sidebar-foreground: oklch(0.9400 0.0080 264.0);
+  --sidebar-primary: oklch(0.6800 0.1900 277.0);
+  --sidebar-primary-foreground: oklch(0.1500 0.0280 264.0);
+  --sidebar-accent: oklch(0.3200 0.0480 277.0);
+  --sidebar-accent-foreground: oklch(0.8400 0.0200 277.0);
+  --sidebar-border: oklch(0.3800 0.0200 264.0);
+  --sidebar-ring: oklch(0.6800 0.1900 277.0);
+
+  /* ── Semantic extras ─────────────────────────────────────── */
+  --success: oklch(0.6980 0.1720 161.0);
+  --success-foreground: oklch(0.9200 0.0480 161.0);
+  --success-muted: oklch(0.2800 0.0480 161.0);
+
+  --warning: oklch(0.7680 0.1620 68.0);
+  --warning-foreground: oklch(0.9400 0.0480 68.0);
+  --warning-muted: oklch(0.2800 0.0480 68.0);
+
+  --info: oklch(0.6980 0.1520 234.0);
+  --info-foreground: oklch(0.9200 0.0380 234.0);
+  --info-muted: oklch(0.2800 0.0380 234.0);
+
+  /* ── Chart palette ───────────────────────────────────────── */
+  --chart-1: oklch(0.6800 0.1900 277.0);
+  --chart-2: oklch(0.5900 0.2200 277.0);
+  --chart-3: oklch(0.5200 0.2300 277.0);
+  --chart-4: oklch(0.4600 0.2100 277.0);
+  --chart-5: oklch(0.4000 0.1800 277.0);
+
   --font-sans: Inter, sans-serif;
   --font-serif: Merriweather, serif;
   --font-mono: JetBrains Mono, monospace;
   --font-display: Plus Jakarta Sans, sans-serif;
-  --radius: 1rem;
-  --shadow-x: 0px;
-  --shadow-y: 4px;
-  --shadow-blur: 8px;
-  --shadow-spread: -1px;
-  --shadow-opacity: 0.1;
-  --shadow-color: hsl(0 0% 0%);
-  --shadow-2xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
-  --shadow-xs: 0px 4px 8px -1px hsl(0 0% 0% / 0.05);
-  --shadow-sm: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
-  --shadow: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 1px 2px -2px hsl(0 0% 0% / 0.10);
-  --shadow-md: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 2px 4px -2px hsl(0 0% 0% / 0.10);
-  --shadow-lg: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 4px 6px -2px hsl(0 0% 0% / 0.10);
-  --shadow-xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.10), 0px 8px 10px -2px hsl(0 0% 0% / 0.10);
-  --shadow-2xl: 0px 4px 8px -1px hsl(0 0% 0% / 0.25);
-}
 
+  --radius: 0.5rem;
+
+  --shadow-2xs: 0px 2px 6px -1px hsl(264 20% 4% / 0.20);
+  --shadow-xs: 0px 2px 6px -1px hsl(264 20% 4% / 0.24);
+  --shadow-sm: 0px 2px 6px -1px hsl(264 20% 4% / 0.28), 0px 1px 2px -2px hsl(264 20% 4% / 0.20);
+  --shadow: 0px 3px 8px -1px hsl(264 20% 4% / 0.28), 0px 1px 2px -2px hsl(264 20% 4% / 0.20);
+  --shadow-md: 0px 4px 10px -1px hsl(264 20% 4% / 0.28), 0px 2px 4px -2px hsl(264 20% 4% / 0.20);
+  --shadow-lg: 0px 6px 14px -1px hsl(264 20% 4% / 0.28), 0px 4px 6px -2px hsl(264 20% 4% / 0.20);
+  --shadow-xl: 0px 8px 18px -1px hsl(264 20% 4% / 0.28), 0px 6px 10px -2px hsl(264 20% 4% / 0.20);
+  --shadow-2xl: 0px 12px 24px -1px hsl(264 20% 4% / 0.40);
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -156,15 +318,30 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  /* Semantic extras exposed as Tailwind colors */
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-muted: var(--success-muted);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-warning-muted: var(--warning-muted);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-muted: var(--info-muted);
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-serif: var(--font-serif);
   --font-display: var(--font-display);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: calc(var(--radius) - 2px);
+  /* 6px  — inputs, small elements  */
+  --radius-md: var(--radius);
+  /* 8px  — cards, buttons           */
+  --radius-lg: calc(var(--radius) + 4px);
+  /* 12px — modals, workspace cards  */
+  --radius-xl: calc(var(--radius) + 12px);
+  /* 20px — badge pills              */
 
   --shadow-2xs: var(--shadow-2xs);
   --shadow-xs: var(--shadow-xs);
@@ -187,18 +364,91 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
     letter-spacing: var(--tracking-normal);
   }
 }
 
-/* 
- ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2
- 
- active:bg-sidebar-accent
-active:text-sidebar-accent-foreground 
- data-[active=true]:bg-sidebar-accent 
- data-[active=true]:font-medium 
- data-[active=true]:text-sidebar-accent-foreground 
+/* ── Avatar utilities ──────────────────────────────────────────
+   Usage: <div class="avatar-violet">H</div>
+   Assign slot by hashing workspace name or user ID mod 6.       */
+@layer utilities {
+  .avatar-violet {
+    background-color: var(--avatar-violet-bg);
+    color: var(--avatar-violet-fg);
+  }
+
+  .avatar-teal {
+    background-color: var(--avatar-teal-bg);
+    color: var(--avatar-teal-fg);
+  }
+
+  .avatar-amber {
+    background-color: var(--avatar-amber-bg);
+    color: var(--avatar-amber-fg);
+  }
+
+  .avatar-blue {
+    background-color: var(--avatar-blue-bg);
+    color: var(--avatar-blue-fg);
+  }
+
+  .avatar-mint {
+    background-color: var(--avatar-mint-bg);
+    color: var(--avatar-mint-fg);
+  }
+
+  .avatar-red {
+    background-color: var(--avatar-red-bg);
+    color: var(--avatar-red-fg);
+  }
+}
+
+/* ── Status badge utilities ────────────────────────────────────
+   Usage: <span class="badge-active">Actif</span>               */
+@layer utilities {
+  .badge-active {
+    background-color: var(--success-muted);
+    color: var(--success-foreground);
+  }
+
+  .badge-paused {
+    background-color: var(--warning-muted);
+    color: var(--warning-foreground);
+  }
+
+  .badge-new {
+    background-color: var(--info-muted);
+    color: var(--info-foreground);
+  }
+
+  .badge-assigned {
+    background-color: var(--avatar-violet-bg);
+    color: var(--avatar-violet-fg);
+  }
+
+  .badge-converted {
+    background-color: var(--success-muted);
+    color: var(--success-foreground);
+  }
+
+  .badge-note {
+    background-color: var(--secondary);
+    color: var(--muted-foreground);
+  }
+}
+
+/*
+  Sidebar active nav item (keep in sync with shadcn sidebar component):
+
+  data-[active=true]:bg-sidebar-accent
+  data-[active=true]:text-sidebar-accent-foreground
+  data-[active=true]:font-medium
+  active:bg-sidebar-accent
+  active:text-sidebar-accent-foreground
+  ring-sidebar-ring
+  focus-visible:ring-2
+  transition-[width,height,padding]
 */

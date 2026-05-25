@@ -3,6 +3,7 @@ import { usePage } from '@inertiajs/react';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import type { BreadcrumbItem as BreadcrumbItemType } from '@/types';
+import { WorkspaceSelector } from './app-sidebar-header/workspace-selector';
 import CreditCardNav from './CreditCardNav';
 import { LanguageSwitcher } from './language-switcher';
 import { NavUser } from './nav-user';
@@ -32,7 +33,7 @@ export function AppSidebarHeader({
             </div>
             <div className="ml-auto  items-center gap-4 hidden md:flex">
 
-                 
+                <WorkspaceSelector />
                 <CreditCardNav user={user} />
                 <LanguageSwitcher
                     availableLocales={availableLocales}

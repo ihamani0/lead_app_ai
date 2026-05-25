@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Settings\AccountSettingsController;
+use App\Http\Controllers\Settings\BillingController;
 use App\Http\Controllers\Settings\LanguageController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
@@ -14,6 +16,12 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     Route::patch('settings/language', [LanguageController::class, 'update'])->name('language.update');
+
+    // Account Settings (all-in-one page)
+    Route::get('account/settings', [AccountSettingsController::class, 'index'])->name('account.settings');
+
+    // Billing
+    Route::get('account/billing', [BillingController::class, 'index'])->name('account.billing');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {

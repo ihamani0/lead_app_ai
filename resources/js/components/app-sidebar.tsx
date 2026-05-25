@@ -1,9 +1,11 @@
-import { Link, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import {
     BookOpen,
     Bot,
+    Briefcase,
     Image,
     LayoutGrid,
+    UserCheck,
     Users,
     BarChart3,
     Settings,
@@ -22,16 +24,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
-import { dashboard } from '@/routes';
 import admin from '@/routes/admin';
-import { index as indexAgent } from '@/routes/agents';
-import { index as indexDocs } from '@/routes/knowledge';
-import { index as indexLeads } from '@/routes/leads';
-import { index as indexMedia } from '@/routes/media';
-import { edit, index as indexProfil } from '@/routes/profile';
-import { index as indexReports } from '@/routes/reports';
 import superAdmin from '@/routes/super-admin';
+import teams, { show as teamsShow } from '@/routes/teams';
+import workspaces from '@/routes/workspaces';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
 import { LanguageSwitcher } from './language-switcher';
@@ -59,59 +57,91 @@ export function AppSidebar() {
     const page = usePage<PageProps>();
 
     const { locale, availableLocales } = page.props;
+    const activeWorkspace = useActiveWorkspace();
 
     const mainNavItems: NavItem[] = [
         {
             title: t('messages.dashboard'),
-            href: dashboard(),
+            href: activeWorkspace
+                ? workspaces.dashboard({ slug: activeWorkspace.slug }).url
+                : teams.index().url,
             icon: Home,
             'data-tour': 'sidebar-dashboard',
         },
 
         {
             title: t('messages.agents'),
-            href: indexAgent().url,
+            href: activeWorkspace
+                ? workspaces.agents.index({ slug: activeWorkspace.slug }).url
+                : teams.index().url,
             icon: Bot,
             'data-tour': 'sidebar-agents',
         },
 
         {
             title: t('messages.whatsapp'),
-            href: indexProfil().url,
+            href: activeWorkspace
+                ? workspaces.instances.index({ slug: activeWorkspace.slug }).url
+                : '#',
             icon: WhatsAppIcon,
             'data-tour': 'sidebar-instances',
         },
 
         {
             title: t('messages.leads'),
-            href: indexLeads().url,
+            href: activeWorkspace
+                ? workspaces.leads.index({ slug: activeWorkspace.slug }).url
+                : teams.index().url,
             icon: Users,
             'data-tour': 'sidebar-leads',
         },
         {
+            title: t('workspace.members.title'),
+            href: activeWorkspace
+                ? workspaces.members.index({ slug: activeWorkspace.slug }).url
+                : teams.index().url,
+            icon: UserCheck,
+            'data-tour': 'sidebar-members',
+        },
+        {
             title: t('messages.media_assets'),
-            href: indexMedia().url,
+            href: activeWorkspace
+                ? workspaces.media.index({ slug: activeWorkspace.slug }).url
+                : teams.index().url,
             icon: Image,
             'data-tour': 'sidebar-media',
         },
         {
             title: t('messages.documentation'),
-            href: indexDocs().url,
+            href: activeWorkspace
+                ? workspaces.knowledge.index({ slug: activeWorkspace.slug }).url
+                : teams.index().url,
             icon: BookOpen,
             'data-tour': 'sidebar-docs',
         },
         {
             title: 'Reports',
-            href: indexReports().url,
+            href: activeWorkspace
+                ? workspaces.reports.index({ slug: activeWorkspace.slug }).url
+                : teams.index().url,
             icon: BarChart3,
             'data-tour': 'sidebar-reports',
         },
     ];
 
     const footerNavItems: NavItem[] = [
+        ...(activeWorkspace
+            ? [
+                  {
+                      title: t('workspace.title'),
+                      href: teamsShow({ slug: activeWorkspace.slug }).url,
+                      icon: Briefcase,
+                  },
+              ]
+            : []),
         {
             title: t('messages.settings'),
-            href: edit().url,
+            href: teams.index().url,
             icon: Settings,
         },
     ];
@@ -184,9 +214,9 @@ export function AppSidebar() {
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild>
-                            <Link href={dashboard()} prefetch>
+                            {/* <Link href={dashboard()} prefetch>
+                            </Link> */}
                                 <AppLogo />
-                            </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>

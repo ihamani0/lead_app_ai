@@ -30,7 +30,7 @@
             }
         </style>
 
-        <title inertia>{{ config('app.name', 'Crew') }}</title>
+        <title inertia>{{ config('app.name', 'MyIA') }}</title>
 
         {{-- <link rel="icon" href="/favicon.ico" sizes="any"> --}}
         <link rel="icon" href="/logo.ico" type="image/svg+xml">

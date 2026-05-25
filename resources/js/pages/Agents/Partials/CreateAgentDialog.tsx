@@ -14,8 +14,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
-import { store } from '@/routes/agents';
+import workspaces from '@/routes/workspaces';
 
 interface CreateAgentDialogProps {
     open: boolean;
@@ -26,6 +27,7 @@ export function CreateAgentDialog({
     open,
     onOpenChange,
 }: CreateAgentDialogProps) {
+    const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
 
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
@@ -35,7 +37,7 @@ export function CreateAgentDialog({
 
     const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
-            post(store().url, {
+            post(workspaces.agents.store({ slug: activeWorkspace.slug }).url, {
             onSuccess: () => {
                 reset();
                 onOpenChange(false);

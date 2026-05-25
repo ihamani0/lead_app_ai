@@ -8,8 +8,16 @@ interface GoogleLoginButtonProps {
 export default function GoogleLoginButton({
     label = 'Sign in with Google',
 }: GoogleLoginButtonProps) {
+    const params = typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search)
+        : new URLSearchParams();
+    const invitation = params.get('invitation');
+    const url = invitation
+        ? redirect().url + '?invitation=' + encodeURIComponent(invitation)
+        : redirect().url;
+
     return (
-        <a href={redirect().url} className="w-full">
+        <a href={url} className="w-full">
             <Button
                 variant="outline"
                 className="flex h-12 w-full items-center justify-center gap-3 rounded-[10px] border border-[#0F0F10]/20 bg-white text-[15px] font-medium text-[#0F0F10] hover:bg-[#F7F7F8]"

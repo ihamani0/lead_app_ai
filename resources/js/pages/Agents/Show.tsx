@@ -12,9 +12,10 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-import agents from '@/routes/agents';
+import workspaces from '@/routes/workspaces';
 
 import type { AgentConfig, BreadcrumbItem, EvolutionInstance } from '@/types';
 
@@ -47,11 +48,6 @@ interface Props {
     availableInstances: EvolutionInstance[];
 }
 
-const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Home', href: '/' },
-    { title: 'Agents', href: '/agents' },
-];
-
 type TabId =
     | 'overview'
     | 'instance'
@@ -61,9 +57,15 @@ type TabId =
     | 'logs';
 
 export default function AgentShow({ agent, availableInstances }: Props) {
+    const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState<TabId>('overview');
     const [isCloning, setIsCloning] = useState(false);
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        { title: 'Home', href: '/' },
+        { title: 'Agents', href: activeWorkspace ? workspaces.agents.index({ slug: activeWorkspace.slug }).url : '' },
+    ];
 
     const navItems: NavItem[] = [
         { id: 'overview', label: t('agents.config.overview'), icon: Settings },
@@ -85,7 +87,7 @@ export default function AgentShow({ agent, availableInstances }: Props) {
     const handleClone = () => {
         setIsCloning(true);
         router.post(
-            agents.clone(agent.id).url,
+            workspaces.agents.clone({ slug: activeWorkspace.slug, agent: agent.id }).url,
             {},
             {
                 onFinish: () => setIsCloning(false),
@@ -94,7 +96,7 @@ export default function AgentShow({ agent, availableInstances }: Props) {
     };
 
     const handleToggle = () => {
-        router.patch(agents.toggle(agent.id).url);
+        router.patch(workspaces.agents.toggle({ slug: activeWorkspace.slug, agent: agent.id }).url);
     };
 
     const renderContent = () => {
@@ -134,7 +136,7 @@ export default function AgentShow({ agent, availableInstances }: Props) {
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8"
-                        onClick={() => router.get('/agents')}
+                        onClick={() => router.get(workspaces.agents.index({ slug: activeWorkspace.slug }).url)}
                     >
                         <ChevronLeft className="h-4 w-4" />
                     </Button>
@@ -225,7 +227,7 @@ export default function AgentShow({ agent, availableInstances }: Props) {
                                 variant="ghost"
                                 size="sm"
                                 className="w-full justify-start"
-                                onClick={() => router.get('/agents')}
+                                onClick={() => router.get(workspaces.agents.index({ slug: activeWorkspace.slug }).url)}
                             >
                                 <ChevronLeft className="mr-2 h-4 w-4" />
                                 {t('agents.config.back')}

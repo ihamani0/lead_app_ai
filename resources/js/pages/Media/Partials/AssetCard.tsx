@@ -19,6 +19,7 @@ interface AssetCardProps {
     asset: Asset;
     onDelete: (id: string) => void;
     onClick: () => void;
+    canManage?: boolean;
 }
 const iconMap: Record<string, LucideIcon> = {
     image: ImageIcon,
@@ -35,7 +36,7 @@ export function MediaIcon({ type, className = 'h-5 w-5' }: MediaIconProps) {
     return <Icon className={className} />;
 }
 
-export function AssetCard({ asset, onDelete, onClick }: AssetCardProps) {
+export function AssetCard({ asset, onDelete, onClick, canManage = true }: AssetCardProps) {
     const [imageError, setImageError] = useState(false);
 
     const handleDelete = (e: React.MouseEvent) => {
@@ -143,19 +144,21 @@ export function AssetCard({ asset, onDelete, onClick }: AssetCardProps) {
                     {asset.type}
                 </span>
 
-                <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={handleDelete}
-                    className={cn(
-                        'h-8 w-8 shrink-0 rounded-md',
-                        'text-muted-foreground transition-colors',
-                        'hover:bg-destructive/10 hover:text-destructive',
-                    )}
-                >
-                    <Trash2 className="h-4 w-4" />
-                </Button>
+                {canManage && (
+                    <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleDelete}
+                        className={cn(
+                            'h-8 w-8 shrink-0 rounded-md',
+                            'text-muted-foreground transition-colors',
+                            'hover:bg-destructive/10 hover:text-destructive',
+                        )}
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                )}
             </CardFooter>
         </Card>
     );

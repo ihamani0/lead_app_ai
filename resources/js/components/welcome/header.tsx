@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import type { TFunction } from 'i18next';
-import { dashboard, login, register } from '@/routes';
+import { login, register } from '@/routes';
+import teams from '@/routes/teams';
 import type { Auth } from '@/types';
 import AppLogo from '../app-logo';
 import { Button } from '../ui/button';
@@ -53,7 +54,7 @@ export const Header = ({ canRegister = true, auth, t }: HeaderProps) => {
 
                     {auth.user ? (
                         <Button asChild className="hidden md:inline-flex">
-                            <Link href={dashboard()}>
+                            <Link href={teams.index().url}>
                                 {t('welcome.dashboard', 'Dashboard')}
                             </Link>
                         </Button>

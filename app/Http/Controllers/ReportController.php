@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
 use App\Models\Lead;
@@ -11,22 +12,22 @@ use Inertia\Inertia;
 
 class ReportController extends Controller
 {
+    use WorkspaceScoped;
+
     public function index(Request $request)
     {
-        $tenantId = $request->user()->tenant_id;
-
         $tab = $request->input('tab', 'leads');
 
         $data = [];
 
         if ($tab === 'leads') {
-            $data['leads'] = $this->getLeadsReport($tenantId);
+            $data['leads'] = $this->getLeadsReport($request);
         } elseif ($tab === 'instances') {
-            $data['instances'] = $this->getInstancesReport($tenantId);
+            $data['instances'] = $this->getInstancesReport($request);
         } elseif ($tab === 'agents') {
-            $data['agents'] = $this->getAgentsReport($tenantId);
+            $data['agents'] = $this->getAgentsReport($request);
         } elseif ($tab === 'media') {
-            $data['media'] = $this->getMediaReport($tenantId);
+            $data['media'] = $this->getMediaReport($request);
         }
 
         return Inertia::render('reports/Index', [
@@ -35,17 +36,17 @@ class ReportController extends Controller
         ]);
     }
 
-    private function getLeadsReport(string $tenantId): array
+    private function getLeadsReport(Request $request): array
     {
-        $leads = Lead::where('tenant_id', $tenantId)->get();
+        $leads = $this->scopedQuery($request, Lead::class)->get();
 
         $byAiQualification = $leads->groupBy('ai_qualification_status')->map(fn ($g) => $g->count());
         $byQualificationResult = $leads->groupBy('qualification_result')->map(fn ($g) => $g->count());
         $byTreatmentStatus = $leads->groupBy('treatment_status')->map(fn ($g) => $g->count());
         $byInstance = $leads->groupBy('instance_id')
             ->map(fn ($g) => $g->count())
-            ->mapWithKeys(function ($count, $instanceId) {
-                $instance = EvolutionInstance::find($instanceId);
+            ->mapWithKeys(function ($count, $instanceId) use ($request) {
+                $instance = $this->scopedQuery($request, EvolutionInstance::class)->find($instanceId);
                 $name = $instance?->instance_name ?? 'Unknown';
 
                 return [$name => $count];
@@ -68,15 +69,15 @@ class ReportController extends Controller
         ];
     }
 
-    private function getInstancesReport(string $tenantId): array
+    private function getInstancesReport(Request $request): array
     {
-        $instances = EvolutionInstance::where('tenant_id', $tenantId)->get();
+        $instances = $this->scopedQuery($request, EvolutionInstance::class)->get();
 
         $byStatus = $instances->groupBy('status')->map(fn ($g) => $g->count());
 
         $leadsByInstance = [];
         foreach ($instances as $instance) {
-            $leadsByInstance[$instance->instance_name] = Lead::where('instance_id', $instance->id)->count();
+            $leadsByInstance[$instance->instance_name] = $this->scopedQuery($request, Lead::class)->where('instance_id', $instance->id)->count();
         }
 
         return [
@@ -97,11 +98,11 @@ class ReportController extends Controller
         ];
     }
 
-    private function getAgentsReport(string $tenantId): array
+    private function getAgentsReport(Request $request): array
     {
-        $agents = AgentConfig::whereHas('instance', function ($query) use ($tenantId) {
-            $query->where('tenant_id', $tenantId);
-        })->with('instance')->get();
+        $agents = $this->scopedQuery($request, AgentConfig::class)
+            ->with('instance')
+            ->get();
 
         return [
             'summary' => [
@@ -123,9 +124,9 @@ class ReportController extends Controller
         ];
     }
 
-    private function getMediaReport(string $tenantId): array
+    private function getMediaReport(Request $request): array
     {
-        $media = MediaAsset::where('tenant_id', $tenantId)->get();
+        $media = $this->scopedQuery($request, MediaAsset::class)->get();
 
         $byType = $media->groupBy('type')->map(fn ($g) => $g->count());
 
@@ -146,7 +147,7 @@ class ReportController extends Controller
                 'avgSize' => $avgSize,
             ],
             'byType' => $byType,
-            'recentMedia' => MediaAsset::where('tenant_id', $tenantId)->latest()->limit(10)->get()->map(fn ($m) => [
+            'recentMedia' => $this->scopedQuery($request, MediaAsset::class)->latest()->limit(10)->get()->map(fn ($m) => [
                 'id' => $m->id,
                 'filename' => $m->category,
                 'mime_type' => $m->type,

@@ -3,15 +3,16 @@ import { Phone, PowerOff, Settings2, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils'; // Make sure you have the shadcn utils
-import { destroy } from '@/routes/instances';
-import { show } from '@/routes/profile';
+import { destroy, show } from '@/routes/workspaces/instances';
 import type { EvolutionInstance } from '@/types';
 
 interface InstanceCardProps {
     instance: EvolutionInstance;
+    slug?: string;
+    canManage?: boolean;
 }
 
-export default function InstanceCard({ instance }: InstanceCardProps) {
+export default function InstanceCard({ instance, slug, canManage = true }: InstanceCardProps) {
     const { t } = useTranslation();
 
     const displayName =
@@ -32,7 +33,8 @@ export default function InstanceCard({ instance }: InstanceCardProps) {
         e.stopPropagation(); // Stop event bubbling
 
         if (confirm('Are you sure you want to delete this instance?')) {
-            router.delete(destroy({ id: instance.id }).url, {
+            if (!slug) return;
+            router.delete(destroy({ slug, id: instance.id }).url, {
                 preserveScroll: true,
             });
         }
@@ -75,7 +77,7 @@ export default function InstanceCard({ instance }: InstanceCardProps) {
           : statusStyles.disconnected;
 
     return (
-        <Link href={show({ id: instance.instance_name })}>
+        <Link href={slug ? show({ slug, id: instance.instance_name }) : '#'}>
             <Card
                 className={cn(
                     'group relative overflow-hidden rounded-2xl border bg-card bg-linear-to-br p-6 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-lg',
@@ -87,18 +89,20 @@ export default function InstanceCard({ instance }: InstanceCardProps) {
 
                 {/* Action Buttons */}
                 {/* delete button */}
-                <div className="absolute top-3 right-3 z-20 
-                opacity-100 sm:opacity-0 group-hover:opacity-100 
-                transition-opacity">
-                <button
-                    onClick={handleDelete}
-                    className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full 
-                            bg-destructive/10 text-destructive transition hover:scale-110"
-                    title={t('profil.deleteInstance')}
-                >
-                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                </button>
-            </div>
+                {canManage && (
+                    <div className="absolute top-3 right-3 z-20 
+                    opacity-100 sm:opacity-0 group-hover:opacity-100 
+                    transition-opacity">
+                    <button
+                        onClick={handleDelete}
+                        className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full 
+                                bg-destructive/10 text-destructive transition hover:scale-110"
+                        title={t('profil.deleteInstance')}
+                    >
+                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </button>
+                </div>
+                )}
 
                 <CardHeader className="flex flex-row items-start justify-between px-6 pt-6">
                     <div className="flex flex-col gap-1">

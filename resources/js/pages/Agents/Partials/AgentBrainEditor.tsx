@@ -22,8 +22,9 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
-import agents from '@/routes/agents';
+import workspaces from '@/routes/workspaces';
 
 import type { AgentConfig, EvolutionInstance } from '@/types';
 
@@ -51,6 +52,7 @@ interface Props {
 }
 
 export default function AgentBrainEditor({ agent }: Props) {
+    const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
 
     const [prompt, setPrompt] = useState(agent.system_prompt || '');
@@ -74,7 +76,7 @@ export default function AgentBrainEditor({ agent }: Props) {
     const handleSave = () => {
         setIsSaving(true);
         router.put(
-            agents.update(agent.id).url,
+            workspaces.agents.update({ slug: activeWorkspace.slug, agent: agent.id }).url,
             { system_prompt: prompt },
             { onFinish: () => setIsSaving(false) },
         );
@@ -84,28 +86,32 @@ export default function AgentBrainEditor({ agent }: Props) {
         if (!confirm(t('agents.config.resetConfirm'))) return;
         setIsResetting(true);
         router.post(
-            agents.resetPrompt(agent.id).url,
+            workspaces.agents.resetPrompt({ slug: activeWorkspace.slug, agent: agent.id }).url,
             {},
             { onFinish: () => setIsResetting(false) },
         );
     };
 
-    const openHistory = async () => {
+    const openHistory = () => {
         setIsLoadingHistory(true);
         setIsHistoryOpen(true);
         setExpandedVersion(null);
 
-        try {
-            const response = await axios.get(
-                agents.promptHistory(agent.id).url,
-            );
-            setHistory(response.data.history || []);
-        } catch {
-            toast.error(t('agents.config.failedToLoadHistory'));
-            setIsHistoryOpen(false);
-        } finally {
-            setIsLoadingHistory(false);
-        }
+        axios
+            .get(
+                workspaces.agents.promptHistory({ slug: activeWorkspace.slug, agent: agent.id }).url,
+            )
+            .then((response) => {
+                const { history } = response.data as { history: PromptHistoryRecord[] };
+                setHistory(history || []);
+            })
+            .catch(() => {
+                toast.error(t('agents.config.failedToLoadHistory'));
+                setIsHistoryOpen(false);
+            })
+            .finally(() => {
+                setIsLoadingHistory(false);
+            });
     };
 
     const downloadPrompt = (record: PromptHistoryRecord) => {
@@ -128,7 +134,7 @@ export default function AgentBrainEditor({ agent }: Props) {
         if (!confirm(t('agents.config.restoreConfirm', { version }))) return;
         setRestoringVersion(version);
         router.post(
-            agents.restorePrompt({ agent: agent.id, version }).url,
+            workspaces.agents.restorePrompt({ slug: activeWorkspace.slug, agent: agent.id, version }).url,
             {},
             {
                 onSuccess: () => {

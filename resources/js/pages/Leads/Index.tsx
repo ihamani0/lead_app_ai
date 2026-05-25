@@ -33,10 +33,11 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 
-import { index, triggerQualification, bulkQualify } from '@/routes/leads';
+import { index, triggerQualification, bulkQualify } from '@/routes/workspaces/leads';
 import type { EvolutionInstance, Lead as LeadType } from '@/types';
 import EditLead from './Partials/EditLead';
 import ViewLead from './Partials/ViewLead';
@@ -46,14 +47,17 @@ type Props = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     filters: any;
     instances: EvolutionInstance[];
+    canManage: boolean;
 };
 
 export default function LeadsIndex({
     leads: initialLeads,
     filters,
     instances,
+    canManage,
 }: Props) {
     const { t } = useTranslation();
+    const activeWorkspace = useActiveWorkspace();
 
     const [leads, setLeads] = useState<LeadType[]>(initialLeads.data);
 
@@ -126,7 +130,7 @@ export default function LeadsIndex({
         if (selectedLeads.size === 0) return;
         setBulkTriggering(true);
         router.post(
-            bulkQualify().url,
+            bulkQualify({ slug: activeWorkspace!.slug }).url,
             { lead_ids: Array.from(selectedLeads) },
             {
                 preserveScroll: true,
@@ -141,7 +145,7 @@ export default function LeadsIndex({
     const handleTriggerQualification = (leadId: string | number) => {
         setTriggeringLeadId(String(leadId));
         router.post(
-            triggerQualification(leadId).url,
+            triggerQualification({ slug: activeWorkspace!.slug, id: leadId }).url,
             {},
             {
                 preserveScroll: true,
@@ -159,7 +163,7 @@ export default function LeadsIndex({
         }
 
         const timeoutId = setTimeout(() => {
-            router.get(index().url, params, {
+            router.get(index({ slug: activeWorkspace!.slug }).url, params, {
                 preserveState: true,
                 preserveScroll: true,
                 replace: true,
@@ -425,7 +429,7 @@ export default function LeadsIndex({
                     </div>
 
                     <div className="overflow-hidden rounded-lg border bg-white px-2 shadow-sm dark:bg-background" data-tour="leads-table">
-                        {selectedLeads.size > 0 && (
+                        {canManage && selectedLeads.size > 0 && (
                             <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2" data-tour="leads-actions">
                                 <span className="text-sm text-muted-foreground">
                                     {selectedLeads.size}{' '}
@@ -661,15 +665,16 @@ export default function LeadsIndex({
                                         </TableCell>
                                         <TableCell className="space-x-1 text-right">
                                             <ViewLead selectedLead={lead} />
-                                            <EditLead lead={lead} />
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() =>
-                                                    handleTriggerQualification(
-                                                        lead.id,
-                                                    )
-                                                }
+                                            {canManage && <EditLead lead={lead} />}
+                                            {canManage && (
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    onClick={() =>
+                                                        handleTriggerQualification(
+                                                            lead.id,
+                                                        )
+                                                    }
                                                 disabled={
                                                     triggeringLeadId === lead.id
                                                 }
@@ -684,6 +689,7 @@ export default function LeadsIndex({
                                                     <Sparkles className="h-4 w-4 text-yellow-500" />
                                                 )}
                                             </Button>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}

@@ -1,7 +1,7 @@
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
-type TabType = 'overview' | 'members' | 'roles' | 'settings';
+type TabType = 'overview' | 'roles' | 'settings';
 
 interface Tab {
     id: TabType;

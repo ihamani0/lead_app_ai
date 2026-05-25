@@ -17,5 +17,10 @@
     "agents": "Mon Ai",
     "leads": "Prospects",
     "media_assets": "Bibliotheque",
-    "documentation": "Base de connaissances"
+    "documentation": "Base de connaissances",
+    "greeting": {
+        "morning": "Bonjour",
+        "afternoon": "Bon après-midi",
+        "evening": "Bonsoir"
+    }
 }

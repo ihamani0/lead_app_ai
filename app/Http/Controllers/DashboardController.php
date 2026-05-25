@@ -2,123 +2,130 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
 use App\Models\Lead;
 use App\Models\MediaAsset;
+use App\Models\Team;
 use App\Models\Tenant;
 use App\Models\TokenTransaction;
 use App\Models\TokenTransactionDaily;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
+    use WorkspaceScoped;
+
     public function __invoke(Request $request)
     {
+        $scope = $this->scope($request);
+        $team = $request->attributes->get('active_team');
         $tenantId = $request->user()->tenant_id;
 
-        // Instance Stats
-        $instances = EvolutionInstance::where('tenant_id', $tenantId)->get();
-        $totalInstances = $instances->count();
-        $connectedInstances = $instances->where('status', 'connected')->count();
-        $disconnectedInstances = $instances->where('status', '!=', 'connected')->count();
+        return Inertia::render('dashboard', [
+            'stats' => [
+                'instances' => $this->getInstanceStats($scope),
+                'leads' => $this->getLeadStats($scope),
+                'media' => $this->getMediaStats($scope),
+                'agents' => $this->getAgentStats($team, $tenantId),
+            ],
+            'recentLeads' => $this->getRecentLeadsList($scope),
+            'token_stats' => $this->getTokenStats($request),
+            'token_daily_usage' => $this->getTokenDailyUsage($scope),
+            'token_transactions' => $this->getRecentTransactions($scope),
+        ]);
+    }
 
-        // Lead Stats
-        $leads = Lead::where('tenant_id', $tenantId)->get();
-        $totalLeads = $leads->count();
-        $leadsByAiQualification = $leads->groupBy('ai_qualification_status')->map(fn ($group) => $group->count());
-        $leadsByQualificationResult = $leads->groupBy('qualification_result')->map(fn ($group) => $group->count());
-        $leadsByTreatmentStatus = $leads->groupBy('treatment_status')->map(fn ($group) => $group->count());
+    private function getInstanceStats(array $scope): array
+    {
+        $instances = EvolutionInstance::where($scope)->get();
 
-        // Recent leads (last 7 days)
-        $recentLeads = Lead::where('tenant_id', $tenantId)
-            ->where('created_at', '>=', now()->subDays(7))
-            ->count();
+        return [
+            'total' => $instances->count(),
+            'connected' => $instances->where('status', 'connected')->count(),
+            'disconnected' => $instances->where('status', '!=', 'connected')->count(),
+        ];
+    }
 
-        // New today
-        $leadsToday = Lead::where('tenant_id', $tenantId)
-            ->whereDate('created_at', today())
-            ->count();
+    private function getLeadStats(array $scope): array
+    {
+        $leads = Lead::where($scope)->get();
 
-        // Media Stats
-        // $totalMedia = MediaAsset::where('tenant_id', $tenantId)->count();
-        // totale Size
-        $media = MediaAsset::where('tenant_id', $tenantId)->get();
-        $totalMedia = $media->count();
+        return [
+            'total' => $leads->count(),
+            'byAiQualification' => $leads->groupBy('ai_qualification_status')->map(fn ($g) => $g->count()),
+            'byQualificationResult' => $leads->groupBy('qualification_result')->map(fn ($g) => $g->count()),
+            'byTreatmentStatus' => $leads->groupBy('treatment_status')->map(fn ($g) => $g->count()),
+            'recent' => Lead::where($scope)->where('created_at', '>=', now()->subDays(7))->count(),
+            'today' => Lead::where($scope)->whereDate('created_at', today())->count(),
+        ];
+    }
+
+    private function getRecentLeadsList(array $scope): Collection
+    {
+        return Lead::where($scope)
+            ->with('instance')
+            ->latest()
+            ->limit(10)
+            ->get();
+    }
+
+    private function getMediaStats(array $scope): array
+    {
+        $media = MediaAsset::where($scope)->get();
+
         $totalSize = 0;
         foreach ($media as $m) {
-            $mediaFiles = $m->getMedia('assets');
-            foreach ($mediaFiles as $file) {
+            foreach ($m->getMedia('assets') as $file) {
                 $totalSize += $file->size;
             }
         }
 
-        // Agent Stats
-        $totalAgents = AgentConfig::whereHas('instance', function ($query) use ($tenantId) {
-            $query->where('tenant_id', $tenantId);
-        })->count();
+        return [
+            'total' => $media->count(),
+            'totalSize' => $totalSize,
+        ];
+    }
 
-        $activeAgents = AgentConfig::whereHas('instance', function ($query) use ($tenantId) {
-            $query->where('tenant_id', $tenantId);
-        })->where('is_active', true)->count();
+    private function getAgentStats(?Team $team, string $tenantId): array
+    {
+        $query = AgentConfig::when($team, fn ($q) => $q->where('team_id', $team->id))
+            ->whereHas('instance', fn ($q) => $q->where('tenant_id', $tenantId));
 
-        // Token Stats
+        return [
+            'total' => (clone $query)->count(),
+            'active' => (clone $query)->where('is_active', true)->count(),
+        ];
+    }
+
+    private function getTokenStats(Request $request): array
+    {
         $tenant = Tenant::find($request->user()->tenant_id);
-        $tokenStats = [
+
+        return [
             'credit' => (int) $tenant->credit_millicents,
             'is_low_credit' => (bool) $tenant->is_low_credit,
             'threshold' => config('services.token.threshold', 10) * 1000,
             'model' => $tenant->llmModel?->display_name ?? 'DeepSeek (Default)',
         ];
+    }
 
-        // Last 30 days daily usage for chart
-        $tokenDailyUsage = TokenTransactionDaily::where('tenant_id', $tenantId)
+    private function getTokenDailyUsage(array $scope): Collection
+    {
+        return TokenTransactionDaily::where($scope)
             ->where('date', '>=', now()->subDays(30)->toDateString())
             ->orderBy('date')
             ->get();
+    }
 
-        // Last 10 transactions
-        $recentTransactions = TokenTransaction::where('tenant_id', $tenantId)
+    private function getRecentTransactions(array $scope): Collection
+    {
+        return TokenTransaction::where($scope)
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
-
-        // Recent leads for the list
-        $recentLeadsList = Lead::where('tenant_id', $tenantId)
-            ->with('instance')
-            ->latest()
-            ->limit(10)
-            ->get();
-
-        return Inertia::render('dashboard', [
-            'stats' => [
-                'instances' => [
-                    'total' => $totalInstances,
-                    'connected' => $connectedInstances,
-                    'disconnected' => $disconnectedInstances,
-                ],
-                'leads' => [
-                    'total' => $totalLeads,
-                    'byAiQualification' => $leadsByAiQualification,
-                    'byQualificationResult' => $leadsByQualificationResult,
-                    'byTreatmentStatus' => $leadsByTreatmentStatus,
-                    'recent' => $recentLeads,
-                    'today' => $leadsToday,
-                ],
-                'media' => [
-                    'total' => $totalMedia,
-                    'totalSize' => $totalSize,
-                ],
-                'agents' => [
-                    'total' => $totalAgents,
-                    'active' => $activeAgents,
-                ],
-            ],
-            'recentLeads' => $recentLeadsList,
-            'token_stats' => $tokenStats,
-            'token_daily_usage' => $tokenDailyUsage,
-            'token_transactions' => $recentTransactions,
-        ]);
     }
 }
