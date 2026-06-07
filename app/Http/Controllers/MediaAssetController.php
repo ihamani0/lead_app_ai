@@ -54,6 +54,29 @@ class MediaAssetController extends Controller
         ]);
     }
 
+    public function update(Request $request)
+    {
+        $this->authorizeRole($request, ['owner', 'admin']);
+
+        $validated = $request->validate([
+            'category' => 'required|string|max:100',
+            'caption' => 'nullable|string|max:255',
+        ]);
+
+        $asset = $this->findScoped($request, MediaAsset::class, $request->route('id'));
+
+        $asset->update([
+            'category' => strtolower(trim($validated['category'])),
+            'caption' => $validated['caption'],
+        ]);
+
+        $asset->url = $asset->resolved_url;
+
+        return response()->json([
+            'asset' => $asset->fresh()->toArray(),
+        ]);
+    }
+
     public function store(Request $request)
     {
         $this->authorizeRole($request, ['owner', 'admin']);
@@ -61,12 +84,13 @@ class MediaAssetController extends Controller
         try {
 
             $validated = $request->validate([
-                'category' => 'required|string|max:100', // e.g., 'pool', 'apartment_a'
+                'category' => 'required|string|max:100',
                 'type' => 'required|in:image,video',
                 'upload_method' => 'required|in:file,url',
-                'file' => 'required_if:upload_method,file|nullable|file|mimes:jpg,jpeg,png,gif,webp|max:30720', // 30MB max
+                'file' => 'required_if:upload_method,file|nullable|file|mimes:jpg,jpeg,png,gif,webp|max:30720',
                 'external_url' => 'required_if:upload_method,url|nullable|url',
                 'caption' => 'nullable|string|max:255',
+                'agent_config_id' => 'nullable|string|exists:agent_configs,id',
             ]);
 
             $asset = MediaAsset::create($this->withTeam($request, [
@@ -76,6 +100,7 @@ class MediaAssetController extends Controller
                 'external_url' => $request->upload_method === 'url' ? $request->external_url : null,
                 'caption' => $request->caption,
                 'is_active' => true,
+                'agent_config_id' => $validated['agent_config_id'] ?? null,
             ]));
 
             // If file upload, process via Spatie MediaLibrary
@@ -163,9 +188,9 @@ class MediaAssetController extends Controller
                 's3_key' => 'required|string',
                 'mime_type' => 'required|string',
                 'caption' => 'nullable|string|max:255',
+                'agent_config_id' => 'nullable|string|exists:agent_configs,id',
             ]);
 
-            // Verify the file exists on S3
             if (! Storage::disk('s3')->exists($validated['s3_key'])) {
                 Log::error('Media finalize: file not found on S3', [
                     's3_key' => $validated['s3_key'],
@@ -180,6 +205,7 @@ class MediaAssetController extends Controller
                 'type' => $validated['type'],
                 'caption' => $validated['caption'],
                 'is_active' => true,
+                'agent_config_id' => $validated['agent_config_id'] ?? null,
             ]));
 
             Log::info('MediaAsset created', ['asset_id' => $asset->id]);

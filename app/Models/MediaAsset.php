@@ -13,17 +13,22 @@ class MediaAsset extends Model implements HasMedia
 
     protected $guarded = [];
 
-    protected $appends = ['resolved_url'];
+    protected $appends = ['resolved_url', 'size'];
 
     public function getResolvedUrlAttribute()
     {
-        // If they provided a direct link, use it.
         if ($this->external_url) {
             return $this->external_url;
         }
 
-        // Otherwise, get the URL of the uploaded file via Spatie
         return $this->getFirstMediaUrl('assets');
+    }
+
+    public function getSizeAttribute(): ?int
+    {
+        $mediaItem = $this->getMedia('assets')->first();
+
+        return $mediaItem ? (int) round($mediaItem->size / 1024) : null;
     }
 
     public function registerMediaCollections(): void
@@ -39,5 +44,10 @@ class MediaAsset extends Model implements HasMedia
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function agentConfig()
+    {
+        return $this->belongsTo(AgentConfig::class, 'agent_config_id');
     }
 }

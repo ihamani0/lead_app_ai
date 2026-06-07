@@ -8,7 +8,8 @@ import { StepNavigation } from '@/components/wizard/StepNavigation';
 import { Step1CreateInstance } from '@/components/wizard/steps/Step1CreateInstance';
 import { Step2ConnectWhatsApp } from '@/components/wizard/steps/Step2ConnectWhatsApp';
 import { Step3ConfigureAgent } from '@/components/wizard/steps/Step3ConfigureAgent';
-import { Step4KnowledgeBase } from '@/components/wizard/steps/Step4KnowledgeBase';
+import { Step4Media } from '@/components/wizard/steps/Step4Media';
+import { Step5KnowledgeBase } from '@/components/wizard/steps/Step5KnowledgeBase';
 import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import workspaces from '@/routes/workspaces';
@@ -29,14 +30,21 @@ const initialFormData: WizardFormData = {
     qrCode: null,
     connectionStatus: 'disconnected',
     agent_name: '',
-    languages: ['en'],
-    primary_objective: 'answer_questions',
-    tone: 'professional',
+    sector: '',
+    languages: ['francais'],
+    main_objective: 'generer_leads',
+    tone: 'professionnel',
+    response_style: 'equilibree',
+    greeting_message: '',
+    call_to_action: '',
+    max_response_length: '',
+    knowledge_mode: 'strict',
     google_maps_url: '',
     calendar_url: '',
     additional_info: '',
     prompt: '',
     knowledge_files: [],
+    media_files: [],
 };
 
 export default function WizardIndex() {
@@ -52,11 +60,12 @@ export default function WizardIndex() {
         { number: 1, title: t('wizard.steps.create_instance'), icon: 'smartphone' },
         { number: 2, title: t('wizard.steps.connect_whatsapp'), icon: 'qr-code' },
         { number: 3, title: t('wizard.steps.configure_agent'), icon: 'bot' },
-        { number: 4, title: t('wizard.steps.knowledge_base'), icon: 'database' },
+        { number: 4, title: t('wizard.steps.media'), icon: 'media' },
+        { number: 5, title: t('wizard.steps.knowledge_base'), icon: 'database' },
     ];
 
     const handleNext = () => {
-        if (currentStep < 4) {
+        if (currentStep < 5) {
             setCurrentStep((currentStep + 1) as WizardStep);
         }
     };
@@ -68,7 +77,7 @@ export default function WizardIndex() {
     };
 
     const handleSkip = () => {
-        if (currentStep === 4) {
+        if (currentStep === 5) {
             handleComplete();
         }
     };
@@ -92,8 +101,9 @@ export default function WizardIndex() {
         formDataToSend.append('instance_id', formData.instance.id);
         formDataToSend.append('agent_name', formData.agent_name);
         formData.languages.forEach((lang) => formDataToSend.append('languages[]', lang));
-        formDataToSend.append('primary_objective', formData.primary_objective);
+        formDataToSend.append('main_objective', formData.main_objective);
         formDataToSend.append('tone', formData.tone);
+        if (formData.sector) formDataToSend.append('sector', formData.sector);
         if (formData.google_maps_url) formDataToSend.append('google_maps_url', formData.google_maps_url);
         if (formData.calendar_url) formDataToSend.append('calendar_url', formData.calendar_url);
         if (formData.additional_info) formDataToSend.append('additional_info', formData.additional_info);
@@ -101,8 +111,9 @@ export default function WizardIndex() {
         formData.knowledge_files.forEach((file) => {
             formDataToSend.append('knowledge_files[]', file);
         });
-
-        localStorage.setItem('wizard_welcome_dismissed', 'true');
+        formData.media_files.forEach((file) => {
+            formDataToSend.append('media_files[]', file);
+        });
 
         router.post(
             workspaces.wizard.complete({ slug: activeWorkspace.slug }).url,
@@ -144,7 +155,14 @@ export default function WizardIndex() {
                 );
             case 4:
                 return (
-                    <Step4KnowledgeBase
+                    <Step4Media
+                        formData={formData}
+                        setFormData={setFormData}
+                    />
+                );
+            case 5:
+                return (
+                    <Step5KnowledgeBase
                         formData={formData}
                         setFormData={setFormData}
                         onNext={handleComplete}
@@ -199,8 +217,8 @@ export default function WizardIndex() {
                 <StepNavigation
                     currentStep={currentStep}
                     onBack={handleBack}
-                    onNext={currentStep === 4 ? handleComplete : handleNext}
-                    onSkip={currentStep === 4 ? handleSkip : undefined}
+                    onNext={currentStep === 5 ? handleComplete : handleNext}
+                    onSkip={currentStep === 5 ? handleSkip : undefined}
                     isSubmitting={isSubmitting}
                     error={wizardError}
                     canProceed={

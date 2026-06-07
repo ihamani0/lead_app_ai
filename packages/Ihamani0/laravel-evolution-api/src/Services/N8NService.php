@@ -50,7 +50,12 @@ class N8NService extends BaseService
         bool $stopBotFromMe = false,
         bool $keepOpen = false,
         int $debounceTime = 0,
-        array $ignoreJids = []
+        array $ignoreJids = [],
+        bool $splitMessages = false,
+        int $timePerChar = 0,
+        string $systemMessage = '',
+        int $contextWindowSize = 5,
+        string $fallbackMessage = '',
     ): array {
 
         $auth ??= N8NAuth::none();
@@ -58,7 +63,7 @@ class N8NService extends BaseService
         $payload = array_merge(
             [
                 'enabled' => $enabled,
-                'apiUrl' => $apiUrl,
+                'webhookUrl' => $apiUrl,
                 'expire' => $expire,
                 'keywordFinish' => $keywordFinish,
                 'delayMessage' => $delayMessage,
@@ -68,6 +73,11 @@ class N8NService extends BaseService
                 'keepOpen' => $keepOpen,
                 'debounceTime' => $debounceTime,
                 'ignoreJids' => $ignoreJids,
+                'splitMessages' => $splitMessages,
+                'timePerChar' => $timePerChar,
+                'systemMessage' => $systemMessage,
+                'contextWindowSize' => $contextWindowSize,
+                'fallbackMessage' => $fallbackMessage,
             ],
             $trigger->toArray(),
             $auth->toArray(),
@@ -134,12 +144,17 @@ class N8NService extends BaseService
         bool $stopBotFromMe = false,
         bool $keepOpen = false,
         int $debounceTime = 0,
-        array $ignoreJids = []
+        array $ignoreJids = [],
+        bool $splitMessages = false,
+        int $timePerChar = 0,
+        string $systemMessage = '',
+        int $contextWindowSize = 5,
+        string $fallbackMessage = '',
     ): array {
         $payload = array_merge(
             [
                 'enabled' => $enabled,
-                'apiUrl' => $apiUrl,
+                'webhookUrl' => $apiUrl,
                 'expire' => $expire,
                 'keywordFinish' => $keywordFinish,
                 'delayMessage' => $delayMessage,
@@ -149,9 +164,14 @@ class N8NService extends BaseService
                 'keepOpen' => $keepOpen,
                 'debounceTime' => $debounceTime,
                 'ignoreJids' => $ignoreJids,
+                'splitMessages' => $splitMessages,
+                'timePerChar' => $timePerChar,
+                'systemMessage' => $systemMessage,
+                'contextWindowSize' => $contextWindowSize,
+                'fallbackMessage' => $fallbackMessage,
             ],
             $trigger->toArray(),
-            $apiKey ? ['apiKey' => $apiKey] : [],
+            ! empty($apiKey) ? ['apiKey' => $apiKey] : [],
         );
 
         return $this->client->put("n8n/update/{$n8nId}/{$this->client->getInstance()}", $payload);
@@ -198,9 +218,9 @@ class N8NService extends BaseService
         bool $keepOpen = false,
         int $debounceTime = 0,
         array $ignoreJids = [],
-        ?string $n8nIdFallback = null,
-        ?bool $splitMessages = false,
-        ?int $timePerChar = 0
+        ?string $fallbackId = null,
+        bool $splitMessages = false,
+        int $timePerChar = 0,
     ): array {
         $payload = [
             'expire' => $expire,
@@ -212,12 +232,12 @@ class N8NService extends BaseService
             'keepOpen' => $keepOpen,
             'debounceTime' => $debounceTime,
             'ignoreJids' => $ignoreJids,
-            'splitMessages' => $splitMessages ?? false,
-            'timePerChar' => $timePerChar ?? 0,
+            'splitMessages' => $splitMessages,
+            'timePerChar' => $timePerChar,
         ];
 
-        if ($n8nIdFallback) {
-            $payload['n8nIdFallback'] = $n8nIdFallback;
+        if ($fallbackId) {
+            $payload['fallbackId'] = $fallbackId;
         }
 
         return $this->client->post("n8n/settings/{$this->client->getInstance()}", $payload);
@@ -249,17 +269,33 @@ class N8NService extends BaseService
         return $this->client->post("n8n/changeStatus/{$this->client->getInstance()}", [
             'remoteJid' => $remoteJid,
             'status' => $status,
-        ]);
+        ], $this->client->getInstance());
     }
 
     /**
      * Fetch all sessions for a specific N8N bot.
-     *
-     * @param  string  $n8nId  The ID of the N8N bot.
-     * @return array List of sessions.
      */
     public function fetchSessions(string $n8nId): array
     {
-        return $this->client->get("n8n/fetchSessions/{$n8nId}/{$this->client->getInstance()}");
+        return $this->client->get("n8n/fetchSessions/{$n8nId}/{$this->client->getInstance()}", $this->client->getInstance());
+    }
+
+    /**
+     * Fetch all sessions for the active instance.
+     */
+    public function allSessions(): array
+    {
+        return $this->client->get("n8n/allSessions/{$this->client->getInstance()}", $this->client->getInstance());
+    }
+
+    /**
+     * Add or remove a JID from the ignore list.
+     */
+    public function ignoreJid(string $remoteJid, string $action = 'add'): array
+    {
+        return $this->client->post("n8n/ignoreJid/{$this->client->getInstance()}", [
+            'remoteJid' => $remoteJid,
+            'action' => $action,
+        ], $this->client->getInstance());
     }
 }

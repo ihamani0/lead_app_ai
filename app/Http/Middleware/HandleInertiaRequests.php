@@ -55,6 +55,7 @@ class HandleInertiaRequests extends Middleware
                     'email' => $user->email,
                     'role' => $user->role,
                     'is_super_admin' => $user->is_super_admin,
+                    'has_password' => (bool) $user->has_password,
                     'welcome_dismissed_at' => $user->welcome_dismissed_at?->toIsoString() ?? null,
                     'tenant' => [
                         'name' => $user->tenant->name,

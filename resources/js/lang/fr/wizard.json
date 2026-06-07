@@ -15,6 +15,7 @@
         "create_instance": "Create Instance",
         "connect_whatsapp": "Connect WhatsApp",
         "configure_agent": "Configure Agent",
+        "media": "Médias",
         "knowledge_base": "Knowledge Base"
     },
     "step1": {
@@ -54,6 +55,8 @@
         "agent_name": "Agent Name",
         "agent_name_placeholder": "e.g., Sales Assistant",
         "agent_name_required": "Veuillez entrer un nom d'agent avant de finaliser la configuration.",
+        "sector": "Secteur d'activité",
+        "sector_placeholder": "Sélectionnez un secteur",
         "language": "Language",
         "tone": "Communication Tone",
         "objective": "Primary Objective",
@@ -61,7 +64,17 @@
         "prompt_hint": "This prompt will be automatically generated based on your selections."
     },
     "step4": {
-        "title": "Knowledge Base (Optional)",
+        "title": "Médias (Optionnel)",
+        "description": "Ajoutez des images et vidéos que votre agent pourra envoyer aux prospects.",
+        "drop_files": "Déposez vos fichiers ici ou cliquez pour ajouter",
+        "supported_formats": "JPEG, PNG, GIF, WebP, MP4, WebM (max 30MB)",
+        "browse_files": "Parcourir",
+        "uploaded_files": "Fichiers ajoutés",
+        "info_title": "Médias de l'agent",
+        "info_description": "Ces médias seront disponibles pour votre agent afin d'enrichir les conversations avec les prospects. Vous pourrez en ajouter d'autres plus tard."
+    },
+    "step5": {
+        "title": "Knowledge Base (Optionnel)",
         "description": "Upload documents to train your AI agent. You can skip this and add knowledge later.",
         "drop_files": "Drop files here or click to upload",
         "supported_formats": "PDF, DOCX, TXT (max 30MB)",
@@ -78,22 +91,29 @@
         "creating": "Creating..."
     },
     "objectives": {
-        "answer_questions": "Answer customer questions",
-        "generate_leads": "Generate leads",
-        "customer_support": "Provide customer support",
-        "sales_assistant": "Sales assistant"
+        "generer_leads": "Générer des leads qualifiés et prendre des rendez-vous",
+        "support_client": "Assistance et support client",
+        "information": "Fournir des informations et conseils",
+        "vente": "Vente et promotion de produits/services",
+        "qualification": "Qualification et filtrage de prospects",
+        "prise_rdv": "Prise de rendez-vous uniquement"
     },
     "tones": {
-        "professional": "Professional",
-        "friendly": "Friendly",
-        "neutral": "Neutral",
-        "dynamic": "Dynamic"
+        "professionnel": "Professionnel & Expert",
+        "amical": "Amical & Décontracté",
+        "formel": "Formel & Strict",
+        "enthousiaste": "Enthousiaste & Dynamique",
+        "pedagogue": "Pédagogue & Explicatif",
+        "humoristique": "Humoristique & Léger"
     },
-    "languages": {
-        "en": "English",
-        "fr": "French",
-        "ar": "Arabic",
-        "es": "Spanish",
-        "de": "German"
-    }
+        "languages": {
+            "francais": "Français",
+            "arabe": "Arabe",
+            "anglais": "Anglais",
+            "darija": "Darija (الدارجة)",
+            "espagnol": "Espagnol",
+            "allemand": "Allemand",
+            "bilingue_fr_ar": "Bilingue Français/Arabe",
+            "bilingue_fr_en": "Bilingue Français/Anglais"
+        }
 }

@@ -1,4 +1,5 @@
-import { Check, ChevronsUpDown, Code, Globe, Info, MapPin, MessageSquareText, Calendar } from 'lucide-react';
+import { Check, ChevronDown, ChevronsUpDown, ChevronUp, Globe, Info, MapPin, MessageSquareText, Calendar, Settings } from 'lucide-react';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -26,7 +27,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/hooks/use-translation';
 import { cn } from '@/lib/utils';
-import { LANGUAGES, OBJECTIVES, TONES } from '@/types/wizard';
+import { SECTORS, LANGUAGES, OBJECTIVES, TONES, RESPONSE_STYLES, CALL_TO_ACTIONS, KNOWLEDGE_MODES } from '@/types/wizard';
 import type { WizardFormData } from '@/types/wizard';
 
 interface Step3ConfigureAgentProps {
@@ -39,6 +40,7 @@ export function Step3ConfigureAgent({
     setFormData,
 }: Step3ConfigureAgentProps) {
     const { t } = useTranslation();
+    const [advancedOpen, setAdvancedOpen] = useState(false);
 
     const updateField = (field: keyof WizardFormData, value: string) => {
         setFormData((prev: WizardFormData) => ({
@@ -68,22 +70,6 @@ export function Step3ConfigureAgent({
         })
         .join(', ');
 
-    const buildConfigJson = () => {
-        const config: Record<string, unknown> = {
-            agent_name: formData.agent_name || null,
-            languages: formData.languages.length > 0 ? formData.languages : null,
-            primary_objective: formData.primary_objective || null,
-            tone: formData.tone || null,
-        };
-
-        if (formData.google_maps_url) config.google_maps_url = formData.google_maps_url;
-        if (formData.calendar_url) config.calendar_url = formData.calendar_url;
-        if (formData.additional_info) config.additional_info = formData.additional_info;
-        if (formData.prompt) config.prompt = formData.prompt;
-
-        return JSON.stringify(config, null, 2);
-    };
-
     return (
         <div className="space-y-6">
             <div>
@@ -108,6 +94,25 @@ export function Step3ConfigureAgent({
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                        <Label>{t('wizard.step3.sector')}</Label>
+                        <Select
+                            value={formData.sector}
+                            onValueChange={(value) => updateField('sector', value)}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder={t('wizard.step3.sector_placeholder')} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {SECTORS.map((s) => (
+                                    <SelectItem key={s.value} value={s.value}>
+                                        {t(s.labelKey)}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+
                     <div className="space-y-2">
                         <Label>
                             {t('wizard.step3.language')} <span className="text-destructive">*</span>
@@ -210,8 +215,8 @@ export function Step3ConfigureAgent({
                         {t('wizard.step3.objective')} <span className="text-destructive">*</span>
                     </Label>
                     <Select
-                        value={formData.primary_objective}
-                        onValueChange={(value) => updateField('primary_objective', value)}
+                        value={formData.main_objective}
+                        onValueChange={(value) => updateField('main_objective', value)}
                     >
                         <SelectTrigger>
                             <SelectValue />
@@ -294,19 +299,108 @@ export function Step3ConfigureAgent({
                 </p>
             </div>
 
-            <div className="space-y-2">
-                <Label className="flex items-center gap-2">
-                    <Code className="h-4 w-4" />
-                    {t('wizard.step3.config_preview')}
-                </Label>
-                <Textarea
-                    value={buildConfigJson()}
-                    readOnly
-                    rows={12}
-                    className="bg-muted/50 font-mono text-xs"
-                />
+            {/* Advanced options */}
+            <div className="rounded-lg border">
+                <button
+                    type="button"
+                    onClick={() => setAdvancedOpen((v) => !v)}
+                    className="flex w-full items-center justify-between p-4 text-left"
+                >
+                    <div className="flex items-center gap-2">
+                        <Settings className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">Options avancées</span>
+                    </div>
+                    {advancedOpen ? (
+                        <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                    ) : (
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                    )}
+                </button>
+                {advancedOpen && (
+                    <div className="border-t p-4 space-y-4">
+                        <div className="space-y-2">
+                            <Label>Style de réponse</Label>
+                            <Select
+                                value={formData.response_style}
+                                onValueChange={(value) => updateField('response_style', value)}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {RESPONSE_STYLES.map((rs) => (
+                                        <SelectItem key={rs.value} value={rs.value}>
+                                            {t(rs.labelKey)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="greeting_message">Message d'accueil</Label>
+                            <Input
+                                id="greeting_message"
+                                value={formData.greeting_message}
+                                onChange={(e) => updateField('greeting_message', e.target.value)}
+                                placeholder="Bonjour ! Comment puis-je vous aider ?"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Call to action</Label>
+                            <Select
+                                value={formData.call_to_action}
+                                onValueChange={(value) => updateField('call_to_action', value)}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder="Choisissez un CTA" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {CALL_TO_ACTIONS.map((cta) => (
+                                        <SelectItem key={cta.value} value={cta.value}>
+                                            {t(cta.labelKey)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Mode de connaissances</Label>
+                            <Select
+                                value={formData.knowledge_mode}
+                                onValueChange={(value) => updateField('knowledge_mode', value)}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {KNOWLEDGE_MODES.map((km) => (
+                                        <SelectItem key={km.value} value={km.value}>
+                                            {t(km.labelKey)}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label>Longueur max des réponses</Label>
+                            <Input
+                                type="number"
+                                value={formData.max_response_length}
+                                onChange={(e) => updateField('max_response_length', e.target.value)}
+                                placeholder="500"
+                            />
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <div className="rounded-lg bg-muted/30 p-4">
                 <p className="text-xs text-muted-foreground">
-                    {t('wizard.step3.config_hint')}
+                    Le prompt système sera généré automatiquement à partir de ces paramètres.
                 </p>
             </div>
         </div>

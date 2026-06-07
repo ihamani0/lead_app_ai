@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Events\QulificationUpdate;
 use App\Http\Controllers\Controller;
+use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
 use App\Models\KnowledgeBase;
 use App\Models\Lead;
@@ -66,13 +67,55 @@ class N8nIntegrationController extends Controller
     }
 
     // 2. AI TOOL: Fetch Media
-    public function getMedia(Request $request)
-    {
-        Log::info('request media', $request->all());
-        // n8n sends: { "instance": "...", "category": "pool" }
+    // public function getMedia(Request $request,AgentConfig $agent )
+    // {
+    //     // Defensive: unwrap double-encoded category
+    //     $categoryRaw = $request->query('category') ?? "project_general";
+    //     if (is_string($categoryRaw)) {
+    //         $decoded = json_decode($categoryRaw, true);
+    //         $category = is_array($decoded) && isset($decoded['category'])
+    //             ? $decoded['category']
+    //             : $categoryRaw;
+    //     } else {
+    //         $category = $categoryRaw;
+    //     }
 
-        // Defensive: unwrap if AI sent {"category": "..."} as string
-        $categoryRaw = $request->category;
+    //     $query = MediaAsset::where('agent_config_id', $agent->id)
+    //         ->where('team_id', $agent->team_id)
+    //         ->where('is_active', true);
+
+    //     if (! empty($category)) {
+    //         $query->where('category', 'LIKE', '%'.$category.'%');
+    //     }
+
+    //     $assets = $query->get();
+
+    //     if ($assets->isEmpty()) {
+    //         $assets = MediaAsset::whereNull('agent_config_id')
+    //             ->where('team_id', $agent->team_id)
+    //             ->where('is_active', true)
+    //             ->where('is_default', true)
+    //             ->limit(5)
+    //             ->get();
+    //     }
+
+    //     $formattedAssets = $assets->map(fn ($asset) => [
+    //         'type' => $asset->type,
+    //         'url' => $asset->resolved_url,
+    //         'caption' => $asset->caption,
+    //     ]);
+
+    //     return response()->json(['assets' => $formattedAssets]);
+    // }
+
+    public function getMedia(Request $request, AgentConfig $agent)
+    {
+        Log::info('agent', [
+            'agent id ' => $agent->id,
+            'team id' => $agent->team_id,
+        ]);
+
+        $categoryRaw = $request->query('category');
 
         if (is_string($categoryRaw)) {
             $decoded = json_decode($categoryRaw, true);
@@ -83,23 +126,45 @@ class N8nIntegrationController extends Controller
             $category = $categoryRaw;
         }
 
-        $tenantId = $this->getTenantId($request->instance);
+        Log::info('[getMedia] Category resolved', [
+            'raw' => $categoryRaw,
+            'clean' => $category ?? '(null)',
+        ]);
 
-        $query = MediaAsset::where('tenant_id', $tenantId)
+        Log::info('[getMedia] Agent resolved', [
+            'agent_config_id' => $agent->id,
+            'team_id' => $agent->team_id,
+        ]);
+
+        $query = MediaAsset::where('agent_config_id', $agent->id)
+            ->where('team_id', $agent->team_id)
             ->where('is_active', true);
 
         if (! empty($category)) {
             $query->where('category', 'LIKE', '%'.$category.'%');
         }
 
+        // Log the SQL for debugging
+        $sql = $query->toSql();
+        $bindings = $query->getBindings();
+        Log::info('[getMedia] SQL query', ['sql' => $sql, 'bindings' => $bindings]);
+
         $assets = $query->get();
 
+        Log::info('[getMedia] Query result', ['count' => $assets->count()]);
+
         if ($assets->isEmpty()) {
-            $assets = MediaAsset::where('tenant_id', $tenantId)
+            Log::info('[getMedia] No assets found, falling back to team defaults', [
+                'team_id' => $agent->team_id,
+            ]);
+
+            $assets = MediaAsset::where('agent_config_id', $agent->id)
+                ->where('team_id', $agent->team_id)
                 ->where('is_active', true)
                 ->where('is_default', true)
-                ->limit(5)
                 ->get();
+
+            Log::info('[getMedia] Fallback result', ['count' => $assets->count()]);
         }
 
         $formattedAssets = $assets->map(fn ($asset) => [
@@ -108,9 +173,7 @@ class N8nIntegrationController extends Controller
             'caption' => $asset->caption,
         ]);
 
-        Log::info('category resolved', ['raw' => $request->category, 'clean' => $category]);
-        Log::info('tenant found', ['tenant_id' => $tenantId]);
-        Log::info('assets count', ['count' => $assets->count()]);
+        Log::info('[getMedia] Response', ['assets_count' => count($formattedAssets)]);
 
         return response()->json(['assets' => $formattedAssets]);
     }

@@ -137,7 +137,6 @@ class LeadIntegrationController extends Controller
                 'is_active' => $agentConfig->is_active,
                 'settings' => $agentConfig->settings,
             ],
-            'system_prompt' => $agentConfig->system_prompt, // Only once here
             'has_sufficient_tokens' => ! $tenant->isBelowThreshold(),
         ]);
     }

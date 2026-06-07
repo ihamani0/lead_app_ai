@@ -2,15 +2,10 @@
 
 namespace Ihamani0\LaravelEvolutionApi\Services;
 
-/**
- * SettingsService
- *
- * Manages instance-level behavior settings.
- * All methods require an active instance via setInstance().
- */
 class SettingsService extends BaseService
 {
     public function set(
+        string $uuid,
         bool $rejectCall = false,
         string $msgCall = '',
         bool $groupsIgnore = false,
@@ -19,25 +14,17 @@ class SettingsService extends BaseService
         bool $readStatus = false,
         bool $syncFullHistory = false,
     ): array {
-
-        return $this->client->post("settings/set/{$this->client->getInstance()}", [
-            'rejectCall' => $rejectCall,
-            'msgCall' => $msgCall,
-            'groupsIgnore' => $groupsIgnore,
-            'alwaysOnline' => $alwaysOnline,
+        return $this->client->put("instance/{$uuid}/advanced-settings", [
+            'rejectCalls' => $rejectCall,
+            'rejectCallMessage' => $msgCall,
             'readMessages' => $readMessages,
             'readStatus' => $readStatus,
-            'syncFullHistory' => $syncFullHistory,
-        ]);
+            'alwaysOnline' => $alwaysOnline,
+        ], $this->client->getInstance());
     }
 
-    /**
-     * Retrieve the current settings of the active instance.
-     *
-     * @return array The API response containing current settings.
-     */
-    public function find(): array
+    public function find(string $uuid): array
     {
-        return $this->client->get("settings/find/{$this->client->getInstance()}");
+        return $this->client->get("instance/{$uuid}/advanced-settings", $this->client->getInstance());
     }
 }

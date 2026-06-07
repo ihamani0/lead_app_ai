@@ -1,6 +1,13 @@
 // components/media/StatsCards.tsx
-import { Image as ImageIcon, Video } from 'lucide-react';
+import { FileText, HardDrive, Image as ImageIcon, Video } from 'lucide-react';
 import type { Asset } from '@/types';
+
+function formatStorage(kb: number): string {
+    if (kb === 0) return '0 KB';
+    const units = ['KB', 'MB', 'GB'];
+    const i = Math.min(Math.floor(Math.log(kb) / Math.log(1024)), units.length - 1);
+    return (kb / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + ' ' + units[i];
+}
 
 interface StatsCardsProps {
     assets: Asset[];
@@ -9,8 +16,18 @@ interface StatsCardsProps {
 export function StatsCards({ assets }: StatsCardsProps) {
     const images = assets.filter((a) => a.type === 'image').length;
     const videos = assets.filter((a) => a.type === 'video').length;
+    const totalCount = assets.length;
+    const totalSizeKB = assets.reduce((sum, a) => sum + (parseFloat(a.size ?? '0') || 0), 0);
 
     const stats = [
+        {
+            icon: FileText,
+            label: 'Total',
+            count: totalCount,
+            gradient: 'from-slate-500/10 to-gray-500/10',
+            border: 'border-slate-500/20',
+            text: 'text-slate-600 dark:text-slate-400',
+        },
         {
             icon: ImageIcon,
             label: 'Images',
@@ -26,6 +43,14 @@ export function StatsCards({ assets }: StatsCardsProps) {
             gradient: 'from-blue-500/10 to-cyan-500/10',
             border: 'border-blue-500/20',
             text: 'text-blue-600 dark:text-blue-400',
+        },
+        {
+            icon: HardDrive,
+            label: 'Storage',
+            count: formatStorage(totalSizeKB),
+            gradient: 'from-amber-500/10 to-yellow-500/10',
+            border: 'border-amber-500/20',
+            text: 'text-amber-600 dark:text-amber-400',
         },
     ];
 

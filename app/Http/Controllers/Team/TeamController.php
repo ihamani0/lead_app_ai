@@ -58,8 +58,6 @@ class TeamController extends Controller
             ->where('is_active', true)
             ->count();
 
-            
-
         return Inertia::render('Workspace/Index', [
             'workspaces' => $teams,
             'canCreate' => true,

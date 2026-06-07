@@ -9,19 +9,6 @@ import { useTranslation } from '@/hooks/use-translation';
 import workspaces from '@/routes/workspaces';
 import type { Auth } from '@/types/auth';
 
-const STORAGE_KEY = 'wizard_welcome_dismissed';
-const EXPIRY_DAYS = 30;
-
-function isExpired(dismissedAt: string | null): boolean {
-    if (!dismissedAt) return false;
-
-    const dismissed = new Date(dismissedAt).getTime();
-    const now = Date.now();
-    const diffDays = (now - dismissed) / (1000 * 60 * 60 * 24);
-
-    return diffDays >= EXPIRY_DAYS;
-}
-
 export function DashboardWelcomeOverlay() {
     const { t } = useTranslation();
     const activeWorkspace = useActiveWorkspace()!;
@@ -30,14 +17,7 @@ export function DashboardWelcomeOverlay() {
     const [dismissing, setDismissing] = useState(false);
 
     useEffect(() => {
-        const serverDismissedAt = auth.user?.welcome_dismissed_at ?? null;
-        const sessionDismissed = localStorage.getItem(STORAGE_KEY) === 'true';
-
-        if (serverDismissedAt && !isExpired(serverDismissedAt)) {
-            return;
-        }
-
-        if (sessionDismissed && !serverDismissedAt) {
+        if (auth.user?.welcome_dismissed_at) {
             return;
         }
 
@@ -47,7 +27,6 @@ export function DashboardWelcomeOverlay() {
 
     const dismiss = () => {
         setDismissing(true);
-        localStorage.setItem(STORAGE_KEY, 'true');
 
         axios
             .post(
@@ -56,6 +35,7 @@ export function DashboardWelcomeOverlay() {
             .then(() => {
                 setVisible(false);
                 setDismissing(false);
+                router.reload({ only: ['auth'] });
             })
             .catch(() => {
                 setVisible(false);

@@ -74,7 +74,7 @@ class EvolutionInstanceController extends Controller
             displayName: $request->display_name ?? $request->name
         );
 
-        $instanceToken = Str::random(32);
+        $instanceToken = (string) Str::uuid();
 
         try {
             DB::transaction(function () use ($request, $evolutionService, $evolutionInstanceName, $instanceToken, $user) {
@@ -86,15 +86,22 @@ class EvolutionInstanceController extends Controller
                     );
                 }
 
-                EvolutionInstance::create($this->withTeam($request, [
+                $responseData = $response['data'];
+                $apiToken = $responseData['token'] ?? $instanceToken;
+                $uuid = $responseData['id'];
+
+                // 3. Create DB record
+                $instance = EvolutionInstance::create($this->withTeam($request, [
                     'tenant_id' => $user->tenant_id,
                     'instance_name' => $evolutionInstanceName,
                     'display_name' => $request->display_name,
                     'phone_number' => $request->phone_number,
-                    'settings' => [
-                        'token' => $instanceToken,
-                    ],
+                    'api_token' => $apiToken,
+                    'uuid' => $uuid,
                 ]));
+
+                // 4. Connect immediately — configures webhook + subscribes to ALL events
+                $evolutionService->connectInstance($instance);
 
                 return back()->with('success', __('messages.success.instance_create'));
             });
@@ -122,14 +129,12 @@ class EvolutionInstanceController extends Controller
 
         $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
 
-        $settings = $instance->settings ?? [];
-        $settings['was_connected'] = false;
         $instance->update([
-            'settings' => $settings,
             'status' => 'connecting',
         ]);
 
-        $service->fetchQrCode($instance->instance_name);
+        // $service->connectInstance($instance);
+        $service->fetchQrCode($instance);
 
         return back();
     }
@@ -140,7 +145,7 @@ class EvolutionInstanceController extends Controller
 
         $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
 
-        $response = $evolutionService->restartInstance($instance->instance_name);
+        $response = $evolutionService->restartInstance($instance);
 
         $instance->update(['status' => 'connecting']);
         broadcast(new InstanceConnectionUpdated($instance));
@@ -161,7 +166,7 @@ class EvolutionInstanceController extends Controller
         try {
             DB::transaction(function () use ($instance, $evolutionService) {
                 try {
-                    $evolutionService->logoutInstance($instance->instance_name);
+                    $evolutionService->logoutInstance($instance);
                 } catch (Exception $e) {
                     Log::warning("Evolution API logout failed for {$instance->instance_name}: ".$e->getMessage());
                 }
@@ -201,9 +206,9 @@ class EvolutionInstanceController extends Controller
             DB::transaction(function () use ($instance, $evolutionService) {
                 try {
                     if ($instance->status !== 'disconnected') {
-                        $evolutionService->logoutInstance($instance->instance_name);
+                        $evolutionService->logoutInstance($instance);
                     }
-                    $evolutionService->deleteInstance($instance->instance_name);
+                    $evolutionService->deleteInstance($instance);
                 } catch (Exception $e) {
                     Log::warning('Evolution delete failed: '.$e->getMessage());
                 }
@@ -243,7 +248,7 @@ class EvolutionInstanceController extends Controller
             ->findOrFail($request->route('id'));
 
         try {
-            $evolutionService->deleteInstance($instance->instance_name);
+            $evolutionService->deleteInstance($instance);
             $instance->forceDelete();
 
             return back()->with('success', __('messages.success.instance_force_deleted'));
@@ -290,7 +295,8 @@ class EvolutionInstanceController extends Controller
                     }
 
                     $instance->instance_name = $newInstanceName;
-                    $settings['token'] = $newToken;
+                    $instance->api_token = $response['token'] ?? $newToken;
+                    $instance->uuid = $response['instanceId'] ?? $response['id'] ?? null;
                     $settings['recreated_at'] = now()->toIso8601String();
                     $settings['original_instance_name'] = $settings['previous_instance_name'] ?? null;
                     unset($settings['needs_recreation'], $settings['reserved_instance_name']);
@@ -300,6 +306,8 @@ class EvolutionInstanceController extends Controller
 
                 $instance->update([
                     'status' => 'disconnected',
+                    'api_token' => $instance->api_token,
+                    'uuid' => $instance->uuid,
                     'settings' => $settings,
                 ]);
             });

@@ -15,6 +15,7 @@
             "create_instance": "Create Instance",
             "connect_whatsapp": "Connect WhatsApp",
             "configure_agent": "Configure Agent",
+            "media": "Media",
             "knowledge_base": "Knowledge Base"
         },
         "step1": {
@@ -54,6 +55,8 @@
             "agent_name": "Agent Name",
             "agent_name_placeholder": "e.g., Sales Assistant",
         "agent_name_required": "Please enter an agent name before completing setup.",
+            "sector": "Business Sector",
+            "sector_placeholder": "Select a sector",
             "language": "Language",
             "tone": "Communication Tone",
             "objective": "Primary Objective",
@@ -61,6 +64,16 @@
             "prompt_hint": "This prompt will be automatically generated based on your selections."
         },
         "step4": {
+            "title": "Media (Optional)",
+            "description": "Add images and videos that your agent can send to prospects.",
+            "drop_files": "Drop files here or click to upload",
+            "supported_formats": "JPEG, PNG, GIF, WebP, MP4, WebM (max 30MB)",
+            "browse_files": "Browse Files",
+            "uploaded_files": "Uploaded Files",
+            "info_title": "Agent Media",
+            "info_description": "These media files will be available for your agent to enrich conversations with prospects. You can add more later."
+        },
+        "step5": {
             "title": "Knowledge Base (Optional)",
             "description": "Upload documents to train your AI agent. You can skip this and add knowledge later.",
             "drop_files": "Drop files here or click to upload",
@@ -78,22 +91,42 @@
             "creating": "Creating..."
         },
         "objectives": {
-            "answer_questions": "Answer customer questions",
-            "generate_leads": "Generate leads",
-            "customer_support": "Provide customer support",
-            "sales_assistant": "Sales assistant"
+            "generer_leads": "Generate qualified leads & book appointments",
+            "support_client": "Customer support & assistance",
+            "information": "Provide information & advice",
+            "vente": "Sell & promote products/services",
+            "qualification": "Qualify & filter prospects",
+            "prise_rdv": "Book appointments only"
         },
         "tones": {
-            "professional": "Professional",
-            "friendly": "Friendly",
-            "neutral": "Neutral",
-            "dynamic": "Dynamic"
+            "professionnel": "Professional & Expert",
+            "amical": "Friendly & Casual",
+            "formel": "Formal & Strict",
+            "enthousiaste": "Enthusiastic & Dynamic",
+            "pedagogue": "Educational & Explanatory",
+            "humoristique": "Humorous & Light"
         },
         "languages": {
-            "en": "English",
-            "fr": "French",
-            "ar": "Arabic",
-            "es": "Spanish",
-            "de": "German"
+            "francais": "French",
+            "arabe": "Arabic",
+            "anglais": "English",
+            "darija": "Darija",
+            "espagnol": "Spanish",
+            "allemand": "German",
+            "bilingue_fr_ar": "Bilingual French/Arabic",
+            "bilingue_fr_en": "Bilingual French/English"
+        },
+        "sectors": {
+            "immobilier": "Real Estate",
+            "automobile": "Automotive",
+            "assurance": "Insurance",
+            "banque": "Banking",
+            "sante": "Healthcare",
+            "education": "Education",
+            "commerce": "Retail",
+            "voyage": "Travel",
+            "restauration": "Restaurant",
+            "service": "Service",
+            "autre": "Other"
         }
     }

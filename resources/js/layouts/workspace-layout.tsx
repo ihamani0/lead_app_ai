@@ -150,7 +150,7 @@ export default function WorkspaceLayout({ children, title }: Props) {
 
             <AppContent>{children}</AppContent>
 
-            <Toaster position="top-center" />
+            <Toaster position="top-center"   />
         </AppShell>
     );
 }

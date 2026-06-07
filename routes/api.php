@@ -1,15 +1,19 @@
 <?php
 
+use App\Http\Controllers\AgentController;
 use App\Http\Controllers\Api\LeadIntegrationController;
 use App\Http\Controllers\Api\N8nIntegrationController;
 use App\Http\Controllers\Api\TokenStatusController;
 use App\Http\Controllers\Api\TokenUsageController;
+use App\Http\Controllers\TestAiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+Route::post('/test-ai/callback', [TestAiController::class, 'callback']);
 
 Route::group(['prefix' => 'n8n', 'middleware' => 'auth:sanctum'], function () {
 
@@ -28,13 +32,14 @@ Route::group(['prefix' => 'n8n', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/instance/agent-config', [LeadIntegrationController::class, 'getAgentConfig']);
 
     // . Get Media (Replaces Google Sheet Media)
-    Route::post('/assets/media', [N8nIntegrationController::class, 'getMedia']);
+    Route::get('/assets/media/{agent}', [N8nIntegrationController::class, 'getMedia']);
 
     // . put updateLead
     Route::put('/update/score/lead', [N8nIntegrationController::class, 'updateLead']);
 
     // 2. Download Document
-    Route::get('/knowledge/download/{id}', [N8nIntegrationController::class, 'download'])->name('knowledge.download');
+    // Route::get('/knowledge/download/{id}', [N8nIntegrationController::class, 'download'])->name('knowledge.download');
+    Route::get('/workspaces/{slug}/agents/{agent}/download/{id}', [AgentController::class, 'knowledgeDownload'])->name('workspaces.agents.knowledge.download');
 
     // 3. Mark Document as Indexed (Replaces Google Sheet Update)
     Route::post('/knowledge/mark-indexed', [N8nIntegrationController::class, 'markAsIndexed']);

@@ -15,8 +15,7 @@
  * - Knowledge Base (document ingestion for agents)
  * - Per-workspace team management (invite, members, roles, invitations)
  */
-use App\Http\Controllers\AgentBotController;
-use App\Http\Controllers\AgentWizardController;
+use App\Http\Controllers\AgentController;
 use App\Http\Controllers\Api\WorkspaceStatsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvolutionInstanceController;
@@ -28,6 +27,7 @@ use App\Http\Controllers\Team\TeamController;
 use App\Http\Controllers\Team\TeamInvitationController;
 use App\Http\Controllers\Team\TeamMemberController;
 use App\Http\Controllers\Team\TeamRoleController;
+use App\Http\Controllers\TestAiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,29 +56,44 @@ Route::prefix('workspaces/{slug}')->middleware('workspace')->group(function () {
     /*
      * Agents — AI bot configuration
      */
-    Route::get('/agents', [AgentBotController::class, 'index'])->name('workspaces.agents.index');
-    Route::post('/agents', [AgentBotController::class, 'store'])->name('workspaces.agents.store');
-    Route::get('/agents/{agent}/prompt-history', [AgentBotController::class, 'promptHistory'])->name('workspaces.agents.prompt-history');
-    Route::post('/agents/{agent}/link-instance', [AgentBotController::class, 'linkInstance'])->name('workspaces.agents.link-instance');
-    Route::post('/agents/{agent}/unlink-instance', [AgentBotController::class, 'unlinkInstance'])->name('workspaces.agents.unlink-instance');
-    Route::post('/agents/{agent}/clone', [AgentBotController::class, 'clone'])->name('workspaces.agents.clone');
-    Route::patch('/agents/{agent}/toggle', [AgentBotController::class, 'toggle'])->name('workspaces.agents.toggle');
-    Route::patch('/agents/{agent}/settings', [AgentBotController::class, 'updateSettings'])->name('workspaces.agents.update-settings');
-    Route::post('/agents/{agent}/reset-prompt', [AgentBotController::class, 'resetSystemPrompt'])->name('workspaces.agents.reset-prompt');
-    Route::post('/agents/{agent}/restore-prompt/{version}', [AgentBotController::class, 'restorePrompt'])->name('workspaces.agents.restore-prompt');
-    Route::delete('/agents/{agent}', [AgentBotController::class, 'destroy'])->name('workspaces.agents.destroy');
-    Route::put('/agents/{agent}', [AgentBotController::class, 'update'])->name('workspaces.agents.update');
-    Route::get('/agents/{agent}', [AgentBotController::class, 'show'])->name('workspaces.agents.show');
+    Route::get('/agents', [AgentController::class, 'index'])->name('workspaces.agents.index');
+    Route::post('/agents', [AgentController::class, 'store'])->name('workspaces.agents.store');
+    Route::get('/agents/{agent}/prompt-history', [AgentController::class, 'promptHistory'])->name('workspaces.agents.prompt-history');
+    Route::post('/agents/{agent}/link-instance', [AgentController::class, 'linkInstance'])->name('workspaces.agents.link-instance');
+    Route::post('/agents/{agent}/unlink-instance', [AgentController::class, 'unlinkInstance'])->name('workspaces.agents.unlink-instance');
+    Route::post('/agents/{agent}/clone', [AgentController::class, 'clone'])->name('workspaces.agents.clone');
+    Route::patch('/agents/{agent}/toggle', [AgentController::class, 'toggle'])->name('workspaces.agents.toggle');
+    Route::patch('/agents/{agent}/settings', [AgentController::class, 'updateSettings'])->name('workspaces.agents.update-settings');
+    Route::post('/agents/{agent}/reset-prompt', [AgentController::class, 'resetSystemPrompt'])->name('workspaces.agents.reset-prompt');
+    Route::post('/agents/{agent}/restore-identity/{version}', [AgentController::class, 'restoreIdentitySettings'])->name('workspaces.agents.restore-identity');
+    Route::delete('/agents/{agent}', [AgentController::class, 'destroy'])->name('workspaces.agents.destroy');
+    Route::put('/agents/{agent}', [AgentController::class, 'update'])->name('workspaces.agents.update');
+    Route::get('/agents/{agent}', [AgentController::class, 'show'])->name('workspaces.agents.show');
+
+    // Agent-scoped test IA
+    Route::post('/agents/{agent}/test/send', [TestAiController::class, 'send'])->name('workspaces.agents.test.send');
+    Route::post('/agents/{agent}/test/clear', [TestAiController::class, 'clear'])->name('workspaces.agents.test.clear');
+
+    // Agent-scoped instance connection (axios-based)
+    Route::post('/agents/{agent}/qr', [AgentController::class, 'fetchQr'])->name('workspaces.agents.qr');
+    Route::post('/agents/{agent}/disconnect', [AgentController::class, 'disconnect'])->name('workspaces.agents.disconnect');
+    Route::put('/agents/{agent}/restart', [AgentController::class, 'restart'])->name('workspaces.agents.restart');
+    Route::post('/agents/{agent}/create-instance', [AgentController::class, 'createInstance'])->name('workspaces.agents.create-instance');
+
+    // Agent-scoped knowledge routes
+    Route::post('/agents/{agent}/knowledge', [AgentController::class, 'knowledgeStore'])->name('workspaces.agents.knowledge.store');
+    Route::delete('/agents/{agent}/knowledge/{id}', [AgentController::class, 'knowledgeDestroy'])->name('workspaces.agents.knowledge.destroy');
+    Route::get('/agents/{agent}/knowledge/{id}/download', [AgentController::class, 'knowledgeDownload'])->name('workspaces.agents.document.download');
 
     /*
      * Wizard — Guided agent setup flow
      */
     Route::prefix('wizard')->group(function () {
-        Route::get('/', [AgentWizardController::class, 'index'])->name('workspaces.wizard.index');
-        Route::post('/instance', [AgentWizardController::class, 'createInstance'])->name('workspaces.wizard.instance');
-        Route::post('/qr', [AgentWizardController::class, 'fetchQr'])->name('workspaces.wizard.qr');
-        Route::post('/complete', [AgentWizardController::class, 'completeSetup'])->name('workspaces.wizard.complete');
-        Route::post('/dismiss-welcome', [AgentWizardController::class, 'dismissWelcome'])->name('workspaces.wizard.dismiss-welcome');
+        Route::get('/', [AgentController::class, 'wizardIndex'])->name('workspaces.wizard.index');
+        Route::post('/instance', [AgentController::class, 'wizardCreateInstance'])->name('workspaces.wizard.instance');
+        Route::post('/qr', [AgentController::class, 'wizardFetchQr'])->name('workspaces.wizard.qr');
+        Route::post('/complete', [AgentController::class, 'completeSetup'])->name('workspaces.wizard.complete');
+        Route::post('/dismiss-welcome', [AgentController::class, 'dismissWelcome'])->name('workspaces.wizard.dismiss-welcome');
     });
 
     /*
@@ -100,6 +115,7 @@ Route::prefix('workspaces/{slug}')->middleware('workspace')->group(function () {
     Route::get('/media', [MediaAssetController::class, 'index'])->name('workspaces.media.index');
     Route::post('/media', [MediaAssetController::class, 'store'])->name('workspaces.media.store');
 
+    Route::put('/media/{id}', [MediaAssetController::class, 'update'])->name('workspaces.media.update');
     Route::delete('/media/{id}', [MediaAssetController::class, 'destroy'])->name('workspaces.media.destroy');
     Route::post('/media/{id}/toggle-default', [MediaAssetController::class, 'toggleDefault'])->name('workspaces.media.toggle-default');
 

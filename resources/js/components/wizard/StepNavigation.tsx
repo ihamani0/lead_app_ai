@@ -22,7 +22,7 @@ export function StepNavigation({
     error,
 }: StepNavigationProps) {
     const { t } = useTranslation();
-    const isLastStep = currentStep === 4;
+    const isLastStep = currentStep === 5;
 
     return (
         <div className="space-y-4">

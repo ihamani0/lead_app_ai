@@ -7,8 +7,10 @@ use App\Observers\TenantObserver;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Log;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -27,6 +29,16 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         Tenant::observe(TenantObserver::class);
+
+        // Http::globalRequestMiddleware(function ($request) {
+        //     Log::info('HTTP OUT', [
+        //         'method' => $request->getMethod(),
+        //         'url' => (string) $request->getUri(),
+        //         'body' => (string) $request->getBody(),
+        //     ]);
+
+        //     return $request;
+        // });
     }
 
     /**

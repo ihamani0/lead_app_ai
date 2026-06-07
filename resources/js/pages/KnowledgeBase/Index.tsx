@@ -1,4 +1,5 @@
 import { Head, router, useForm } from '@inertiajs/react';
+import { useEcho } from '@laravel/echo-react';
 import {
     FileText,
     UploadCloud,
@@ -13,6 +14,7 @@ import {
     Download,
 } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -57,13 +59,15 @@ interface KnowledgeBaseIndexProps {
     agents: AgentConfig[];
     canCreate: boolean;
     canManage: boolean;
+    tenantId: string;
 }
 
 export default function KnowledgeBaseIndex({
-    documents,
+    documents: initialDocuments,
     agents,
     canCreate,
     canManage,
+    tenantId,
 }: KnowledgeBaseIndexProps) {
     const activeWorkspace = useActiveWorkspace();
     const { t } = useTranslation();
@@ -82,6 +86,24 @@ export default function KnowledgeBaseIndex({
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragActive, setDragActive] = useState(false);
     const [agentFilter, setAgentFilter] = useState<string>('all');
+    const [documents, setDocuments] = useState(initialDocuments);
+
+    const channel = `knowledge-base.${tenantId}`;
+    useEcho(channel, ['DocumentStatusUpdated'], (event: { documentId: string; status: string; documentName: string }) => {
+        setDocuments((prev) =>
+            prev.map((doc) =>
+                String(doc.id) === event.documentId
+                    ? { ...doc, status: event.status as DocumentStatus }
+                    : doc,
+            ),
+        );
+
+        if (event.status === 'indexed') {
+            toast.success(`"${event.documentName}" indexed successfully`);
+        } else if (event.status === 'failed') {
+            toast.error(`"${event.documentName}" indexing failed`);
+        }
+    });
 
     const { data, setData, post, processing, reset, errors } = useForm({
         name: '',

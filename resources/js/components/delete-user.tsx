@@ -1,4 +1,4 @@
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { useRef } from 'react';
 import Heading from '@/components/heading';
 import InputError from '@/components/input-error';
@@ -15,15 +15,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import profile from '@/routes/profile';
+import type { Auth } from '@/types/auth';
 
 export default function DeleteUser() {
     const passwordInput = useRef<HTMLInputElement>(null);
+    const hasPassword = usePage<{ auth: Auth }>().props.auth.user.has_password;
 
     const form = useForm({
         password: '',
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
         form.delete(profile.destroy.url(), {
             preserveScroll: true,
@@ -62,33 +64,36 @@ export default function DeleteUser() {
                         </DialogTitle>
                         <DialogDescription className="text-sm md:text-base">
                             Once your account is deleted, all of its resources
-                            and data will also be permanently deleted. Please
-                            enter your password to confirm you would like to
-                            permanently delete your account.
+                            and data will also be permanently deleted.{' '}
+                            {hasPassword
+                                ? 'Please enter your password to confirm you would like to permanently delete your account.'
+                                : 'This account was created with a social provider. Click delete to permanently remove your account.'}
                         </DialogDescription>
 
                         <form onSubmit={handleSubmit} className="space-y-6">
-                            <div className="grid gap-2">
-                                <Label htmlFor="password" className="sr-only">
-                                    Password
-                                </Label>
+                            {hasPassword && (
+                                <div className="grid gap-2">
+                                    <Label htmlFor="password" className="sr-only">
+                                        Password
+                                    </Label>
 
-                                <Input
-                                    id="password"
-                                    type="password"
-                                    name="password"
-                                    ref={passwordInput}
-                                    placeholder="Password"
-                                    autoComplete="current-password"
-                                    value={form.data.password}
-                                    onChange={(e) =>
-                                        form.setData('password', e.target.value)
-                                    }
-                                    disabled={form.processing}
-                                />
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        name="password"
+                                        ref={passwordInput}
+                                        placeholder="Password"
+                                        autoComplete="current-password"
+                                        value={form.data.password}
+                                        onChange={(e) =>
+                                            form.setData('password', e.target.value)
+                                        }
+                                        disabled={form.processing}
+                                    />
 
-                                <InputError message={form.errors.password} />
-                            </div>
+                                    <InputError message={form.errors.password} />
+                                </div>
+                            )}
 
                             <DialogFooter className="gap-2">
                                 <DialogClose asChild>

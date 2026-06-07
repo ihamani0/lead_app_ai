@@ -1,36 +1,41 @@
 import { Head, router } from '@inertiajs/react';
 import {
     Bot,
-    Settings,
-    Brain,
-    Shield,
-    BookOpen,
     ChevronLeft,
-    Copy,
-    Play,
-    Pause,
+    User,
+    BookOpen,
+    Settings,
+    MessageSquare,
+    Image,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { ComponentType } from 'react';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
 import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import workspaces from '@/routes/workspaces';
 
-import type { AgentConfig, BreadcrumbItem, EvolutionInstance } from '@/types';
+import type { AgentConfig, Asset, BreadcrumbItem, EvolutionInstance } from '@/types';
 
-import AgentBlockList from './Partials/AgentBlockList';
-import AgentBrainEditor from './Partials/AgentBrainEditor';
-import AgentConversationLogs from './Partials/AgentConversationLogs';
+import AgentIdentite from './Partials/AgentIdentite';
 import AgentInstanceManager from './Partials/AgentInstanceManager';
 import AgentKnowledgeBase from './Partials/AgentKnowledgeBase';
-import AgentOverview from './Partials/AgentOverview';
+import AgentParametres from './Partials/AgentParametres';
+import MediasPlaceholder from './Partials/MediasPlaceholder';
+import TestChat from './Partials/TestChat';
 
-type NavItem = {
-    id: string;
-    label: string;
-    icon: typeof Brain;
-};
+interface TestMessage {
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp: string;
+}
+
+interface TestConversation {
+    messages: TestMessage[];
+}
 
 interface AgentWithRelations extends AgentConfig {
     instance?: EvolutionInstance | null;
@@ -41,44 +46,76 @@ interface AgentWithRelations extends AgentConfig {
         status: string;
         created_at: string;
     }>;
+    mediaAssets?: Asset[];
+}
+
+interface AgentStats {
+    total_conversations: number;
+    qualified_leads: number;
+    satisfaction_rate: number | null;
+    last_activity: string | null;
+    messages_today: number;
 }
 
 interface Props {
     agent: AgentWithRelations;
     availableInstances: EvolutionInstance[];
+    stats: AgentStats;
+    canManage: boolean;
+    testConversation: TestConversation | null;
+    mediaAssets: Asset[];
 }
 
 type TabId =
-    | 'overview'
-    | 'instance'
-    | 'brain'
-    | 'blocklist'
-    | 'knowledge'
-    | 'logs';
+    | 'identite'
+    | 'connexions'
+    | 'connaissances'
+    | 'parametres'
+    | 'test'
+    | 'medias';
 
-export default function AgentShow({ agent, availableInstances }: Props) {
+interface TabConfig {
+    id: TabId;
+    label: string;
+    // Accept any React component that renders an SVG/icon and accepts className prop
+    icon: ComponentType<{ className?: string }>;
+}
+
+export default function AgentShow({ agent, availableInstances, stats, canManage, testConversation, mediaAssets }: Props) {
     const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
-    const [activeTab, setActiveTab] = useState<TabId>('overview');
+
+    const tabs: TabConfig[] = [
+        { id: 'identite', label: 'Identité', icon: User },
+        { id: 'connexions', label: 'Connexions', icon: WhatsAppIcon },
+        { id: 'connaissances', label: 'Connaissances', icon: BookOpen },
+        { id: 'medias', label: 'Médias', icon: Image },
+        { id: 'test', label: 'Test IA', icon: MessageSquare },
+        { id: 'parametres', label: 'Paramètres', icon: Settings },
+    ];
+
+    const [activeTab, setActiveTab] = useState<TabId>(() => {
+        const saved = localStorage.getItem(`agent-tab-${agent.id}`);
+        if (saved && tabs.some((t) => t.id === saved)) {
+            return saved as TabId;
+        }
+        return 'identite';
+    });
     const [isCloning, setIsCloning] = useState(false);
+
+    const slug = activeWorkspace.slug;
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Home', href: '/' },
-        { title: 'Agents', href: activeWorkspace ? workspaces.agents.index({ slug: activeWorkspace.slug }).url : '' },
+        {
+            title: 'Agents',
+            href: workspaces.agents.index({ slug }).url,
+        },
     ];
 
-    const navItems: NavItem[] = [
-        { id: 'overview', label: t('agents.config.overview'), icon: Settings },
-        { id: 'instance', label: t('agents.config.instance'), icon: Bot },
-        { id: 'brain', label: t('agents.config.brain'), icon: Brain },
-        { id: 'blocklist', label: t('agents.config.blocklist'), icon: Shield },
-        {
-            id: 'knowledge',
-            label: t('agents.config.knowledge'),
-            icon: BookOpen,
-        },
-        // { id: 'logs', label: t('agents.config.logs'), icon: History },
-    ];
+    useEffect(() => {
+        localStorage.setItem(`agent-tab-${agent.id}`, activeTab);
+    }, [activeTab, agent.id]);
 
     const isLinked = agent.evolution_instance_id !== null;
     const isConnected = isLinked && agent.instance?.status === 'connected';
@@ -87,7 +124,7 @@ export default function AgentShow({ agent, availableInstances }: Props) {
     const handleClone = () => {
         setIsCloning(true);
         router.post(
-            workspaces.agents.clone({ slug: activeWorkspace.slug, agent: agent.id }).url,
+            workspaces.agents.clone({ slug, agent: agent.id }).url,
             {},
             {
                 onFinish: () => setIsCloning(false),
@@ -96,31 +133,7 @@ export default function AgentShow({ agent, availableInstances }: Props) {
     };
 
     const handleToggle = () => {
-        router.patch(workspaces.agents.toggle({ slug: activeWorkspace.slug, agent: agent.id }).url);
-    };
-
-    const renderContent = () => {
-        switch (activeTab) {
-            case 'overview':
-                return <AgentOverview agent={agent} />;
-            case 'instance':
-                return (
-                    <AgentInstanceManager
-                        agent={agent}
-                        availableInstances={availableInstances}
-                    />
-                );
-            case 'brain':
-                return <AgentBrainEditor agent={agent} />;
-            case 'blocklist':
-                return <AgentBlockList agent={agent} />;
-            case 'knowledge':
-                return <AgentKnowledgeBase agent={agent} />;
-            case 'logs':
-                return <AgentConversationLogs />;
-            default:
-                return null;
-        }
+        router.patch(workspaces.agents.toggle({ slug, agent: agent.id }).url);
     };
 
     return (
@@ -129,205 +142,129 @@ export default function AgentShow({ agent, availableInstances }: Props) {
                 title={`${agent.name || t('agents.assistant')} - ${t('agents.config.title')}`}
             />
 
-            {/* Mobile Header */}
-            <div className="flex items-center justify-between border-b bg-card px-4 py-3 md:hidden">
-                <div className="flex items-center gap-3">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => router.get(workspaces.agents.index({ slug: activeWorkspace.slug }).url)}
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <div
-                        className={`flex h-8 w-8 items-center justify-center rounded-lg ${isActive ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}
-                    >
-                        <Bot className="h-4 w-4" />
-                    </div>
-                    <div>
-                        <p className="truncate text-sm font-semibold">
-                            {agent.name || t('agents.assistant')}
-                        </p>
-                        <div className="flex items-center gap-1">
-                            <span
-                                className={`h-1.5 w-1.5 rounded-full ${isActive ? 'bg-green-500' : isLinked ? 'bg-amber-400' : 'bg-slate-300'}`}
-                            />
-                            <span className="text-xs text-muted-foreground">
-                                {isActive
-                                    ? t('agents.status.running')
-                                    : isLinked
-                                      ? t('agents.status.paused')
-                                      : t('agents.status.noInstance')}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-                <div className="flex items-center gap-1">
-                    {isLinked && (
+            <div className="flex h-[calc(100vh-3.5rem)] flex-col">
+                {/* Agent Header */}
+                <div className="flex items-center justify-between border-b bg-card px-6 py-4">
+                    <div className="flex items-center gap-4">
                         <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
-                            onClick={handleToggle}
+                            className="h-10 w-10 shrink-0"
+                            onClick={() =>
+                                router.get(
+                                    workspaces.agents.index({ slug }).url,
+                                )
+                            }
                         >
-                            {agent.is_active ? (
-                                <Pause className="h-4 w-4" />
-                            ) : (
-                                <Play className="h-4 w-4" />
-                            )}
+                            <ChevronLeft className="h-5 w-5" />
                         </Button>
-                    )}
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={handleClone}
-                        disabled={isCloning}
-                    >
-                        <Copy className="h-4 w-4" />
-                    </Button>
-                </div>
-            </div>
-
-            {/* Mobile Tab Navigation */}
-            <div
-                className="border-b bg-card md:hidden"
-                data-tour="agent-tabs-mobile"
-            >
-                <div className="flex overflow-x-auto px-2 py-1">
-                    {navItems.map((item) => (
-                        <button
-                            key={item.id}
-                            onClick={() => setActiveTab(item.id as TabId)}
-                            className={`flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
-                                activeTab === item.id
-                                    ? 'bg-primary/10 text-primary'
-                                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        <div
+                            className={`flex h-11 w-11 items-center justify-center rounded-xl ${
+                                isActive
+                                    ? 'bg-emerald-100 text-emerald-600'
+                                    : 'bg-slate-100 text-slate-400'
                             }`}
                         >
-                            <item.icon className="h-3.5 w-3.5" />
-                            {item.label}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            {/* Main Layout - Desktop and Mobile combined */}
-            <div className="flex h-[calc(100vh-3.5rem)] overflow-hidden">
-                {/* Desktop Sidebar */}
-                <div
-                    className="hidden w-64 shrink-0 border-r bg-card md:block dark:bg-background/10"
-                    data-tour="agent-tabs-desktop"
-                >
-                    <div className="flex h-full flex-col">
-                        {/* Back button */}
-                        <div className="border-b p-4">
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                className="w-full justify-start"
-                                onClick={() => router.get(workspaces.agents.index({ slug: activeWorkspace.slug }).url)}
-                            >
-                                <ChevronLeft className="mr-2 h-4 w-4" />
-                                {t('agents.config.back')}
-                            </Button>
+                            <Bot className="h-6 w-6" />
                         </div>
-
-                        {/* Agent info header */}
-                        <div className="border-b p-4">
-                            <div className="flex items-center gap-3">
-                                <div
-                                    className={`flex h-10 w-10 items-center justify-center rounded-xl ${isActive ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-100 text-slate-400'}`}
-                                >
-                                    <Bot className="h-5 w-5" />
-                                </div>
-                                <div className="min-w-0 flex-1">
-                                    <p className="truncate text-sm font-semibold">
-                                        {agent.name || t('agents.assistant')}
-                                    </p>
-                                    <div className="flex items-center gap-1">
-                                        <span
-                                            className={`h-1.5 w-1.5 rounded-full ${isActive ? 'bg-green-500' : isLinked ? 'bg-amber-400' : 'bg-slate-300'}`}
-                                        />
-                                        <span className="text-xs text-muted-foreground">
-                                            {isActive
-                                                ? t('agents.status.running')
-                                                : isLinked
-                                                  ? t('agents.status.paused')
-                                                  : t(
-                                                        'agents.status.noInstance',
-                                                    )}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Quick actions */}
-                            <div className="mt-4 flex gap-2">
-                                {isLinked && (
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="flex-1 gap-1 text-xs"
-                                        onClick={handleToggle}
-                                    >
-                                        {agent.is_active ? (
-                                            <>
-                                                <Pause className="h-3 w-3" />
-                                                Pause
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Play className="h-3 w-3" />
-                                                Resume
-                                            </>
-                                        )}
-                                    </Button>
-                                )}
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="flex-1 gap-1 text-xs"
-                                    onClick={handleClone}
-                                    disabled={isCloning}
-                                >
-                                    <Copy className="h-3 w-3" />
-                                    {t('agents.config.clone')}
-                                </Button>
-                            </div>
-                        </div>
-
-                        {/* Nav Items */}
-                        <div className="flex-1 overflow-y-auto p-2">
-                            {navItems.map((item) => (
-                                <button
-                                    key={item.id}
-                                    onClick={() =>
-                                        setActiveTab(item.id as TabId)
-                                    }
-                                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                                        activeTab === item.id
-                                            ? 'bg-primary/10 text-primary'
-                                            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                        <div>
+                            <p className="text-base font-semibold">
+                                {agent.name || t('agents.assistant')}
+                            </p>
+                            <div className="flex items-center gap-1.5">
+                                <span
+                                    className={`h-2 w-2 rounded-full ${
+                                        isActive
+                                            ? 'bg-green-500'
+                                            : isLinked
+                                              ? 'bg-amber-400'
+                                              : 'bg-slate-300'
                                     }`}
-                                >
-                                    <item.icon className="h-4 w-4" />
-                                    {item.label}
-                                </button>
-                            ))}
+                                />
+                                <span className="text-sm text-muted-foreground">
+                                    {isActive
+                                        ? t('agents.status.running')
+                                        : isLinked
+                                          ? t('agents.status.paused')
+                                          : t('agents.status.noInstance')}
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Content Area */}
-                <div
-                    className="flex-1 overflow-y-auto p-4 md:p-6"
-                    data-tour="agent-content"
+                {/* Tab Bar */}
+                <Tabs
+                    value={activeTab}
+                    onValueChange={(v) => setActiveTab(v as TabId)}
+                    className="flex flex-1 flex-col overflow-hidden"
                 >
-                    <div className="mx-auto max-w-6xl">{renderContent()}</div>
-                </div>
+                    <div className="border-b bg-card px-6 py-3">
+                        <TabsList variant="line" className="h-14 gap-0">
+                            {tabs.map((tab) => (
+                                <TabsTrigger
+                                    key={tab.id}
+                                    value={tab.id}
+                                    className="flex items-center gap-3 px-6 py-3 text-base font-medium data-[state=active]:text-purple-600 data-[state=active]:shadow-none data-[state=active]:after:bg-purple-600 data-[state=active]:after:opacity-100"
+                                >
+                                    <tab.icon className="h-5 w-5" />
+                                    {tab.label}
+                                </TabsTrigger>
+                            ))}
+                        </TabsList>
+                    </div>
+
+                    {/* Tab Content */}
+                    <div className="flex-1 overflow-y-auto">
+                        <div className="p-4 md:p-6" style={{maxWidth:"1520px",margin:"0 auto",width:"100%"}}>
+                            <TabsContent value="identite" className="mt-0">
+                                <AgentIdentite
+                                    agent={agent}
+                                    slug={slug}
+                                    stats={stats}
+                                />
+                            </TabsContent>
+
+                            <TabsContent value="connexions" className="mt-0">
+                                <AgentInstanceManager
+                                    agent={agent}
+                                    availableInstances={availableInstances}
+                                    stats={stats}
+                                    onNavigateToTest={() => setActiveTab('test')}
+                                />
+                            </TabsContent>
+
+                            <TabsContent value="connaissances" className="mt-0">
+                                <AgentKnowledgeBase
+                                    agent={agent}
+                                    canManage={canManage}
+                                    slug={slug}
+                                />
+                            </TabsContent>
+
+                            <TabsContent value="parametres" className="mt-0">
+                                <AgentParametres
+                                    agent={agent}
+                                    isLinked={isLinked}
+                                    onToggle={handleToggle}
+                                    onClone={handleClone}
+                                    isCloning={isCloning}
+                                />
+                            </TabsContent>
+
+                            <TabsContent value="test" className="mt-0">
+                                <TestChat agent={agent} testConversation={testConversation} />
+                            </TabsContent>
+
+                            <TabsContent value="medias" className="mt-0">
+                                <MediasPlaceholder agent={agent} assets={mediaAssets} />
+                            </TabsContent>
+                        </div>
+                    </div>
+                </Tabs>
             </div>
         </AppLayout>
     );
 }
+
+

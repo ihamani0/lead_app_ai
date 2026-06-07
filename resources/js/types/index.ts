@@ -36,8 +36,6 @@ export interface PaginatedInstances {
     meta: unknown;
 }
 
-export type EvolutionProvider = 'n8n' | 'typebot' | 'dify';
-
 export interface EvolutionSettings {
     delayMessage?: number; // Delay before sending a new message (ms)
     keywordFinish?: string; // Keyword to finish the conversation
@@ -51,6 +49,23 @@ export interface EvolutionSettings {
     [key: string]: unknown; // Allow future evolution-specific fields
 }
 
+export interface AgentSettings {
+    sector?: string;
+    tone?: string;
+    languages?: string[];
+    main_objective?: string;
+    response_style?: string;
+    greeting_message?: string;
+    call_to_action?: string;
+    max_response_length?: string;
+    knowledge_mode?: string;
+    google_maps_url?: string;
+    calendar_url?: string;
+    additional_info?: string;
+    custom_prompt?: string;
+    [key: string]: unknown;
+}
+
 export interface AgentConfig {
     id: string;
     name: string;
@@ -60,21 +75,14 @@ export interface AgentConfig {
     is_active: boolean;
     webhook_url?: string | null;
 
-    config_webhook_url: string | null;
-
-    provider: EvolutionProvider;
-    provider_id?: string | null;
-
     evo_integration_id?: string | null;
 
-    system_prompt?: string | null;
-    default_system_prompt?: string | null;
-
-    settings?: EvolutionSettings | null;
+    settings?: AgentSettings | null;
 
     instance?: EvolutionInstance | null;
 
     knowledge_bases_count?: number;
+    media_asset_count?: number;
 
     created_at?: string;
     updated_at?: string;

@@ -8,7 +8,7 @@ import type { WizardFormData } from '@/types/wizard';
 
 type FileStatus = 'pending' | 'uploading' | 'done' | 'failed';
 
-interface Step4KnowledgeBaseProps {
+interface Step5KnowledgeBaseProps {
     formData: WizardFormData;
     setFormData: (data: WizardFormData | ((prev: WizardFormData) => WizardFormData)) => void;
     onNext: () => void;
@@ -29,11 +29,11 @@ function statusIcon(status: FileStatus) {
     }
 }
 
-export function Step4KnowledgeBase({
+export function Step5KnowledgeBase({
     formData,
     setFormData,
     isSubmitting,
-}: Step4KnowledgeBaseProps) {
+}: Step5KnowledgeBaseProps) {
     const { t } = useTranslation();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragActive, setDragActive] = useState(false);

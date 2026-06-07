@@ -10,11 +10,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Jurager\Teams\Traits\HasTeams;
 use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
-    use AuthMustVerifyEmail, HasFactory, HasTeams, Notifiable, TwoFactorAuthenticatable;
+    use AuthMustVerifyEmail, HasApiTokens, HasFactory, HasTeams, Notifiable, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -79,6 +80,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function assignedLeads()
     {
         return $this->hasMany(Lead::class, 'assigned_to');
+    }
+
+    public function agentConversations()
+    {
+        return $this->hasMany(AgentConversation::class);
+    }
+
+    public function agentConversationMessages()
+    {
+        return $this->hasMany(AgentConversationMessage::class);
     }
 
     public function isAdmin()

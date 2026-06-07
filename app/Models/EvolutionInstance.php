@@ -20,14 +20,19 @@ class EvolutionInstance extends Model
         'qr_code',
         'webhook_url',
         'settings',
+        'api_token',
+        'uuid',
         'connected_at',
     ];
 
-    protected $casts = [
-        'settings' => 'array',
-        'connected_at' => 'datetime',
-        'deleted_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'settings' => 'array',
+            'connected_at' => 'datetime',
+            'deleted_at' => 'datetime',
+        ];
+    }
 
     // ==========================================
     // RELATIONSHIPS

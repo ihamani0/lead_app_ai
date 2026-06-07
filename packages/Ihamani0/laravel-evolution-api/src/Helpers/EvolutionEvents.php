@@ -4,53 +4,55 @@ namespace Ihamani0\LaravelEvolutionApi\Helpers;
 
 class EvolutionEvents
 {
-    const APPLICATION_STARTUP = 'APPLICATION_STARTUP';
+    const MESSAGE = 'Message';
 
-    const QRCODE_UPDATED = 'QRCODE_UPDATED';
+    const SEND_MESSAGE = 'SendMessage';
 
-    const MESSAGES_SET = 'MESSAGES_SET';
+    const CONNECTED = 'Connected';
 
-    const MESSAGES_UPSERT = 'MESSAGES_UPSERT';
+    const PAIR_SUCCESS = 'PairSuccess';
 
-    const MESSAGES_UPDATE = 'MESSAGES_UPDATE';
+    const LOGGED_OUT = 'LoggedOut';
 
-    const MESSAGES_DELETE = 'MESSAGES_DELETE';
+    const OFFLINE_SYNC_COMPLETED = 'OfflineSyncCompleted';
 
-    const SEND_MESSAGE = 'SEND_MESSAGE';
+    const QR_CODE = 'QRCode';
 
-    const CONTACTS_SET = 'CONTACTS_SET';
+    const QR_TIMEOUT = 'QRTimeout';
 
-    const CONTACTS_UPSERT = 'CONTACTS_UPSERT';
+    const QR_SUCCESS = 'QRSuccess';
 
-    const CONTACTS_UPDATE = 'CONTACTS_UPDATE';
+    const RECEIPT = 'Receipt';
 
-    const PRESENCE_UPDATE = 'PRESENCE_UPDATE';
+    const PRESENCE = 'Presence';
 
-    const CHATS_SET = 'CHATS_SET';
+    const CALL_OFFER = 'CallOffer';
 
-    const CHATS_UPSERT = 'CHATS_UPSERT';
+    const CALL_RELAY_LATENCY = 'CallRelayLatency';
 
-    const CHATS_UPDATE = 'CHATS_UPDATE';
+    const CALL_TERMINATE = 'CallTerminate';
 
-    const CHATS_DELETE = 'CHATS_DELETE';
+    const HISTORY_SYNC = 'HistorySync';
 
-    const GROUPS_UPSERT = 'GROUPS_UPSERT';
+    const CHAT_PRESENCE = 'ChatPresence';
 
-    const GROUP_UPDATE = 'GROUP_UPDATE';
+    const LABEL_EDIT = 'LabelEdit';
 
-    const GROUP_PARTICIPANTS_UPDATE = 'GROUP_PARTICIPANTS_UPDATE';
+    const LABEL_ASSOCIATION_CHAT = 'LabelAssociationChat';
 
-    const CONNECTION_UPDATE = 'CONNECTION_UPDATE';
+    const LABEL_ASSOCIATION_MESSAGE = 'LabelAssociationMessage';
 
-    const LABELS_EDIT = 'LABELS_EDIT';
+    const CONTACT = 'Contact';
 
-    const LABELS_ASSOCIATION = 'LABELS_ASSOCIATION';
+    const PUSH_NAME = 'PushName';
 
-    const CALL = 'CALL';
+    const GROUP_INFO = 'GroupInfo';
 
-    const TYPEBOT_START = 'TYPEBOT_START';
+    const JOINED_GROUP = 'JoinedGroup';
 
-    const TYPEBOT_CHANGE_STATUS = 'TYPEBOT_CHANGE_STATUS';
+    const NEWSLETTER_JOIN = 'NewsletterJoin';
+
+    const NEWSLETTER_LEAVE = 'NewsletterLeave';
 
     /**
      * Get all available events.
@@ -60,30 +62,31 @@ class EvolutionEvents
     public static function all(): array
     {
         return [
-            self::APPLICATION_STARTUP,
-            self::QRCODE_UPDATED,
-            self::MESSAGES_SET,
-            self::MESSAGES_UPSERT,
-            self::MESSAGES_UPDATE,
-            self::MESSAGES_DELETE,
+            self::MESSAGE,
             self::SEND_MESSAGE,
-            self::CONTACTS_SET,
-            self::CONTACTS_UPSERT,
-            self::CONTACTS_UPDATE,
-            self::PRESENCE_UPDATE,
-            self::CHATS_SET,
-            self::CHATS_UPSERT,
-            self::CHATS_UPDATE,
-            self::CHATS_DELETE,
-            self::GROUPS_UPSERT,
-            self::GROUP_UPDATE,
-            self::GROUP_PARTICIPANTS_UPDATE,
-            self::CONNECTION_UPDATE,
-            self::LABELS_EDIT,
-            self::LABELS_ASSOCIATION,
-            self::CALL,
-            self::TYPEBOT_START,
-            self::TYPEBOT_CHANGE_STATUS,
+            self::CONNECTED,
+            self::PAIR_SUCCESS,
+            self::LOGGED_OUT,
+            self::OFFLINE_SYNC_COMPLETED,
+            self::QR_CODE,
+            self::QR_TIMEOUT,
+            self::QR_SUCCESS,
+            self::RECEIPT,
+            self::PRESENCE,
+            self::CALL_OFFER,
+            self::CALL_RELAY_LATENCY,
+            self::CALL_TERMINATE,
+            self::HISTORY_SYNC,
+            self::CHAT_PRESENCE,
+            self::LABEL_EDIT,
+            self::LABEL_ASSOCIATION_CHAT,
+            self::LABEL_ASSOCIATION_MESSAGE,
+            self::CONTACT,
+            self::PUSH_NAME,
+            self::GROUP_INFO,
+            self::JOINED_GROUP,
+            self::NEWSLETTER_JOIN,
+            self::NEWSLETTER_LEAVE,
         ];
     }
 }

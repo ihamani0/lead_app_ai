@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import workspaces from '@/routes/workspaces';
@@ -32,7 +31,6 @@ export function CreateAgentDialog({
 
     const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
         name: '',
-        system_prompt: '',
     });
 
     const handleSubmit = (e: React.SubmitEvent) => {
@@ -55,7 +53,7 @@ export function CreateAgentDialog({
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogTrigger asChild>
-                <Button className="gap-2 rounded-xl bg-white/20 font-semibold text-white shadow-lg backdrop-blur-md hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20">
+                <Button className="gap-2 rounded-xl bg-white/20 font-semibold text-foreground shadow-lg backdrop-blur-md hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20">
                     <Plus className="h-4 w-4" />
                     {t('agents.create_agent')}
                 </Button>
@@ -72,8 +70,8 @@ export function CreateAgentDialog({
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="mt-4 space-y-4">
-                        <div className="space-y-2">
+                    <div className="mt-4 ">
+                        <div className="space-y-3">
                             <Label htmlFor="agent-name">
                                 {t('agents.agent_name')}
                             </Label>
@@ -93,33 +91,6 @@ export function CreateAgentDialog({
                                 </p>
                             )}
                         </div>
-
-                        <div className="space-y-2">
-                            <Label htmlFor="system-prompt">
-                                {t('agents.system_prompt')}
-                            </Label>
-                            <Textarea
-                                id="system-prompt"
-                                placeholder={t(
-                                    'agents.system_prompt_placeholder',
-                                )}
-                                value={data.system_prompt}
-                                onChange={(e) =>
-                                    setData(
-                                        'system_prompt',
-                                        e.target.value,
-                                    )
-                                }
-                                disabled={processing}
-                                rows={4}
-                            />
-                            {errors.system_prompt && (
-                                <p className="text-sm text-destructive">
-                                    {errors.system_prompt}
-                                </p>
-                            )}
-                        </div>
-
                     </div>
 
                     <DialogFooter className="mt-6">

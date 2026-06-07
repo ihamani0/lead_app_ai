@@ -13,16 +13,15 @@ class EvolutionApiClient
 {
     protected string $base_url;
 
-    protected string $api_key;
+    protected string $admin_key;
 
     protected ?string $instance;
 
-    public function __construct(string $baseUrl, string $apiKey, ?string $Inistance = null)
+    public function __construct(string $baseUrl, string $adminKey, ?string $instance = null)
     {
         $this->base_url = rtrim($baseUrl, '/');
-        $this->api_key = $apiKey;
-        $this->instance = $Inistance;
-
+        $this->admin_key = $adminKey;
+        $this->instance = $instance;
     }
 
     // ----------------------------
@@ -39,7 +38,6 @@ class EvolutionApiClient
         return $this->instance;
     }
 
-    // Dynamically switch instance
     public function setInstance(string $instance): static
     {
         $this->instance = $instance;
@@ -50,40 +48,51 @@ class EvolutionApiClient
     // ----------------------------
     // Core HTTP methods
     // ----------------------------
-
-    public function post(string $endpoint, array $data): array
+    public function post(string $endpoint, array $data = [], ?string $token = null, array $extraHeaders = []): array
     {
-        $response = Http::withHeaders([
-            'apikey' => $this->api_key,
+        $headers = array_merge([
+            'apikey' => $token ?? $this->admin_key,
             'Content-Type' => 'application/json',
-        ])->post("{$this->base_url}/{$endpoint}", $data);
+        ], $extraHeaders);
+
+        $response = Http::withHeaders($headers)
+            ->post("{$this->base_url}/{$endpoint}", $data);
 
         return $response->json();
     }
 
-    public function get(?string $endpoint = null): array
+    public function get(string $endpoint, ?string $token = null, array $extraHeaders = []): array
     {
-        $response = Http::withHeaders([
-            'apikey' => $this->api_key,
-        ])->get("{$this->base_url}/{$endpoint}");
+        $headers = array_merge([
+            'apikey' => $token ?? $this->admin_key,
+        ], $extraHeaders);
+
+        $response = Http::withHeaders($headers)
+            ->get("{$this->base_url}/{$endpoint}");
 
         return $response->json();
     }
 
-    public function delete(string $endpoint): array
+    public function delete(string $endpoint, ?string $token = null, array $extraHeaders = []): array
     {
-        $response = Http::withHeaders([
-            'apikey' => $this->api_key,
-        ])->delete("{$this->base_url}/{$endpoint}");
+        $headers = array_merge([
+            'apikey' => $token ?? $this->admin_key,
+        ], $extraHeaders);
+
+        $response = Http::withHeaders($headers)
+            ->delete("{$this->base_url}/{$endpoint}");
 
         return $response->json();
     }
 
-    public function put(string $endpoint, array $data = []): array
+    public function put(string $endpoint, array $data = [], ?string $token = null, array $extraHeaders = []): array
     {
-        $response = Http::withHeaders([
-            'apikey' => $this->api_key,
-        ])->put("{$this->base_url}/{$endpoint}", $data);
+        $headers = array_merge([
+            'apikey' => $token ?? $this->admin_key,
+        ], $extraHeaders);
+
+        $response = Http::withHeaders($headers)
+            ->put("{$this->base_url}/{$endpoint}", $data);
 
         return $response->json();
     }
@@ -99,7 +108,7 @@ class EvolutionApiClient
     // ----------------------------
     // Services
     // ----------------------------
-    public function instance()
+    public function instance(): InstanceService
     {
         return new InstanceService($this);
     }
@@ -114,7 +123,7 @@ class EvolutionApiClient
         return new WebsocketService($this);
     }
 
-    public function n8n()
+    public function n8n(): N8NService
     {
         return new N8NService($this);
     }

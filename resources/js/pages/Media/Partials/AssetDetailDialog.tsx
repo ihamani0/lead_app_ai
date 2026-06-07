@@ -11,11 +11,14 @@ import {
     Copy,
     Eye,
     Star,
+    Pencil,
+    Loader2,
 } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
-
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
@@ -32,6 +35,7 @@ interface AssetDetailDialogProps {
     onOpenChange: (open: boolean) => void;
     onDelete: (id: string) => void;
     onToggleDefault?: (id: string, isDefault: boolean) => void;
+    onUpdate?: (id: string, data: { category: string; caption: string }) => void;
     canManage?: boolean;
 }
 
@@ -99,11 +103,23 @@ export function AssetDetailDialog({
     onOpenChange,
     onDelete,
     onToggleDefault,
+    onUpdate,
     canManage = true,
 }: AssetDetailDialogProps) {
     const activeWorkspace = useActiveWorkspace();
     const { copy, isCopied } = useClipboard();
     const [isUpdatingDefault, setIsUpdatingDefault] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editCategory, setEditCategory] = useState('');
+    const [editCaption, setEditCaption] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        if (asset) {
+            setEditCategory(asset.category);
+            setEditCaption(asset.caption ?? '');
+        }
+    }, [asset]);
 
     if (!asset) return null;
 
@@ -146,6 +162,46 @@ export function AssetDetailDialog({
             onDelete(asset.id);
             onOpenChange(false);
         }
+    };
+
+    const handleStartEdit = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setEditCategory(asset.category);
+        setEditCaption(asset.caption ?? '');
+        setIsEditing(true);
+    };
+
+    const handleCancelEdit = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsEditing(false);
+    };
+
+    const handleSaveEdit = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!editCategory.trim()) return;
+        setIsSaving(true);
+        axios
+            .put(media.update({ slug: activeWorkspace!.slug, id: asset.id }).url, {
+                category: editCategory.trim(),
+                caption: editCaption,
+            })
+            .then((response) => {
+                const { asset: updatedAsset } = response.data as { asset: Asset };
+                onUpdate?.(asset.id, {
+                    category: updatedAsset.category,
+                    caption: updatedAsset.caption ?? '',
+                });
+                setIsEditing(false);
+            })
+            .catch((error) => {
+                console.error('Failed to update asset:', error);
+            })
+            .finally(() => {
+                setIsSaving(false);
+            });
     };
 
     return (
@@ -209,13 +265,26 @@ export function AssetDetailDialog({
                 {/* 📜 Scrollable Details Section */}
                 <div className="w-full max-w-full flex-1 space-y-4 overflow-y-auto px-4 py-4">
                     <div className="space-y-1">
-                        <h3 className="flex items-center gap-2 text-lg font-semibold">
-                            <MediaIcon
-                                type={asset.type}
-                                className="h-5 w-5 shrink-0"
-                            />
-                            <span className="truncate">Asset Details</span>
-                        </h3>
+                        <div className="flex items-center justify-between">
+                            <h3 className="flex items-center gap-2 text-lg font-semibold">
+                                <MediaIcon
+                                    type={asset.type}
+                                    className="h-5 w-5 shrink-0"
+                                />
+                                <span className="truncate">Asset Details</span>
+                            </h3>
+                            {canManage && !isEditing && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleStartEdit}
+                                    className="gap-1.5"
+                                >
+                                    <Pencil className="h-3.5 w-3.5" />
+                                    Edit
+                                </Button>
+                            )}
+                        </div>
                         <p className="text-xs text-muted-foreground">
                             Media information and metadata
                         </p>
@@ -253,15 +322,31 @@ export function AssetDetailDialog({
 
                     {/* Metadata (Inline for zero overflow) */}
                     <div className="w-full max-w-full space-y-3">
-                        <MetadataRow
-                            icon={<Tag className="h-4 w-4 shrink-0" />}
-                            label="Category"
-                            value={asset.category}
-                            onCopy={() =>
-                                handleCopy(asset.category, 'category')
-                            }
-                            copied={isCopied('category')}
-                        />
+                        {isEditing ? (
+                            <div className="space-y-1.5">
+                                <Label htmlFor="edit-category" className="text-xs font-medium text-muted-foreground uppercase flex items-center gap-1.5">
+                                    <Tag className="h-3.5 w-3.5" />
+                                    Category
+                                </Label>
+                                <Input
+                                    id="edit-category"
+                                    value={editCategory}
+                                    onChange={(e) => setEditCategory(e.target.value)}
+                                    placeholder="Category"
+                                    disabled={isSaving}
+                                />
+                            </div>
+                        ) : (
+                            <MetadataRow
+                                icon={<Tag className="h-4 w-4 shrink-0" />}
+                                label="Category"
+                                value={asset.category}
+                                onCopy={() =>
+                                    handleCopy(asset.category, 'category')
+                                }
+                                copied={isCopied('category')}
+                            />
+                        )}
                         <MetadataRow
                             icon={<FileType className="h-4 w-4 shrink-0" />}
                             label="Type"
@@ -322,14 +407,53 @@ export function AssetDetailDialog({
                         <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                             Caption / Description
                         </p>
-                        <div className="w-full rounded-md border border-border/50 bg-muted/30 p-3 text-sm leading-relaxed wrap-break-word">
-                            {asset.caption || (
-                                <span className="text-muted-foreground italic">
-                                    No caption provided
-                                </span>
-                            )}
-                        </div>
+                        {isEditing ? (
+                            <Input
+                                value={editCaption}
+                                onChange={(e) => setEditCaption(e.target.value)}
+                                placeholder="Add a caption…"
+                                disabled={isSaving}
+                            />
+                        ) : (
+                            <div className="w-full rounded-md border border-border/50 bg-muted/30 p-3 text-sm leading-relaxed wrap-break-word">
+                                {asset.caption || (
+                                    <span className="text-muted-foreground italic">
+                                        No caption provided
+                                    </span>
+                                )}
+                            </div>
+                        )}
                     </div>
+
+                    {/* Edit actions */}
+                    {isEditing && (
+                        <div className="flex gap-3 pt-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={handleCancelEdit}
+                                disabled={isSaving}
+                                className="flex-1"
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="button"
+                                size="sm"
+                                onClick={handleSaveEdit}
+                                disabled={isSaving || !editCategory.trim()}
+                                className="flex-1 gap-2"
+                            >
+                                {isSaving ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <Check className="h-4 w-4" />
+                                )}
+                                {isSaving ? 'Saving…' : 'Save'}
+                            </Button>
+                        </div>
+                    )}
 
                     {/* AI Default Toggle */}
                     {canManage && (

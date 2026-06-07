@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\AgentConfig;
 use App\Models\KnowledgeBase;
+use App\Services\KnowledgeBaseService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class KnowledgeBaseController extends Controller
@@ -39,11 +37,13 @@ class KnowledgeBaseController extends Controller
             'agents' => $agents,
             'canCreate' => $canManage,
             'canManage' => $canManage,
+            'tenantId' => $request->user()->tenant_id,
         ]);
     }
 
     public function store(Request $request)
     {
+        // dd($request->all());
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
 
         $request->validate([
@@ -54,32 +54,24 @@ class KnowledgeBaseController extends Controller
 
         $this->findScoped($request, AgentConfig::class, $request->agent_config_id);
 
-        $document = KnowledgeBase::create($this->withTeam($request, [
-            'tenant_id' => $request->user()->tenant_id,
-            'name' => $request->name,
-            'agent_config_id' => $request->agent_config_id,
-            'status' => 'processing',
-        ]));
-
-        $document->addMediaFromRequest('file')->toMediaCollection('documents');
-
-        $DocumentWebhookUrl = config('services.document.webhook_url');
-
         try {
-            Http::withHeaders([
-                'X-N8N-API-KEY' => config('services.n8n.api_key'),
-            ])
-                ->post($DocumentWebhookUrl, [
-                    'document_id' => $document->id,
-                    'tenant_id' => (string) $document->tenant_id,
-                    'agent_config_id' => $document->agent_config_id,
-                    'file_name' => $request->file('file')->getClientOriginalName(),
-                ]);
+            $downloadUrl = route('workspaces.knowledge.web.download', [
+                'slug' => $request->route('slug'),
+                'id' => '{id}',
+            ]).'?normalized';
+
+            app(KnowledgeBaseService::class)->store(
+                $this->withTeam($request, [
+                    'tenant_id' => $request->user()->tenant_id,
+                    'name' => $request->name,
+                    'agent_config_id' => $request->agent_config_id,
+                    'download_url' => $downloadUrl,
+                ]),
+                $request->file('file'),
+            );
 
             return back()->with('success', __('messages.success.document_uploaded'));
         } catch (\Exception $e) {
-            $document->update(['status' => 'failed']);
-
             return back()->withErrors(['error' => __('messages.error.document_uploaded')]);
         }
     }
@@ -90,9 +82,10 @@ class KnowledgeBaseController extends Controller
 
         $document = $this->findScoped($request, KnowledgeBase::class, $request->route('id'));
 
-        $file_path = $document->getFirstMediaPath('documents');
+        $normalized = $request->has('normalized')
+            || str_contains($request->header('User-Agent', ''), 'n8n');
 
-        return response()->download($file_path);
+        return app(KnowledgeBaseService::class)->download($document, $normalized);
     }
 
     public function destroy(Request $request)
@@ -101,17 +94,7 @@ class KnowledgeBaseController extends Controller
 
         $document = $this->findScoped($request, KnowledgeBase::class, $request->route('id'));
 
-        // Clean up vector embeddings in document_chunks
-        try {
-            DB::statement(
-                "DELETE FROM document_chunks WHERE metadata->>'document_id' = ?",
-                [$document->id]
-            );
-        } catch (\Exception $e) {
-            Log::warning('Failed to clean up document_chunks for document '.$document->id.': '.$e->getMessage());
-        }
-
-        $document->delete();
+        app(KnowledgeBaseService::class)->destroy($document);
 
         return back()->with('success', __('messages.success.document_deleted'));
     }

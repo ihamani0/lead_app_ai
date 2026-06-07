@@ -82,7 +82,9 @@ export function LinkInstanceDialog({
                     </DialogHeader>
 
                     <div className="mt-4 space-y-4">
-                        <div className="space-y-2">
+                        
+                        {availableInstances.length > 0 ? (
+                            <div className="space-y-2">
                             <Label>{t('agents.available_instances')}</Label>
                             <Select
                                 value={form.data.instance_id}
@@ -121,30 +123,15 @@ export function LinkInstanceDialog({
                                 </p>
                             )}
                         </div>
+                        ):(
+                            // make compoents ther is not instance avaible her
+                            <div className='w-full flex items-center justify-center mt-4'>
+                                <span className='text-muted-foreground text-sm'>no WhatsApp avaible</span>
+                                 
+                            </div>
+                        )}
+                        
 
-                        <div className="space-y-2">
-                            <Label htmlFor="webhook-url">
-                                {t('agents.webhook_url')}
-                            </Label>
-                            <Input
-                                id="webhook-url"
-                                type="url"
-                                placeholder={t(
-                                    'agents.webhook_url_placeholder',
-                                )}
-                                value={form.data.webhook_url}
-                                onChange={(e) =>
-                                    form.setData('webhook_url', e.target.value)
-                                }
-                                disabled={form.processing}
-                                required
-                            />
-                            {form.errors.webhook_url && (
-                                <p className="text-sm text-destructive">
-                                    {form.errors.webhook_url}
-                                </p>
-                            )}
-                        </div>
                     </div>
 
                     <DialogFooter className="mt-6">

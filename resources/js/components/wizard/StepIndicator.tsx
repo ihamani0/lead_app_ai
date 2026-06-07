@@ -1,4 +1,4 @@
-import { Check, Smartphone, QrCode, Bot, Database } from 'lucide-react';
+import { Check, Smartphone, QrCode, Bot, Image, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface Step {
@@ -16,6 +16,7 @@ const iconMap = {
     'smartphone': Smartphone,
     'qr-code': QrCode,
     'bot': Bot,
+    'media': Image,
     'database': Database,
 };
 

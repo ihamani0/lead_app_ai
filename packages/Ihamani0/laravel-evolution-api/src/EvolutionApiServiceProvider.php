@@ -17,7 +17,7 @@ class EvolutionApiServiceProvider extends ServiceProvider
         $this->app->singleton('evolution-api', function ($app) {
             return new EvolutionApiClient(
                 config('evolution-api.base_url'),
-                config('evolution-api.api_key'),
+                config('evolution-api.admin_key'),
                 config('evolution-api.instance_name') ?? null,
             );
         });

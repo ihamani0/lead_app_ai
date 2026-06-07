@@ -25,8 +25,8 @@ return [
 
     'evolution' => [
         'base_url' => env('EVOLUTION_API_URL'),
-        'api_key' => env('EVOLUTION_API_KEY'),
-        'evolutaion_url_webhook' => env('EVOLUTION_WEBHOOK_URL'),
+        'admin_key' => env('EVOLUTION_KEY'),
+        'webhook_url' => env('EVOLUTION_WEBHOOK_URL'),
     ],
 
     'n8n' => [

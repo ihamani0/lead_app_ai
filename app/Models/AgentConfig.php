@@ -31,11 +31,6 @@ class AgentConfig extends Model
         return $this->hasMany(KnowledgeBase::class, 'agent_config_id');
     }
 
-    public function history()
-    {
-        return $this->hasMany(AgentSystemPromptHistory::class, 'agent_config_id')->orderBy('version', 'desc');
-    }
-
     public function isLinked(): bool
     {
         return $this->evolution_instance_id !== null;
@@ -46,19 +41,18 @@ class AgentConfig extends Model
         return $this->is_active && $this->isLinked();
     }
 
-    public function setSystemPromptAttribute(?string $value): void
-    {
-        $this->attributes['system_prompt'] = $value;
-        $this->attributes['system_prompt_hash'] = $value ? md5($value) : null;
-    }
-
-    public function hasSystemPromptChanged(?string $newPrompt): bool
-    {
-        return md5($newPrompt ?? '') !== ($this->system_prompt_hash ?? '');
-    }
-
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function testConversation()
+    {
+        return $this->hasOne(TestConversation::class, 'agent_config_id');
+    }
+
+    public function mediaAssets()
+    {
+        return $this->hasMany(MediaAsset::class, 'agent_config_id');
     }
 }

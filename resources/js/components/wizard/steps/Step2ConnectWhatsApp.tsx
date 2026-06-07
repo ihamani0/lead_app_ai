@@ -73,7 +73,7 @@ export function Step2ConnectWhatsApp({
         try {
             await axios.post(
                 workspaces.wizard.qr({ slug: activeWorkspace.slug }).url,
-                { instance_id: instance.instance_name },
+                { instance_id: instance.id },
             );
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {

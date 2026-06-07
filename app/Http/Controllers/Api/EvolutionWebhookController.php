@@ -19,111 +19,123 @@ class EvolutionWebhookController extends Controller
 
         $payload = $request->all();
         $event = $payload['event'] ?? null;
-        $instanceName = $payload['instance'] ?? null;
+        $instanceId = $payload['instanceId'] ?? null;
 
-        if (! $instanceName) {
-            return response()->json(['error' => 'No instance specified'], 400);
+        if (! $instanceId) {
+            return response()->json(['error' => 'No instanceId specified'], 400);
         }
+
+        $instance = EvolutionInstance::where('uuid', $instanceId)->first();
+        if (! $instance) {
+            Log::warning("Instance not found for uuid: {$instanceId}");
+
+            return response()->json(['status' => 'success']);
+        }
+
+        $instanceName = $instance->instance_name;
 
         /*
         |--------------------------------------------------------------------------
-        | QR UPDATED
+        | QR CODE
         |--------------------------------------------------------------------------
         */
-        if ($event === 'qrcode.updated') {
-            $qrData = $payload['data']['qrcode'] ?? null;
-
-            if (! $qrData) {
-                Log::warning('QR code data missing in webhook', ['payload' => $payload]);
-
-                return response()->json(['error' => 'QR data missing'], 400);
-            }
-
-            $qrCode = $qrData['code'] ?? null;
+        if ($event === 'QRCode') {
+            $data = $payload['data'] ?? [];
+            $qrCode = $data['code'] ?? null;
 
             broadcast(new QrCodeUpdated($instanceName, $qrCode));
+
+            if ($qrCode) {
+                Log::info("QR code received for instance {$instanceName}");
+            }
 
             return response()->json(['status' => 'success']);
         }
 
         /*
         |--------------------------------------------------------------------------
-        | CONNECTION UPDATED
+        | CONNECTION EVENTS
         |--------------------------------------------------------------------------
         */
-        if ($event === 'connection.update') {
-            $state = $payload['data']['state'] ?? 'close';
-            $statusReason = $payload['data']['statusReason'] ?? null;
+        if ($event === 'Connected') {
+            $data = $payload['data'] ?? [];
+            $status = $data['status'] ?? 'open';
+            $jid = $data['jid'] ?? null;
+            $pushName = $data['pushName'] ?? null;
 
-            $status = match ($state) {
-                'open' => 'connected',
-                'connecting' => 'connecting',
-                'close' => ($statusReason == 401 || $statusReason === 'device_removed') ? 'disconnected' : 'connecting',
-                default => 'disconnected',
-            };
+            $phone = $jid ? explode(':', explode('@', $jid)[0])[0] : null;
 
-            $instance = EvolutionInstance::where('instance_name', $instanceName)->first();
+            $instance->update([
+                'status' => 'connected',
+                'phone_number' => $phone,
+                'connected_at' => now(),
+            ]);
 
-            if ($instance && $instance->status !== $status) {
-                $settings = $instance->settings ?? [];
+            broadcast(new InstanceConnectionUpdated($instance));
+            Log::info("Instance {$instanceName} connected");
 
-                if ($status === 'connected') {
-                    $settings['was_connected'] = true;
-                } elseif ($status === 'disconnected') {
-                    $settings['was_connected'] = false;
-                }
+            return response()->json(['status' => 'success']);
+        }
 
-                $instance->update([
-                    'status' => $status,
-                    'connected_at' => $status === 'connected' ? now() : $instance->connected_at,
-                    'phone_number' => $status === 'connected' && isset($payload['data']['wuid'])
-                        ? explode('@', $payload['data']['wuid'])[0]
-                        : ($status === 'disconnected' ? null : $instance->phone_number),
-                    'settings' => $settings,
-                ]);
+        if ($event === 'PairSuccess') {
+            $data = $payload['data'] ?? [];
+            $jid = $data['jid'] ?? null;
+            $pushName = $data['pushName'] ?? '';
 
-                broadcast(new InstanceConnectionUpdated($instance));
-                Log::info("Instance {$instanceName} updated to {$status} (Reason: {$statusReason})");
-            }
+            $phone = $jid ? explode(':', explode('@', $jid)[0])[0] : null;
+
+            $instance->update([
+                'status' => 'connected',
+                'phone_number' => $phone,
+                'connected_at' => now(),
+            ]);
+
+            broadcast(new InstanceConnectionUpdated($instance));
+            Log::info("Instance {$instanceName} paired successfully");
+
+            return response()->json(['status' => 'success']);
+        }
+
+        if ($event === 'LoggedOut') {
+            $instance->update([
+                'status' => 'disconnected',
+                'phone_number' => null,
+                'connected_at' => null,
+            ]);
+
+            broadcast(new InstanceConnectionUpdated($instance));
+            Log::info("Instance {$instanceName} logged out");
+
+            return response()->json(['status' => 'success']);
+        }
+
+        if ($event === 'OfflineSyncCompleted') {
+            Log::info("Instance {$instanceName} offline sync completed", $payload['data'] ?? []);
+
+            return response()->json(['status' => 'success']);
         }
 
         /*
         |--------------------------------------------------------------------------
-        | MESSAGES UPSERT - Incoming messages from clients
+        | MESSAGE EVENTS
         |--------------------------------------------------------------------------
         */
-        if ($event === 'messages.upsert') {
-            $msg = $payload['data'] ?? [];
+        if ($event === 'Message' || $event === 'SendMessage') {
+            $data = $payload['data'] ?? [];
+            $info = $data['Info'] ?? [];
+            $message = $data['Message'] ?? [];
 
-            $messageText = $this->extractMessageText($msg['message'] ?? []);
+            $isFromMe = $info['IsFromMe'] ?? true;
+            $direction = $isFromMe ? 'ai' : 'client';
+
+            $messageText = $this->extractMessageText($message);
 
             if ($messageText) {
-                $direction = ($msg['key']['fromMe'] ?? true) ? 'ai' : 'client';
-                $phone = $this->normalizePhone($msg['key']['remoteJid'] ?? null);
+                $phone = $this->normalizePhone($info['Chat'] ?? null);
 
                 if ($phone) {
                     $this->saveMessage($phone, $direction, $messageText);
                 }
-            }
-        }
-
-        /*
-        |--------------------------------------------------------------------------
-        | SEND MESSAGE - Outgoing AI messages
-        |--------------------------------------------------------------------------
-        */
-        if ($event === 'send.message') {
-            $msg = $payload['data'] ?? [];
-            $messageText = $this->extractMessageText($msg['message'] ?? []);
-
-            if (! $messageText) {
-                return response()->json(['status' => 'success']);
-            }
-
-            $phone = $this->normalizePhone($msg['key']['remoteJid'] ?? null);
-
-            if ($phone) {
-                $this->saveMessage($phone, 'ai', $messageText);
             }
         }
 
@@ -163,21 +175,17 @@ class EvolutionWebhookController extends Controller
             return null;
         }
 
-        // Remove all non-digits
         $digits = preg_replace('/[^0-9]/', '', $phone);
 
-        // Remove leading 0
         if (str_starts_with($digits, '0')) {
             $digits = substr($digits, 1);
         }
 
-        // Return clean digits without + to match DB format (e.g., "213697096705")
         return $digits;
     }
 
     private function saveMessage(string $phone, string $direction, string $messageText): void
     {
-        // Match exact phone or phone with country code prefix
         $lead = Lead::where(function ($query) use ($phone) {
             $query->where('phone', $phone)
                 ->orWhere('phone', 'like', $phone.'%');

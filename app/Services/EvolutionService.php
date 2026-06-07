@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use App\Events\QrCodeUpdated;
 use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
+use Exception;
 use Ihamani0\LaravelEvolutionApi\Facades\EvolutionApi;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -13,119 +13,100 @@ class EvolutionService
 {
     protected $baseUrl;
 
-    protected $apiKey;
+    protected $adminKey;
 
-    protected $evolutaion_url_webhook;
+    protected $webhookUrl;
 
     public function __construct()
     {
         $this->baseUrl = config('services.evolution.base_url');
-        $this->apiKey = config('services.evolution.api_key');
-        $this->evolutaion_url_webhook = config('services.evolution.evolutaion_url_webhook');
-
+        $this->adminKey = config('services.evolution.admin_key');
+        $this->webhookUrl = config('services.evolution.webhook_url');
     }
 
-    public function createInstance(string $instanceName, string $token): array
+    public function createInstance(string $instanceName, string $token, array $settings = []): array
     {
+        $response = EvolutionApi::instance()->create($instanceName, $token, $settings);
 
-        $response = EvolutionApi::instance()->create($instanceName, [
-            'token' => $token,
-            'reject_call' => true,
-            'webhook' => [
-                'enabled' => true,
-                'url' => $this->evolutaion_url_webhook,
-                'byEvents' => false,
-                'events' => [
-                    'CONNECTION_UPDATE',
-                    'MESSAGES_UPSERT',
-                    'QRCODE_UPDATED',
-                    'SEND_MESSAGE',
-                ],
-            ],
-        ]);
-
-        return $response;
-
-    }
-
-    public function fetchQrCode(string $instanceName): void
-    {
-        // 1. Make the request to Evolution API
-        $response = Http::withHeaders([
-            'apikey' => $this->apiKey, // 'apikey' should usually be lowercase 'a' in v2
-            'Content-Type' => 'application/json',
-        ])->get("{$this->baseUrl}/instance/connect/{$instanceName}");
-
-        // 2. If successful, Evolution returns the QR code in the response body!
-        if ($response->successful()) {
-            $data = $response->json();
-
-            // Extract the raw code
-            $qrCode = $data['code'] ?? null;
-
-            // 3. Instantly broadcast it to the frontend!
-            // This guarantees the UI updates immediately even if the webhook is delayed.
-            if ($qrCode) {
-                broadcast(new QrCodeUpdated($instanceName, $qrCode));
-            }
-        } else {
-            Log::error("Failed to fetch QR for {$instanceName}: ".$response->body());
+        if (isset($response['error'])) {
+            return $response;
         }
-    }
-
-    public function logoutInstance(string $instanceName): array
-    {
-
-        $response = EvolutionApi::setInstance($instanceName)->instance()->logout();
 
         return $response;
     }
 
-    public function deleteInstance(string $instanceName): array
+    public function connectInstance(EvolutionInstance $instance): void
     {
+        $response = EvolutionApi::setInstance($instance->api_token)
+            ->instance()
+            ->connect($instance->api_token, $this->webhookUrl, ['QRCODE', 'MESSAGE', 'CONNECTION', 'PRESENCE']);
 
-        $response = EvolutionApi::setInstance($instanceName)->instance()->delete();
-
-        // $response = Http::withHeaders([
-        //     'apiKey' => $this->apiKey,
-        //     'Content-Type' => 'application/json'
-        //  ])->delete("{$this->baseUrl}/instance/delete/{$instanceName}");
-
-        return $response;
+        Log::info('Instance connect response', ['response' => $response]);
     }
 
-    public function restartInstance(string $instanceName)
+    public function fetchQrCode(EvolutionInstance $instance): void
     {
+        try {
 
-        $response = EvolutionApi::setInstance($instanceName)->instance()->restart();
+            $response = EvolutionApi::setInstance($instance->api_token)
+                ->instance()
+                ->qr();
 
-        return $response;
+            $qrCode = $response['code'] ?? null;
+        } catch (Exception $e) {
+            Log::error("Failed to fetch QR for {$instance->instance_name}: ".$e->getMessage());
+            Log::error("Failed to fetch QR for {$instance->instance_name}: ".json_encode($response));
+        }
+
     }
 
-    public function getInstanceStatus(string $instanceName): array
+    public function pairInstance(EvolutionInstance $instance, string $phone): array
     {
-        return EvolutionApi::setInstance($instanceName)->instance()->status();
+        return EvolutionApi::setInstance($instance->api_token)
+            ->instance()
+            ->pair($phone);
     }
 
-    public function disconnectInstance(string $instanceName): array
+    public function logoutInstance(EvolutionInstance $instance): array
     {
-        return EvolutionApi::setInstance($instanceName)->instance()->logout();
+        return EvolutionApi::setInstance($instance->api_token)
+            ->instance()
+            ->logout();
+    }
+
+    public function deleteInstance(EvolutionInstance $instance): array
+    {
+        return EvolutionApi::instance()->delete($instance->uuid);
+    }
+
+    public function restartInstance(EvolutionInstance $instance): array
+    {
+        return EvolutionApi::setInstance($instance->api_token)
+            ->instance()
+            ->reconnect();
+    }
+
+    public function getInstanceStatus(EvolutionInstance $instance): array
+    {
+        return EvolutionApi::setInstance($instance->api_token)
+            ->instance()
+            ->status();
+    }
+
+    public function disconnectInstance(EvolutionInstance $instance): array
+    {
+        return EvolutionApi::setInstance($instance->api_token)
+            ->instance()
+            ->disconnect();
     }
 
     // ==========Handle N8n Integration===============
 
-    /**
-     * Convert phone number to WhatsApp JID format.
-     * Example: +213 697 096 705 -> 213697096705@s.whatsapp.net
-     */
     private function formatPhoneToJid(string $phone): string
     {
         return preg_replace('/[^0-9]/', '', $phone).'@s.whatsapp.net';
     }
 
-    /**
-     * Convert blacklist phone numbers to JID format.
-     */
     private function convertBlacklistToJids(array $blacklist): array
     {
         return collect($blacklist)
@@ -150,36 +131,37 @@ class EvolutionService
             'unknownMessage' => $settings['unknownMessage'] ?? '',
             'listeningFromMe' => (bool) ($settings['listeningFromMe'] ?? false),
             'stopBotFromMe' => (bool) ($settings['stopBotFromMe'] ?? true),
-            'ignoreJids' => $this->convertBlacklistToJids($settings['blacklist'] ?? []),
+            'splitMessages' => (bool) ($settings['splitMessages'] ?? false),
+            'timePerChar' => (int) ($settings['timePerChar'] ?? 0),
+            'systemMessage' => $settings['systemMessage'] ?? '',
+            'contextWindowSize' => (int) ($settings['contextWindowSize'] ?? 5),
+            'fallbackMessage' => $settings['fallbackMessage'] ?? '',
         ];
     }
 
     public function connectN8nBot(EvolutionInstance $instance, AgentConfig $agent)
     {
-
         $payload = $this->buildN8nPayload($agent, true);
 
-        $response = Http::withHeaders(['apikey' => $this->apiKey])
+        $response = Http::withHeaders(['apikey' => $this->adminKey])
             ->post("{$this->baseUrl}/n8n/create/{$instance->instance_name}", $payload);
 
         if ($response->failed()) {
-            throw new \Exception('Evolution API: '.$response->body());
+            throw new Exception('Evolution API: '.$response->body());
         }
 
         return $response->json();
-
     }
 
     public function updateN8nBot(EvolutionInstance $instance, AgentConfig $agent)
     {
-
         $payload = $this->buildN8nPayload($agent, $agent->is_active);
 
-        $response = Http::withHeaders(['apikey' => $this->apiKey])
+        $response = Http::withHeaders(['apikey' => $this->adminKey])
             ->put("{$this->baseUrl}/n8n/update/{$agent->evo_integration_id}/{$instance->instance_name}", $payload);
 
         if ($response->failed()) {
-            throw new \Exception('Evolution API: '.$response->body());
+            throw new Exception('Evolution API: '.$response->body());
         }
 
         return $response->json();
@@ -189,12 +171,11 @@ class EvolutionService
     {
         $payload = $this->buildN8nPayload($agent, $status);
 
-        $response = Http::withHeaders(['apikey' => $this->apiKey])
+        $response = Http::withHeaders(['apikey' => $this->adminKey])
             ->put("{$this->baseUrl}/n8n/update/{$agent->evo_integration_id}/{$instance->instance_name}", $payload);
 
         if ($response->failed()) {
-            dd($response->body());
-            throw new \Exception('Evolution API: '.$response->body());
+            throw new Exception('Evolution API: '.$response->body());
         }
 
         return $response->json();
@@ -206,20 +187,16 @@ class EvolutionService
             return true;
         }
 
-        $response = Http::withHeaders(['apikey' => $this->apiKey])
+        $response = Http::withHeaders(['apikey' => $this->adminKey])
             ->delete("{$this->baseUrl}/n8n/delete/{$agent->evo_integration_id}/{$instance->instance_name}");
 
         if ($response->failed()) {
-            throw new \Exception('Evolution API: '.$response->body());
+            throw new Exception('Evolution API: '.$response->body());
         }
 
         return $response->successful();
     }
 
-    /**
-     * Update global N8N settings (applies to all bots).
-     * Gets current settings, merges with new blacklist, sends complete config.
-     */
     public function updateN8nSettings(EvolutionInstance $instance, AgentConfig $agent)
     {
         $settings = $agent->settings ?? [];
@@ -229,33 +206,12 @@ class EvolutionService
             return;
         }
 
-        // Get current global settings
-        $currentSettings = EvolutionApi::setInstance($instance->instance_name)
-            ->n8n()
-            ->getSettings();
+        $jids = $this->convertBlacklistToJids($blacklist);
 
-        Log::info('Current settings: '.json_encode($currentSettings));
-
-        // Convert new blacklist to JIDs
-        $newJids = $this->convertBlacklistToJids($blacklist);
-
-        // Merge with existing ignoreJids
-        $existingJids = $currentSettings['ignoreJids'] ?? [];
-        $mergedJids = array_unique(array_merge($existingJids, $newJids));
-
-        // Send complete settings (POST overwrites all)
-        EvolutionApi::setInstance($instance->instance_name)
-            ->n8n()
-            ->setSettings(
-                expire: $currentSettings['expire'] ?? 20,
-                keywordFinish: $currentSettings['keywordFinish'] ?? '#STOP',
-                delayMessage: $currentSettings['delayMessage'] ?? 1000,
-                unknownMessage: $currentSettings['unknownMessage'] ?: 'Message not recognized',
-                listeningFromMe: $currentSettings['listeningFromMe'] ?? false,
-                stopBotFromMe: $currentSettings['stopBotFromMe'] ?? true,
-                keepOpen: $currentSettings['keepOpen'] ?? false,
-                debounceTime: $currentSettings['debounceTime'] ?? 0,
-                ignoreJids: $mergedJids,
-            );
+        foreach ($jids as $jid) {
+            EvolutionApi::setInstance($instance->api_token)
+                ->n8n()
+                ->ignoreJid($jid, 'add');
+        }
     }
 }
