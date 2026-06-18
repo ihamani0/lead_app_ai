@@ -1,5 +1,4 @@
 {
-   
     "sidebar_dashboard": "Naviguez entre les différentes sections de l’application ici.",
     "stats_leads": "Suivez votre total de leads et les nouveaux leads du jour.",
     "stats_instances": "Surveillez l’état de connexion de vos instances WhatsApp.",
@@ -15,5 +14,4 @@
     "agents_create": "Créez des agents IA pour automatiser les conversations.",
     "agent_card": "Visualisez et configurez vos agents IA ici.",
     "settings_nav": "Gérez votre profil, mot de passe et paramètres de sécurité."
-   
 }

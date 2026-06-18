@@ -35,7 +35,10 @@ interface AssetDetailDialogProps {
     onOpenChange: (open: boolean) => void;
     onDelete: (id: string) => void;
     onToggleDefault?: (id: string, isDefault: boolean) => void;
-    onUpdate?: (id: string, data: { category: string; caption: string }) => void;
+    onUpdate?: (
+        id: string,
+        data: { category: string; caption: string },
+    ) => void;
     canManage?: boolean;
 }
 
@@ -128,7 +131,10 @@ export function AssetDetailDialog({
         setIsUpdatingDefault(true);
         axios
             .post(
-                media.toggleDefault({ slug: activeWorkspace!.slug, id: asset.id }).url,
+                media.toggleDefault({
+                    slug: activeWorkspace!.slug,
+                    id: asset.id,
+                }).url,
             )
             .then((response) => {
                 const { is_default } = response.data as { is_default: boolean };
@@ -184,12 +190,17 @@ export function AssetDetailDialog({
         if (!editCategory.trim()) return;
         setIsSaving(true);
         axios
-            .put(media.update({ slug: activeWorkspace!.slug, id: asset.id }).url, {
-                category: editCategory.trim(),
-                caption: editCaption,
-            })
+            .put(
+                media.update({ slug: activeWorkspace!.slug, id: asset.id }).url,
+                {
+                    category: editCategory.trim(),
+                    caption: editCaption,
+                },
+            )
             .then((response) => {
-                const { asset: updatedAsset } = response.data as { asset: Asset };
+                const { asset: updatedAsset } = response.data as {
+                    asset: Asset;
+                };
                 onUpdate?.(asset.id, {
                     category: updatedAsset.category,
                     caption: updatedAsset.caption ?? '',
@@ -324,14 +335,19 @@ export function AssetDetailDialog({
                     <div className="w-full max-w-full space-y-3">
                         {isEditing ? (
                             <div className="space-y-1.5">
-                                <Label htmlFor="edit-category" className="text-xs font-medium text-muted-foreground uppercase flex items-center gap-1.5">
+                                <Label
+                                    htmlFor="edit-category"
+                                    className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase"
+                                >
                                     <Tag className="h-3.5 w-3.5" />
                                     Category
                                 </Label>
                                 <Input
                                     id="edit-category"
                                     value={editCategory}
-                                    onChange={(e) => setEditCategory(e.target.value)}
+                                    onChange={(e) =>
+                                        setEditCategory(e.target.value)
+                                    }
                                     placeholder="Category"
                                     disabled={isSaving}
                                 />

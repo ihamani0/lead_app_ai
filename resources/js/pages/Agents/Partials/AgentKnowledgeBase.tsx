@@ -61,11 +61,7 @@ interface Props {
 
 const ITEMS_PER_PAGE = 7;
 
-export default function AgentKnowledgeBase({
-    agent,
-    canManage,
-    slug,
-}: Props) {
+export default function AgentKnowledgeBase({ agent, canManage, slug }: Props) {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const addInputRef = useRef<HTMLInputElement>(null);
     const [dragActive, setDragActive] = useState(false);
@@ -79,7 +75,8 @@ export default function AgentKnowledgeBase({
     });
 
     const getDocs = (): KnowledgeDocument[] =>
-        (agent as unknown as { knowledge_bases?: KnowledgeDocument[] }).knowledge_bases || [];
+        (agent as unknown as { knowledge_bases?: KnowledgeDocument[] })
+            .knowledge_bases || [];
 
     const [docs, setDocs] = useState<KnowledgeDocument[]>(getDocs);
 
@@ -88,56 +85,106 @@ export default function AgentKnowledgeBase({
     }, [agent]);
 
     const channel = `knowledge-base.agent.${agent.id}`;
-    useEcho(channel, ['DocumentStatusUpdated'], (event: { documentId: string; status: string; documentName: string }) => {
-        setDocs((prev) =>
-            prev.map((doc) =>
-                doc.id === event.documentId
-                    ? { ...doc, status: event.status as KnowledgeDocument['status'] }
-                    : doc,
-            ),
-        );
+    useEcho(
+        channel,
+        ['DocumentStatusUpdated'],
+        (event: {
+            documentId: string;
+            status: string;
+            documentName: string;
+        }) => {
+            setDocs((prev) =>
+                prev.map((doc) =>
+                    doc.id === event.documentId
+                        ? {
+                              ...doc,
+                              status: event.status as KnowledgeDocument['status'],
+                          }
+                        : doc,
+                ),
+            );
 
-        if (event.status === 'indexed') {
-            toast.success(`"${event.documentName}" Finished successfully`, { position: "top-right" });
-        } else if (event.status === 'failed') {
-            toast.error(`"${event.documentName}" indexing failed`);
-        }
-    });
+            if (event.status === 'indexed') {
+                toast.success(`"${event.documentName}" Finished successfully`, {
+                    position: 'top-right',
+                });
+            } else if (event.status === 'failed') {
+                toast.error(`"${event.documentName}" indexing failed`);
+            }
+        },
+    );
 
     const knowledgeStats = useMemo(() => {
         const total_documents = docs.length;
         const indexed_count = docs.filter((d) => d.status === 'indexed').length;
-        const processing_count = docs.filter((d) => d.status === 'processing').length;
+        const processing_count = docs.filter(
+            (d) => d.status === 'processing',
+        ).length;
         const totalWords = docs.reduce((sum, d) => sum + (d.file_size || 0), 0);
         const total_words = Math.floor(totalWords / 5);
         const dates = docs.map((d) => d.updated_at).filter(Boolean);
-        const last_updated_at = dates.length > 0
-            ? dates.reduce((latest, curr) => (curr > latest ? curr : latest))
-            : null;
+        const last_updated_at =
+            dates.length > 0
+                ? dates.reduce((latest, curr) =>
+                      curr > latest ? curr : latest,
+                  )
+                : null;
 
-        return { total_documents, indexed_count, processing_count, total_words, last_updated_at };
+        return {
+            total_documents,
+            indexed_count,
+            processing_count,
+            total_words,
+            last_updated_at,
+        };
     }, [docs]);
 
     const filteredDocs = docs.filter((doc) => {
-        const matchesSearch = doc.name.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesSearch = doc.name
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase());
         const ext = doc.name.split('.').pop()?.toLowerCase() || '';
         const matchesType = typeFilter === 'all' || ext === typeFilter;
-        const matchesStatus = statusFilter === 'all' || doc.status === statusFilter;
+        const matchesStatus =
+            statusFilter === 'all' || doc.status === statusFilter;
         return matchesSearch && matchesType && matchesStatus;
     });
 
-    const totalPages = Math.max(1, Math.ceil(filteredDocs.length / ITEMS_PER_PAGE));
-    const paginatedDocs = filteredDocs.slice((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE);
+    const totalPages = Math.max(
+        1,
+        Math.ceil(filteredDocs.length / ITEMS_PER_PAGE),
+    );
+    const paginatedDocs = filteredDocs.slice(
+        (page - 1) * ITEMS_PER_PAGE,
+        page * ITEMS_PER_PAGE,
+    );
 
     const getTypeInfo = (name: string) => {
         const ext = name.split('.').pop()?.toLowerCase() || '';
         const map: Record<string, { label: string; class: string }> = {
-            pdf: { label: 'PDF', class: 'bg-red-100 text-red-700 border-red-200' },
-            docx: { label: 'DOCX', class: 'bg-blue-100 text-blue-700 border-blue-200' },
-            xlsx: { label: 'XLSX', class: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
-            txt: { label: 'TXT', class: 'bg-slate-100 text-slate-600 border-slate-200' },
+            pdf: {
+                label: 'PDF',
+                class: 'bg-red-100 text-red-700 border-red-200',
+            },
+            docx: {
+                label: 'DOCX',
+                class: 'bg-blue-100 text-blue-700 border-blue-200',
+            },
+            xlsx: {
+                label: 'XLSX',
+                class: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+            },
+            txt: {
+                label: 'TXT',
+                class: 'bg-slate-100 text-slate-600 border-slate-200',
+            },
         };
-        return map[ext] || { label: ext.toUpperCase(), class: 'bg-slate-100 text-slate-600 border-slate-200' };
+        return (
+            map[ext] || {
+                label: ext.toUpperCase(),
+                class: 'bg-slate-100 text-slate-600 border-slate-200',
+            }
+        );
     };
 
     const getStatusBadge = (status: string) => {
@@ -194,7 +241,7 @@ export default function AgentKnowledgeBase({
         const date = new Date(dateString);
         const diffMs = now.getTime() - date.getTime();
         const diffMins = Math.floor(diffMs / 60000);
-        if (diffMins < 1) return 'À l\'instant';
+        if (diffMins < 1) return "À l'instant";
         if (diffMins < 60) return `Il y a ${diffMins} min`;
         const diffHours = Math.floor(diffMins / 60);
         if (diffHours < 24) return `Il y a ${diffHours}h`;
@@ -252,9 +299,13 @@ export default function AgentKnowledgeBase({
 
     const handleDelete = (docId: string) => {
         if (confirm('Supprimer ce document ?')) {
-            router.delete(agents.knowledge.destroy({ slug, agent: agent.id, id: docId }).url, {
-                preserveScroll: true,
-            });
+            router.delete(
+                agents.knowledge.destroy({ slug, agent: agent.id, id: docId })
+                    .url,
+                {
+                    preserveScroll: true,
+                },
+            );
         }
     };
 
@@ -305,7 +356,9 @@ export default function AgentKnowledgeBase({
                         >
                             <div
                                 className={`mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-xl ${
-                                    processing ? 'bg-slate-200' : 'bg-purple-100'
+                                    processing
+                                        ? 'bg-slate-200'
+                                        : 'bg-purple-100'
                                 }`}
                             >
                                 {processing ? (
@@ -369,7 +422,9 @@ export default function AgentKnowledgeBase({
                                 ) : (
                                     <File className="h-4 w-4" />
                                 )}
-                                {processing ? 'Upload en cours…' : 'Ajouter des documents'}
+                                {processing
+                                    ? 'Upload en cours…'
+                                    : 'Ajouter des documents'}
                             </Button>
                         )}
                         <input
@@ -384,7 +439,7 @@ export default function AgentKnowledgeBase({
                     {/* Filters */}
                     <div className="flex flex-wrap items-center gap-3">
                         <div className="relative flex-1 sm:max-w-xs">
-                            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
                             <Input
                                 placeholder="Rechercher un document..."
                                 value={searchQuery}
@@ -501,7 +556,9 @@ export default function AgentKnowledgeBase({
                                                     </TableCell>
                                                     <TableCell>
                                                         <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
+                                                            <DropdownMenuTrigger
+                                                                asChild
+                                                            >
                                                                 <Button
                                                                     variant="ghost"
                                                                     size="icon"
@@ -517,12 +574,13 @@ export default function AgentKnowledgeBase({
                                                                 <DropdownMenuItem
                                                                     onClick={() =>
                                                                         window.open(
-                                                                            agents.document
-                                                                                .download({
+                                                                            agents.document.download(
+                                                                                {
                                                                                     slug,
                                                                                     agent: agent.id,
                                                                                     id: doc.id,
-                                                                                })
+                                                                                },
+                                                                            )
                                                                                 .url,
                                                                         )
                                                                     }

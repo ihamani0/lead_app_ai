@@ -5,7 +5,7 @@
         "leads": "Leads",
         "instances": "Instances",
         "agents": "Agents",
-        "media": "Media"
+        "tokens": "Tokens"
     },
     "noData": "No data available",
     "leads": {
@@ -19,14 +19,17 @@
             "last30DaysDesc": "Last 30 days"
         },
         "charts": {
-            "byStatus": "By Status",
-            "byTemperature": "By Temperature",
+            "aiQualification": "AI Qualification Status",
+            "qualificationResult": "Qualification Result",
+            "treatmentStatus": "Treatment Status",
             "leadsByInstance": "Leads by Instance",
-            "bySource": "By Source"
+            "leadsOverTime": "Leads Over Time (Last 30 Days)"
         },
-        "unknown": "Unknown",
-        "progress": {
-            "byStatus": "By Status"
+        "status": {
+            "qualified": "Qualified",
+            "notQualified": "Not Qualified",
+            "treated": "Treated",
+            "notTreated": "Not Treated"
         }
     },
     "instances": {
@@ -36,13 +39,13 @@
             "uptime": "% uptime",
             "disconnected": "Disconnected"
         },
-        "charts": {
-            "instanceStatus": "Instance Status",
-            "leadsPerInstance": "Leads per Instance"
-        },
-        "details": {
-            "leadsPerInstance": "Leads per Instance",
-            "description": "Number of leads captured by each WhatsApp instance"
+        "table": {
+            "title": "Instance Details",
+            "name": "Name",
+            "phone": "Phone",
+            "status": "Status",
+            "leads": "Leads",
+            "connectedAt": "Connected At"
         },
         "noInstances": "No instances found"
     },
@@ -50,10 +53,13 @@
         "summary": {
             "totalAgents": "Total Agents",
             "activeAgents": "Active Agents",
-            "inactiveAgents": "Inactive Agents"
+            "inactiveAgents": "Inactive Agents",
+            "totalTokens": "Total Tokens",
+            "allTimeTokens": "All time"
         },
         "charts": {
-            "agentStatus": "Agent Status"
+            "agentStatus": "Agent Status",
+            "tokenUsage": "Token Usage by Agent"
         },
         "list": {
             "allAgents": "All Agents"
@@ -63,16 +69,37 @@
         "inactive": "Inactive",
         "noAgents": "No agents configured"
     },
-    "media": {
+    "tokens": {
         "summary": {
-            "totalFiles": "Total Files",
-            "totalStorage": "Total Storage",
-            "averageFileSize": "Average File Size"
+            "totalTokens": "Total Tokens",
+            "totalCost": "Total Cost",
+            "inputTokens": "Input Tokens",
+            "outputTokens": "Output Tokens"
         },
         "charts": {
-            "byFileType": "By File Type",
-            "fileTypeDistribution": "File Type Distribution"
+            "tokenUsage": "Token Usage"
         },
-        "noMedia": "No media files found"
+        "toggle": {
+            "daily": "Daily",
+            "monthly": "Monthly"
+        },
+        "legend": {
+            "inputTokens": "Input Tokens",
+            "outputTokens": "Output Tokens"
+        },
+        "monthly": {
+            "title": "Monthly Summary"
+        },
+        "table": {
+            "month": "Month",
+            "inputTokens": "Input Tokens",
+            "outputTokens": "Output Tokens",
+            "totalTokens": "Total Tokens",
+            "cost": "Cost",
+            "transactions": "Transactions"
+        },
+        "byAgent": {
+            "title": "Usage by Agent"
+        }
     }
 }

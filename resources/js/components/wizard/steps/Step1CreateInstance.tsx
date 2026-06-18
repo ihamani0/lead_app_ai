@@ -12,7 +12,9 @@ import type { WizardFormData } from '@/types/wizard';
 
 interface Step1CreateInstanceProps {
     formData: WizardFormData;
-    setFormData: (data: WizardFormData | ((prev: WizardFormData) => WizardFormData)) => void;
+    setFormData: (
+        data: WizardFormData | ((prev: WizardFormData) => WizardFormData),
+    ) => void;
     onNext: () => void;
 }
 
@@ -73,7 +75,9 @@ export function Step1CreateInstance({
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold">{t('wizard.step1.title')}</h2>
+                <h2 className="text-2xl font-bold">
+                    {t('wizard.step1.title')}
+                </h2>
                 <p className="mt-2 text-muted-foreground">
                     {t('wizard.step1.description')}
                 </p>
@@ -82,11 +86,14 @@ export function Step1CreateInstance({
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                     <Label htmlFor="instance_name">
-                        {t('wizard.step1.instance_name')} <span className="text-destructive">*</span>
+                        {t('wizard.step1.instance_name')}{' '}
+                        <span className="text-destructive">*</span>
                     </Label>
                     <Input
                         id="instance_name"
-                        placeholder={t('wizard.step1.instance_name_placeholder')}
+                        placeholder={t(
+                            'wizard.step1.instance_name_placeholder',
+                        )}
                         value={instanceName}
                         onChange={(e) => setInstanceName(e.target.value)}
                         required
@@ -95,7 +102,9 @@ export function Step1CreateInstance({
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="display_name">{t('wizard.step1.display_name')}</Label>
+                    <Label htmlFor="display_name">
+                        {t('wizard.step1.display_name')}
+                    </Label>
                     <Input
                         id="display_name"
                         placeholder={t('wizard.step1.display_name_placeholder')}
@@ -106,7 +115,9 @@ export function Step1CreateInstance({
                 </div>
 
                 <div className="space-y-2">
-                    <Label htmlFor="phone_number">{t('wizard.step1.phone_number')}</Label>
+                    <Label htmlFor="phone_number">
+                        {t('wizard.step1.phone_number')}
+                    </Label>
                     <Input
                         id="phone_number"
                         placeholder={t('wizard.step1.phone_placeholder')}
@@ -126,7 +137,11 @@ export function Step1CreateInstance({
                 )}
 
                 <div className="flex justify-end pt-4">
-                    <Button type="submit" disabled={processing} className="gap-2">
+                    <Button
+                        type="submit"
+                        disabled={processing}
+                        className="gap-2"
+                    >
                         {processing ? (
                             <>
                                 <Loader2 className="h-4 w-4 animate-spin" />

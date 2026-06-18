@@ -16,7 +16,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -43,7 +42,7 @@ class AgentController extends Controller
         $agents = $this->scopedQuery($request, AgentConfig::class)
             ->with(['instance', 'knowledgeBases'])
             ->withCount('knowledgeBases')
-            ->withCount('MediaAsset')
+            ->withCount('mediaAssets')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -620,29 +619,15 @@ class AgentController extends Controller
 
                 if ($request->hasFile('knowledge_files')) {
                     foreach ($request->file('knowledge_files') as $file) {
-                        $document = KnowledgeBase::create([
-                            'tenant_id' => $request->user()->tenant_id,
-                            'team_id' => $agent->team_id,
-                            'name' => $file->getClientOriginalName(),
-                            'agent_config_id' => $agent->id,
-                            'status' => 'processing',
-                        ]);
-
-                        $document->addMedia($file)->toMediaCollection('documents');
-
-                        try {
-                            Http::withHeaders([
-                                'X-N8N-API-KEY' => config('services.n8n.api_key'),
-                            ])->post(config('services.document.webhook_url'), [
-                                'document_id' => $document->id,
-                                'tenant_id' => (string) $document->tenant_id,
-                                'agent_config_id' => $document->agent_config_id,
-                                'file_name' => $file->getClientOriginalName(),
-                            ]);
-                        } catch (Exception $e) {
-                            $document->update(['status' => 'failed']);
-                            Log::warning('n8n webhook failed for document '.$document->id.': '.$e->getMessage());
-                        }
+                        app(KnowledgeBaseService::class)->store(
+                            [
+                                'tenant_id' => $request->user()->tenant_id,
+                                'team_id' => $agent->team_id,
+                                'name' => $file->getClientOriginalName(),
+                                'agent_config_id' => $agent->id,
+                            ],
+                            $file,
+                        );
                     }
                 }
 

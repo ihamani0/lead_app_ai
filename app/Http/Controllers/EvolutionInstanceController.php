@@ -7,6 +7,7 @@ use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\EvolutionInstance;
 use App\Models\Tenant;
 use App\Services\EvolutionService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -110,13 +111,39 @@ class EvolutionInstanceController extends Controller
         }
     }
 
+    public function update(Request $request)
+    {
+        $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        $validated = $request->validate([
+            'display_name' => 'nullable|string|max:50',
+        ]);
+
+        $instance = $this->findScoped($request, EvolutionInstance::class, $request->route('id'));
+        $instance->update($validated);
+
+        return back()->with('success', 'Instance updated successfully.');
+    }
+
     public function show(Request $request)
     {
         $this->authorizeRole($request, ['owner', 'admin', 'member', 'viewer']);
 
         $instance = $this->scopedQuery($request, EvolutionInstance::class)
             ->with('agentConfig')
-            ->where('instance_name', $request->route('id'))->first();
+            ->where('instance_name', $request->route('id'))->firstOrFail();
+
+        $instance->messages_today = $instance->leads()
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        $instance->leads_count = $instance->leads()->count();
+
+        $instance->connection_quality = match ($instance->status) {
+            'connected' => 'excellente',
+            'connecting' => 'bonne',
+            default => 'faible',
+        };
 
         return Inertia::render('Profil/Show', [
             'instance' => $instance,

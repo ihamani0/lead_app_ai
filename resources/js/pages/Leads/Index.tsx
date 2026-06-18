@@ -1,22 +1,30 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import {
+    ChevronDown,
+    Download,
+    Filter,
     Flame,
+    Loader2,
     Search,
     Snowflake,
-    ThermometerSun,
-    X,
-    Users,
-    Loader2,
     Sparkles,
-    CheckCircle,
-    CheckSquare,
-    Square,
+    ThermometerSun,
+    Users,
+    X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Pagination from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -36,11 +44,15 @@ import {
 import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-
-import { index, triggerQualification, bulkQualify } from '@/routes/workspaces/leads';
+import {
+    index,
+    show,
+    triggerQualification,
+    bulkQualify,
+    exportMethod as exportLeads,
+} from '@/routes/workspaces/leads';
 import type { EvolutionInstance, Lead as LeadType } from '@/types';
 import EditLead from './Partials/EditLead';
-import ViewLead from './Partials/ViewLead';
 
 type Props = {
     leads: { data: LeadType[]; links: PaginationLink[] };
@@ -67,7 +79,6 @@ export default function LeadsIndex({
 
     useEcho('lead', ['QulificationUpdate'], (event) => {
         const updatedLead = event.lead;
-
         setLeads((prevLeads) =>
             prevLeads.map((lead) =>
                 lead.id === updatedLead.id ? { ...lead, ...updatedLead } : lead,
@@ -77,7 +88,6 @@ export default function LeadsIndex({
 
     useEcho('lead', ['LeadMessageUpdated'], (event) => {
         const updatedLead = event.lead;
-
         setLeads((prevLeads) =>
             prevLeads.map((lead) =>
                 lead.id === updatedLead.id ? { ...lead, ...updatedLead } : lead,
@@ -145,7 +155,8 @@ export default function LeadsIndex({
     const handleTriggerQualification = (leadId: string | number) => {
         setTriggeringLeadId(String(leadId));
         router.post(
-            triggerQualification({ slug: activeWorkspace!.slug, id: leadId }).url,
+            triggerQualification({ slug: activeWorkspace!.slug, id: leadId })
+                .url,
             {},
             {
                 preserveScroll: true,
@@ -156,14 +167,23 @@ export default function LeadsIndex({
         );
     };
 
+    const workspaceSlugRef = useRef(activeWorkspace?.slug);
+
+    useEffect(() => {
+        workspaceSlugRef.current = activeWorkspace?.slug;
+    }, [activeWorkspace?.slug]);
+
     useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
 
+        const slug = workspaceSlugRef.current;
+        if (!slug) return;
+
         const timeoutId = setTimeout(() => {
-            router.get(index({ slug: activeWorkspace!.slug }).url, params, {
+            router.get(index({ slug }).url, params, {
                 preserveState: true,
                 preserveScroll: true,
                 replace: true,
@@ -189,17 +209,7 @@ export default function LeadsIndex({
         });
     };
 
-    const formatDateTime = (dateString: string | null) => {
-        if (!dateString) return '-';
-        const date = new Date(dateString);
-        return date.toLocaleString('fr-FR', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
+    const hasActiveFilters = Object.values(params).some((val) => val !== '');
 
     const formatMessageTime = (timestamp: string) => {
         const diff = Date.now() - new Date(timestamp).getTime();
@@ -241,7 +251,7 @@ export default function LeadsIndex({
             case 'TRAITE':
                 return (
                     <Badge className="border-emerald-200 bg-emerald-100 text-emerald-800">
-                        <CheckCircle className="mr-1 h-3 w-3" /> Traité
+                        Traité
                     </Badge>
                 );
             case 'NON_TRAITE':
@@ -296,41 +306,55 @@ export default function LeadsIndex({
         </TooltipProvider>
     );
 
+    const [sortBy, setSortBy] = useState('lastActivity');
+
     return (
         <AppLayout>
             <Head title={t('leads.title')} />
-            <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
-                <div className="space-y-6">
-                    <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500 to-teal-600 p-4 shadow-xl ring-1 ring-emerald-400/30 sm:p-5 md:p-6 dark:from-emerald-700 dark:to-teal-700 dark:ring-emerald-600/40">
-                        <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            <div className="min-w-0 space-y-1.5">
-                                <div className="flex items-center gap-2">
-                                    <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-sm">
-                                        <Users className="h-5 w-5 text-white sm:h-6 sm:w-6" />
-                                    </div>
-                                    <h1 className="text-lg leading-tight font-semibold text-white sm:text-xl md:text-3xl">
-                                        {t('leads.title')}
-                                    </h1>
-                                </div>
-                                <p className="max-w-xs text-xs font-light text-white/90 sm:max-w-md sm:text-sm md:text-base">
-                                    {t('leads.description')}
-                                </p>
-                            </div>
 
-                            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-                                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-medium text-white backdrop-blur-sm sm:text-xs">
-                                    <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                    <span className="whitespace-nowrap">
-                                        {leads.length} {t('leads.leadsCount')}
-                                    </span>
-                                </div>
+            <div className="min-h-screen bg-background">
+                <div className="border-b   px-4 py-5 sm:px-6 lg:px-8">
+                        
+                    <div className="flex items-center gap-3">
+                        <Users className="h-5 w-5 shrink-0 text-muted-foreground" />
+                        <div className="min-w-0 flex-1">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <h1 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                                    {t('leads.title')}
+                                </h1>
+                                <Badge variant="secondary" className="text-xs">
+                                    {initialLeads.data.length}
+                                </Badge>
                             </div>
+                            <p className="mt-0.5 text-sm text-muted-foreground">
+                                {t('leads.description')}
+                            </p>
                         </div>
                     </div>
+                    <div className="flex items-center justify-between">
 
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4" data-tour="leads-filters">
-                        <div className="relative" data-tour="leads-search">
-                            <Search className="absolute top-2.5 left-2.5 h-4 w-4 text-muted-foreground" />
+                        <div className="flex items-center gap-2">
+                            <a
+                                href={exportLeads({ slug: activeWorkspace!.slug }).url + '?' + new URLSearchParams(
+                                    Object.fromEntries(
+                                        Object.entries(params).filter(([, v]) => v !== ''),
+                                    ),
+                                ).toString()}
+                                download
+                            >
+                                <Button variant="outline" size="sm">
+                                    <Download className="mr-1.5 h-4 w-4" />
+                                    {t('leads.actions.export')}
+                                </Button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="space-y-4 px-4 py-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-wrap items-center gap-3">
+                        <div className="relative min-w-[240px] flex-1 sm:max-w-xs">
+                            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                             <Input
                                 placeholder={t('leads.search.placeholder')}
                                 className="pl-9"
@@ -341,96 +365,197 @@ export default function LeadsIndex({
                             />
                         </div>
 
-                        <select
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                            value={params.instance_id}
-                            onChange={(e) =>
-                                handleChange('instance_id', e.target.value)
-                            }
-                        >
-                            <option value="">
-                                {t('leads.search.allInstances')}
-                            </option>
-                            {instances.map((inst) => (
-                                <option key={inst.id} value={inst.id}>
-                                    {inst.display_name ||
-                                        inst.instance_name.split('-')[1] ||
-                                        inst.instance_name}
-                                </option>
-                            ))}
-                        </select>
-
-                        <select
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                            value={params.temperature}
-                            onChange={(e) =>
-                                handleChange('temperature', e.target.value)
-                            }
-                        >
-                            <option value="">
-                                {t('leads.search.allQualificationResults')}
-                            </option>
-                            <option value="UNQUALIFIED">
-                                ⏳ Non qualifiés
-                            </option>
-                            <option value="HOT">
-                                🔥 {t('leads.search.hot')}
-                            </option>
-                            <option value="WARM">
-                                ☀️ {t('leads.search.warm')}
-                            </option>
-                            <option value="COLD">
-                                ❄️ {t('leads.search.cold')}
-                            </option>
-                        </select>
-
-                        <Input
-                            type="number"
-                            placeholder={t('leads.search.minScore')}
-                            value={params.min_score}
-                            onChange={(e) =>
-                                handleChange('min_score', e.target.value)
-                            }
-                            min="0"
-                            max="10"
-                        />
-
-                        <Input
-                            type="date"
-                            title="Created After Date"
-                            value={params.date_from}
-                            onChange={(e) =>
-                                handleChange('date_from', e.target.value)
-                            }
-                        />
-
-                        <Input
-                            type="date"
-                            title="Created Before Date"
-                            value={params.date_to}
-                            onChange={(e) =>
-                                handleChange('date_to', e.target.value)
-                            }
-                        />
-
-                        {Object.values(params).some((val) => val !== '') && (
-                            <div className="flex justify-end pt-2">
-                                <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={clearFilters}
-                                    className="text-red-500 hover:bg-red-50 hover:text-red-600"
-                                >
-                                    <X className="mr-1 h-4 w-4" />
-                                    {t('leads.search.clearFilters')}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                    <Filter className="mr-1.5 h-4 w-4" />
+                                    {t('leads.search.filters')}
+                                    {(params.instance_id ||
+                                        params.temperature ||
+                                        params.min_score ||
+                                        params.date_from ||
+                                        params.date_to) && (
+                                        <span className="ml-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground">
+                                            {
+                                                [
+                                                    params.instance_id,
+                                                    params.temperature,
+                                                    params.min_score,
+                                                    params.date_from,
+                                                    params.date_to,
+                                                ].filter(Boolean).length
+                                            }
+                                        </span>
+                                    )}
+                                    <ChevronDown className="ml-1 h-3 w-3 opacity-50" />
                                 </Button>
-                            </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start" className="w-56">
+                                <DropdownMenuLabel>
+                                    {t('leads.search.allInstances')}
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                {instances.map((inst) => (
+                                    <DropdownMenuItem
+                                        key={inst.id}
+                                        onClick={() =>
+                                            handleChange(
+                                                'instance_id',
+                                                params.instance_id === inst.id
+                                                    ? ''
+                                                    : inst.id,
+                                            )
+                                        }
+                                    >
+                                        {params.instance_id === inst.id && (
+                                            <span className="mr-2 text-primary">
+                                                ✓
+                                            </span>
+                                        )}
+                                        {inst.display_name ||
+                                            inst.instance_name}
+                                    </DropdownMenuItem>
+                                ))}
+                                {instances.length > 0 && (
+                                    <DropdownMenuSeparator />
+                                )}
+
+                                <DropdownMenuLabel>
+                                    {t('leads.search.allTemperatures')}
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                {[
+                                    { value: '', label: 'Tous' },
+                                    {
+                                        value: 'UNQUALIFIED',
+                                        label: '⏳ Non qualifiés',
+                                    },
+                                    {
+                                        value: 'HOT',
+                                        label: `🔥 ${t('leads.search.hot')}`,
+                                    },
+                                    {
+                                        value: 'WARM',
+                                        label: `☀️ ${t('leads.search.warm')}`,
+                                    },
+                                    {
+                                        value: 'COLD',
+                                        label: `❄️ ${t('leads.search.cold')}`,
+                                    },
+                                ].map((opt) => (
+                                    <DropdownMenuItem
+                                        key={opt.value}
+                                        onClick={() =>
+                                            handleChange(
+                                                'temperature',
+                                                opt.value,
+                                            )
+                                        }
+                                    >
+                                        {params.temperature === opt.value && (
+                                            <span className="mr-2 text-primary">
+                                                ✓
+                                            </span>
+                                        )}
+                                        {opt.label}
+                                    </DropdownMenuItem>
+                                ))}
+                                <DropdownMenuSeparator />
+                                <DropdownMenuLabel>
+                                    {t('leads.search.minScore')}
+                                </DropdownMenuLabel>
+                                <div className="px-2 py-1.5">
+                                    <Input
+                                        type="number"
+                                        placeholder="0-10"
+                                        min="0"
+                                        max="10"
+                                        value={params.min_score}
+                                        onChange={(e) =>
+                                            handleChange(
+                                                'min_score',
+                                                e.target.value,
+                                            )
+                                        }
+                                        className="h-8"
+                                    />
+                                </div>
+                                <DropdownMenuSeparator />
+                                <div className="grid grid-cols-2 gap-1 px-2 py-1.5">
+                                    <div>
+                                        <p className="mb-1 text-[11px] text-muted-foreground">
+                                            {t('leads.search.dateFrom')}
+                                        </p>
+                                        <Input
+                                            type="date"
+                                            value={params.date_from}
+                                            onChange={(e) =>
+                                                handleChange(
+                                                    'date_from',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                    <div>
+                                        <p className="mb-1 text-[11px] text-muted-foreground">
+                                            {t('leads.search.dateTo')}
+                                        </p>
+                                        <Input
+                                            type="date"
+                                            value={params.date_to}
+                                            onChange={(e) =>
+                                                handleChange(
+                                                    'date_to',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className="h-8 text-xs"
+                                        />
+                                    </div>
+                                </div>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+
+                        <select
+                            className="flex h-9 rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                        >
+                            <option value="lastActivity">
+                                {t('leads.search.sortBy')} :{' '}
+                                {t('leads.search.lastActivity')}
+                            </option>
+                            <option value="name">
+                                {t('leads.search.sortBy')} :{' '}
+                                {t('leads.search.name')}
+                            </option>
+                            <option value="createdAt">
+                                {t('leads.search.sortBy')} :{' '}
+                                {t('leads.search.createdAt')}
+                            </option>
+                        </select>
+
+                        {hasActiveFilters && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={clearFilters}
+                                className="text-muted-foreground hover:text-destructive"
+                            >
+                                <X className="mr-1 h-4 w-4" />
+                                {t('leads.search.clearFilters')}
+                            </Button>
                         )}
                     </div>
 
-                    <div className="overflow-hidden rounded-lg border bg-white px-2 shadow-sm dark:bg-background" data-tour="leads-table">
+                    <div
+                        className="overflow-hidden rounded-lg border bg-card shadow-sm"
+                        data-tour="leads-table"
+                    >
                         {canManage && selectedLeads.size > 0 && (
-                            <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2" data-tour="leads-actions">
+                            <div className="flex items-center gap-2 border-b bg-muted/50 px-4 py-2">
                                 <span className="text-sm text-muted-foreground">
                                     {selectedLeads.size}{' '}
                                     {t('leads.table.selected')}
@@ -451,7 +576,7 @@ export default function LeadsIndex({
                             </div>
                         )}
                         <Table>
-                            <TableHeader className="bg-slate-50 dark:bg-background dark:text-foreground">
+                            <TableHeader>
                                 <TableRow>
                                     <TableHead className="w-10">
                                         <button
@@ -461,16 +586,14 @@ export default function LeadsIndex({
                                             {selectedLeads.size ===
                                                 leads.length &&
                                             leads.length > 0 ? (
-                                                <CheckSquare className="h-4 w-4 text-primary" />
+                                                <Sparkles className="h-4 w-4 text-primary" />
                                             ) : (
-                                                <Square className="h-4 w-4 text-muted-foreground" />
+                                                <div className="h-4 w-4 rounded border border-input" />
                                             )}
                                         </button>
                                     </TableHead>
                                     <TableHead>
-                                        <div className="flex items-center gap-1">
-                                            {t('leads.table.contact')}
-                                        </div>
+                                        {t('leads.table.contact')}
                                     </TableHead>
                                     <TableHead>
                                         <TooltipHeader
@@ -499,7 +622,7 @@ export default function LeadsIndex({
                                             {t('leads.table.status')}
                                         </TooltipHeader>
                                     </TableHead>
-                                    <TableHead>
+                                    <TableHead className="max-w-[150px]">
                                         <TooltipHeader
                                             text={t(
                                                 'leads.table.notes_tooltip',
@@ -508,30 +631,17 @@ export default function LeadsIndex({
                                             {t('leads.table.notes')}
                                         </TooltipHeader>
                                     </TableHead>
-                                    <TableHead className="w-[100px]">
-                                        <TooltipHeader text={t('leads.table.lastMessage_tooltip')}>
+                                    <TableHead className="max-w-[180px]">
+                                        <TooltipHeader
+                                            text={t(
+                                                'leads.table.lastMessage_tooltip',
+                                            )}
+                                        >
                                             {t('leads.table.lastMessage')}
                                         </TooltipHeader>
                                     </TableHead>
                                     <TableHead>
-                                        <TooltipHeader
-                                            text={t(
-                                                'leads.table.date_lastMessage_tooltip',
-                                            )}
-                                        >
-                                            {t('leads.table.lastActive')}
-                                        </TooltipHeader>
-                                    </TableHead>
-                                    <TableHead>
-                                        <TooltipHeader
-                                            text={t(
-                                                'leads.table.lastQualificationDate_tooltip',
-                                            )}
-                                        >
-                                            {t(
-                                                'leads.table.lastQualificationDate',
-                                            )}
-                                        </TooltipHeader>
+                                        {t('leads.table.lastActive')}
                                     </TableHead>
                                     <TableHead className="text-right">
                                         {t('leads.table.actions')}
@@ -549,26 +659,37 @@ export default function LeadsIndex({
                                                 className="flex items-center justify-center"
                                             >
                                                 {selectedLeads.has(lead.id) ? (
-                                                    <CheckSquare className="h-4 w-4 text-primary" />
+                                                    <Sparkles className="h-4 w-4 text-primary" />
                                                 ) : (
-                                                    <Square className="h-4 w-4 text-muted-foreground" />
+                                                    <div className="h-4 w-4 rounded border border-input" />
                                                 )}
                                             </button>
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex items-center gap-2">
-                                                {lead.is_new && (
-                                                    <Badge className="bg-red-500 px-1.5 py-0.5 text-[10px] text-white">
-                                                        NEW
-                                                    </Badge>
-                                                )}
-                                                <p className="text-sm font-medium text-slate-900 md:text-base dark:text-foreground">
-                                                    {lead.name}
+                                            <Link
+                                                href={
+                                                    show({
+                                                        slug: activeWorkspace!
+                                                            .slug,
+                                                        lead: lead.id,
+                                                    }).url
+                                                }
+                                                className="block"
+                                            >
+                                                <div className="flex items-center gap-2">
+                                                    {lead.is_new && (
+                                                        <Badge className="bg-red-500 px-1.5 py-0.5 text-[10px] text-white">
+                                                            NEW
+                                                        </Badge>
+                                                    )}
+                                                    <p className="text-sm font-medium text-foreground">
+                                                        {lead.name}
+                                                    </p>
+                                                </div>
+                                                <p className="text-xs text-muted-foreground">
+                                                    +{lead.phone}
                                                 </p>
-                                            </div>
-                                            <p className="text-xs text-slate-500 md:text-sm dark:text-foreground">
-                                                +{lead.phone}
-                                            </p>
+                                            </Link>
                                         </TableCell>
                                         <TableCell>
                                             {getQualificationResultBadge(
@@ -584,9 +705,9 @@ export default function LeadsIndex({
                                                             100) /
                                                         10
                                                     }
-                                                    className="h-2"
+                                                    className="h-2 w-16"
                                                 />
-                                                <span className="w-8 text-xs font-medium">
+                                                <span className="w-8 text-xs font-medium tabular-nums">
                                                     {lead.qualification_score ??
                                                         0}
                                                     /10
@@ -601,7 +722,7 @@ export default function LeadsIndex({
                                         <TableCell className="max-w-[150px]">
                                             {getNotesPreview(lead.notes)}
                                         </TableCell>
-                                        <TableCell className="max-w-[200px]">
+                                        <TableCell className="max-w-[180px]">
                                             {lead.recent_messages &&
                                             lead.recent_messages.length > 0 ? (
                                                 <div className="flex items-center gap-2">
@@ -635,13 +756,6 @@ export default function LeadsIndex({
                                                                       .recent_messages[0]
                                                                       .message}
                                                         </p>
-                                                        <p className="text-[10px] text-muted-foreground">
-                                                            {formatMessageTime(
-                                                                lead
-                                                                    .recent_messages[0]
-                                                                    .timestamp,
-                                                            )}
-                                                        </p>
                                                     </div>
                                                 </div>
                                             ) : (
@@ -650,8 +764,7 @@ export default function LeadsIndex({
                                                 </span>
                                             )}
                                         </TableCell>
-
-                                        <TableCell className="w-[100px] text-xs text-slate-500">
+                                        <TableCell className="text-xs text-muted-foreground">
                                             {lead.recent_messages &&
                                             lead.recent_messages.length > 0
                                                 ? formatMessageTime(
@@ -660,47 +773,69 @@ export default function LeadsIndex({
                                                   )
                                                 : '-'}
                                         </TableCell>
-                                        <TableCell className="text-xs text-slate-500">
-                                            {formatDateTime(lead.qualified_at)}
-                                        </TableCell>
-                                        <TableCell className="space-x-1 text-right">
-                                            <ViewLead selectedLead={lead} />
-                                            {canManage && <EditLead lead={lead} />}
-                                            {canManage && (
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    onClick={() =>
-                                                        handleTriggerQualification(
-                                                            lead.id,
-                                                        )
+                                        <TableCell className="text-right">
+                                            <div className="flex items-center justify-end gap-1">
+                                                <Link
+                                                    href={
+                                                        show({
+                                                            slug: activeWorkspace!
+                                                                .slug,
+                                                            lead: lead.id,
+                                                        }).url
                                                     }
-                                                disabled={
-                                                    triggeringLeadId === lead.id
-                                                }
-                                                title={t(
-                                                    'leads.actions.triggerQualification',
+                                                >
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
+                                                    >
+                                                        <Users className="h-4 w-4" />
+                                                    </Button>
+                                                </Link>
+                                                {canManage && (
+                                                    <EditLead lead={lead} />
                                                 )}
-                                            >
-                                                {triggeringLeadId ===
-                                                lead.id ? (
-                                                    <Loader2 className="h-4 w-4 animate-spin" />
-                                                ) : (
-                                                    <Sparkles className="h-4 w-4 text-yellow-500" />
+                                                {canManage && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8"
+                                                        onClick={() =>
+                                                            handleTriggerQualification(
+                                                                lead.id,
+                                                            )
+                                                        }
+                                                        disabled={
+                                                            triggeringLeadId ===
+                                                            lead.id
+                                                        }
+                                                        title={t(
+                                                            'leads.actions.triggerQualification',
+                                                        )}
+                                                    >
+                                                        {triggeringLeadId ===
+                                                        lead.id ? (
+                                                            <Loader2 className="h-4 w-4 animate-spin" />
+                                                        ) : (
+                                                            <Sparkles className="h-4 w-4 text-yellow-500" />
+                                                        )}
+                                                    </Button>
                                                 )}
-                                            </Button>
-                                            )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))}
                                 {leads.length === 0 && (
                                     <TableRow>
                                         <TableCell
-                                            colSpan={8}
-                                            className="py-8 text-center text-muted-foreground"
+                                            colSpan={9}
+                                            className="py-12 text-center text-muted-foreground"
                                         >
-                                            {t('leads.empty.title')}!{' '}
-                                            {t('leads.empty.description')}
+                                            <Users className="mx-auto mb-2 h-8 w-8 opacity-40" />
+                                            <p>{t('leads.empty.title')}</p>
+                                            <p className="text-sm">
+                                                {t('leads.empty.description')}
+                                            </p>
                                         </TableCell>
                                     </TableRow>
                                 )}

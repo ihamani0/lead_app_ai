@@ -9,20 +9,19 @@ export default function AppLogo() {
                 <AppLogoIcon className="size-5 fill-current text-white dark:text-black" />
             </div> */}
             <div className="ml-1 flex-1 justify-center">
-                
-                    {appearance === 'dark' ? (
-                        <img
-                            src="/logo-white.png"
-                            alt="Logo"
-                            className="size-15 fill-current text-white dark:text-black"
-                        />
-                    ) : (
-                        <img
-                            src="/logo-black.png"
-                            alt="Logo"
-                            className="size-15 fill-current text-black dark:text-white"
-                        />
-                    )}
+                {appearance === 'dark' ? (
+                    <img
+                        src="/logo-white.png"
+                        alt="Logo"
+                        className="size-15 fill-current text-white dark:text-black"
+                    />
+                ) : (
+                    <img
+                        src="/logo-black.png"
+                        alt="Logo"
+                        className="size-15 fill-current text-black dark:text-white"
+                    />
+                )}
             </div>
         </>
     );

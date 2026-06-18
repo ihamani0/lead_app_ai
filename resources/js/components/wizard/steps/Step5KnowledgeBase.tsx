@@ -1,5 +1,13 @@
-import { CheckCircle2, Database, FileText, Loader2, UploadCloud, X, XCircle } from 'lucide-react';
-import { useRef, useState } from 'react';
+import {
+    CheckCircle2,
+    Database,
+    FileText,
+    Loader2,
+    UploadCloud,
+    X,
+    XCircle,
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useTranslation } from '@/hooks/use-translation';
@@ -10,7 +18,9 @@ type FileStatus = 'pending' | 'uploading' | 'done' | 'failed';
 
 interface Step5KnowledgeBaseProps {
     formData: WizardFormData;
-    setFormData: (data: WizardFormData | ((prev: WizardFormData) => WizardFormData)) => void;
+    setFormData: (
+        data: WizardFormData | ((prev: WizardFormData) => WizardFormData),
+    ) => void;
     onNext: () => void;
     onSkip: () => void;
     isSubmitting: boolean;
@@ -37,7 +47,9 @@ export function Step5KnowledgeBase({
     const { t } = useTranslation();
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragActive, setDragActive] = useState(false);
-    const [fileStatuses, setFileStatuses] = useState<Record<number, FileStatus>>({});
+    const [fileStatuses, setFileStatuses] = useState<
+        Record<number, FileStatus>
+    >({});
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selected = e.target.files?.[0];
@@ -93,23 +105,24 @@ export function Step5KnowledgeBase({
         });
     };
 
-    // Update file statuses when submitting
-    const prevSubmitting = useRef(isSubmitting);
-    if (isSubmitting && !prevSubmitting.current) {
-        setFileStatuses((prev) => {
-            const updated: Record<number, FileStatus> = {};
-            Object.keys(prev).forEach((key) => {
-                updated[Number(key)] = 'uploading';
+    useEffect(() => {
+        if (isSubmitting) {
+            setFileStatuses((prev) => {
+                const updated: Record<number, FileStatus> = {};
+                Object.keys(prev).forEach((key) => {
+                    updated[Number(key)] = 'uploading';
+                });
+                return updated;
             });
-            return updated;
-        });
-    }
-    prevSubmitting.current = isSubmitting;
+        }
+    }, [isSubmitting]);
 
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold">{t('wizard.step4.title')}</h2>
+                <h2 className="text-2xl font-bold">
+                    {t('wizard.step4.title')}
+                </h2>
                 <p className="mt-2 text-muted-foreground">
                     {t('wizard.step4.description')}
                 </p>
@@ -163,12 +176,16 @@ export function Step5KnowledgeBase({
                                 key={index}
                                 className={cn(
                                     'flex items-center justify-between rounded-lg border bg-muted/30 p-3',
-                                    fileStatuses[index] === 'uploading' && 'border-primary/50 bg-primary/5',
-                                    fileStatuses[index] === 'failed' && 'border-destructive/50 bg-destructive/5',
+                                    fileStatuses[index] === 'uploading' &&
+                                        'border-primary/50 bg-primary/5',
+                                    fileStatuses[index] === 'failed' &&
+                                        'border-destructive/50 bg-destructive/5',
                                 )}
                             >
                                 <div className="flex items-center gap-3">
-                                    {statusIcon(fileStatuses[index] ?? 'pending') || (
+                                    {statusIcon(
+                                        fileStatuses[index] ?? 'pending',
+                                    ) || (
                                         <FileText className="h-5 w-5 text-muted-foreground" />
                                     )}
                                     <div>
@@ -176,7 +193,10 @@ export function Step5KnowledgeBase({
                                             {file.name}
                                         </p>
                                         <p className="text-xs text-muted-foreground">
-                                            {(file.size / 1024 / 1024).toFixed(2)} MB
+                                            {(file.size / 1024 / 1024).toFixed(
+                                                2,
+                                            )}{' '}
+                                            MB
                                         </p>
                                     </div>
                                 </div>
@@ -199,7 +219,9 @@ export function Step5KnowledgeBase({
                 <div className="flex items-start gap-3">
                     <Database className="mt-0.5 h-5 w-5 text-muted-foreground" />
                     <div>
-                        <p className="font-medium">{t('wizard.step4.info_title')}</p>
+                        <p className="font-medium">
+                            {t('wizard.step4.info_title')}
+                        </p>
                         <p className="text-sm text-muted-foreground">
                             {t('wizard.step4.info_description')}
                         </p>

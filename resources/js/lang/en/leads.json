@@ -1,6 +1,6 @@
 {
     "title": "Leads",
-    "description": "Contacts processed and scored by your AI Agent",
+    "description": "Manage and track all your conversations and prospects.",
     "leadsCount": "Leads",
 
     "search": {
@@ -17,23 +17,30 @@
         "warm": "Warm",
         "cold": "Cold",
         "minScore": "Min AI Score (0-100)",
-        "clearFilters": "Clear Filters"
+        "clearFilters": "Clear Filters",
+        "filters": "Filters",
+        "sortBy": "Sort by",
+        "lastActivity": "Last activity",
+        "name": "Name",
+        "createdAt": "Creation date",
+        "dateFrom": "Date from",
+        "dateTo": "Date to"
     },
 
     "table": {
-        "selected":"selected",
-        "result":"Result",
-        "result_tooltip":"Automatic qualification result: HOT/WARM/COLD",
-        "aiScore":"Score",
-        "aiScore_tooltip":"AI qualification score (0-10)",
-        "status":"Processing",
-        "status_tooltip":"Commercial processing status: Processed or Not processed",
+        "selected": "selected",
+        "result": "Result",
+        "result_tooltip": "Automatic qualification result: HOT/WARM/COLD",
+        "aiScore": "Score",
+        "aiScore_tooltip": "AI qualification score (0-10)",
+        "status": "Processing",
+        "status_tooltip": "Commercial processing status: Processed or Not processed",
         "contact": "Contact",
         "temperature": "Temperature",
         "lastActive": "Last Active",
-        "lastMessage": "Last Message",
+        "lastMessage": "Message",
         "lastMessage_tooltip": "Date of last WhatsApp message",
-        "date_lastMessage_tooltip": "Date Of Last Message",  
+        "date_lastMessage_tooltip": "Date Of Last Message",
         "notes": "Notes",
         "notes_tooltip": "Notes added manually on the lead",
         "lastActive_tooltip": "Date of last WhatsApp message",
@@ -48,11 +55,43 @@
     },
 
     "badges": {
-        "new": "New"
+        "new": "New",
+        "tous": "All",
+        "hot": "Hot",
+        "unread": "Unread",
+        "today": "Today",
+        "humanRequest": "Human request"
     },
 
     "actions": {
-        "triggerQualification": "Trigger AI Qualification"
+        "triggerQualification": "Trigger AI Qualification",
+        "export": "Export",
+        "backToList": "Back to list",
+        "edit": "Edit",
+        "delete": "Delete"
+    },
+
+    "details": {
+        "iaInsights": "IA Insights",
+        "updatedAt": "Updated at",
+        "intention": "Detected intention",
+        "score": "Qualification score",
+        "aiSummary": "AI Summary",
+        "keyInfoTitle": "Key Information",
+        "recommendedActions": "Recommended Actions",
+        "seeAllActions": "See all actions →",
+        "leadDetails": "Lead Details",
+        "fullName": "Full Name",
+        "phone": "Phone",
+        "source": "Source",
+        "firstInteraction": "First Interaction",
+        "lastActivity": "Last Activity",
+        "status": "Status",
+        "owner": "Owner",
+        "tags": "Tags",
+        "internalNotes": "Internal Notes",
+        "modifiedBy": "Modified by",
+        "addTag": "Add tag"
     },
 
     "statusInfo": {

@@ -13,11 +13,11 @@ interface StepIndicatorProps {
 }
 
 const iconMap = {
-    'smartphone': Smartphone,
+    smartphone: Smartphone,
     'qr-code': QrCode,
-    'bot': Bot,
-    'media': Image,
-    'database': Database,
+    bot: Bot,
+    media: Image,
+    database: Database,
 };
 
 export function StepIndicator({ steps, currentStep }: StepIndicatorProps) {

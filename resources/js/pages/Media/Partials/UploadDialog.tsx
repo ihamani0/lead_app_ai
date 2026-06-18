@@ -40,6 +40,7 @@ interface UploadDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     onUploadComplete?: (asset: Asset) => void;
+    agentId?: string;
 }
 
 const ALLOWED_IMAGE_TYPES = [
@@ -97,7 +98,6 @@ function FileIcon({ type }: { type: string | undefined }) {
     return <FileText className="h-5 w-5 text-muted-foreground" />;
 }
 
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type UppyFileType = any;
 
@@ -105,6 +105,7 @@ interface UppyUploadInnerProps {
     mediaType: string;
     category: string;
     caption: string;
+    agentId?: string;
     onUploadProgress: (progress: number) => void;
     onUploadComplete: (asset: Asset) => void;
     onUploadError: (error: Error) => void;
@@ -118,6 +119,7 @@ function UppyUploadInner({
     mediaType,
     category,
     caption,
+    agentId,
     onUploadProgress,
     onUploadComplete,
     onUploadError,
@@ -159,7 +161,7 @@ function UppyUploadInner({
 
         instance.use(AwsS3, {
             shouldUseMultipart: false,
-            
+
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             getUploadParameters: (file: any) => {
                 const payload = {
@@ -176,7 +178,9 @@ function UppyUploadInner({
                         )
                         .then((response) => {
                             const presign = response.data as PresignResponse;
-                            instance.setFileMeta(file.id, { s3_key: presign.key });
+                            instance.setFileMeta(file.id, {
+                                s3_key: presign.key,
+                            });
 
                             const safeHeaders = { ...presign.headers };
                             delete safeHeaders['Host'];
@@ -190,7 +194,8 @@ function UppyUploadInner({
                         })
                         .catch((error) => {
                             const msg =
-                                error.response?.data?.message || 'Presign failed';
+                                error.response?.data?.message ||
+                                'Presign failed';
                             console.error('[Presign] Error:', msg);
                             reject(new Error(msg));
                         });
@@ -210,7 +215,7 @@ function UppyUploadInner({
 
     // ─── FIX: Single canonical effect for file list changes ──────────────────
     // We subscribe via useUppyState and derive everything from it.
-    
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const files = useUppyState(uppy, (state: any) => state.files);
 
@@ -251,7 +256,6 @@ function UppyUploadInner({
 
     // ─── Progress tracking ────────────────────────────────────────────────────
     useEffect(() => {
-        
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const handleProgress = (progress: any) => {
             onUploadProgress(progress);
@@ -273,13 +277,17 @@ function UppyUploadInner({
                 return;
             }
 
-            const payload = {
+            const payload: Record<string, unknown> = {
                 category: category.toLowerCase().trim(),
                 type: mediaType,
                 s3_key: s3Key,
                 mime_type: file.type || 'application/octet-stream',
                 caption: caption,
             };
+
+            if (agentId) {
+                payload.agent_config_id = agentId;
+            }
 
             axios
                 .post(
@@ -302,11 +310,18 @@ function UppyUploadInner({
         return () => {
             uppy.off('upload-success', handleSuccess);
         };
-    }, [uppy, category, mediaType, caption, onUploadComplete, onUploadError]);
+    }, [
+        uppy,
+        category,
+        mediaType,
+        caption,
+        agentId,
+        onUploadComplete,
+        onUploadError,
+    ]);
 
     // ─── Upload error ─────────────────────────────────────────────────────────
     useEffect(() => {
-        
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const handleError = (_file: any, error: Error) => {
             console.error('[S3] Upload error:', error);
@@ -643,6 +658,7 @@ export function UploadDialog({
     open,
     onOpenChange,
     onUploadComplete,
+    agentId,
 }: UploadDialogProps) {
     const [mediaType, setMediaType] = useState<string>('image');
     const [category, setCategory] = useState('');
@@ -778,6 +794,7 @@ export function UploadDialog({
                         mediaType={mediaType}
                         category={category}
                         caption={caption}
+                        agentId={agentId}
                         onUploadProgress={handleUploadProgress}
                         onUploadComplete={handleUploadComplete}
                         onUploadError={handleUploadError}

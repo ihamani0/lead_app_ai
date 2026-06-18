@@ -2,7 +2,6 @@
 import { CopyButton } from '@/components/copy-button';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
- 
 
 interface MetadataItemProps {
     icon: React.ReactNode;

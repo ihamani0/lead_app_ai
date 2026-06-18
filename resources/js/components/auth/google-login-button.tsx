@@ -8,9 +8,10 @@ interface GoogleLoginButtonProps {
 export default function GoogleLoginButton({
     label = 'Sign in with Google',
 }: GoogleLoginButtonProps) {
-    const params = typeof window !== 'undefined'
-        ? new URLSearchParams(window.location.search)
-        : new URLSearchParams();
+    const params =
+        typeof window !== 'undefined'
+            ? new URLSearchParams(window.location.search)
+            : new URLSearchParams();
     const invitation = params.get('invitation');
     const url = invitation
         ? redirect().url + '?invitation=' + encodeURIComponent(invitation)

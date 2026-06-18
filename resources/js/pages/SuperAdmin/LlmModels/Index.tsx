@@ -21,7 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
+import SuperAdminLayout from '@/layouts/super-admin-layout';
 
 interface LlmModel {
     id: string;
@@ -52,7 +52,7 @@ export default function Index({ models }: PageProps) {
     });
 
     return (
-        <AppLayout>
+        <SuperAdminLayout>
             <Head title="LLM Models" />
 
             <div className="flex flex-col gap-6 p-6">
@@ -355,6 +355,6 @@ export default function Index({ models }: PageProps) {
                     </CardContent>
                 </Card>
             </div>
-        </AppLayout>
+        </SuperAdminLayout>
     );
 }

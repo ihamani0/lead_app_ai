@@ -59,9 +59,7 @@ export default function Register() {
                         autoComplete="name"
                         placeholder="Your full name"
                         value={form.data.name}
-                        onChange={(e) =>
-                            form.setData('name', e.target.value)
-                        }
+                        onChange={(e) => form.setData('name', e.target.value)}
                         disabled={form.processing}
                         className="h-12 rounded-[10px] border-[#E2E2E7] bg-[#F7F7F8] pl-4 text-[15px] text-[#0F0F10] placeholder:text-[#6B6B80] focus:bg-white focus:ring-[3px] focus:ring-[#4C3BCF]/12"
                     />
@@ -79,9 +77,7 @@ export default function Register() {
                         autoComplete="email"
                         placeholder="your@email.com"
                         value={form.data.email}
-                        onChange={(e) =>
-                            form.setData('email', e.target.value)
-                        }
+                        onChange={(e) => form.setData('email', e.target.value)}
                         disabled={form.processing}
                         className="h-12 rounded-[10px] border-[#E2E2E7] bg-[#F7F7F8] pl-4 text-[15px] text-[#0F0F10] placeholder:text-[#6B6B80] focus:bg-white focus:ring-[3px] focus:ring-[#4C3BCF]/12"
                     />
@@ -104,12 +100,12 @@ export default function Register() {
                                 form.setData('password', e.target.value)
                             }
                             disabled={form.processing}
-                            className="h-12 rounded-[10px] border-[#E2E2E7] bg-[#F7F7F8] pl-4 pr-11 text-[15px] text-[#0F0F10] placeholder:text-[#6B6B80] focus:bg-white focus:ring-[3px] focus:ring-[#4C3BCF]/12"
+                            className="h-12 rounded-[10px] border-[#E2E2E7] bg-[#F7F7F8] pr-11 pl-4 text-[15px] text-[#0F0F10] placeholder:text-[#6B6B80] focus:bg-white focus:ring-[3px] focus:ring-[#4C3BCF]/12"
                         />
                         <button
                             type="button"
                             onClick={() => setShowPassword((prev) => !prev)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B6B80] hover:text-[#0F0F10]"
+                            className="absolute top-1/2 right-3 -translate-y-1/2 text-[#6B6B80] hover:text-[#0F0F10]"
                             tabIndex={-1}
                         >
                             {showPassword ? (

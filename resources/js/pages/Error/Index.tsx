@@ -7,23 +7,28 @@ interface ErrorPageProps {
     status: number;
 }
 
-const errorConfig: Record<number, {
-    icon: typeof ShieldAlert;
-    title: string;
-    description: string;
-    primaryAction: { label: string; href: string };
-    secondaryAction?: { label: string; onClick: string };
-}> = {
+const errorConfig: Record<
+    number,
+    {
+        icon: typeof ShieldAlert;
+        title: string;
+        description: string;
+        primaryAction: { label: string; href: string };
+        secondaryAction?: { label: string; onClick: string };
+    }
+> = {
     403: {
         icon: ShieldAlert,
         title: '403 — Forbidden',
-        description: 'You don\'t have permission to access this page. Please contact your workspace administrator if you think this is a mistake.',
+        description:
+            "You don't have permission to access this page. Please contact your workspace administrator if you think this is a mistake.",
         primaryAction: { label: 'Go Home', href: '/' },
     },
     404: {
         icon: FileQuestion,
         title: '404 — Page Not Found',
-        description: 'The page you\'re looking for doesn\'t exist or has been moved. Check the URL or navigate back to a known page.',
+        description:
+            "The page you're looking for doesn't exist or has been moved. Check the URL or navigate back to a known page.",
         primaryAction: { label: 'Go Home', href: '/' },
         secondaryAction: { label: 'Go Back', onClick: 'history.back()' },
     },
@@ -59,7 +64,7 @@ export default function ErrorPage({ status }: ErrorPageProps) {
                         {config.title}
                     </h1>
 
-                    <p className="mt-4 text-base text-muted-foreground leading-relaxed">
+                    <p className="mt-4 text-base leading-relaxed text-muted-foreground">
                         {config.description}
                     </p>
 

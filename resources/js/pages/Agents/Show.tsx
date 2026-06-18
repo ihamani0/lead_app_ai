@@ -18,7 +18,12 @@ import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import workspaces from '@/routes/workspaces';
 
-import type { AgentConfig, Asset, BreadcrumbItem, EvolutionInstance } from '@/types';
+import type {
+    AgentConfig,
+    Asset,
+    BreadcrumbItem,
+    EvolutionInstance,
+} from '@/types';
 
 import AgentIdentite from './Partials/AgentIdentite';
 import AgentInstanceManager from './Partials/AgentInstanceManager';
@@ -81,7 +86,14 @@ interface TabConfig {
     icon: ComponentType<{ className?: string }>;
 }
 
-export default function AgentShow({ agent, availableInstances, stats, canManage, testConversation, mediaAssets }: Props) {
+export default function AgentShow({
+    agent,
+    availableInstances,
+    stats,
+    canManage,
+    testConversation,
+    mediaAssets,
+}: Props) {
     const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
 
@@ -216,7 +228,14 @@ export default function AgentShow({ agent, availableInstances, stats, canManage,
 
                     {/* Tab Content */}
                     <div className="flex-1 overflow-y-auto">
-                        <div className="p-4 md:p-6" style={{maxWidth:"1520px",margin:"0 auto",width:"100%"}}>
+                        <div
+                            className="p-4 md:p-6"
+                            style={{
+                                maxWidth: '1520px',
+                                margin: '0 auto',
+                                width: '100%',
+                            }}
+                        >
                             <TabsContent value="identite" className="mt-0">
                                 <AgentIdentite
                                     agent={agent}
@@ -230,7 +249,9 @@ export default function AgentShow({ agent, availableInstances, stats, canManage,
                                     agent={agent}
                                     availableInstances={availableInstances}
                                     stats={stats}
-                                    onNavigateToTest={() => setActiveTab('test')}
+                                    onNavigateToTest={() =>
+                                        setActiveTab('test')
+                                    }
                                 />
                             </TabsContent>
 
@@ -253,11 +274,17 @@ export default function AgentShow({ agent, availableInstances, stats, canManage,
                             </TabsContent>
 
                             <TabsContent value="test" className="mt-0">
-                                <TestChat agent={agent} testConversation={testConversation} />
+                                <TestChat
+                                    agent={agent}
+                                    testConversation={testConversation}
+                                />
                             </TabsContent>
 
                             <TabsContent value="medias" className="mt-0">
-                                <MediasPlaceholder agent={agent} assets={mediaAssets} />
+                                <MediasPlaceholder
+                                    agent={agent}
+                                    assets={mediaAssets}
+                                />
                             </TabsContent>
                         </div>
                     </div>
@@ -266,5 +293,3 @@ export default function AgentShow({ agent, availableInstances, stats, canManage,
         </AppLayout>
     );
 }
-
-

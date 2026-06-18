@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\AgentController;
+use App\Http\Controllers\Api\FaqsController;
 use App\Http\Controllers\Api\LeadIntegrationController;
 use App\Http\Controllers\Api\N8nIntegrationController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\TokenStatusController;
 use App\Http\Controllers\Api\TokenUsageController;
 use App\Http\Controllers\TestAiController;
@@ -14,6 +16,7 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/test-ai/callback', [TestAiController::class, 'callback']);
+Route::post('/test-ai/typing', [TestAiController::class, 'typing']);
 
 Route::group(['prefix' => 'n8n', 'middleware' => 'auth:sanctum'], function () {
 
@@ -30,6 +33,9 @@ Route::group(['prefix' => 'n8n', 'middleware' => 'auth:sanctum'], function () {
 
     // 5. Get Status of  Agent config if enable or disable
     Route::post('/instance/agent-config', [LeadIntegrationController::class, 'getAgentConfig']);
+
+    // 6. Flag a lead for policy violations
+    Route::post('/lead/flag', [LeadIntegrationController::class, 'flagLead']);
 
     // . Get Media (Replaces Google Sheet Media)
     Route::get('/assets/media/{agent}', [N8nIntegrationController::class, 'getMedia']);
@@ -48,4 +54,13 @@ Route::group(['prefix' => 'n8n', 'middleware' => 'auth:sanctum'], function () {
     Route::post('/token-usage', [TokenUsageController::class, 'store']);
     // 5. Token Status Pre-Check (for N8N workflow gating)
     Route::get('/token-status', [TokenStatusController::class, 'show']);
+
+    // 6. FAQ endpoint for AI bot
+    Route::get('/faqs', [FaqsController::class, 'index']);
+});
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'read']);
+    Route::post('/notifications/read-all', [NotificationController::class, 'readAll']);
 });

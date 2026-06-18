@@ -62,7 +62,8 @@ class SuperAdminTenantController extends Controller
         $tokenService->addDollars(
             $tenant,
             (float) $validated['dollar_amount'],
-            $validated['description'] ?? 'Recharge'
+            $validated['description'] ?? 'Recharge',
+            null
         );
 
         return back()->with('success', "Added \${$validated['dollar_amount']} credit to {$tenant->name}.");

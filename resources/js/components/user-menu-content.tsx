@@ -1,5 +1,12 @@
 import { Link, router } from '@inertiajs/react';
-import { CreditCard, Crown, LogOut, Settings, Shield, SlidersHorizontal } from 'lucide-react';
+import {
+    CreditCard,
+    Crown,
+    LogOut,
+    Settings,
+    Shield,
+    SlidersHorizontal,
+} from 'lucide-react';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,

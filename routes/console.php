@@ -13,3 +13,6 @@ Schedule::command('model:prune')->dailyAt('02:00');
 
 // Auto-qualify unprocessed leads daily at 2:00 AM
 Schedule::command('leads:qualify-unprocessed')->dailyAt('02:00');
+
+// Analyze conversations and generate FAQ suggestions daily at 3:00 AM
+Schedule::command('faqs:analyze')->dailyAt('03:00');

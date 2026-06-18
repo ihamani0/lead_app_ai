@@ -14,7 +14,13 @@ interface Props {
     isCloning: boolean;
 }
 
-export default function AgentParametres({ agent, isLinked, onToggle, onClone, isCloning }: Props) {
+export default function AgentParametres({
+    agent,
+    isLinked,
+    onToggle,
+    onClone,
+    isCloning,
+}: Props) {
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
             {/* Left: Actions + Blocklist */}
@@ -22,9 +28,7 @@ export default function AgentParametres({ agent, isLinked, onToggle, onClone, is
                 {/* Actions */}
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">
-                            Actions
-                        </CardTitle>
+                        <CardTitle className="text-base">Actions</CardTitle>
                     </CardHeader>
                     <CardContent className="flex flex-wrap items-center gap-3">
                         {isLinked && (

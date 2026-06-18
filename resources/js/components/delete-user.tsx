@@ -73,7 +73,10 @@ export default function DeleteUser() {
                         <form onSubmit={handleSubmit} className="space-y-6">
                             {hasPassword && (
                                 <div className="grid gap-2">
-                                    <Label htmlFor="password" className="sr-only">
+                                    <Label
+                                        htmlFor="password"
+                                        className="sr-only"
+                                    >
                                         Password
                                     </Label>
 
@@ -86,12 +89,17 @@ export default function DeleteUser() {
                                         autoComplete="current-password"
                                         value={form.data.password}
                                         onChange={(e) =>
-                                            form.setData('password', e.target.value)
+                                            form.setData(
+                                                'password',
+                                                e.target.value,
+                                            )
                                         }
                                         disabled={form.processing}
                                     />
 
-                                    <InputError message={form.errors.password} />
+                                    <InputError
+                                        message={form.errors.password}
+                                    />
                                 </div>
                             )}
 

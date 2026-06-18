@@ -6,18 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('token_transactions_daily', function (Blueprint $table) {
             $table->id();
             $table->foreignUlid('tenant_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('team_id')->nullable()->constrained('teams')->nullOnDelete();
             $table->foreignId('instance_id')->nullable()->constrained('evolution_instances')->nullOnDelete();
 
-            $table->ulid('llm_model_id')->nullable()->after('instance_id');
+            $table->ulid('llm_model_id')->nullable();
             $table->foreign('llm_model_id')->references('id')->on('llm_models')->nullOnDelete();
+
+            $table->foreignUlid('agent_config_id')->nullable()->constrained('agent_configs')->nullOnDelete();
 
             $table->date('date');
 
@@ -33,14 +33,12 @@ return new class extends Migration
             $table->integer('transaction_count')->default(0);
 
             $table->timestamps();
-            $table->unique(['tenant_id', 'instance_id', 'date']);
+
+            $table->unique(['tenant_id', 'agent_config_id', 'date']);
             $table->index('date');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('token_transactions_daily');

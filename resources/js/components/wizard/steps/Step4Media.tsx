@@ -8,10 +8,19 @@ import type { WizardFormData } from '@/types/wizard';
 
 interface Step4MediaProps {
     formData: WizardFormData;
-    setFormData: (data: WizardFormData | ((prev: WizardFormData) => WizardFormData)) => void;
+    setFormData: (
+        data: WizardFormData | ((prev: WizardFormData) => WizardFormData),
+    ) => void;
 }
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'video/mp4', 'video/webm'];
+const ALLOWED_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'video/mp4',
+    'video/webm',
+];
 const MAX_SIZE = 30 * 1024 * 1024;
 
 export function Step4Media({ formData, setFormData }: Step4MediaProps) {
@@ -67,12 +76,15 @@ export function Step4Media({ formData, setFormData }: Step4MediaProps) {
     };
 
     const isImage = (file: File) => file.type.startsWith('image/');
-    const previewUrl = (file: File) => (isImage(file) ? URL.createObjectURL(file) : null);
+    const previewUrl = (file: File) =>
+        isImage(file) ? URL.createObjectURL(file) : null;
 
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold">{t('wizard.step4.title')}</h2>
+                <h2 className="text-2xl font-bold">
+                    {t('wizard.step4.title')}
+                </h2>
                 <p className="mt-2 text-muted-foreground">
                     {t('wizard.step4.description')}
                 </p>
@@ -94,7 +106,9 @@ export function Step4Media({ formData, setFormData }: Step4MediaProps) {
                         <UploadCloud className="h-8 w-8 text-muted-foreground" />
                     </div>
                     <div>
-                        <p className="font-medium">{t('wizard.step4.drop_files')}</p>
+                        <p className="font-medium">
+                            {t('wizard.step4.drop_files')}
+                        </p>
                         <p className="text-sm text-muted-foreground">
                             {t('wizard.step4.supported_formats')}
                         </p>
@@ -107,7 +121,10 @@ export function Step4Media({ formData, setFormData }: Step4MediaProps) {
                         onChange={handleFileChange}
                         className="hidden"
                     />
-                    <Button variant="outline" onClick={() => fileInputRef.current?.click()}>
+                    <Button
+                        variant="outline"
+                        onClick={() => fileInputRef.current?.click()}
+                    >
                         {t('wizard.step4.browse_files')}
                     </Button>
                 </div>
@@ -136,12 +153,14 @@ export function Step4Media({ formData, setFormData }: Step4MediaProps) {
                                     </div>
                                 )}
                                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-                                    <p className="truncate text-xs text-white">{file.name}</p>
+                                    <p className="truncate text-xs text-white">
+                                        {file.name}
+                                    </p>
                                 </div>
                                 <button
                                     type="button"
                                     onClick={() => removeFile(index)}
-                                    className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                                    className="absolute top-1 right-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100"
                                 >
                                     <X className="h-3 w-3" />
                                 </button>
@@ -155,7 +174,9 @@ export function Step4Media({ formData, setFormData }: Step4MediaProps) {
                 <div className="flex items-start gap-3">
                     <ImageIcon className="mt-0.5 h-5 w-5 text-muted-foreground" />
                     <div>
-                        <p className="font-medium">{t('wizard.step4.info_title')}</p>
+                        <p className="font-medium">
+                            {t('wizard.step4.info_title')}
+                        </p>
                         <p className="text-sm text-muted-foreground">
                             {t('wizard.step4.info_description')}
                         </p>

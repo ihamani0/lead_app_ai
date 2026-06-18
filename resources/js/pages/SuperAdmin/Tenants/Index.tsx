@@ -8,7 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
+import SuperAdminLayout from '@/layouts/super-admin-layout';
 import admin from '@/routes/admin';
 import type { Tenant } from '@/types';
 
@@ -22,7 +22,7 @@ export default function Index({ tenants }: IndexProps) {
     };
 
     return (
-        <AppLayout>
+        <SuperAdminLayout>
             <div className="container mx-auto py-6">
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-2xl font-bold">Tenants Management</h1>
@@ -105,6 +105,6 @@ export default function Index({ tenants }: IndexProps) {
                     </Table>
                 </div>
             </div>
-        </AppLayout>
+        </SuperAdminLayout>
     );
 }

@@ -5,8 +5,6 @@ import { QrCode, Settings, MessageCircle, Check } from 'lucide-react';
 import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
-
-
 // Animated QR Code with shimmer loading
 const QRCodeMockup = () => (
     <div className="relative mx-auto w-full max-w-md">
@@ -228,29 +226,27 @@ const customStyles = `
   }
 `;
 
-export function HowItWorksSection({t}: {t: TFunction}) {
-
+export function HowItWorksSection({ t }: { t: TFunction }) {
     const steps = [
-    {
-        number: 1,
-        title: t("welcome.how_work.step1.title"),
-        description:t("welcome.how_work.step1.description"),
-        icon: QrCode,
-    },
-    {
-        number: 2,
-        title: t("welcome.how_work.step2.title"),
-        description:t("welcome.how_work.step2.description"),
-        icon: Settings,
-    },
-    {
-        number: 3,
-        title: t("welcome.how_work.step3.title"),
-        description:t("welcome.how_work.step3.description"),
-        icon: MessageCircle,
-    },
-];
-     
+        {
+            number: 1,
+            title: t('welcome.how_work.step1.title'),
+            description: t('welcome.how_work.step1.description'),
+            icon: QrCode,
+        },
+        {
+            number: 2,
+            title: t('welcome.how_work.step2.title'),
+            description: t('welcome.how_work.step2.description'),
+            icon: Settings,
+        },
+        {
+            number: 3,
+            title: t('welcome.how_work.step3.title'),
+            description: t('welcome.how_work.step3.description'),
+            icon: MessageCircle,
+        },
+    ];
 
     const [activeStep, setActiveStep] = useState(0);
     const [progress, setProgress] = useState(0);
@@ -293,18 +289,13 @@ export function HowItWorksSection({t}: {t: TFunction}) {
                     {/* Header */}
                     <div className="mb-16 text-center">
                         <span className="text-sm font-semibold tracking-widest text-emerald-600 uppercase dark:text-emerald-400">
-                            
-                            {t("welcome.how_work.title")}
+                            {t('welcome.how_work.title')}
                         </span>
                         <h2 className="mt-4 text-4xl font-bold text-balance text-foreground md:text-5xl">
-                           
-                            {t("welcome.how_work.subtitle")}
-
+                            {t('welcome.how_work.subtitle')}
                         </h2>
                         <p className="mt-4 text-muted-foreground">
-                            
-                            {t("welcome.how_work.tip_pause")}
-
+                            {t('welcome.how_work.tip_pause')}
                         </p>
                     </div>
 

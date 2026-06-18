@@ -54,7 +54,10 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
-            if (in_array($response->getStatusCode(), [403, 404])) {
+            $isApiRequest = $request->is('api/*')
+                || str_contains($request->header('Accept', ''), 'application/json');
+
+            if (! $isApiRequest && in_array($response->getStatusCode(), [403, 404])) {
                 return Inertia::render('Error/Index', ['status' => $response->getStatusCode()])
                     ->toResponse($request)
                     ->setStatusCode($response->getStatusCode());

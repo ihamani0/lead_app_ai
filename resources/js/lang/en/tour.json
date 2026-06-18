@@ -1,5 +1,4 @@
 {
-   
     "sidebar_dashboard": "Navigate to different sections of the app from here.",
     "stats_leads": "Track your total leads and new leads today.",
     "stats_instances": "Monitor your WhatsApp instances connection status.",
@@ -15,5 +14,4 @@
     "agents_create": "Create AI agents to automate conversations.",
     "agent_card": "View and configure your AI agents here.",
     "settings_nav": "Manage your profile, password, and security settings."
-   
 }

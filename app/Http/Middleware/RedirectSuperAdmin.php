@@ -10,7 +10,7 @@ class RedirectSuperAdmin
     public function handle(Request $request, Closure $next)
     {
         $user = $request->user();
-        if ($user && $user->isSuperAdmin() && $request->routeIs('dashboard')) {
+        if ($user && $user->isSuperAdmin() && ($request->routeIs('teams.*') || $request->routeIs('workspaces.*'))) {
             return redirect()->route('super-admin.dashboard');
         }
 

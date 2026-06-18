@@ -24,7 +24,6 @@ import { useTranslation } from '@/hooks/use-translation';
 import workspaces from '@/routes/workspaces';
 import type { AgentConfig, EvolutionInstance } from '@/types';
 
-
 interface LinkInstanceDialogProps {
     agent: AgentConfig | null;
     availableInstances: EvolutionInstance[];
@@ -50,12 +49,18 @@ export function LinkInstanceDialog({
         e.preventDefault();
         if (!agent) return;
 
-        form.post(workspaces.agents.linkInstance({ slug: activeWorkspace.slug, agent: agent.id }).url, {
-            onSuccess: () => {
-                form.reset();
-                onOpenChange(false);
+        form.post(
+            workspaces.agents.linkInstance({
+                slug: activeWorkspace.slug,
+                agent: agent.id,
+            }).url,
+            {
+                onSuccess: () => {
+                    form.reset();
+                    onOpenChange(false);
+                },
             },
-        });
+        );
     };
 
     useEffect(() => {
@@ -63,7 +68,7 @@ export function LinkInstanceDialog({
             form.reset();
             form.clearErrors();
         }
-    }, [open ]);
+    }, [open]);
 
     if (!agent) return null;
 
@@ -82,56 +87,54 @@ export function LinkInstanceDialog({
                     </DialogHeader>
 
                     <div className="mt-4 space-y-4">
-                        
                         {availableInstances.length > 0 ? (
                             <div className="space-y-2">
-                            <Label>{t('agents.available_instances')}</Label>
-                            <Select
-                                value={form.data.instance_id}
-                                onValueChange={(value) =>
-                                    form.setData('instance_id', value)
-                                }
-                                disabled={form.processing}
-                            >
-                                <SelectTrigger>
-                                    <SelectValue
-                                        placeholder={t(
-                                            'agents.select_instance',
-                                        )}
-                                    />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {availableInstances.map((instance) => (
-                                        <SelectItem
-                                            key={instance.id}
-                                            value={String(instance.id)}
-                                        >
-                                            <span className="flex items-center gap-2">
-                                                <Phone className="h-3.5 w-3.5" />
-                                                {instance.display_name ||
-                                                    instance.instance_name}
-                                                {instance.phone_number &&
-                                                    ` (+${instance.phone_number})`}
-                                            </span>
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                            {form.errors.instance_id && (
-                                <p className="text-sm text-destructive">
-                                    {form.errors.instance_id}
-                                </p>
-                            )}
-                        </div>
-                        ):(
+                                <Label>{t('agents.available_instances')}</Label>
+                                <Select
+                                    value={form.data.instance_id}
+                                    onValueChange={(value) =>
+                                        form.setData('instance_id', value)
+                                    }
+                                    disabled={form.processing}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue
+                                            placeholder={t(
+                                                'agents.select_instance',
+                                            )}
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {availableInstances.map((instance) => (
+                                            <SelectItem
+                                                key={instance.id}
+                                                value={String(instance.id)}
+                                            >
+                                                <span className="flex items-center gap-2">
+                                                    <Phone className="h-3.5 w-3.5" />
+                                                    {instance.display_name ||
+                                                        instance.instance_name}
+                                                    {instance.phone_number &&
+                                                        ` (+${instance.phone_number})`}
+                                                </span>
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {form.errors.instance_id && (
+                                    <p className="text-sm text-destructive">
+                                        {form.errors.instance_id}
+                                    </p>
+                                )}
+                            </div>
+                        ) : (
                             // make compoents ther is not instance avaible her
-                            <div className='w-full flex items-center justify-center mt-4'>
-                                <span className='text-muted-foreground text-sm'>no WhatsApp avaible</span>
-                                 
+                            <div className="mt-4 flex w-full items-center justify-center">
+                                <span className="text-sm text-muted-foreground">
+                                    no WhatsApp avaible
+                                </span>
                             </div>
                         )}
-                        
-
                     </div>
 
                     <DialogFooter className="mt-6">

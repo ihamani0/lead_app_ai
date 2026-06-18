@@ -143,11 +143,12 @@ class IngestKnowledgeBaseJob implements ShouldQueue
         ]);
 
         // 1. Current custom schema table
-        DB::table('document_chunks')->insert([
-            'text' => $text,
-            'metadata' => $metadataJson,
-            'embedding' => $vectorString,
-        ]);
+
+        // DB::table('document_chunks')->insert([
+        //     'text' => $text,
+        //     'metadata' => $metadataJson,
+        //     'embedding' => $vectorString,
+        // ]);
 
         // 2. Scalable LangChain schema table
         DB::table('langchain_pg_embedding')->insert([

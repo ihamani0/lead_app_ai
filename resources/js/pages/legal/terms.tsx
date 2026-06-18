@@ -15,8 +15,8 @@ const sections = [
 ];
 
 export default function Terms() {
-        const supportEmail = usePage().props.support_email;
-    
+    const supportEmail = usePage().props.support_email;
+
     return (
         <>
             <Head title="Terms of Service" />
@@ -125,8 +125,8 @@ export default function Terms() {
                                     information during registration.
                                 </li>
                                 <li>
-                                    You must be at least 18 years old to use
-                                    the Service.
+                                    You must be at least 18 years old to use the
+                                    Service.
                                 </li>
                                 <li>
                                     Each user may only maintain one account
@@ -150,8 +150,8 @@ export default function Terms() {
                             </p>
                             <ul className="mt-2 list-disc space-y-1 pl-6">
                                 <li>
-                                    Subscription fees are billed in advance on
-                                    a monthly or annual basis as selected.
+                                    Subscription fees are billed in advance on a
+                                    monthly or annual basis as selected.
                                 </li>
                                 <li>
                                     All fees are non-refundable except as
@@ -181,8 +181,8 @@ export default function Terms() {
                             </h2>
                             <p className="mt-3">
                                 You agree not to use the Service for any
-                                unlawful purpose or in violation of these
-                                Terms. Prohibited activities include:
+                                unlawful purpose or in violation of these Terms.
+                                Prohibited activities include:
                             </p>
                             <ul className="mt-2 list-disc space-y-1 pl-6">
                                 <li>
@@ -198,8 +198,8 @@ export default function Terms() {
                                     laws or regulations.
                                 </li>
                                 <li>
-                                    Interfering with the security or
-                                    performance of the Service.
+                                    Interfering with the security or performance
+                                    of the Service.
                                 </li>
                                 <li>
                                     Reselling or redistributing the Service
@@ -219,9 +219,9 @@ export default function Terms() {
                                 intellectual property laws.
                             </p>
                             <p className="mt-2">
-                                You retain all rights to the data, messages,
-                                and content you submit to the Service. By using
-                                the Service, you grant us a limited license to
+                                You retain all rights to the data, messages, and
+                                content you submit to the Service. By using the
+                                Service, you grant us a limited license to
                                 process this data solely to provide the Service
                                 to you.
                             </p>
@@ -302,16 +302,17 @@ export default function Terms() {
                         </section>
 
                         <section id="contact">
-                            <h2 className="text-xl font-bold">
-                                11. Contact
-                            </h2>
+                            <h2 className="text-xl font-bold">11. Contact</h2>
                             <p className="mt-3">
                                 If you have any questions about these Terms,
                                 please contact us at:
                             </p>
                             <p className="mt-2 text-[#4C3BCF]">
                                 {/* TODO: Replace with your support email */}
-                                <a href={`mailto:${supportEmail}`} className="font-semibold">
+                                <a
+                                    href={`mailto:${supportEmail}`}
+                                    className="font-semibold"
+                                >
                                     {supportEmail}
                                 </a>
                             </p>

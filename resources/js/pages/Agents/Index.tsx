@@ -80,7 +80,10 @@ export default function AgentIndex({
     const handleClone = (agentId: string) => {
         setCloningId(agentId);
         router.post(
-            workspaces.agents.clone({ slug: activeWorkspace.slug, agent: agentId }).url,
+            workspaces.agents.clone({
+                slug: activeWorkspace.slug,
+                agent: agentId,
+            }).url,
             {},
             {
                 onSuccess: () => toast.success('Agent dupliqué'),
@@ -111,8 +114,8 @@ export default function AgentIndex({
             <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
                 <div className="space-y-5">
                     {/* Header */}
-                    <div className="relative mb-6 overflow-hidden rounded-2xl">
-                        <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="relative mb-6 overflow-hidden rounded-2xl bg-card p-4 shadow-sm sm:p-5" >
+                        <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between ">
                             {/* LEFT */}
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2">

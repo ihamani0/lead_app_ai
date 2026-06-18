@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Plan;
 use App\Models\Team;
 use App\Models\Tenant;
 use App\Models\User;
@@ -18,9 +19,13 @@ class TeamService
 
     public function canCreateTeam(Tenant $tenant): bool
     {
-        $limits = $this->getPlanLimits($tenant->plan);
+        $plan = Plan::where('slug', $tenant->plan)->first();
 
-        return $tenant->teams()->count() < $limits['teams'];
+        if (! $plan || $plan->max_teams === null) {
+            return true;
+        }
+
+        return $tenant->teams()->count() < $plan->max_teams;
     }
 
     public function createDefaultWorkspace(User $user, Tenant $tenant): Team
@@ -35,11 +40,20 @@ class TeamService
         return $team;
     }
 
-    public function getPlanLimits(string $plan): array
+    public function getPlanLimits(string $planSlug): array
     {
+        $plan = Plan::where('slug', $planSlug)->first();
+
+        if (! $plan) {
+            return [
+                'teams' => 1,
+                'members' => 5,
+            ];
+        }
+
         return [
-            'teams' => 1,
-            'members' => 5,
+            'teams' => $plan->max_teams ?? PHP_INT_MAX,
+            'members' => $plan->max_members ?? PHP_INT_MAX,
         ];
     }
 

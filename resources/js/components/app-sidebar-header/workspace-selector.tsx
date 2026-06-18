@@ -72,9 +72,7 @@ export function WorkspaceSelector() {
                                 {activeWorkspace.name.slice(0, 2).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
-                        <span className="truncate">
-                            {activeWorkspace.name}
-                        </span>
+                        <span className="truncate">{activeWorkspace.name}</span>
                     </div>
                     <div className="flex shrink-0 items-center gap-1">
                         {plan && (
@@ -91,10 +89,18 @@ export function WorkspaceSelector() {
             </PopoverTrigger>
             <PopoverContent align="start" className="w-[280px] p-0">
                 <Command>
-                    <CommandInput placeholder={t('workspace.search', 'Find organization...')} />
+                    <CommandInput
+                        placeholder={t(
+                            'workspace.search',
+                            'Find organization...',
+                        )}
+                    />
                     <CommandList>
                         <CommandEmpty>
-                            {t('workspace.no_results', 'No organization found.')}
+                            {t(
+                                'workspace.no_results',
+                                'No organization found.',
+                            )}
                         </CommandEmpty>
                         <CommandGroup heading={t('workspace.title')}>
                             {workspaces.map((workspace) => (
@@ -103,15 +109,23 @@ export function WorkspaceSelector() {
                                     value={workspace.name}
                                     onSelect={() => {
                                         setOpen(false);
-                                        if (workspace.id !== activeWorkspace.id) {
-                                            router.visit(workspacesRoutes.dashboard({ slug: workspace.slug }));
+                                        if (
+                                            workspace.id !== activeWorkspace.id
+                                        ) {
+                                            router.visit(
+                                                workspacesRoutes.dashboard({
+                                                    slug: workspace.slug,
+                                                }),
+                                            );
                                         }
                                     }}
                                 >
                                     <div className="flex w-full items-center gap-2">
                                         <Avatar className="size-6 shrink-0">
                                             <AvatarFallback className="text-xs">
-                                                {workspace.name.slice(0, 2).toUpperCase()}
+                                                {workspace.name
+                                                    .slice(0, 2)
+                                                    .toUpperCase()}
                                             </AvatarFallback>
                                         </Avatar>
                                         <div className="flex min-w-0 flex-1 flex-col">
@@ -133,7 +147,8 @@ export function WorkspaceSelector() {
                                                     {plan}
                                                 </Badge>
                                             )}
-                                            {activeWorkspace.id === workspace.id && (
+                                            {activeWorkspace.id ===
+                                                workspace.id && (
                                                 <Check className="size-4 text-primary" />
                                             )}
                                         </div>

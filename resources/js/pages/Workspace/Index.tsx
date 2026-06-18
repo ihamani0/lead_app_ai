@@ -93,7 +93,7 @@ export default function WorkspaceIndex({
                 <div className="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                     <SummaryCard
                         title={t('workspace.stats.credit')}
-                        value={`$${(auth.user.tenant.credit / 1000).toFixed(2)}`}
+                        value={`$${auth.user.tenant.credit.toFixed(2)}`}
                         icon={CreditCard}
                         color="emerald"
                     />

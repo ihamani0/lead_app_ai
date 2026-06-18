@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Lead;
+use App\Models\LeadMessage;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -13,7 +14,10 @@ class LeadMessageUpdated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public Lead $lead) {}
+    public function __construct(
+        public Lead $lead,
+        public LeadMessage $message,
+    ) {}
 
     public function broadcastOn(): array
     {
@@ -25,10 +29,11 @@ class LeadMessageUpdated implements ShouldBroadcast
     public function broadcastWith(): array
     {
         return [
+            'message' => $this->message->toArray(),
+            'lead_id' => $this->lead->id,
             'lead' => [
                 'id' => $this->lead->id,
                 'last_activity_at' => $this->lead->last_activity_at?->toISOString(),
-                'recent_messages' => $this->lead->recent_messages,
             ],
         ];
     }

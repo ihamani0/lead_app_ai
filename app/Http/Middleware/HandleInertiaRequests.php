@@ -68,6 +68,23 @@ class HandleInertiaRequests extends Middleware
                 'tours' => ($user && ! $user->is_super_admin) ? $this->getTourProgress($user) : [],
                 'workspaces' => $user ? $user->allTeams()->values() : [],
             ],
+            'notifications' => function () use ($request) {
+                $team = $request->attributes->get('active_team');
+
+                if (! $request->user() || ! $team) {
+                    return ['data' => [], 'unread_count' => 0];
+                }
+
+                $notifications = $request->user()
+                    ->notifications()
+                    ->take(20)
+                    ->get();
+
+                return [
+                    'data' => $notifications,
+                    'unread_count' => $notifications->whereNull('read_at')->count(),
+                ];
+            },
             'activeWorkspace' => function () use ($request) {
                 $team = $request->attributes->get('active_team');
 

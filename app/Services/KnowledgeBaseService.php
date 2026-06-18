@@ -137,15 +137,27 @@ class KnowledgeBaseService
     {
         try {
             DB::transaction(function () use ($document) {
-                // 1. Delete associated chunks from the custom "document_chunks" table
-                DB::table('document_chunks')
-                    ->whereRaw("metadata->>'document_id' = ?", [(string) $document->id])
-                    ->delete();
-
-                // 2. Delete associated chunks from the LangChain table
+                // 1. Delete associated chunks from the LangChain embedding table
                 DB::table('langchain_pg_embedding')
                     ->whereRaw("cmetadata->>'document_id' = ?", [(string) $document->id])
                     ->delete();
+
+                // 2. Clean up collection if no embeddings remain for this agent
+                $collection = DB::table('langchain_pg_collection')
+                    ->where('name', 'agent_'.$document->agent_config_id)
+                    ->first();
+
+                if ($collection) {
+                    $remaining = DB::table('langchain_pg_embedding')
+                        ->where('collection_id', $collection->uuid)
+                        ->count();
+
+                    if ($remaining === 0) {
+                        DB::table('langchain_pg_collection')
+                            ->where('uuid', $collection->uuid)
+                            ->delete();
+                    }
+                }
 
                 // 3. Clear Spatie Media Library file collections
                 $document->clearMediaCollection('documents');

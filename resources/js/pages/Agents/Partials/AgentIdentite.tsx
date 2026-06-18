@@ -42,6 +42,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import workspaces from '@/routes/workspaces';
+import { SECTORS } from '@/types/wizard';
 import type { AgentConfig } from '@/types';
 
 interface AgentStats {
@@ -75,20 +76,6 @@ interface IdentityFormData {
         custom_prompt: string;
     };
 }
-
-const SECTORS = [
-    { value: 'immobilier', label: 'Immobilier' },
-    { value: 'automobile', label: 'Automobile' },
-    { value: 'assurance', label: 'Assurance' },
-    { value: 'banque', label: 'Banque & Finance' },
-    { value: 'sante', label: 'Santé' },
-    { value: 'education', label: 'Éducation' },
-    { value: 'commerce', label: 'Commerce & E-commerce' },
-    { value: 'voyage', label: 'Voyage & Tourisme' },
-    { value: 'restauration', label: 'Restauration' },
-    { value: 'service', label: 'Service Client' },
-    { value: 'autre', label: 'Autre' },
-] as const;
 
 const TONES = [
     {
@@ -215,7 +202,9 @@ function resolveInitialSettings(
     return {
         sector: (s.sector as string) || '',
         tone: (s.tone as string) || '',
-        languages: Array.isArray(s.languages) ? (s.languages as string[]) : ['francais'],
+        languages: Array.isArray(s.languages)
+            ? (s.languages as string[])
+            : ['francais'],
         main_objective: (s.main_objective as string) || '',
         response_style: (s.response_style as string) || 'equilibree',
         greeting_message: (s.greeting_message as string) || '',

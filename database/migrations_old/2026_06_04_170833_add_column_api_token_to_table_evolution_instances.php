@@ -14,6 +14,8 @@ return new class extends Migration
         Schema::table('evolution_instances', function (Blueprint $table) {
             $table->string('api_token', 100)->nullable()->after('webhook_url');
             $table->string('uuid', 100)->nullable()->after('api_token');
+
+            $table->index(['uuid', 'api_token']);
         });
     }
 

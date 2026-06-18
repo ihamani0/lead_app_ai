@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
@@ -16,12 +13,27 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('role', 50)->default('agent'); // admin | manager | agent
+            $table->boolean('is_super_admin')->default(false);
 
             $table->foreignUlid('tenant_id')->constrained()->onDelete('cascade');
 
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+
+            // Two-factor auth
+            $table->text('two_factor_secret')->nullable();
+            $table->text('two_factor_recovery_codes')->nullable();
+            $table->timestamp('two_factor_confirmed_at')->nullable();
+
+            // Google OAuth
+            $table->string('google_id')->nullable()->unique();
+            $table->text('google_token')->nullable();
+            $table->text('google_refresh_token')->nullable();
+
+            $table->boolean('has_password')->default(false);
+            $table->timestamp('welcome_dismissed_at')->nullable();
+
             $table->timestamps();
 
             $table->index('tenant_id');
@@ -43,9 +55,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('users');

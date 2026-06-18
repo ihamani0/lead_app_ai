@@ -32,17 +32,20 @@ export interface WizardProps {
 }
 
 export const SECTORS = [
-    { value: 'immobilier', labelKey: 'wizard.sectors.immobilier' },
-    { value: 'automobile', labelKey: 'wizard.sectors.automobile' },
-    { value: 'assurance', labelKey: 'wizard.sectors.assurance' },
-    { value: 'banque', labelKey: 'wizard.sectors.banque' },
-    { value: 'sante', labelKey: 'wizard.sectors.sante' },
-    { value: 'education', labelKey: 'wizard.sectors.education' },
-    { value: 'commerce', labelKey: 'wizard.sectors.commerce' },
-    { value: 'voyage', labelKey: 'wizard.sectors.voyage' },
-    { value: 'restauration', labelKey: 'wizard.sectors.restauration' },
-    { value: 'service', labelKey: 'wizard.sectors.service' },
-    { value: 'autre', labelKey: 'wizard.sectors.autre' },
+    { value: 'immobilier', labelKey: 'wizard.sectors.immobilier', label: 'Immobilier' },
+    { value: 'automobile', labelKey: 'wizard.sectors.automobile', label: 'Automobile' },
+    { value: 'assurance', labelKey: 'wizard.sectors.assurance', label: 'Assurance' },
+    { value: 'banque', labelKey: 'wizard.sectors.banque', label: 'Banque & Finance' },
+    { value: 'sante', labelKey: 'wizard.sectors.sante', label: 'Santé' },
+    { value: 'education', labelKey: 'wizard.sectors.education', label: 'Éducation' },
+    { value: 'commerce', labelKey: 'wizard.sectors.commerce', label: 'Commerce & E-commerce' },
+    { value: 'voyage', labelKey: 'wizard.sectors.voyage', label: 'Voyage & Tourisme' },
+    { value: 'restauration', labelKey: 'wizard.sectors.restauration', label: 'Restauration' },
+    { value: 'service', labelKey: 'wizard.sectors.service', label: 'Service Client' },
+    { value: 'construction', labelKey: 'wizard.sectors.construction', label: 'Bâtiment & Construction' },
+    { value: 'technologie', labelKey: 'wizard.sectors.technologie', label: 'Technologie & IT' },
+    { value: 'juridique', labelKey: 'wizard.sectors.juridique', label: 'Juridique & Avocat' },
+    { value: 'autre', labelKey: 'wizard.sectors.autre', label: 'Autre' },
 ] as const;
 
 export const OBJECTIVES = [
@@ -75,9 +78,21 @@ export const LANGUAGES = [
 ] as const;
 
 export const RESPONSE_STYLES = [
-    { value: 'concis', labelKey: 'wizard.response_styles.concis' },
-    { value: 'detaillee', labelKey: 'wizard.response_styles.detaillee' },
-    { value: 'equilibree', labelKey: 'wizard.response_styles.equilibree' },
+    {
+        value: 'concis',
+        labelKey: 'wizard.response_styles.concis',
+        descKey: 'wizard.response_styles.concis_desc',
+    },
+    {
+        value: 'detaillee',
+        labelKey: 'wizard.response_styles.detaillee',
+        descKey: 'wizard.response_styles.detaillee_desc',
+    },
+    {
+        value: 'equilibree',
+        labelKey: 'wizard.response_styles.equilibree',
+        descKey: 'wizard.response_styles.equilibree_desc',
+    },
 ] as const;
 
 export const CALL_TO_ACTIONS = [
@@ -90,9 +105,21 @@ export const CALL_TO_ACTIONS = [
 ] as const;
 
 export const KNOWLEDGE_MODES = [
-    { value: 'strict', labelKey: 'wizard.knowledge_modes.strict' },
-    { value: 'hybride', labelKey: 'wizard.knowledge_modes.hybride' },
-    { value: 'libre', labelKey: 'wizard.knowledge_modes.libre' },
+    {
+        value: 'strict',
+        labelKey: 'wizard.knowledge_modes.strict',
+        descKey: 'wizard.knowledge_modes.strict_desc',
+    },
+    {
+        value: 'hybride',
+        labelKey: 'wizard.knowledge_modes.hybride',
+        descKey: 'wizard.knowledge_modes.hybride_desc',
+    },
+    {
+        value: 'libre',
+        labelKey: 'wizard.knowledge_modes.libre',
+        descKey: 'wizard.knowledge_modes.libre_desc',
+    },
 ] as const;
 
 export const DEFAULT_WIZARD_FORM: WizardFormData = {

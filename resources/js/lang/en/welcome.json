@@ -67,21 +67,21 @@
         }
     },
 
-    "how_work" : {
-        "title" : "How It Works",
+    "how_work": {
+        "title": "How It Works",
         "subtitle": "Just 3 steps to get started",
-        "tip_pause":"Hover over to pause • Click a step to explore",
-        "step1" : {
-            "title" : "Connect WhatsApp",
-            "description" : "Scan the QR code to connect your WhatsApp Business account. Your account will be securely linked to our platform in seconds."
+        "tip_pause": "Hover over to pause • Click a step to explore",
+        "step1": {
+            "title": "Connect WhatsApp",
+            "description": "Scan the QR code to connect your WhatsApp Business account. Your account will be securely linked to our platform in seconds."
         },
-        "step2" : {
-            "title" : "Configure AI Agent",
-            "description" : "Set up your AI agent with custom prompts, knowledge base, and automation rules. Tailor it to match your business needs."
+        "step2": {
+            "title": "Configure AI Agent",
+            "description": "Set up your AI agent with custom prompts, knowledge base, and automation rules. Tailor it to match your business needs."
         },
-        "step3" : {
-            "title" : "Automate Conversations",
-            "description" : "Your AI agent is now live! It will automatically handle customer inquiries, qualify leads, and provide 24/7 support."
+        "step3": {
+            "title": "Automate Conversations",
+            "description": "Your AI agent is now live! It will automatically handle customer inquiries, qualify leads, and provide 24/7 support."
         }
     }
 }

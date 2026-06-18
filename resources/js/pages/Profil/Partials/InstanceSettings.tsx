@@ -134,7 +134,16 @@ export function InstanceSettings({
                                 size="sm"
                                 className="gap-2"
                             >
-                                <Link href={activeWorkspace ? workspaces.agents.show({ slug: activeWorkspace.slug, agent: agentConfig.id }).url : '#'}>
+                                <Link
+                                    href={
+                                        activeWorkspace
+                                            ? workspaces.agents.show({
+                                                  slug: activeWorkspace.slug,
+                                                  agent: agentConfig.id,
+                                              }).url
+                                            : '#'
+                                    }
+                                >
                                     {t('agents.config.title')}
                                     <ExternalLink className="h-3.5 w-3.5" />
                                 </Link>
@@ -158,7 +167,15 @@ export function InstanceSettings({
                                 </div>
                             </div>
                             <Button asChild variant="ghost" size="sm">
-                                <Link href={activeWorkspace ? workspaces.agents.index({ slug: activeWorkspace.slug }).url : '#'}>
+                                <Link
+                                    href={
+                                        activeWorkspace
+                                            ? workspaces.agents.index({
+                                                  slug: activeWorkspace.slug,
+                                              }).url
+                                            : '#'
+                                    }
+                                >
                                     {t('agents.title')}
                                     <ExternalLink className="ml-2 h-3.5 w-3.5" />
                                 </Link>

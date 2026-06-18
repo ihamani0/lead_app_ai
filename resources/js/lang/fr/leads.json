@@ -1,6 +1,6 @@
 {
     "title": "Prospects",
-    "description": "Contacts traités et scorés par votre Agent IA",
+    "description": "Gérez et suivez toutes vos conversations et prospects.",
     "leadsCount": "Prospects",
 
     "search": {
@@ -17,22 +17,29 @@
         "warm": "Tiède",
         "cold": "Froid",
         "minScore": "Score IA min (0-100)",
-        "clearFilters": "Effacer les filtres"
+        "clearFilters": "Effacer les filtres",
+        "filters": "Filtres",
+        "sortBy": "Trier par",
+        "lastActivity": "Dernière activité",
+        "name": "Nom",
+        "createdAt": "Date de création",
+        "dateFrom": "Date début",
+        "dateTo": "Date fin"
     },
     "table": {
-        "selected":"sélectionné(s)",
-        "result":"Résultat",
-        "result_tooltip":"Résultat de qualification automatique: HOT/WARM/COLD",
-        "aiScore":"Score",
-        "aiScore_tooltip":"Score de qualification IA (0-10)",
-        "status":"Traitement",
-        "status_tooltip":"Statut de traitement commercial: Traité ou Non traité",
+        "selected": "sélectionné(s)",
+        "result": "Résultat",
+        "result_tooltip": "Résultat de qualification automatique: HOT/WARM/COLD",
+        "aiScore": "Score",
+        "aiScore_tooltip": "Score de qualification IA (0-10)",
+        "status": "Traitement",
+        "status_tooltip": "Statut de traitement commercial: Traité ou Non traité",
         "contact": "Contact",
         "temperature": "Température",
         "lastActive": "Dernière activité",
         "lastMessage": "Message",
-        "lastMessage_tooltip": "Dernier message",  
-        "date_lastMessage_tooltip": "Date du dernier message",  
+        "lastMessage_tooltip": "Dernier message",
+        "date_lastMessage_tooltip": "Date du dernier message",
         "notes": "Notes",
         "notes_tooltip": "Notes ajoutées manuellement sur le lead",
         "lastActive_tooltip": "Date du dernier message WhatsApp",
@@ -47,11 +54,43 @@
     },
 
     "badges": {
-        "new": "Nouveau"
+        "new": "Nouveau",
+        "tous": "Tous",
+        "hot": "Chauds",
+        "unread": "Non lus",
+        "today": "Aujourd'hui",
+        "humanRequest": "Demande humain"
     },
 
     "actions": {
-        "triggerQualification": "Déclencher la qualification IA"
+        "triggerQualification": "Déclencher la qualification IA",
+        "export": "Exporter",
+        "backToList": "Retour à la liste",
+        "edit": "Modifier",
+        "delete": "Supprimer"
+    },
+
+    "details": {
+        "iaInsights": "IA Insights",
+        "updatedAt": "Mis à jour à",
+        "intention": "Intention détectée",
+        "score": "Score de qualification",
+        "aiSummary": "Résumé IA",
+        "keyInfoTitle": "Informations clés",
+        "recommendedActions": "Actions recommandées",
+        "seeAllActions": "Voir toutes les actions →",
+        "leadDetails": "Détails du lead",
+        "fullName": "Nom complet",
+        "phone": "Téléphone",
+        "source": "Source",
+        "firstInteraction": "Première interaction",
+        "lastActivity": "Dernière activité",
+        "status": "Statut",
+        "owner": "Propriétaire",
+        "tags": "Tags",
+        "internalNotes": "Notes internes",
+        "modifiedBy": "Modifié par",
+        "addTag": "Ajouter un tag"
     },
 
     "statusInfo": {

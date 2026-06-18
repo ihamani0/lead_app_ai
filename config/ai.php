@@ -95,6 +95,11 @@ return [
             'driver' => 'gemini',
             'key' => env('GEMINI_API_KEY'),
             'url' => env('GEMINI_URL', 'https://generativelanguage.googleapis.com/v1/'),
+            'models' => [
+                'text' => [
+                    'default' => env('GEMINI_MODEL', 'gemini-2.0-flash'),
+                ],
+            ],
         ],
 
         'groq' => [
@@ -127,6 +132,11 @@ return [
         'openrouter' => [
             'driver' => 'openrouter',
             'key' => env('OPENROUTER_API_KEY'),
+            'models' => [
+                'text' => [
+                    'default' => env('OPENROUTER_MODEL', 'openai/gpt-oss-120b:free'),
+                ],
+            ],
         ],
 
         'voyageai' => [

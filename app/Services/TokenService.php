@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\AgentConfig;
 use App\Models\LlmModel;
 use App\Models\Tenant;
 use App\Models\TokenTransaction;
-use App\Models\TokenTransactionDaily;
 use Illuminate\Support\Facades\DB;
 
 class TokenService
@@ -31,12 +31,14 @@ class TokenService
     }
 
     public function deductUsage(
-        Tenant $tenant,
+        string $agentConfigId,
         int $inputTokens,
         int $outputTokens,
         array $metadata = [],
-        ?string $instanceId = null
     ): void {
+        $agentConfig = AgentConfig::with(['tenant.llmModel', 'instance'])->findOrFail($agentConfigId);
+        $tenant = $agentConfig->tenant;
+
         $model = $tenant->llmModel ?? LlmModel::where('is_active', true)->first();
 
         if (! $model) {
@@ -47,8 +49,12 @@ class TokenService
         $outputCost = $this->calculateCost($outputTokens, $model->output_rate_per_million_millicents);
         $totalCost = max(1, $inputCost + $outputCost);
 
-        DB::transaction(function () use ($tenant, $inputTokens, $outputTokens, $metadata, $instanceId, $model, $inputCost, $outputCost, $totalCost) {
-            $tenant = Tenant::lockForUpdate()->find($tenant->id);
+        $tenantId = $tenant->id;
+        $instanceId = $agentConfig->evolution_instance_id;
+        $teamId = $agentConfig->team_id;
+
+        DB::transaction(function () use ($tenantId, $agentConfigId, $instanceId, $teamId, $inputTokens, $outputTokens, $metadata, $model, $inputCost, $outputCost, $totalCost) {
+            $tenant = Tenant::lockForUpdate()->find($tenantId);
 
             if ($tenant->credit_millicents < $totalCost) {
                 throw new \Exception('Insufficient credit');
@@ -57,7 +63,8 @@ class TokenService
             $tenant->decrement('credit_millicents', $totalCost);
 
             TokenTransaction::create([
-                'tenant_id' => $tenant->id,
+                'tenant_id' => $tenantId,
+                'agent_config_id' => $agentConfigId,
                 'instance_id' => $instanceId,
                 'llm_model_id' => $model->id,
                 'date' => now()->toDateString(),
@@ -72,30 +79,40 @@ class TokenService
                 'reference_id' => $metadata['reference_id'] ?? null,
             ]);
 
-            TokenTransactionDaily::updateOrCreate(
+            DB::table('token_transactions_daily')->upsert(
                 [
-                    'tenant_id' => $tenant->id,
+                    'tenant_id' => $tenantId,
+                    'agent_config_id' => $agentConfigId,
                     'date' => now()->toDateString(),
+                    'instance_id' => $instanceId,
+                    'team_id' => $teamId,
+                    'llm_model_id' => $model->id,
+                    'input_tokens_used' => $inputTokens,
+                    'output_tokens_used' => $outputTokens,
+                    'total_tokens_used' => $inputTokens + $outputTokens,
+                    'input_cost_millicents' => $inputCost,
+                    'output_cost_millicents' => $outputCost,
+                    'total_cost_millicents' => $totalCost,
+                    'transaction_count' => 1,
                 ],
-                []
+                ['tenant_id', 'agent_config_id', 'date'],
+                [
+                    'instance_id' => $instanceId,
+                    'team_id' => $teamId,
+                    'llm_model_id' => $model->id,
+                    'input_tokens_used' => DB::raw('input_tokens_used + '.$inputTokens),
+                    'output_tokens_used' => DB::raw('output_tokens_used + '.$outputTokens),
+                    'total_tokens_used' => DB::raw('total_tokens_used + '.($inputTokens + $outputTokens)),
+                    'input_cost_millicents' => DB::raw('input_cost_millicents + '.$inputCost),
+                    'output_cost_millicents' => DB::raw('output_cost_millicents + '.$outputCost),
+                    'total_cost_millicents' => DB::raw('total_cost_millicents + '.$totalCost),
+                    'transaction_count' => DB::raw('transaction_count + 1'),
+                ]
             );
-
-            TokenTransactionDaily::where([
-                'tenant_id' => $tenant->id,
-                'date' => now()->toDateString(),
-            ])->update([
-                'input_tokens_used' => DB::raw('input_tokens_used + '.$inputTokens),
-                'output_tokens_used' => DB::raw('output_tokens_used + '.$outputTokens),
-                'total_tokens_used' => DB::raw('total_tokens_used + '.($inputTokens + $outputTokens)),
-                'input_cost_millicents' => DB::raw('input_cost_millicents + '.$inputCost),
-                'output_cost_millicents' => DB::raw('output_cost_millicents + '.$outputCost),
-                'total_cost_millicents' => DB::raw('total_cost_millicents + '.$totalCost),
-                'transaction_count' => DB::raw('transaction_count + 1'),
-            ]);
         });
     }
 
-    public function addDollars(Tenant $tenant, float $dollars, string $description): void
+    public function addDollars(Tenant $tenant, float $dollars, string $description, ?int $teamId = null): void
     {
         $millicents = self::dollarsToMillicents($dollars);
 
@@ -116,18 +133,27 @@ class TokenService
                 'reference_id' => $description,
             ]);
 
-            TokenTransactionDaily::updateOrCreate(
-                ['tenant_id' => $tenant->id, 'date' => now()->toDateString()],
-                []
-            );
+            $exists = DB::table('token_transactions_daily')
+                ->where('tenant_id', $tenant->id)
+                ->where('date', now()->toDateString())
+                ->exists();
 
-            TokenTransactionDaily::where([
-                'tenant_id' => $tenant->id,
-                'date' => now()->toDateString(),
-            ])->update([
-                'millicents_recharged' => DB::raw('millicents_recharged + '.$millicents),
-                'transaction_count' => DB::raw('transaction_count + 1'),
-            ]);
+            if ($exists) {
+                DB::table('token_transactions_daily')
+                    ->where('tenant_id', $tenant->id)
+                    ->where('date', now()->toDateString())
+                    ->update([
+                        'millicents_recharged' => DB::raw('millicents_recharged + '.$millicents),
+                        'transaction_count' => DB::raw('transaction_count + 1'),
+                    ]);
+            } else {
+                DB::table('token_transactions_daily')->insert([
+                    'tenant_id' => $tenant->id,
+                    'date' => now()->toDateString(),
+                    'millicents_recharged' => $millicents,
+                    'transaction_count' => 1,
+                ]);
+            }
         });
     }
 }

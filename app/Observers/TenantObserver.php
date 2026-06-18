@@ -11,10 +11,8 @@ class TenantObserver
     {
         if ($tenant->isDirty('credit_millicents')) {
             $threshold = config('services.token.threshold', 10) * 1000;
-            $newCredit = (int) $tenant->credit_millicents;
             $originalCredit = (int) $tenant->getOriginal('credit_millicents');
-
-            $tenant->is_low_credit = $newCredit < $threshold;
+            $newCredit = (int) $tenant->credit_millicents;
 
             if ($originalCredit >= $threshold && $newCredit < $threshold) {
                 $tenant->notify(new LowBalanceNotification);

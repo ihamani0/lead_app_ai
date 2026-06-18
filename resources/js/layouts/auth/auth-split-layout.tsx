@@ -86,7 +86,11 @@ export default function AuthSplitLayout({
                 {/* Header: Logo & Language */}
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                        <img src="/logo-white.png" alt="MyIA" className="h-8 w-8" />
+                        <img
+                            src="/logo-white.png"
+                            alt="MyIA"
+                            className="h-8 w-8"
+                        />
                     </div>
                     <div className="flex items-center gap-1 rounded-lg border border-white/10 bg-white/10 p-0.5 backdrop-blur-md">
                         {['en', 'fr'].map((lang) => (
@@ -109,10 +113,13 @@ export default function AuthSplitLayout({
 
                 <div className="mt-auto mb-auto flex flex-col justify-center">
                     <div className="mb-10">
-                        <h2 className="font-display text-[36px] font-bold leading-tight lg:text-[42px] tracking-tight text-transparent bg-clip-text bg-linear-to-r from-white to-white/70">
-                            {t('auth.brand.headline', 'Supercharge your workflow')}
+                        <h2 className="bg-linear-to-r from-white to-white/70 bg-clip-text font-display text-[36px] leading-tight font-bold tracking-tight text-transparent lg:text-[42px]">
+                            {t(
+                                'auth.brand.headline',
+                                'Supercharge your workflow',
+                            )}
                         </h2>
-                        <p className="font-display mt-4 max-w-md text-[16px] leading-relaxed text-white/80">
+                        <p className="mt-4 max-w-md font-display text-[16px] leading-relaxed text-white/80">
                             {t(
                                 'auth.brand.tagline',
                                 'Join thousands of professionals who are using AI to work smarter, not harder.',
@@ -191,7 +198,6 @@ export default function AuthSplitLayout({
                         )}
                     </p>
                     <div className="flex items-center gap-1 text-xs text-white/50">
-                        
                         <span>Powered by MyIA</span>
                     </div>
                 </div>

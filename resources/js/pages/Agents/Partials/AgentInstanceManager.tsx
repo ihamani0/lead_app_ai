@@ -139,7 +139,7 @@ export default function AgentInstanceManager({
     const [localInstance, setLocalInstance] = useState<
         EvolutionInstance | undefined | null
     >(agent.instance);
-    const [qrCode, setQrCode] = useState<string | null>(null);
+    const [qrCode, setQrCode] = useState<string | null>(agent.instance?.qr_code ?? null);
     const [isLoadingQr, setIsLoadingQr] = useState(false);
     const [isWaitingForQr, setIsWaitingForQr] = useState(false);
     const [isRestarting, setIsRestarting] = useState(false);
@@ -201,7 +201,6 @@ export default function AgentInstanceManager({
     const ql = qualityLabel(status);
 
     const handleLink = () => {
-        
         if (!selectedInstanceId) return;
         setIsLinking(true);
         router.post(
@@ -269,9 +268,7 @@ export default function AgentInstanceManager({
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const body = error.response.data as { error?: string };
-                setActionError(
-                    body.error || 'Erreur lors de la déconnexion',
-                );
+                setActionError(body.error || 'Erreur lors de la déconnexion');
             } else {
                 setActionError('Erreur lors de la déconnexion');
             }
@@ -291,9 +288,7 @@ export default function AgentInstanceManager({
         } catch (error) {
             if (axios.isAxiosError(error) && error.response) {
                 const body = error.response.data as { error?: string };
-                setActionError(
-                    body.error || 'Erreur lors du redémarrage',
-                );
+                setActionError(body.error || 'Erreur lors du redémarrage');
             } else {
                 setActionError('Erreur lors du redémarrage');
             }
@@ -393,12 +388,12 @@ export default function AgentInstanceManager({
                                                 WhatsApp
                                             </CardTitle>
                                             {isConnected ? (
-                                                <Badge className="bg-green-100 text-green-700 hover:bg-green-100 gap-1.5 px-2.5 py-0.5 text-xs font-medium border-0">
-                                                    <span className="h-1.5 w-1.5 rounded-full bg-green-500 inline-block" />
+                                                <Badge className="gap-1.5 border-0 bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700 hover:bg-green-100">
+                                                    <span className="inline-block h-1.5 w-1.5 rounded-full bg-green-500" />
                                                     Connecté
                                                 </Badge>
                                             ) : (
-                                                <Badge className="bg-slate-100 text-slate-600 hover:bg-slate-100 gap-1.5 px-2.5 py-0.5 text-xs font-medium border-0">
+                                                <Badge className="gap-1.5 border-0 bg-slate-100 px-2.5 py-0.5 text-xs font-medium text-slate-600 hover:bg-slate-100">
                                                     Déconnecté
                                                 </Badge>
                                             )}
@@ -430,7 +425,7 @@ export default function AgentInstanceManager({
                                             size="sm"
                                             onClick={handleDisconnect}
                                             disabled={isLoadingQr}
-                                            className="text-red-600 hover:bg-red-50 border-red-200"
+                                            className="border-red-200 text-red-600 hover:bg-red-50"
                                         >
                                             <PlugZap className="mr-1.5 h-4 w-4" />
                                             Déconnecter
@@ -452,18 +447,19 @@ export default function AgentInstanceManager({
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     {/* Left: QR Code + Instructions */}
                                     <div className="space-y-4">
-                                        <h3 className="font-semibold text-sm">
-                                            Scannez le QR code avec votre WhatsApp
+                                        <h3 className="text-sm font-semibold">
+                                            Scannez le QR code avec votre
+                                            WhatsApp
                                         </h3>
-                                        <p className="text-xs text-muted-foreground leading-relaxed">
-                                            Ouvrez WhatsApp sur votre téléphone →{' '}
-                                            Paramètres → Appareils connectés →{' '}
+                                        <p className="text-xs leading-relaxed text-muted-foreground">
+                                            Ouvrez WhatsApp sur votre téléphone
+                                            → Paramètres → Appareils connectés →{' '}
                                             Connecter un appareil
                                         </p>
 
                                         <div className="flex justify-center py-2">
                                             {hasQr && qrCode ? (
-                                                <div className="rounded-lg bg-white p-3 shadow-md border">
+                                                <div className="rounded-lg border bg-white p-3 shadow-md">
                                                     <QRCodeSVG
                                                         value={qrCode}
                                                         size={200}
@@ -476,7 +472,7 @@ export default function AgentInstanceManager({
                                                     <Loader2 className="h-10 w-10 animate-spin text-primary" />
                                                 </div>
                                             ) : (
-                                                <div className="flex h-[216px] w-[216px] flex-col items-center justify-center rounded-lg border bg-muted/30 gap-3">
+                                                <div className="flex h-[216px] w-[216px] flex-col items-center justify-center gap-3 rounded-lg border bg-muted/30">
                                                     <QrCode className="h-10 w-10 text-muted-foreground" />
                                                     <Button
                                                         size="sm"
@@ -511,7 +507,7 @@ export default function AgentInstanceManager({
 
                                         <button
                                             type="button"
-                                            className="text-xs text-purple-600 hover:text-purple-700 hover:underline inline-flex items-center gap-1"
+                                            className="inline-flex items-center gap-1 text-xs text-purple-600 hover:text-purple-700 hover:underline"
                                             onClick={() =>
                                                 window.open(
                                                     'https://faq.whatsapp.com/13121127155',
@@ -520,13 +516,14 @@ export default function AgentInstanceManager({
                                             }
                                         >
                                             <ExternalLink className="h-3 w-3" />
-                                            Besoin d'aide ? Voir le guide de connexion
+                                            Besoin d'aide ? Voir le guide de
+                                            connexion
                                         </button>
                                     </div>
 
                                     {/* Right: Connection Status Steps */}
                                     <div className="space-y-4">
-                                        <h3 className="font-semibold text-sm">
+                                        <h3 className="text-sm font-semibold">
                                             Statut de la connexion
                                         </h3>
                                         <div className="space-y-3">
@@ -548,15 +545,15 @@ export default function AgentInstanceManager({
                                                         </span>
                                                     </div>
                                                     {step.done ? (
-                                                        <span className="text-xs text-green-600 font-medium">
+                                                        <span className="text-xs font-medium text-green-600">
                                                             Connecté
                                                         </span>
                                                     ) : step.loading ? (
-                                                        <span className="text-xs text-amber-600 font-medium">
+                                                        <span className="text-xs font-medium text-amber-600">
                                                             En cours
                                                         </span>
                                                     ) : (
-                                                        <span className="text-xs text-slate-400 font-medium">
+                                                        <span className="text-xs font-medium text-slate-400">
                                                             En attente
                                                         </span>
                                                     )}
@@ -567,7 +564,7 @@ export default function AgentInstanceManager({
                                 </div>
                             ) : (
                                 /* Connected state */
-                                <div className="rounded-lg border bg-green-50/40 p-6 text-center">
+                                <div className="rounded-lg border bg-green-50/40 p-6 text-center dark:bg-green-950/30">
                                     <div className="mx-auto mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-green-100">
                                         <CheckCircle2 className="h-7 w-7 text-green-600" />
                                     </div>
@@ -587,9 +584,9 @@ export default function AgentInstanceManager({
                             )}
 
                             {/* Bottom Banner */}
-                            <div className="flex items-start gap-3 rounded-lg bg-amber-50 border border-amber-200 p-3">
+                            <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3">
                                 <Wrench className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-                                <p className="text-xs text-amber-800 leading-relaxed">
+                                <p className="text-xs leading-relaxed text-amber-800">
                                     Gardez votre téléphone connecté à Internet
                                     pour maintenir la connexion active.
                                 </p>
@@ -602,7 +599,7 @@ export default function AgentInstanceManager({
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
                                 <Phone className="h-5 w-5" />
-                                 WhatsApp
+                                WhatsApp
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -636,8 +633,8 @@ export default function AgentInstanceManager({
                             {mode === 'link' && allInstances.length > 0 ? (
                                 <>
                                     <p className="text-sm text-muted-foreground">
-                                        Sélectionnez une WhatsApp connectée
-                                        pour lier à cet agent.
+                                        Sélectionnez une WhatsApp connectée pour
+                                        lier à cet agent.
                                     </p>
                                     <Select
                                         value={selectedInstanceId}
@@ -671,7 +668,9 @@ export default function AgentInstanceManager({
 
                                     <Button
                                         onClick={handleLink}
-                                        disabled={!selectedInstanceId || isLinking}
+                                        disabled={
+                                            !selectedInstanceId || isLinking
+                                        }
                                         className="gap-2"
                                     >
                                         {isLinking ? (
@@ -690,12 +689,16 @@ export default function AgentInstanceManager({
                                             : 'Créez une nouvelle instance WhatsApp pour connecter un autre numéro.'}
                                     </p>
                                     <div className="space-y-2">
-                                        <Label htmlFor="instance-name">Nom de WhatsApp </Label>
+                                        <Label htmlFor="instance-name">
+                                            Nom de WhatsApp{' '}
+                                        </Label>
                                         <Input
                                             id="instance-name"
                                             value={newInstanceName}
                                             onChange={(e) =>
-                                                setNewInstanceName(e.target.value)
+                                                setNewInstanceName(
+                                                    e.target.value,
+                                                )
                                             }
                                             placeholder="Ex: support-whatsapp"
                                             required
@@ -709,7 +712,9 @@ export default function AgentInstanceManager({
                                             id="display-name"
                                             value={newDisplayName}
                                             onChange={(e) =>
-                                                setNewDisplayName(e.target.value)
+                                                setNewDisplayName(
+                                                    e.target.value,
+                                                )
                                             }
                                             placeholder="Ex: Support Client"
                                         />
@@ -722,7 +727,9 @@ export default function AgentInstanceManager({
                                             id="phone-number"
                                             value={newPhoneNumber}
                                             onChange={(e) =>
-                                                setNewPhoneNumber(e.target.value)
+                                                setNewPhoneNumber(
+                                                    e.target.value,
+                                                )
                                             }
                                             placeholder="e.g. 212612345678"
                                         />
@@ -730,7 +737,8 @@ export default function AgentInstanceManager({
                                     <Button
                                         onClick={handleCreateInstance}
                                         disabled={
-                                            !newInstanceName.trim() || isCreating
+                                            !newInstanceName.trim() ||
+                                            isCreating
                                         }
                                         className="gap-2"
                                     >
@@ -894,7 +902,7 @@ export default function AgentInstanceManager({
                                         '_blank',
                                     )
                                 }
-                                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-muted transition-colors"
+                                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted"
                             >
                                 <Globe className="h-4 w-4 text-muted-foreground" />
                                 <span className="flex-1 text-left">
@@ -907,13 +915,13 @@ export default function AgentInstanceManager({
                                     type="button"
                                     onClick={handleFetchQr}
                                     disabled={isLoadingQr}
-                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-muted transition-colors"
+                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted"
                                 >
                                     <QrCode className="h-4 w-4 text-muted-foreground" />
                                     <span className="flex-1 text-left">
                                         Reconnecter (QR Code)
                                     </span>
-                                    <span className="text-muted-foreground text-xs">
+                                    <span className="text-xs text-muted-foreground">
                                         &gt;
                                     </span>
                                 </button>
@@ -922,7 +930,7 @@ export default function AgentInstanceManager({
                                 <button
                                     type="button"
                                     onClick={onNavigateToTest}
-                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-muted transition-colors"
+                                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors hover:bg-muted"
                                 >
                                     <MessageSquare className="h-4 w-4 text-muted-foreground" />
                                     <span className="flex-1 text-left">
@@ -935,13 +943,13 @@ export default function AgentInstanceManager({
                                 type="button"
                                 onClick={handleDisconnect}
                                 disabled={isLoadingQr}
-                                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm hover:bg-red-50 transition-colors text-red-600"
+                                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
                             >
                                 <PlugZap className="h-4 w-4" />
                                 <span className="flex-1 text-left">
                                     Déconnecter l'instance
                                 </span>
-                                <span className="text-red-400 text-xs">
+                                <span className="text-xs text-red-400">
                                     &gt;
                                 </span>
                             </button>
@@ -949,7 +957,7 @@ export default function AgentInstanceManager({
                     </Card>
 
                     {/* Coming Soon */}
-                         {/*<Card>
+                    {/*<Card>
                             <CardContent className="pt-5 pb-4">
                                 <p className="text-xs text-muted-foreground mb-3">
                                     Instagram, Messenger, Telegram et plus encore.

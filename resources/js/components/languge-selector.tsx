@@ -1,6 +1,6 @@
 import { usePage } from '@inertiajs/react';
 import { LanguageSwitcher } from './language-switcher';
- 
+
 type PageProps = {
     auth: {
         user: {
@@ -11,7 +11,7 @@ type PageProps = {
     };
     locale: string;
     availableLocales: string[];
-}; 
+};
 
 export function LanguageSelector() {
     const page = usePage<PageProps>();

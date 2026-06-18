@@ -58,8 +58,7 @@ export default function WorkspaceLayout({ children, title }: Props) {
 
     useEffect(() => {
         if (i18n.language !== locale) {
-            i18n.services.backendConnector.backend.options.loadPath =
-                `/translations/{{lng}}?v=${langVersion}`;
+            i18n.services.backendConnector.backend.options.loadPath = `/translations/{{lng}}?v=${langVersion}`;
             i18n.changeLanguage(locale as string);
         }
     }, [locale, langVersion]);
@@ -91,7 +90,7 @@ export default function WorkspaceLayout({ children, title }: Props) {
                     {plan && (
                         <Badge
                             variant="secondary"
-                            className="hidden px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider md:inline-flex"
+                            className="hidden px-2.5 py-0.5 text-[11px] font-semibold tracking-wider uppercase md:inline-flex"
                         >
                             {plan}
                         </Badge>
@@ -138,10 +137,7 @@ export default function WorkspaceLayout({ children, title }: Props) {
                                 </Avatar>
                             </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                            className="w-56"
-                            align="end"
-                        >
+                        <DropdownMenuContent className="w-56" align="end">
                             <UserMenuContent user={auth.user} />
                         </DropdownMenuContent>
                     </DropdownMenu>
@@ -150,7 +146,7 @@ export default function WorkspaceLayout({ children, title }: Props) {
 
             <AppContent>{children}</AppContent>
 
-            <Toaster position="top-center"   />
+            <Toaster position="top-center" />
         </AppShell>
     );
 }

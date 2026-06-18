@@ -1,6 +1,12 @@
 import { router, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { Bot, MessageCircle, Sparkles, ArrowRight, LayoutDashboard } from 'lucide-react';
+import {
+    Bot,
+    MessageCircle,
+    Sparkles,
+    ArrowRight,
+    LayoutDashboard,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -30,7 +36,8 @@ export function DashboardWelcomeOverlay() {
 
         axios
             .post(
-                workspaces.wizard.dismissWelcome({ slug: activeWorkspace.slug }).url,
+                workspaces.wizard.dismissWelcome({ slug: activeWorkspace.slug })
+                    .url,
             )
             .then(() => {
                 setVisible(false);
@@ -56,9 +63,9 @@ export function DashboardWelcomeOverlay() {
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-            <div className="relative mx-4 w-full max-w-2xl animate-in fade-in zoom-in-95 duration-300">
+            <div className="relative mx-4 w-full max-w-2xl animate-in duration-300 zoom-in-95 fade-in">
                 <Card className="overflow-hidden border-0 shadow-2xl">
-                    <div className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/70 px-8 pb-16 pt-10 text-center text-white">
+                    <div className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/70 px-8 pt-10 pb-16 text-center text-white">
                         <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-white/20 backdrop-blur">
                             <Bot className="h-10 w-10" />
                         </div>
@@ -71,7 +78,7 @@ export function DashboardWelcomeOverlay() {
                         </p>
                     </div>
 
-                    <div className="space-y-6 bg-card px-8 pb-8 pt-6">
+                    <div className="space-y-6 bg-card px-8 pt-6 pb-8">
                         <div className="grid gap-4 sm:grid-cols-3">
                             <div className="flex flex-col items-center gap-2 rounded-lg border bg-muted/30 p-4 text-center">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">

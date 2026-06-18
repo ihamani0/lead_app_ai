@@ -81,21 +81,19 @@ export default function Privacy() {
                                 1. Information We Collect
                             </h2>
                             <p className="mt-3">
-                                We collect the following types of information
-                                to provide and improve the Service:
+                                We collect the following types of information to
+                                provide and improve the Service:
                             </p>
                             <h3 className="mt-4 font-semibold">
                                 Account Information
                             </h3>
                             <p className="mt-1">
                                 When you register, we collect your name, email
-                                address, and account credentials. If you sign
-                                up via Google OAuth, we receive your name,
-                                email, and Google ID from Google.
+                                address, and account credentials. If you sign up
+                                via Google OAuth, we receive your name, email,
+                                and Google ID from Google.
                             </p>
-                            <h3 className="mt-4 font-semibold">
-                                Usage Data
-                            </h3>
+                            <h3 className="mt-4 font-semibold">Usage Data</h3>
                             <p className="mt-1">
                                 We collect information about how you use the
                                 Service, including your interactions,
@@ -106,8 +104,8 @@ export default function Privacy() {
                             </h3>
                             <p className="mt-1">
                                 The Service processes WhatsApp messages and
-                                other communications you configure. This data
-                                is stored and processed to provide the Service.
+                                other communications you configure. This data is
+                                stored and processed to provide the Service.
                             </p>
                             <h3 className="mt-4 font-semibold">
                                 Payment Information
@@ -129,11 +127,11 @@ export default function Privacy() {
                             <h2 className="text-xl font-bold">
                                 2. How We Use Your Information
                             </h2>
-                            <p className="mt-3">
-                                We use your information to:
-                            </p>
+                            <p className="mt-3">We use your information to:</p>
                             <ul className="mt-2 list-disc space-y-1 pl-6">
-                                <li>Provide, maintain, and improve the Service.</li>
+                                <li>
+                                    Provide, maintain, and improve the Service.
+                                </li>
                                 <li>
                                     Process your subscription and manage your
                                     account.
@@ -167,12 +165,14 @@ export default function Privacy() {
                             </p>
                             <ul className="mt-2 list-disc space-y-1 pl-6">
                                 <li>
-                                    <strong>Resend</strong> &mdash; Transactional
-                                    emails (verification, notifications).
+                                    <strong>Resend</strong> &mdash;
+                                    Transactional emails (verification,
+                                    notifications).
                                 </li>
                                 <li>
-                                    <strong>OpenAI / Anthropic</strong> &mdash; AI
-                                    processing for chat and automation features.
+                                    <strong>OpenAI / Anthropic</strong> &mdash;
+                                    AI processing for chat and automation
+                                    features.
                                 </li>
                                 <li>
                                     <strong>AWS (S3)</strong> &mdash; File and
@@ -212,9 +212,7 @@ export default function Privacy() {
                                     Access controls and authentication
                                     requirements.
                                 </li>
-                                <li>
-                                    Regular security audits and monitoring.
-                                </li>
+                                <li>Regular security audits and monitoring.</li>
                             </ul>
                             <p className="mt-2">
                                 While we strive to protect your data, no method
@@ -251,8 +249,8 @@ export default function Privacy() {
                                 6. Your Rights
                             </h2>
                             <p className="mt-3">
-                                Depending on your jurisdiction, you may have
-                                the following rights:
+                                Depending on your jurisdiction, you may have the
+                                following rights:
                             </p>
                             <ul className="mt-2 list-disc space-y-1 pl-6">
                                 <li>
@@ -272,8 +270,8 @@ export default function Privacy() {
                                     your data in a machine-readable format.
                                 </li>
                                 <li>
-                                    <strong>Objection</strong> &mdash; Object
-                                    to certain processing activities.
+                                    <strong>Objection</strong> &mdash; Object to
+                                    certain processing activities.
                                 </li>
                             </ul>
                             <p className="mt-2">
@@ -289,20 +287,16 @@ export default function Privacy() {
                         <section id="cookies">
                             <h2 className="text-xl font-bold">7. Cookies</h2>
                             <p className="mt-3">
-                                We use cookies and similar tracking
-                                technologies to:
+                                We use cookies and similar tracking technologies
+                                to:
                             </p>
                             <ul className="mt-2 list-disc space-y-1 pl-6">
                                 <li>
                                     Maintain your session and authentication
                                     state.
                                 </li>
-                                <li>
-                                    Remember your preferences and settings.
-                                </li>
-                                <li>
-                                    Analyze usage and improve the Service.
-                                </li>
+                                <li>Remember your preferences and settings.</li>
+                                <li>Analyze usage and improve the Service.</li>
                             </ul>
                             <p className="mt-2">
                                 You can control cookies through your browser
@@ -317,10 +311,9 @@ export default function Privacy() {
                             </h2>
                             <p className="mt-3">
                                 The Service may contain links to third-party
-                                websites or services. We are not responsible
-                                for the privacy practices of these third
-                                parties. We encourage you to review their
-                                privacy policies.
+                                websites or services. We are not responsible for
+                                the privacy practices of these third parties. We
+                                encourage you to review their privacy policies.
                             </p>
                         </section>
 
@@ -330,10 +323,10 @@ export default function Privacy() {
                             </h2>
                             <p className="mt-3">
                                 The Service is not intended for individuals
-                                under the age of 18. We do not knowingly
-                                collect personal information from children. If
-                                we become aware that a child has provided us
-                                with personal data, we will delete it.
+                                under the age of 18. We do not knowingly collect
+                                personal information from children. If we become
+                                aware that a child has provided us with personal
+                                data, we will delete it.
                             </p>
                         </section>
 
@@ -353,16 +346,17 @@ export default function Privacy() {
                         </section>
 
                         <section id="contact">
-                            <h2 className="text-xl font-bold">
-                                11. Contact
-                            </h2>
+                            <h2 className="text-xl font-bold">11. Contact</h2>
                             <p className="mt-3">
                                 If you have any questions about this Privacy
                                 Policy, please contact us at:
                             </p>
                             <p className="mt-2 text-[#4C3BCF]">
                                 {/* TODO: Replace with your support email */}
-                                <a href={`mailto:${supportEmail}`} className="font-semibold">
+                                <a
+                                    href={`mailto:${supportEmail}`}
+                                    className="font-semibold"
+                                >
                                     {supportEmail}
                                 </a>
                             </p>

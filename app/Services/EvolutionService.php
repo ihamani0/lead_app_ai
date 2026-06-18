@@ -39,7 +39,7 @@ class EvolutionService
     {
         $response = EvolutionApi::setInstance($instance->api_token)
             ->instance()
-            ->connect($instance->api_token, $this->webhookUrl, ['QRCODE', 'MESSAGE', 'CONNECTION', 'PRESENCE']);
+            ->connect($instance->api_token, $this->webhookUrl, ['QRCODE', 'MESSAGE', 'SEND_MESSAGE', 'CONNECTION', 'PRESENCE']);
 
         Log::info('Instance connect response', ['response' => $response]);
     }
@@ -120,7 +120,10 @@ class EvolutionService
 
         return [
             'enabled' => $isEnabled,
+            'description' => $settings['description'] ?? '',
             'webhookUrl' => $agent->webhook_url,
+            'basicAuthUser' => $settings['basicAuthUser'] ?? '',
+            'basicAuthPass' => $settings['basicAuthPass'] ?? '',
             'triggerType' => $settings['triggerType'] ?? 'all',
             'triggerOperator' => $settings['triggerOperator'] ?? 'equals',
             'triggerValue' => $settings['triggerValue'] ?? '',
@@ -131,11 +134,14 @@ class EvolutionService
             'unknownMessage' => $settings['unknownMessage'] ?? '',
             'listeningFromMe' => (bool) ($settings['listeningFromMe'] ?? false),
             'stopBotFromMe' => (bool) ($settings['stopBotFromMe'] ?? true),
+            'keepOpen' => (bool) ($settings['keepOpen'] ?? false),
+            'ignoreJids' => implode(',', $this->convertBlacklistToJids($settings['blocklist'] ?? [])),
             'splitMessages' => (bool) ($settings['splitMessages'] ?? false),
             'timePerChar' => (int) ($settings['timePerChar'] ?? 0),
             'systemMessage' => $settings['systemMessage'] ?? '',
             'contextWindowSize' => (int) ($settings['contextWindowSize'] ?? 5),
             'fallbackMessage' => $settings['fallbackMessage'] ?? '',
+            'fallbackId' => $settings['fallbackId'] ?? null,
         ];
     }
 
@@ -147,6 +153,7 @@ class EvolutionService
             ->post("{$this->baseUrl}/n8n/create/{$instance->instance_name}", $payload);
 
         if ($response->failed()) {
+            Log::error('Evolution API: '.$response->body());
             throw new Exception('Evolution API: '.$response->body());
         }
 
@@ -197,21 +204,30 @@ class EvolutionService
         return $response->successful();
     }
 
-    public function updateN8nSettings(EvolutionInstance $instance, AgentConfig $agent)
+    public function updateN8nSettings(EvolutionInstance $instance, AgentConfig $agent, ?array $oldBlocklist = null)
     {
-        $settings = $agent->settings ?? [];
-        $blacklist = $settings['blocklist'] ?? [];
-
-        if (empty($blacklist)) {
+        if (! $agent->evo_integration_id) {
             return;
         }
 
-        $jids = $this->convertBlacklistToJids($blacklist);
+        $newBlocklist = $agent->settings['blocklist'] ?? [];
+        $oldBlocklist = $oldBlocklist ?? [];
 
-        foreach ($jids as $jid) {
+        $addedPhones = array_values(array_diff($newBlocklist, $oldBlocklist));
+        $removedPhones = array_values(array_diff($oldBlocklist, $newBlocklist));
+
+        foreach ($addedPhones as $phone) {
+            $jid = $this->formatPhoneToJid($phone);
             EvolutionApi::setInstance($instance->api_token)
                 ->n8n()
-                ->ignoreJid($jid, 'add');
+                ->ignoreJid($agent->evo_integration_id, $jid, 'add');
+        }
+
+        foreach ($removedPhones as $phone) {
+            $jid = $this->formatPhoneToJid($phone);
+            EvolutionApi::setInstance($instance->api_token)
+                ->n8n()
+                ->ignoreJid($agent->evo_integration_id, $jid, 'remove');
         }
     }
 }

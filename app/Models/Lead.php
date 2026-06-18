@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Lead extends Model
 {
@@ -23,6 +24,7 @@ class Lead extends Model
         'last_activity_at' => 'datetime',
         'recent_messages' => 'array',
         'last_qualification_attempt_at' => 'datetime',
+        'flagged_at' => 'datetime',
     ];
 
     public const AI_QUALIFICATION_STATUS = [
@@ -81,5 +83,10 @@ class Lead extends Model
     public function team()
     {
         return $this->belongsTo(Team::class);
+    }
+
+    public function messages(): HasMany
+    {
+        return $this->hasMany(LeadMessage::class);
     }
 }

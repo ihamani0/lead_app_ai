@@ -89,21 +89,29 @@ export default function KnowledgeBaseIndex({
     const [documents, setDocuments] = useState(initialDocuments);
 
     const channel = `knowledge-base.${tenantId}`;
-    useEcho(channel, ['DocumentStatusUpdated'], (event: { documentId: string; status: string; documentName: string }) => {
-        setDocuments((prev) =>
-            prev.map((doc) =>
-                String(doc.id) === event.documentId
-                    ? { ...doc, status: event.status as DocumentStatus }
-                    : doc,
-            ),
-        );
+    useEcho(
+        channel,
+        ['DocumentStatusUpdated'],
+        (event: {
+            documentId: string;
+            status: string;
+            documentName: string;
+        }) => {
+            setDocuments((prev) =>
+                prev.map((doc) =>
+                    String(doc.id) === event.documentId
+                        ? { ...doc, status: event.status as DocumentStatus }
+                        : doc,
+                ),
+            );
 
-        if (event.status === 'indexed') {
-            toast.success(`"${event.documentName}" indexed successfully`);
-        } else if (event.status === 'failed') {
-            toast.error(`"${event.documentName}" indexing failed`);
-        }
-    });
+            if (event.status === 'indexed') {
+                toast.success(`"${event.documentName}" indexed successfully`);
+            } else if (event.status === 'failed') {
+                toast.error(`"${event.documentName}" indexing failed`);
+            }
+        },
+    );
 
     const { data, setData, post, processing, reset, errors } = useForm({
         name: '',
@@ -173,7 +181,9 @@ export default function KnowledgeBaseIndex({
                     'Are you sure you want to delete this document?',
             )
         ) {
-            router.delete(knowledge.destroy({ slug: activeWorkspace!.slug, id }).url);
+            router.delete(
+                knowledge.destroy({ slug: activeWorkspace!.slug, id }).url,
+            );
         }
     };
 
@@ -209,9 +219,10 @@ export default function KnowledgeBaseIndex({
             <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
                 <div className="space-y-10">
                     {/* Header - Stone Gradient (Dark for both modes) */}
-                        <div className="relative block overflow-hidden rounded-2xl bg-linear-to-br from-stone-600 via-stone-700 to-stone-800 p-4 shadow-xl ring-1 ring-stone-400/30 sm:p-5 md:p-6 
-                        dark:from-stone-700 dark:via-stone-800 dark:to-stone-800 dark:ring-stone-400/30" data-tour="kb-header">
-
+                    <div
+                        className="relative block overflow-hidden rounded-2xl bg-linear-to-br from-stone-600 via-stone-700 to-stone-800 p-4 shadow-xl ring-1 ring-stone-400/30 sm:p-5 md:p-6 dark:from-stone-700 dark:via-stone-800 dark:to-stone-800 dark:ring-stone-400/30"
+                        data-tour="kb-header"
+                    >
                         {/* Background */}
                         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg...%3E')] opacity-15 dark:opacity-10" />
 
@@ -220,301 +231,326 @@ export default function KnowledgeBaseIndex({
                         <div className="absolute -bottom-8 -left-8 h-14 w-14 rounded-full bg-stone-400/10 blur-2xl" />
 
                         <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-
                             {/* LEFT */}
                             <div className="space-y-1">
-                            <div className="flex items-center gap-2">
-                                
-                                <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
-                                <Database className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                                <div className="flex items-center gap-2">
+                                    <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
+                                        <Database className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                                    </div>
+
+                                    <h1 className="text-lg font-semibold text-white sm:text-xl md:text-3xl">
+                                        {t('knowledgeBase.title')}
+                                    </h1>
                                 </div>
 
-                                <h1 className="text-lg font-semibold text-white sm:text-xl md:text-3xl">
-                                {t('knowledgeBase.title')}
-                                </h1>
-                            </div>
-
-                            <p className="text-xs text-white/80 sm:text-sm md:text-base max-w-xs sm:max-w-md">
-                                {t('knowledgeBase.description')}
-                            </p>
+                                <p className="max-w-xs text-xs text-white/80 sm:max-w-md sm:text-sm md:text-base">
+                                    {t('knowledgeBase.description')}
+                                </p>
                             </div>
 
                             {/* RIGHT */}
-                            <div className="flex items-center justify-between sm:justify-end gap-2">
-                            
-                            <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] text-white sm:px-3 sm:text-xs">
-                                <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                <span>
-                                {documents.length} {t('knowledgeBase.documentsCount')}
-                                </span>
+                            <div className="flex items-center justify-between gap-2 sm:justify-end">
+                                <div className="flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 text-[10px] text-white sm:px-3 sm:text-xs">
+                                    <Zap className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                    <span>
+                                        {documents.length}{' '}
+                                        {t('knowledgeBase.documentsCount')}
+                                    </span>
+                                </div>
                             </div>
-
-                            </div>
-
                         </div>
-                        </div>
+                    </div>
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
                         {/* Upload Card */}
                         {canCreate && (
-                        <div className="lg:col-span-4" data-tour="kb-upload">
-                            <Card className="overflow-hidden border-0 bg-white/80 shadow-2xl ring-1 ring-white/50 backdrop-blur-xl dark:bg-slate-900/80 dark:ring-white/10">
-                                <div className="absolute inset-0 bg-card text-foreground" />
+                            <div
+                                className="lg:col-span-4"
+                                data-tour="kb-upload"
+                            >
+                                <Card className="overflow-hidden border-0 bg-white/80 shadow-2xl ring-1 ring-white/50 backdrop-blur-xl dark:bg-slate-900/80 dark:ring-white/10">
+                                    <div className="absolute inset-0 bg-card text-foreground" />
 
-                                <CardHeader className="relative pb-6">
-                                    <div className="mb-2 flex items-center gap-3">
-                                        <div className="rounded-xl bg-linear-to-br from-sky-500 to-teal-600 p-2.5 shadow-lg shadow-sky-500/25">
-                                            <UploadCloud className="h-5 w-5 text-white" />
-                                        </div>
-                                        <CardTitle className="bg-linear-to-r from-slate-900 to-slate-600 bg-clip-text text-lg font-bold text-transparent md:text-xl dark:from-white dark:to-slate-300">
-                                            {t('knowledgeBase.upload.title')}
-                                        </CardTitle>
-                                    </div>
-                                    <p className="text-xs text-slate-500 md:text-sm dark:text-slate-400">
-                                        {t('knowledgeBase.upload.description')}
-                                    </p>
-                                </CardHeader>
-
-                                <CardContent className="relative space-y-6">
-                                    <form
-                                        onSubmit={submit}
-                                        className="space-y-5"
-                                    >
-                                        {/* Document Name Input */}
-                                        <div className="group space-y-2.5">
-                                            <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                                <FileText className="h-4 w-4 text-slate-400" />
-                                                {t(
-                                                    'knowledgeBase.upload.documentName',
-                                                )}
-                                            </Label>
-                                            <div className="relative">
-                                                <Input
-                                                    value={data.name}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            'name',
-                                                            e.target.value,
-                                                        )
-                                                    }
-                                                    placeholder="e.g., Pricing Strategy 2024"
-                                                    className="h-12 rounded-xl border-slate-200/60 bg-white/60 backdrop-blur-sm transition-all duration-300 placeholder:text-slate-400 focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-700/60 dark:bg-slate-800/60"
-                                                />
+                                    <CardHeader className="relative pb-6">
+                                        <div className="mb-2 flex items-center gap-3">
+                                            <div className="rounded-xl bg-linear-to-br from-sky-500 to-teal-600 p-2.5 shadow-lg shadow-sky-500/25">
+                                                <UploadCloud className="h-5 w-5 text-white" />
                                             </div>
-                                            {errors.name && (
-                                                <p className="flex items-center gap-1 text-xs font-medium text-rose-500">
-                                                    <AlertCircle className="h-3 w-3" />
-                                                    {errors.name}
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        {/* File Upload - Fixed Working Version */}
-                                        <div className="space-y-2.5">
-                                            <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                                <UploadCloud className="h-4 w-4 text-slate-400" />
+                                            <CardTitle className="bg-linear-to-r from-slate-900 to-slate-600 bg-clip-text text-lg font-bold text-transparent md:text-xl dark:from-white dark:to-slate-300">
                                                 {t(
-                                                    'knowledgeBase.upload.uploadFile',
+                                                    'knowledgeBase.upload.title',
                                                 )}
-                                            </Label>
-                                            <div
-                                                className={`group relative ${dragActive ? 'scale-[1.02]' : ''}`}
-                                                onDragEnter={handleDrag}
-                                                onDragLeave={handleDrag}
-                                                onDragOver={handleDrag}
-                                                onDrop={handleDrop}
-                                            >
-                                                <div
-                                                    className={`absolute -inset-0.5 rounded-2xl bg-linear-to-r from-sky-500 to-teal-500 opacity-0 transition duration-500 ${dragActive ? 'opacity-100' : 'group-hover:opacity-30'}`}
-                                                />
-                                                <div
-                                                    className={`relative flex h-36 w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed bg-slate-50/50 backdrop-blur-sm transition-all duration-300 dark:bg-slate-800/30 ${dragActive ? 'border-sky-500 bg-sky-50/50 dark:bg-sky-900/20' : 'border-slate-300 hover:bg-sky-50/50 dark:border-slate-600 dark:hover:bg-sky-900/20'}`}
-                                                    onClick={() =>
-                                                        fileInputRef.current?.click()
-                                                    }
-                                                >
-                                                    <div className="absolute inset-0 bg-linear-to-br from-sky-500/5 to-teal-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                                            </CardTitle>
+                                        </div>
+                                        <p className="text-xs text-slate-500 md:text-sm dark:text-slate-400">
+                                            {t(
+                                                'knowledgeBase.upload.description',
+                                            )}
+                                        </p>
+                                    </CardHeader>
 
-                                                    {data.file ? (
-                                                        <div className="relative z-10 flex flex-col items-center gap-2 p-4 text-center">
-                                                            <div className="rounded-full bg-emerald-100 p-2 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
-                                                                <CheckCircle className="h-5 w-5" />
-                                                            </div>
-                                                            <div className="flex flex-col items-center gap-1">
-                                                                <span className="max-w-[200px] truncate text-xs font-medium text-slate-700 md:text-sm dark:text-slate-200">
-                                                                    {
-                                                                        data
-                                                                            .file
-                                                                            .name
-                                                                    }
-                                                                </span>
-                                                                <span className="text-xs text-slate-500 md:text-sm">
-                                                                    {(
-                                                                        data
-                                                                            .file
-                                                                            .size /
-                                                                        1024 /
-                                                                        1024
-                                                                    ).toFixed(
-                                                                        2,
-                                                                    )}{' '}
-                                                                    MB
-                                                                </span>
-                                                            </div>
-                                                            <button
-                                                                type="button"
-                                                                onClick={(
-                                                                    e,
-                                                                ) => {
-                                                                    e.stopPropagation();
-                                                                    clearFile();
-                                                                }}
-                                                                className="mt-1 rounded-full p-1 text-rose-500 transition-colors hover:bg-rose-100 dark:hover:bg-rose-900/30"
-                                                            >
-                                                                <X className="h-4 w-4" />
-                                                            </button>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="relative z-10 flex flex-col items-center gap-2 text-slate-500 transition-colors group-hover:text-sky-600 dark:text-slate-400 dark:group-hover:text-sky-400">
-                                                            <div className="rounded-full bg-white/80 p-3 shadow-lg transition-transform duration-300 group-hover:scale-110 dark:bg-slate-800/80">
-                                                                <UploadCloud className="h-6 w-6" />
-                                                            </div>
-                                                            <span className="text-xs font-medium md:text-sm">
-                                                                {t(
-                                                                    'knowledgeBase.upload.dropFile',
-                                                                )}
-                                                            </span>
-                                                            <span className="text-xs text-slate-400">
-                                                                {t(
-                                                                    'knowledgeBase.upload.supportedFormats',
-                                                                )}
-                                                            </span>
-                                                        </div>
+                                    <CardContent className="relative space-y-6">
+                                        <form
+                                            onSubmit={submit}
+                                            className="space-y-5"
+                                        >
+                                            {/* Document Name Input */}
+                                            <div className="group space-y-2.5">
+                                                <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                                    <FileText className="h-4 w-4 text-slate-400" />
+                                                    {t(
+                                                        'knowledgeBase.upload.documentName',
                                                     )}
-
-                                                    <input
-                                                        ref={fileInputRef}
-                                                        type="file"
-                                                        accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                                                        onChange={
-                                                            handleFileChange
+                                                </Label>
+                                                <div className="relative">
+                                                    <Input
+                                                        value={data.name}
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                'name',
+                                                                e.target.value,
+                                                            )
                                                         }
-                                                        className="hidden"
+                                                        placeholder="e.g., Pricing Strategy 2024"
+                                                        className="h-12 rounded-xl border-slate-200/60 bg-white/60 backdrop-blur-sm transition-all duration-300 placeholder:text-slate-400 focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-700/60 dark:bg-slate-800/60"
                                                     />
                                                 </div>
-                                            </div>
-                                            {errors.file && (
-                                                <p className="flex items-center gap-1 text-xs font-medium text-rose-500">
-                                                    <AlertCircle className="h-3 w-3" />
-                                                    {errors.file}
-                                                </p>
-                                            )}
-                                        </div>
-
-                                        {/* Agent Selection - Required */}
-                                        {agents.length > 0 && (
-                                            <div className="space-y-2.5">
-                                                <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
-                                                    <Sparkles className="h-4 w-4 text-slate-400" />
-                                                    {t(
-                                                        'knowledgeBase.upload.targetAgent',
-                                                    )}
-                                                    <span className="text-rose-500">
-                                                        *
-                                                    </span>
-                                                </Label>
-                                                <Select
-                                                    value={data.agent_config_id}
-                                                    onValueChange={(value) =>
-                                                        setData(
-                                                            'agent_config_id',
-                                                            value,
-                                                        )
-                                                    }
-                                                >
-                                                    <SelectTrigger className="h-12 rounded-xl border-slate-200/60 bg-white/60 backdrop-blur-sm transition-all duration-300 focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-700/60 dark:bg-slate-800/60">
-                                                        <SelectValue
-                                                            placeholder={t(
-                                                                'knowledgeBase.select_agent_required',
-                                                            )}
-                                                        />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {agents.map((agent) => (
-                                                            <SelectItem
-                                                                key={agent.id}
-                                                                value={agent.id}
-                                                            >
-                                                                {agent.name ||
-                                                                    'Unnamed Agent'}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                                {errors.agent_config_id && (
+                                                {errors.name && (
                                                     <p className="flex items-center gap-1 text-xs font-medium text-rose-500">
                                                         <AlertCircle className="h-3 w-3" />
-                                                        {errors.agent_config_id}
+                                                        {errors.name}
                                                     </p>
                                                 )}
                                             </div>
-                                        )}
 
-                                        {/* Submit Button - Success Emerald/Teal linear */}
-                                        {agents.length === 0 ? (
-                                            <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
-                                                <p className="mb-2 text-sm font-medium text-amber-700 dark:text-amber-300">
+                                            {/* File Upload - Fixed Working Version */}
+                                            <div className="space-y-2.5">
+                                                <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                                    <UploadCloud className="h-4 w-4 text-slate-400" />
                                                     {t(
-                                                        'knowledgeBase.noAgentsWarning',
+                                                        'knowledgeBase.upload.uploadFile',
                                                     )}
-                                                </p>
-                                                <Button
-                                                    asChild
-                                                    variant="outline"
-                                                    className="w-full gap-2 border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/30"
+                                                </Label>
+                                                <div
+                                                    className={`group relative ${dragActive ? 'scale-[1.02]' : ''}`}
+                                                    onDragEnter={handleDrag}
+                                                    onDragLeave={handleDrag}
+                                                    onDragOver={handleDrag}
+                                                    onDrop={handleDrop}
                                                 >
-                                                    <a href={activeWorkspace ? workspaces.agents.index({ slug: activeWorkspace.slug }).url : '#'}>
-                                                        <Sparkles className="h-4 w-4" />
-                                                        {t(
-                                                            'knowledgeBase.createAgentFirst',
+                                                    <div
+                                                        className={`absolute -inset-0.5 rounded-2xl bg-linear-to-r from-sky-500 to-teal-500 opacity-0 transition duration-500 ${dragActive ? 'opacity-100' : 'group-hover:opacity-30'}`}
+                                                    />
+                                                    <div
+                                                        className={`relative flex h-36 w-full cursor-pointer flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed bg-slate-50/50 backdrop-blur-sm transition-all duration-300 dark:bg-slate-800/30 ${dragActive ? 'border-sky-500 bg-sky-50/50 dark:bg-sky-900/20' : 'border-slate-300 hover:bg-sky-50/50 dark:border-slate-600 dark:hover:bg-sky-900/20'}`}
+                                                        onClick={() =>
+                                                            fileInputRef.current?.click()
+                                                        }
+                                                    >
+                                                        <div className="absolute inset-0 bg-linear-to-br from-sky-500/5 to-teal-500/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                                                        {data.file ? (
+                                                            <div className="relative z-10 flex flex-col items-center gap-2 p-4 text-center">
+                                                                <div className="rounded-full bg-emerald-100 p-2 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                                                    <CheckCircle className="h-5 w-5" />
+                                                                </div>
+                                                                <div className="flex flex-col items-center gap-1">
+                                                                    <span className="max-w-[200px] truncate text-xs font-medium text-slate-700 md:text-sm dark:text-slate-200">
+                                                                        {
+                                                                            data
+                                                                                .file
+                                                                                .name
+                                                                        }
+                                                                    </span>
+                                                                    <span className="text-xs text-slate-500 md:text-sm">
+                                                                        {(
+                                                                            data
+                                                                                .file
+                                                                                .size /
+                                                                            1024 /
+                                                                            1024
+                                                                        ).toFixed(
+                                                                            2,
+                                                                        )}{' '}
+                                                                        MB
+                                                                    </span>
+                                                                </div>
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={(
+                                                                        e,
+                                                                    ) => {
+                                                                        e.stopPropagation();
+                                                                        clearFile();
+                                                                    }}
+                                                                    className="mt-1 rounded-full p-1 text-rose-500 transition-colors hover:bg-rose-100 dark:hover:bg-rose-900/30"
+                                                                >
+                                                                    <X className="h-4 w-4" />
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="relative z-10 flex flex-col items-center gap-2 text-slate-500 transition-colors group-hover:text-sky-600 dark:text-slate-400 dark:group-hover:text-sky-400">
+                                                                <div className="rounded-full bg-white/80 p-3 shadow-lg transition-transform duration-300 group-hover:scale-110 dark:bg-slate-800/80">
+                                                                    <UploadCloud className="h-6 w-6" />
+                                                                </div>
+                                                                <span className="text-xs font-medium md:text-sm">
+                                                                    {t(
+                                                                        'knowledgeBase.upload.dropFile',
+                                                                    )}
+                                                                </span>
+                                                                <span className="text-xs text-slate-400">
+                                                                    {t(
+                                                                        'knowledgeBase.upload.supportedFormats',
+                                                                    )}
+                                                                </span>
+                                                            </div>
                                                         )}
-                                                    </a>
-                                                </Button>
+
+                                                        <input
+                                                            ref={fileInputRef}
+                                                            type="file"
+                                                            accept=".pdf,.txt,.docx,application/pdf,text/plain,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                                            onChange={
+                                                                handleFileChange
+                                                            }
+                                                            className="hidden"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                {errors.file && (
+                                                    <p className="flex items-center gap-1 text-xs font-medium text-rose-500">
+                                                        <AlertCircle className="h-3 w-3" />
+                                                        {errors.file}
+                                                    </p>
+                                                )}
                                             </div>
-                                        ) : (
-                                            <Button
-                                                type="submit"
-                                                disabled={processing}
-                                                className="group relative h-14 w-full overflow-hidden rounded-xl font-semibold text-white shadow-xl shadow-emerald-500/25 transition-all duration-300 hover:shadow-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-70"
-                                            >
-                                                <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300" />
-                                                <span className="relative flex items-center justify-center gap-2">
-                                                    {processing ? (
-                                                        <>
-                                                            <Loader2 className="h-5 w-5 animate-spin" />
-                                                            <span>
-                                                                {t(
-                                                                    'knowledgeBase.upload.processingDocument',
+
+                                            {/* Agent Selection - Required */}
+                                            {agents.length > 0 && (
+                                                <div className="space-y-2.5">
+                                                    <Label className="flex items-center gap-2 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                                                        <Sparkles className="h-4 w-4 text-slate-400" />
+                                                        {t(
+                                                            'knowledgeBase.upload.targetAgent',
+                                                        )}
+                                                        <span className="text-rose-500">
+                                                            *
+                                                        </span>
+                                                    </Label>
+                                                    <Select
+                                                        value={
+                                                            data.agent_config_id
+                                                        }
+                                                        onValueChange={(
+                                                            value,
+                                                        ) =>
+                                                            setData(
+                                                                'agent_config_id',
+                                                                value,
+                                                            )
+                                                        }
+                                                    >
+                                                        <SelectTrigger className="h-12 rounded-xl border-slate-200/60 bg-white/60 backdrop-blur-sm transition-all duration-300 focus:border-sky-500/50 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-700/60 dark:bg-slate-800/60">
+                                                            <SelectValue
+                                                                placeholder={t(
+                                                                    'knowledgeBase.select_agent_required',
                                                                 )}
-                                                            </span>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Sparkles className="h-5 w-5" />
-                                                            <span>
-                                                                {t(
-                                                                    'knowledgeBase.upload.uploadTrain',
-                                                                )}
-                                                            </span>
-                                                        </>
+                                                            />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {agents.map(
+                                                                (agent) => (
+                                                                    <SelectItem
+                                                                        key={
+                                                                            agent.id
+                                                                        }
+                                                                        value={
+                                                                            agent.id
+                                                                        }
+                                                                    >
+                                                                        {agent.name ||
+                                                                            'Unnamed Agent'}
+                                                                    </SelectItem>
+                                                                ),
+                                                            )}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    {errors.agent_config_id && (
+                                                        <p className="flex items-center gap-1 text-xs font-medium text-rose-500">
+                                                            <AlertCircle className="h-3 w-3" />
+                                                            {
+                                                                errors.agent_config_id
+                                                            }
+                                                        </p>
                                                     )}
-                                                </span>
-                                            </Button>
-                                        )}
-                                    </form>
-                                </CardContent>
-                            </Card>
-                        </div>
+                                                </div>
+                                            )}
+
+                                            {/* Submit Button - Success Emerald/Teal linear */}
+                                            {agents.length === 0 ? (
+                                                <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950/20">
+                                                    <p className="mb-2 text-sm font-medium text-amber-700 dark:text-amber-300">
+                                                        {t(
+                                                            'knowledgeBase.noAgentsWarning',
+                                                        )}
+                                                    </p>
+                                                    <Button
+                                                        asChild
+                                                        variant="outline"
+                                                        className="w-full gap-2 border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-300 dark:hover:bg-amber-900/30"
+                                                    >
+                                                        <a
+                                                            href={
+                                                                activeWorkspace
+                                                                    ? workspaces.agents.index(
+                                                                          {
+                                                                              slug: activeWorkspace.slug,
+                                                                          },
+                                                                      ).url
+                                                                    : '#'
+                                                            }
+                                                        >
+                                                            <Sparkles className="h-4 w-4" />
+                                                            {t(
+                                                                'knowledgeBase.createAgentFirst',
+                                                            )}
+                                                        </a>
+                                                    </Button>
+                                                </div>
+                                            ) : (
+                                                <Button
+                                                    type="submit"
+                                                    disabled={processing}
+                                                    className="group relative h-14 w-full overflow-hidden rounded-xl font-semibold text-white shadow-xl shadow-emerald-500/25 transition-all duration-300 hover:shadow-emerald-500/40 disabled:cursor-not-allowed disabled:opacity-70"
+                                                >
+                                                    <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300" />
+                                                    <span className="relative flex items-center justify-center gap-2">
+                                                        {processing ? (
+                                                            <>
+                                                                <Loader2 className="h-5 w-5 animate-spin" />
+                                                                <span>
+                                                                    {t(
+                                                                        'knowledgeBase.upload.processingDocument',
+                                                                    )}
+                                                                </span>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <Sparkles className="h-5 w-5" />
+                                                                <span>
+                                                                    {t(
+                                                                        'knowledgeBase.upload.uploadTrain',
+                                                                    )}
+                                                                </span>
+                                                            </>
+                                                        )}
+                                                    </span>
+                                                </Button>
+                                            )}
+                                        </form>
+                                    </CardContent>
+                                </Card>
+                            </div>
                         )}
 
                         {/* Documents Table */}
@@ -719,10 +755,13 @@ export default function KnowledgeBaseIndex({
                                                                 <a
                                                                     href={
                                                                         knowledge.web.download(
-                                                                            { slug: activeWorkspace!.slug, id: doc.id },
+                                                                            {
+                                                                                slug: activeWorkspace!
+                                                                                    .slug,
+                                                                                id: doc.id,
+                                                                            },
                                                                         ).url
                                                                     }
-                                                                    
                                                                     className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-sky-100 hover:text-sky-600 dark:hover:bg-sky-900/30 dark:hover:text-sky-400"
                                                                     title={t(
                                                                         'knowledgeBase.download',

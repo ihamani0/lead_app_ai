@@ -20,7 +20,11 @@ interface MediaIndexProps {
     canManage: boolean;
 }
 
-export default function Index({ assets, canCreate, canManage }: MediaIndexProps) {
+export default function Index({
+    assets,
+    canCreate,
+    canManage,
+}: MediaIndexProps) {
     const { t } = useTranslation();
     const activeWorkspace = useActiveWorkspace();
 

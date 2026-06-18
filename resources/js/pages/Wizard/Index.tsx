@@ -57,9 +57,9 @@ export default function WizardIndex() {
     const [wizardError, setWizardError] = useState<string | null>(null);
 
     const steps: StepItem[] = [
-        { number: 1, title: t('wizard.steps.create_instance'), icon: 'smartphone' },
-        { number: 2, title: t('wizard.steps.connect_whatsapp'), icon: 'qr-code' },
-        { number: 3, title: t('wizard.steps.configure_agent'), icon: 'bot' },
+        { number: 1, title: t('wizard.steps.configure_agent'), icon: 'bot' },
+        { number: 2, title: t('wizard.steps.create_instance'), icon: 'smartphone' },
+        { number: 3, title: t('wizard.steps.connect_whatsapp'), icon: 'qr-code' },
         { number: 4, title: t('wizard.steps.media'), icon: 'media' },
         { number: 5, title: t('wizard.steps.knowledge_base'), icon: 'database' },
     ];
@@ -132,15 +132,14 @@ export default function WizardIndex() {
         switch (currentStep) {
             case 1:
                 return (
-                    <Step1CreateInstance
+                    <Step3ConfigureAgent
                         formData={formData}
                         setFormData={setFormData}
-                        onNext={handleNext}
                     />
                 );
             case 2:
                 return (
-                    <Step2ConnectWhatsApp
+                    <Step1CreateInstance
                         formData={formData}
                         setFormData={setFormData}
                         onNext={handleNext}
@@ -148,9 +147,10 @@ export default function WizardIndex() {
                 );
             case 3:
                 return (
-                    <Step3ConfigureAgent
+                    <Step2ConnectWhatsApp
                         formData={formData}
                         setFormData={setFormData}
+                        onNext={handleNext}
                     />
                 );
             case 4:
@@ -223,11 +223,11 @@ export default function WizardIndex() {
                     error={wizardError}
                     canProceed={
                         currentStep === 1
-                            ? !!formData.instance
+                            ? !!formData.agent_name
                             : currentStep === 2
-                              ? formData.connectionStatus === 'connected'
+                              ? !!formData.instance
                               : currentStep === 3
-                                ? !!formData.agent_name
+                                ? formData.connectionStatus === 'connected'
                                 : true
                     }
                 />

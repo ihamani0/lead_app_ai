@@ -40,14 +40,29 @@ import '@uppy/core/css/style.min.css';
 
 // ─── Constants ───────────────────────────────────────────────────────────────
 
-const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-const ALLOWED_VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/quicktime', 'video/x-msvideo'];
+const ALLOWED_IMAGE_TYPES = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+];
+const ALLOWED_VIDEO_TYPES = [
+    'video/mp4',
+    'video/webm',
+    'video/quicktime',
+    'video/x-msvideo',
+];
 const MAX_FILE_SIZE = 30 * 1024 * 1024;
 
 function getUppyRestrictions(type: string) {
-    const allowedTypes = type === 'image' ? ALLOWED_IMAGE_TYPES : ALLOWED_VIDEO_TYPES;
+    const allowedTypes =
+        type === 'image' ? ALLOWED_IMAGE_TYPES : ALLOWED_VIDEO_TYPES;
 
-    return { maxFileSize: MAX_FILE_SIZE, allowedFileTypes: allowedTypes, maxNumberOfFiles: 1 };
+    return {
+        maxFileSize: MAX_FILE_SIZE,
+        allowedFileTypes: allowedTypes,
+        maxNumberOfFiles: 1,
+    };
 }
 
 function getAcceptMimeTypes(type: string): string {
@@ -67,8 +82,10 @@ function formatFileSize(bytes: number): string {
 }
 
 function FileIcon({ type }: { type: string | undefined }) {
-    if (type?.startsWith('image/')) return <ImageIcon className="h-5 w-5 text-blue-500" />;
-    if (type?.startsWith('video/')) return <Video className="h-5 w-5 text-purple-500" />;
+    if (type?.startsWith('image/'))
+        return <ImageIcon className="h-5 w-5 text-blue-500" />;
+    if (type?.startsWith('video/'))
+        return <Video className="h-5 w-5 text-purple-500" />;
 
     return <FileText className="h-5 w-5 text-muted-foreground" />;
 }
@@ -145,10 +162,15 @@ function UppyUploadInner({
 
                 return new Promise((resolve, reject) => {
                     axios
-                        .post(media.presign({ slug: slugRef.current ?? '' }).url, payload)
+                        .post(
+                            media.presign({ slug: slugRef.current ?? '' }).url,
+                            payload,
+                        )
                         .then((response) => {
                             const presign = response.data as PresignResponse;
-                            instance.setFileMeta(file.id, { s3_key: presign.key });
+                            instance.setFileMeta(file.id, {
+                                s3_key: presign.key,
+                            });
 
                             const safeHeaders = { ...presign.headers };
                             delete safeHeaders['Host'];
@@ -161,7 +183,9 @@ function UppyUploadInner({
                             });
                         })
                         .catch((error) => {
-                            const msg = error.response?.data?.message || 'Presign failed';
+                            const msg =
+                                error.response?.data?.message ||
+                                'Presign failed';
                             console.error('[Presign] Error:', msg);
                             reject(new Error(msg));
                         });
@@ -250,13 +274,17 @@ function UppyUploadInner({
             };
 
             axios
-                .post(media.finalize({ slug: slugRef.current ?? '' }).url, payload)
+                .post(
+                    media.finalize({ slug: slugRef.current ?? '' }).url,
+                    payload,
+                )
                 .then((response) => {
                     const { asset } = response.data as { asset: Asset };
                     onUploadComplete(asset);
                 })
                 .catch((error) => {
-                    const msg = error.response?.data?.message || 'Finalize failed';
+                    const msg =
+                        error.response?.data?.message || 'Finalize failed';
                     console.error('[Finalize] Error:', msg);
                     onUploadError(new Error(msg));
                 });
@@ -267,7 +295,15 @@ function UppyUploadInner({
         return () => {
             uppy.off('upload-success', handleSuccess);
         };
-    }, [uppy, category, mediaType, caption, agentId, onUploadComplete, onUploadError]);
+    }, [
+        uppy,
+        category,
+        mediaType,
+        caption,
+        agentId,
+        onUploadComplete,
+        onUploadError,
+    ]);
 
     useEffect(() => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -301,10 +337,17 @@ function UppyUploadInner({
     const addFileToUppy = useCallback(
         (file: File) => {
             const currentType = mediaTypeRef.current;
-            const allowed = currentType === 'image' ? ALLOWED_IMAGE_TYPES : ALLOWED_VIDEO_TYPES;
+            const allowed =
+                currentType === 'image'
+                    ? ALLOWED_IMAGE_TYPES
+                    : ALLOWED_VIDEO_TYPES;
 
             if (!allowed.includes(file.type)) {
-                onUploadError(new Error(`Please select a valid ${currentType} file. Allowed: ${allowed.join(', ')}`));
+                onUploadError(
+                    new Error(
+                        `Please select a valid ${currentType} file. Allowed: ${allowed.join(', ')}`,
+                    ),
+                );
 
                 return;
             }
@@ -383,7 +426,11 @@ function UppyUploadInner({
         try {
             await uppy.upload();
         } catch (error) {
-            onUploadError(error instanceof Error ? error : new Error('Failed to start upload.'));
+            onUploadError(
+                error instanceof Error
+                    ? error
+                    : new Error('Failed to start upload.'),
+            );
         }
     }, [uppy, isUploading, selectedFile, category, onUploadError]);
 
@@ -403,7 +450,11 @@ function UppyUploadInner({
                         onDragLeave={!isUploading ? handleDragLeave : undefined}
                         onDragOver={!isUploading ? handleDragOver : undefined}
                         onDrop={!isUploading ? handleDrop : undefined}
-                        onClick={() => !isUploading && !selectedFile && fileInputRef.current?.click()}
+                        onClick={() =>
+                            !isUploading &&
+                            !selectedFile &&
+                            fileInputRef.current?.click()
+                        }
                         className={cn(
                             'mt-2 cursor-pointer rounded-xl border-2 border-dashed p-6 text-center transition-all',
                             isUploading && 'cursor-not-allowed opacity-50',
@@ -415,7 +466,9 @@ function UppyUploadInner({
                         {isDragActive ? (
                             <>
                                 <Upload className="mx-auto mb-3 h-10 w-10 animate-bounce text-primary" />
-                                <p className="text-sm font-medium text-primary">Drop your file here</p>
+                                <p className="text-sm font-medium text-primary">
+                                    Drop your file here
+                                </p>
                             </>
                         ) : (
                             <>
@@ -423,7 +476,10 @@ function UppyUploadInner({
                                     <FolderOpen className="h-6 w-6 text-muted-foreground" />
                                 </div>
                                 <p className="text-sm font-medium">
-                                    Drag & drop or <span className="text-primary underline">browse</span>
+                                    Drag & drop or{' '}
+                                    <span className="text-primary underline">
+                                        browse
+                                    </span>
                                 </p>
                             </>
                         )}
@@ -462,7 +518,7 @@ function UppyUploadInner({
                 {selectedFile && (
                     <div className="overflow-hidden rounded-xl border border-border bg-muted/30">
                         {isImage && previewUrl && (
-                            <div className="relative h-40 w-full bg-checkerboard">
+                            <div className="bg-checkerboard relative h-40 w-full">
                                 <img
                                     src={previewUrl}
                                     alt={selectedFile.name}
@@ -473,7 +529,9 @@ function UppyUploadInner({
                         {isVideo && (
                             <div className="relative flex h-32 w-full items-center justify-center bg-black/10">
                                 <Video className="h-10 w-10 text-muted-foreground/50" />
-                                <span className="ml-2 text-sm text-muted-foreground">Video preview unavailable</span>
+                                <span className="ml-2 text-sm text-muted-foreground">
+                                    Video preview unavailable
+                                </span>
                             </div>
                         )}
                         <div className="flex items-center gap-3 p-3">
@@ -481,8 +539,12 @@ function UppyUploadInner({
                                 <FileIcon type={selectedFile.type} />
                             </div>
                             <div className="min-w-0 flex-1">
-                                <p className="truncate text-sm font-medium">{selectedFile.name}</p>
-                                <p className="text-xs text-muted-foreground">{formatFileSize(selectedFile.size ?? 0)}</p>
+                                <p className="truncate text-sm font-medium">
+                                    {selectedFile.name}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                    {formatFileSize(selectedFile.size ?? 0)}
+                                </p>
                             </div>
                             {!isUploading && (
                                 <Button
@@ -504,18 +566,24 @@ function UppyUploadInner({
                     <div className="space-y-3 rounded-lg border border-border bg-muted/30 p-4">
                         <div className="flex items-center justify-between text-sm">
                             <span className="flex items-center gap-2 font-medium">
-                                {progress < 100 ? 'Uploading…' : (
+                                {progress < 100 ? (
+                                    'Uploading…'
+                                ) : (
                                     <>
                                         <Loader2 className="h-3.5 w-3.5 animate-spin" />
                                         Saving to database…
                                     </>
                                 )}
                             </span>
-                            <span className="tabular-nums text-muted-foreground">{Math.round(progress)}%</span>
+                            <span className="text-muted-foreground tabular-nums">
+                                {Math.round(progress)}%
+                            </span>
                         </div>
                         <Progress value={progress} className="h-2" />
                         <p className="text-center text-xs text-muted-foreground">
-                            {progress < 100 ? 'Uploading directly to cloud storage' : 'Finalizing upload, please wait…'}
+                            {progress < 100
+                                ? 'Uploading directly to cloud storage'
+                                : 'Finalizing upload, please wait…'}
                         </p>
                     </div>
                 )}
@@ -531,13 +599,20 @@ function UppyUploadInner({
                 {/* Actions */}
                 {!isUploading && progress < 100 && (
                     <div className="flex gap-3 pt-2">
-                        <Button type="button" variant="outline" onClick={handleCancelClick} className="flex-1">
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={handleCancelClick}
+                            className="flex-1"
+                        >
                             Cancel
                         </Button>
                         <Button
                             type="button"
                             onClick={handleUploadClick}
-                            disabled={isUploading || !selectedFile || !category.trim()}
+                            disabled={
+                                isUploading || !selectedFile || !category.trim()
+                            }
                             className="flex-1 gap-2"
                         >
                             <Upload className="h-4 w-4" />
@@ -559,7 +634,12 @@ interface UploadDialogProps {
     onUploadComplete?: (asset: Asset) => void;
 }
 
-function UploadDialog({ agentId, open, onOpenChange, onUploadComplete }: UploadDialogProps) {
+function UploadDialog({
+    agentId,
+    open,
+    onOpenChange,
+    onUploadComplete,
+}: UploadDialogProps) {
     const [mediaType, setMediaType] = useState<string>('image');
     const [category, setCategory] = useState('');
     const [caption, setCaption] = useState('');
@@ -634,7 +714,9 @@ function UploadDialog({ agentId, open, onOpenChange, onUploadComplete }: UploadD
                         <Upload className="h-5 w-5 text-primary" />
                         Upload Media
                     </DialogTitle>
-                    <DialogDescription>Upload an image or video to this agent's media library.</DialogDescription>
+                    <DialogDescription>
+                        Upload an image or video to this agent's media library.
+                    </DialogDescription>
                 </DialogHeader>
 
                 <div className="space-y-4 py-4">
@@ -666,7 +748,9 @@ function UploadDialog({ agentId, open, onOpenChange, onUploadComplete }: UploadD
                     </div>
 
                     <div className="space-y-2">
-                        <Label htmlFor="caption-input">Caption (optional)</Label>
+                        <Label htmlFor="caption-input">
+                            Caption (optional)
+                        </Label>
                         <Input
                             id="caption-input"
                             placeholder="Add a caption…"
@@ -692,7 +776,9 @@ function UploadDialog({ agentId, open, onOpenChange, onUploadComplete }: UploadD
 
                     {uploadError && (
                         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3">
-                            <p className="text-sm text-destructive">{uploadError}</p>
+                            <p className="text-sm text-destructive">
+                                {uploadError}
+                            </p>
                             <Button
                                 type="button"
                                 variant="link"
@@ -717,7 +803,10 @@ interface MediasPlaceholderProps {
     assets: Asset[];
 }
 
-export default function MediasPlaceholder({ agent, assets: initialAssets }: MediasPlaceholderProps) {
+export default function MediasPlaceholder({
+    agent,
+    assets: initialAssets,
+}: MediasPlaceholderProps) {
     const activeWorkspace = useActiveWorkspace()!;
 
     const [assetsList, setAssetsList] = useState(initialAssets);
@@ -731,10 +820,16 @@ export default function MediasPlaceholder({ agent, assets: initialAssets }: Medi
     const [detailOpen, setDetailOpen] = useState(false);
 
     const handleDelete = (id: string) => {
-        if (confirm("Delete this media asset? The AI won't be able to send it anymore.")) {
+        if (
+            confirm(
+                "Delete this media asset? The AI won't be able to send it anymore.",
+            )
+        ) {
             setAssetsList((prev) => prev.filter((a) => a.id !== id));
             setSelectedAsset((prev) => (prev?.id === id ? null : prev));
-            router.delete(media.destroy({ slug: activeWorkspace.slug, id }).url);
+            router.delete(
+                media.destroy({ slug: activeWorkspace.slug, id }).url,
+            );
         }
     };
 
@@ -745,20 +840,30 @@ export default function MediasPlaceholder({ agent, assets: initialAssets }: Medi
 
     const handleToggleDefault = (id: string, isDefault: boolean) => {
         setSelectedAsset((prev) => {
-            if (prev && prev.id === id) return { ...prev, is_default: isDefault };
+            if (prev && prev.id === id)
+                return { ...prev, is_default: isDefault };
 
             return prev;
         });
-        setAssetsList((prev) => prev.map((a) => (a.id === id ? { ...a, is_default: isDefault } : a)));
+        setAssetsList((prev) =>
+            prev.map((a) =>
+                a.id === id ? { ...a, is_default: isDefault } : a,
+            ),
+        );
     };
 
-    const handleUpdateAsset = (id: string, data: { category: string; caption: string }) => {
+    const handleUpdateAsset = (
+        id: string,
+        data: { category: string; caption: string },
+    ) => {
         setSelectedAsset((prev) => {
             if (prev && prev.id === id) return { ...prev, ...data };
 
             return prev;
         });
-        setAssetsList((prev) => prev.map((a) => (a.id === id ? { ...a, ...data } : a)));
+        setAssetsList((prev) =>
+            prev.map((a) => (a.id === id ? { ...a, ...data } : a)),
+        );
     };
 
     return (
@@ -768,10 +873,15 @@ export default function MediasPlaceholder({ agent, assets: initialAssets }: Medi
                 <div>
                     <h2 className="text-lg font-semibold">Médias de l'agent</h2>
                     <p className="text-sm text-muted-foreground">
-                        Gérez les images et vidéos que {agent.name} peut envoyer aux prospects.
+                        Gérez les images et vidéos que {agent.name} peut envoyer
+                        aux prospects.
                     </p>
                 </div>
-                <UploadDialog agentId={agent.id} open={uploadOpen} onOpenChange={setUploadOpen} />
+                <UploadDialog
+                    agentId={agent.id}
+                    open={uploadOpen}
+                    onOpenChange={setUploadOpen}
+                />
             </div>
 
             {/* Two-column layout: 70% grid, 30% stats */}

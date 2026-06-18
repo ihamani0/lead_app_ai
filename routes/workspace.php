@@ -17,12 +17,16 @@
  */
 use App\Http\Controllers\AgentController;
 use App\Http\Controllers\Api\WorkspaceStatsController;
+use App\Http\Controllers\BibliothequeController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EvolutionInstanceController;
+use App\Http\Controllers\FaqController;
 use App\Http\Controllers\KnowledgeBaseController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\LeadMessageController;
 use App\Http\Controllers\MediaAssetController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\SessionController;
 use App\Http\Controllers\Team\TeamController;
 use App\Http\Controllers\Team\TeamInvitationController;
 use App\Http\Controllers\Team\TeamMemberController;
@@ -49,9 +53,18 @@ Route::prefix('workspaces/{slug}')->middleware('workspace')->group(function () {
      * Leads — CRM
      */
     Route::get('/leads', [LeadController::class, 'index'])->name('workspaces.leads.index');
+    Route::get('/leads/export', [LeadController::class, 'export'])->name('workspaces.leads.export');
+    Route::get('/leads/{lead}/profile', [LeadController::class, 'profile'])->name('workspaces.leads.profile');
+    Route::post('/leads/{lead}/block', [LeadController::class, 'block'])->name('workspaces.leads.block');
+    Route::get('/leads/{lead}', [LeadController::class, 'show'])->name('workspaces.leads.show');
     Route::put('/leads/{id}', [LeadController::class, 'update'])->name('workspaces.leads.update');
     Route::post('/leads/{id}/trigger-qualification', [LeadController::class, 'triggerQualification'])->name('workspaces.leads.trigger-qualification');
     Route::post('/leads/bulk-qualify', [LeadController::class, 'bulkQualify'])->name('workspaces.leads.bulk-qualify');
+    Route::get('/leads/{lead}/messages', [LeadMessageController::class, 'index'])->name('workspaces.leads.messages');
+    Route::post('/leads/{lead}/send', [LeadMessageController::class, 'send'])->name('workspaces.leads.send');
+    Route::get('/leads/{lead}/session', [SessionController::class, 'index'])->name('workspaces.leads.session');
+    Route::get('/leads/{lead}/sessions', [SessionController::class, 'allSessions'])->name('workspaces.leads.sessions');
+    Route::post('/leads/{lead}/session/status', [SessionController::class, 'changeStatus'])->name('workspaces.leads.session.status');
 
     /*
      * Agents — AI bot configuration
@@ -106,6 +119,7 @@ Route::prefix('workspaces/{slug}')->middleware('workspace')->group(function () {
     Route::post('/instances/{id}/disconnect', [EvolutionInstanceController::class, 'disconnect'])->name('workspaces.instances.disconnect');
     Route::put('/instances/{id}/restart', [EvolutionInstanceController::class, 'restart'])->name('workspaces.instances.restart');
     Route::post('/instances/{id}/restore', [EvolutionInstanceController::class, 'restore'])->name('workspaces.instances.restore');
+    Route::put('/instances/{id}', [EvolutionInstanceController::class, 'update'])->name('workspaces.instances.update');
     Route::delete('/instances/{id}', [EvolutionInstanceController::class, 'destroy'])->name('workspaces.instances.destroy');
     Route::delete('/instances/{id}/force', [EvolutionInstanceController::class, 'forceDestroy'])->name('workspaces.instances.force-destroy');
 
@@ -134,6 +148,22 @@ Route::prefix('workspaces/{slug}')->middleware('workspace')->group(function () {
     Route::post('/knowledge', [KnowledgeBaseController::class, 'store'])->name('workspaces.knowledge.store');
     Route::delete('/knowledge/{id}', [KnowledgeBaseController::class, 'destroy'])->name('workspaces.knowledge.destroy');
     Route::get('/knowledge/download/{id}', [KnowledgeBaseController::class, 'download'])->name('workspaces.knowledge.web.download');
+
+    /*
+     * FAQ — Questions fréquentes
+     */
+    Route::get('/faqs', [FaqController::class, 'index'])->name('workspaces.faqs.index');
+    Route::post('/faqs', [FaqController::class, 'store'])->name('workspaces.faqs.store');
+    Route::post('/faqs/analyze', [FaqController::class, 'triggerAnalysis'])->name('workspaces.faqs.analyze');
+    Route::put('/faqs/{faq}', [FaqController::class, 'update'])->name('workspaces.faqs.update');
+    Route::delete('/faqs/{faq}', [FaqController::class, 'destroy'])->name('workspaces.faqs.destroy');
+    Route::post('/faqs/{faq}/toggle', [FaqController::class, 'toggle'])->name('workspaces.faqs.toggle');
+    Route::post('/faqs/{faq}/accept', [FaqController::class, 'accept'])->name('workspaces.faqs.accept');
+
+    /*
+     * Bibliothèque — Unified library (Documents, FAQ, WhatsApp, Media)
+     */
+    Route::get('/bibliotheque', [BibliothequeController::class, 'index'])->name('workspaces.bibliotheque.index');
 
     /*
      * Members — Workspace member management

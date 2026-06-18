@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\LeadFlagged;
 use App\Http\Controllers\Controller;
 use App\Models\EvolutionInstance;
 use App\Models\Lead;
 use App\Models\Tenant;
+use App\Notifications\LeadFlaggedNotification;
 use Illuminate\Http\Request;
+use Log;
 
 class LeadIntegrationController extends Controller
 {
@@ -22,25 +25,31 @@ class LeadIntegrationController extends Controller
 
     public function lookupLead(Request $request)
     {
+        Log::info('Evolution lookupLead received', ['payload' => $request->all()]);
         $request->validate([
             'instance' => 'required',
             'phone' => 'required',
         ]);
-        // n8n sends: { "instance": "tenant-slug-xyz", "phone": "551199..." }
+        // n8n sends: { "instance": "tenant-slug-xyz", "phone": "551199...", "push_name": "..." }
         $instance = EvolutionInstance::where('instance_name', $request->input('instance'))->firstOrFail();
         $phone = $request->input('phone');
+        $pushName = $request->input('push_name');
 
         $lead = Lead::firstOrCreate(
             ['tenant_id' => $instance->tenant_id, 'phone' => $phone],
             [
                 'instance_id' => $instance->id,
                 'team_id' => $instance->team_id,
-                'name' => $request->input('name', 'UNKNOW'),
+                'name' => $pushName,
                 'status' => 'NEW',
                 'contact_status' => 'REPONDU',
                 'phone' => $phone,
             ]
         );
+
+        if ($pushName && $lead->name !== $pushName) {
+            $lead->update(['name' => $pushName]);
+        }
 
         return response()->json($lead);
     }
@@ -136,8 +145,47 @@ class LeadIntegrationController extends Controller
                 'webhook_url' => $agentConfig->webhook_url,
                 'is_active' => $agentConfig->is_active,
                 'settings' => $agentConfig->settings,
+                'botId' => $agentConfig->evo_integration_id,
             ],
             'has_sufficient_tokens' => ! $tenant->isBelowThreshold(),
+        ]);
+    }
+
+    public function flagLead(Request $request)
+    {
+        $validated = $request->validate([
+            'instance' => 'required|string',
+            'phone' => 'required|string',
+            'reason' => 'required|string|max:1000',
+            'severity' => 'sometimes|string|in:low,medium,high,critical',
+        ]);
+
+        $instance = EvolutionInstance::where('instance_name', $validated['instance'])->firstOrFail();
+
+        $lead = Lead::where('tenant_id', $instance->tenant_id)
+            ->where('phone', $validated['phone'])
+            ->firstOrFail();
+
+        $severity = $validated['severity'] ?? 'high';
+        $agentName = $instance->agentConfig?->name;
+
+        $lead->update([
+            'flagged_at' => now(),
+            'flag_reason' => $validated['reason'],
+            'flag_severity' => $severity,
+        ]);
+
+        if ($lead->team) {
+            $lead->team->users->each(
+                fn ($user) => $user->notify(new LeadFlaggedNotification($lead, $validated['reason'], $severity, $agentName))
+            );
+
+            event(new LeadFlagged($lead, $validated['reason'], $severity, $agentName));
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'lead_id' => $lead->id,
         ]);
     }
 }

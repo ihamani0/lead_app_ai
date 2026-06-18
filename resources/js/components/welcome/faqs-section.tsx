@@ -5,7 +5,6 @@ import {
     AccordionTrigger,
 } from '@/components/ui/accordion';
 import { DecorIcon } from '@/components/ui/decor-icon';
- 
 
 export function FaqsSection() {
     return (
@@ -81,7 +80,7 @@ const faqs = [
         id: 'item-3',
         title: 'Do I need a WhatsApp Business account?',
         content:
-            'Yes, you need a WhatsApp Business API account. We help you set it up through Evolution API - just connect and you\'re ready to go.',
+            "Yes, you need a WhatsApp Business API account. We help you set it up through Evolution API - just connect and you're ready to go.",
     },
     {
         id: 'item-4',
@@ -93,7 +92,7 @@ const faqs = [
         id: 'item-5',
         title: 'Is my data secure?',
         content:
-            'Yes. All data is encrypted and stored in your tenant\'s isolated environment. We never access your WhatsApp conversations.',
+            "Yes. All data is encrypted and stored in your tenant's isolated environment. We never access your WhatsApp conversations.",
     },
     {
         id: 'item-6',
@@ -109,9 +108,9 @@ const faqs = [
     },
     {
         id: 'item-8',
-        title: 'What happens when the AI can\'t handle a conversation?',
+        title: "What happens when the AI can't handle a conversation?",
         content:
-            'You can set fallback rules - conversations can be transferred to a human agent or you\'ll receive a notification to intervene.',
+            "You can set fallback rules - conversations can be transferred to a human agent or you'll receive a notification to intervene.",
     },
     {
         id: 'item-9',

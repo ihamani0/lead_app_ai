@@ -14,6 +14,14 @@ export const agentApi = {
     createInstance: (
         slug: string,
         agentId: string,
-        data: { instance_name: string; display_name?: string; phone_number?: string },
-    ) => axios.post(workspaces.agents.createInstance({ slug, agent: agentId }).url, data),
+        data: {
+            instance_name: string;
+            display_name?: string;
+            phone_number?: string;
+        },
+    ) =>
+        axios.post(
+            workspaces.agents.createInstance({ slug, agent: agentId }).url,
+            data,
+        ),
 };

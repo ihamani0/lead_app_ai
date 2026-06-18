@@ -1,12 +1,7 @@
-
 export const LogoIcon = () => (
-	<h1 className="font-mono dark:text-white text-primary">CREW</h1>
+    <h1 className="font-mono text-primary dark:text-white">CREW</h1>
 );
 
 export const Logo = () => {
-	
-	return (
-		<h1 className="font-mono dark:text-white text-primary">CREW</h1>
-	)
-	 
-}
+    return <h1 className="font-mono text-primary dark:text-white">CREW</h1>;
+};

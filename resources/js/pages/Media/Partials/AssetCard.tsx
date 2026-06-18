@@ -36,7 +36,12 @@ export function MediaIcon({ type, className = 'h-5 w-5' }: MediaIconProps) {
     return <Icon className={className} />;
 }
 
-export function AssetCard({ asset, onDelete, onClick, canManage = true }: AssetCardProps) {
+export function AssetCard({
+    asset,
+    onDelete,
+    onClick,
+    canManage = true,
+}: AssetCardProps) {
     const [imageError, setImageError] = useState(false);
 
     const handleDelete = (e: React.MouseEvent) => {

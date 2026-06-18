@@ -29,13 +29,14 @@ export function CreateAgentDialog({
     const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
 
-    const { data, setData, post, processing, errors, reset, clearErrors } = useForm({
-        name: '',
-    });
+    const { data, setData, post, processing, errors, reset, clearErrors } =
+        useForm({
+            name: '',
+        });
 
     const handleSubmit = (e: React.SubmitEvent) => {
         e.preventDefault();
-            post(workspaces.agents.store({ slug: activeWorkspace.slug }).url, {
+        post(workspaces.agents.store({ slug: activeWorkspace.slug }).url, {
             onSuccess: () => {
                 reset();
                 onOpenChange(false);
@@ -45,8 +46,8 @@ export function CreateAgentDialog({
 
     useEffect(() => {
         if (!open) {
-                reset();
-                clearErrors();
+            reset();
+            clearErrors();
         }
     }, [open]);
 
@@ -70,7 +71,7 @@ export function CreateAgentDialog({
                         </DialogDescription>
                     </DialogHeader>
 
-                    <div className="mt-4 ">
+                    <div className="mt-4">
                         <div className="space-y-3">
                             <Label htmlFor="agent-name">
                                 {t('agents.agent_name')}

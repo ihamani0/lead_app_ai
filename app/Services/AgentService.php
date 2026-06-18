@@ -8,6 +8,7 @@ use App\Models\Lead;
 use App\Models\Tenant;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class AgentService
@@ -59,6 +60,7 @@ class AgentService
     {
         DB::transaction(function () use ($agent, $settings) {
             $currentSettings = $agent->settings ?? [];
+            $oldBlocklist = $currentSettings['blocklist'] ?? [];
             $mergedSettings = array_merge($currentSettings, $settings);
 
             if (isset($settings['blocklist'])) {
@@ -69,7 +71,7 @@ class AgentService
             $agent->save();
 
             if ($agent->isLinked() && $agent->is_active) {
-                $this->evolutionService->updateN8nSettings($agent->instance, $agent);
+                $this->evolutionService->updateN8nSettings($agent->instance, $agent, $oldBlocklist);
             }
         });
     }
@@ -80,7 +82,12 @@ class AgentService
             if ($agent->isLinked() && $agent->instance) {
                 try {
                     $this->evolutionService->deleteN8nBot($agent->instance, $agent);
-                } catch (Exception) {
+                } catch (Exception $e) {
+                    Log::warning('Failed to delete old n8n bot during relink', [
+                        'agent_id' => $agent->id,
+                        'instance_id' => $agent->evolution_instance_id,
+                        'error' => $e->getMessage(),
+                    ]);
                 }
             }
 
@@ -90,8 +97,26 @@ class AgentService
                 'is_active' => true,
             ]);
 
-            $evoResponse = $this->evolutionService->connectN8nBot($instance, $agent);
-            $agent->update(['evo_integration_id' => $evoResponse['id'] ?? null]);
+            try {
+                $evoResponse = $this->evolutionService->connectN8nBot($instance, $agent);
+                $agent->update(['evo_integration_id' => $evoResponse['bot']['id'] ?? null]);
+            } catch (Exception $e) {
+                if (str_contains($e->getMessage(), 'bot already exists')) {
+                    if ($agent->evo_integration_id) {
+                        $this->evolutionService->deleteN8nBot($instance, $agent);
+                        $agent->update(['evo_integration_id' => null]);
+                    } else {
+                        throw new Exception(
+                            "Bot already exists for instance {$instance->instance_name} but no evo_integration_id available to delete it."
+                        );
+                    }
+
+                    $evoResponse = $this->evolutionService->connectN8nBot($instance, $agent);
+                    $agent->update(['evo_integration_id' => $evoResponse['bot']['id'] ?? null]);
+                } else {
+                    throw $e;
+                }
+            }
         });
     }
 
@@ -102,10 +127,16 @@ class AgentService
         }
 
         DB::transaction(function () use ($agent) {
-            if ($agent->instance) {
+            if ($agent->instance && $agent->evo_integration_id) {
                 try {
                     $this->evolutionService->deleteN8nBot($agent->instance, $agent);
-                } catch (Exception) {
+                } catch (Exception $e) {
+                    Log::error('Failed to delete n8n bot during unlink', [
+                        'agent_id' => $agent->id,
+                        'instance_id' => $agent->evolution_instance_id,
+                        'evo_integration_id' => $agent->evo_integration_id,
+                        'error' => $e->getMessage(),
+                    ]);
                 }
             }
 

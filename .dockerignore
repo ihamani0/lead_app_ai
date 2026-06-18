@@ -1,0 +1,40 @@
+/node_modules
+/vendor
+/.git
+/public/build
+/.env
+/storage/app/public
+/storage/debugbar
+/storage/framework/cache
+/storage/framework/sessions
+/storage/framework/views
+/storage/logs
+/.phpunit.result.cache
+/.prettierignore
+/.prettierrc
+/.editorconfig
+/.npmrc
+/eslint.config.js
+/tsconfig.json
+# Keep lock files - required for npm ci and composer install
+# /package-lock.json
+# /composer.lock
+/Dockerfile
+/DockerFile-backup.yml
+/docker.yml
+/lint.yml
+/tests.yml
+/boost.json
+/opencode.json
+/skills-lock.json
+/components.json
+/pint.json
+/phpunit.xml
+/AGENTS.md
+/docs
+/.vscode
+/.github
+/.gitattributes
+/.opencode
+/.agents
+/.codex

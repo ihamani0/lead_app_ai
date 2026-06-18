@@ -16,17 +16,27 @@ export function NavMain({ items = [] }: { items: NavItem[] }) {
         <SidebarGroup className="px-2 py-0">
             <SidebarMenu>
                 {items.map((item) => (
-                    <SidebarMenuItem key={item.title} className='mb-2'>
+                    <SidebarMenuItem key={item.title} className="mb-2">
                         <SidebarMenuButton
-                            className='py-5'
+                            className="py-5"
                             asChild
                             isActive={isCurrentUrl(item.href)}
                             tooltip={{ children: item.title }}
-                            size='lg'
-                        
+                            size="lg"
                         >
-                            <Link href={item.href} prefetch data-tour={item['data-tour']}>
-                                {item.icon && <item.icon style={{width:'20px',height:'20px'}}/>}
+                            <Link
+                                href={item.href}
+                                prefetch
+                                data-tour={item['data-tour']}
+                            >
+                                {item.icon && (
+                                    <item.icon
+                                        style={{
+                                            width: '20px',
+                                            height: '20px',
+                                        }}
+                                    />
+                                )}
                                 <span className="text-base">{item.title}</span>
                             </Link>
                         </SidebarMenuButton>

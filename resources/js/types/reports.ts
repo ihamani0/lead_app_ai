@@ -9,8 +9,6 @@ export interface SummaryData {
     disconnected?: number;
     active?: number;
     inactive?: number;
-    totalSize?: number;
-    avgSize?: number;
 }
 
 export interface LeadsSummary extends SummaryData {
@@ -29,9 +27,9 @@ export interface AgentsSummary extends SummaryData {
     inactive: number;
 }
 
-export interface MediaSummary extends SummaryData {
-    totalSize: number;
-    avgSize: number;
+export interface LeadTimeData {
+    date: string;
+    count: number;
 }
 
 export interface LeadsReportData {
@@ -41,6 +39,7 @@ export interface LeadsReportData {
     byQualificationResult: Record<string, number>;
     byTreatmentStatus: Record<string, number>;
     byInstance: Record<string, number>;
+    leadsOverTime: LeadTimeData[];
 }
 
 export interface InstanceData {
@@ -66,6 +65,9 @@ export interface AgentData {
     display_name?: string | null;
     is_active: boolean;
     created_at: string;
+    total_tokens: number;
+    total_cost: number;
+    transaction_count: number;
 }
 
 export interface AgentsReportData {
@@ -74,18 +76,51 @@ export interface AgentsReportData {
     agents: AgentData[];
 }
 
-export interface MediaReportData {
-    summary: MediaSummary;
-    byType: Record<string, number>;
-    recentMedia?: Array<{
-        id: number;
-        filename: string;
-        mime_type: string;
-        created_at: string;
-    }>;
+export type ReportTab = 'leads' | 'instances' | 'agents' | 'tokens';
+
+export interface TokenDayData {
+    date: string;
+    input_tokens: number;
+    output_tokens: number;
+    total_tokens: number;
+    input_cost: number;
+    output_cost: number;
+    total_cost: number;
+    transaction_count: number;
 }
 
-export type ReportTab = 'leads' | 'instances' | 'agents' | 'media';
+export interface TokenMonthData {
+    month: string;
+    input_tokens: number;
+    output_tokens: number;
+    total_tokens: number;
+    input_cost: number;
+    output_cost: number;
+    total_cost: number;
+    transaction_count: number;
+}
+
+export interface TokenTransactionsReportData {
+    summary: {
+        total_tokens: number;
+        total_cost: number;
+        input_tokens: number;
+        output_tokens: number;
+        transaction_count: number;
+    };
+    daily: TokenDayData[];
+    monthly: TokenMonthData[];
+    byAgent: TokenAgentData[];
+}
+
+export interface TokenAgentData {
+    agent_name: string;
+    input_tokens: number;
+    output_tokens: number;
+    total_tokens: number;
+    total_cost: number;
+    transaction_count: number;
+}
 
 export interface ReportApiResponse<T> {
     data: T;

@@ -5,6 +5,7 @@ import {
     Trash2,
     Mail,
     X,
+    UserCheck,
 } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -54,7 +55,12 @@ import {
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
 import teams from '@/routes/teams';
-import type { Workspace, WorkspaceInvitation, WorkspaceMember, WorkspaceRole } from '@/types';
+import type {
+    Workspace,
+    WorkspaceInvitation,
+    WorkspaceMember,
+    WorkspaceRole,
+} from '@/types';
 
 const teamsInviteRoute = teams.invite;
 const teamsDestroyMemberRoute = teams.members.destroy;
@@ -87,7 +93,8 @@ export default function MembersIndex({
 }: MembersIndexProps) {
     const { t } = useTranslation();
     const [inviteOpen, setInviteOpen] = useState(false);
-    const [memberToRemove, setMemberToRemove] = useState<WorkspaceMember | null>(null);
+    const [memberToRemove, setMemberToRemove] =
+        useState<WorkspaceMember | null>(null);
 
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
@@ -111,7 +118,10 @@ export default function MembersIndex({
     const confirmRemoveMember = () => {
         if (!memberToRemove) return;
         router.delete(
-            teamsDestroyMemberRoute({ slug: workspace.slug, user: memberToRemove.user_id }).url,
+            teamsDestroyMemberRoute({
+                slug: workspace.slug,
+                user: memberToRemove.user_id,
+            }).url,
         );
         setMemberToRemove(null);
     };
@@ -159,17 +169,23 @@ export default function MembersIndex({
 
             <div className="flex flex-col gap-6 p-4 md:p-6">
                 {/* Header with Invite Button */}
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h2 className="text-lg font-semibold">
-                            {t('workspace.members.title')}
-                        </h2>
-                        <p className="text-sm text-muted-foreground">
-                            {t('workspace.members.description', {
-                                count: members.length,
-                            })}
-                        </p>
+                <div className="mb-6 rounded-xl bg-card p-4 shadow-sm sm:p-5">
+                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <div className="flex items-center gap-3">
+                                <UserCheck className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
+                                <div>
+                                    <h1 className="text-lg font-semibold sm:text-xl md:text-2xl">
+                                        {t('workspace.members.title')}
+                                    </h1>
+                                    <p className="text-xs text-muted-foreground sm:text-sm">
+                                        {t('workspace.members.description')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    
 
                     {canInvite && (
                         <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
@@ -185,11 +201,16 @@ export default function MembersIndex({
                                         {t('workspace.members.invite_title')}
                                     </DialogTitle>
                                     <DialogDescription>
-                                        {t('workspace.members.invite_description')}
+                                        {t(
+                                            'workspace.members.invite_description',
+                                        )}
                                     </DialogDescription>
                                 </DialogHeader>
 
-                                <form onSubmit={handleInvite} className="space-y-4">
+                                <form
+                                    onSubmit={handleInvite}
+                                    className="space-y-4"
+                                >
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium">
                                             {t('workspace.members.email')}
@@ -230,7 +251,8 @@ export default function MembersIndex({
                                             <SelectContent>
                                                 {roles
                                                     .filter(
-                                                        (r) => r.code !== 'owner',
+                                                        (r) =>
+                                                            r.code !== 'owner',
                                                     )
                                                     .map((role) => (
                                                         <SelectItem
@@ -278,41 +300,39 @@ export default function MembersIndex({
                             {t('workspace.members.pending_invitations')}
                         </h3>
                         <div className="space-y-2">
-                            {invitations.map(
-                                (invitation) => (
-                                    <div
-                                        key={invitation.id}
-                                        className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <Avatar className="size-7">
-                                                <AvatarFallback className="text-xs">
-                                                    {invitation.email
-                                                        .slice(0, 2)
-                                                        .toUpperCase()}
-                                                </AvatarFallback>
-                                            </Avatar>
-                                            <p className="text-sm">
-                                                {invitation.email}
-                                            </p>
-                                        </div>
-                                        {canInvite && (
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="size-7 text-muted-foreground hover:text-destructive"
-                                                onClick={() =>
-                                                    handleCancelInvitation(
-                                                        invitation.id,
-                                                    )
-                                                }
-                                            >
-                                                <X className="size-4" />
-                                            </Button>
-                                        )}
+                            {invitations.map((invitation) => (
+                                <div
+                                    key={invitation.id}
+                                    className="flex items-center justify-between rounded-md bg-muted/50 px-3 py-2"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <Avatar className="size-7">
+                                            <AvatarFallback className="text-xs">
+                                                {invitation.email
+                                                    .slice(0, 2)
+                                                    .toUpperCase()}
+                                            </AvatarFallback>
+                                        </Avatar>
+                                        <p className="text-sm">
+                                            {invitation.email}
+                                        </p>
                                     </div>
-                                ),
-                            )}
+                                    {canInvite && (
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="size-7 text-muted-foreground hover:text-destructive"
+                                            onClick={() =>
+                                                handleCancelInvitation(
+                                                    invitation.id,
+                                                )
+                                            }
+                                        >
+                                            <X className="size-4" />
+                                        </Button>
+                                    )}
+                                </div>
+                            ))}
                         </div>
                     </div>
                 )}
@@ -361,8 +381,9 @@ export default function MembersIndex({
                                             <Badge
                                                 variant="secondary"
                                                 className={
-                                                    roleColors[member.role.code] ||
-                                                    ''
+                                                    roleColors[
+                                                        member.role.code
+                                                    ] || ''
                                                 }
                                             >
                                                 {member.role.name}
@@ -396,12 +417,15 @@ export default function MembersIndex({
                                                     {roles
                                                         .filter(
                                                             (r) =>
-                                                                r.code !== 'owner',
+                                                                r.code !==
+                                                                'owner',
                                                         )
                                                         .map((role) => (
                                                             <SelectItem
                                                                 key={role.id}
-                                                                value={role.code}
+                                                                value={
+                                                                    role.code
+                                                                }
                                                             >
                                                                 {role.name}
                                                             </SelectItem>
@@ -412,8 +436,9 @@ export default function MembersIndex({
                                             <Badge
                                                 variant="secondary"
                                                 className={
-                                                    roleColors[member.role.code] ||
-                                                    ''
+                                                    roleColors[
+                                                        member.role.code
+                                                    ] || ''
                                                 }
                                             >
                                                 {member.role.name}
@@ -429,7 +454,9 @@ export default function MembersIndex({
                                         {member.role.code !== 'owner' &&
                                             canInvite && (
                                                 <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
+                                                    <DropdownMenuTrigger
+                                                        asChild
+                                                    >
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
@@ -471,17 +498,29 @@ export default function MembersIndex({
                 </div>
 
                 {/* Remove Member Confirmation */}
-                <AlertDialog open={!!memberToRemove} onOpenChange={(open) => { if (!open) setMemberToRemove(null); }}>
+                <AlertDialog
+                    open={!!memberToRemove}
+                    onOpenChange={(open) => {
+                        if (!open) setMemberToRemove(null);
+                    }}
+                >
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                            <AlertDialogTitle>{t('workspace.members.remove')}</AlertDialogTitle>
+                            <AlertDialogTitle>
+                                {t('workspace.members.remove')}
+                            </AlertDialogTitle>
                             <AlertDialogDescription>
                                 {t('workspace.members.remove_confirm')}
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-                            <AlertDialogAction variant="destructive" onClick={confirmRemoveMember}>
+                            <AlertDialogCancel>
+                                {t('common.cancel')}
+                            </AlertDialogCancel>
+                            <AlertDialogAction
+                                variant="destructive"
+                                onClick={confirmRemoveMember}
+                            >
                                 {t('workspace.members.remove')}
                             </AlertDialogAction>
                         </AlertDialogFooter>

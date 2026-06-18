@@ -5,7 +5,10 @@ import type { Asset } from '@/types';
 function formatStorage(kb: number): string {
     if (kb === 0) return '0 KB';
     const units = ['KB', 'MB', 'GB'];
-    const i = Math.min(Math.floor(Math.log(kb) / Math.log(1024)), units.length - 1);
+    const i = Math.min(
+        Math.floor(Math.log(kb) / Math.log(1024)),
+        units.length - 1,
+    );
     return (kb / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1) + ' ' + units[i];
 }
 
@@ -17,7 +20,10 @@ export function StatsCards({ assets }: StatsCardsProps) {
     const images = assets.filter((a) => a.type === 'image').length;
     const videos = assets.filter((a) => a.type === 'video').length;
     const totalCount = assets.length;
-    const totalSizeKB = assets.reduce((sum, a) => sum + (parseFloat(a.size ?? '0') || 0), 0);
+    const totalSizeKB = assets.reduce(
+        (sum, a) => sum + (parseFloat(a.size ?? '0') || 0),
+        0,
+    );
 
     const stats = [
         {

@@ -17,7 +17,13 @@ import {
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 
-export function CreateInstanceDialog({ t, slug }: { t: TFunction; slug?: string }) {
+export function CreateInstanceDialog({
+    t,
+    slug,
+}: {
+    t: TFunction;
+    slug?: string;
+}) {
     const [open, setOpen] = useState(false);
 
     const form = useForm({
@@ -46,16 +52,16 @@ export function CreateInstanceDialog({ t, slug }: { t: TFunction; slug?: string 
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                  <Button
-                        variant="outline"
-                        className="px-2 py-1 text-xs sm:px-3 sm:py-2 sm:text-sm"
-                    >
-                        <PlusCircle className="h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" />
-                        
-                        <span className="hidden sm:inline">
+                <Button
+                    variant="outline"
+                    className="px-2 py-1 text-xs sm:px-3 sm:py-2 sm:text-sm"
+                >
+                    <PlusCircle className="h-4 w-4 sm:mr-2 sm:h-5 sm:w-5" />
+
+                    <span className="hidden sm:inline">
                         {t('profil.connectNewNumber')}
-                        </span>
-                    </Button>
+                    </span>
+                </Button>
             </DialogTrigger>
             <DialogContent
                 className="sm:max-w-[425px]"

@@ -10,15 +10,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/create-n8n-token', function () {
     $instance = Tenant::create([
-        'name' => 'n8n-user',
-        'slug' => 'n8n-user',
+        'name' => 'lg-agent',
+        'slug' => 'lg-agent',
         'plan' => 'free',
         'is_active' => true,
         'settings' => [],
     ]);
 
-    $token = $instance->createToken('n8n-token')->plainTextToken;
-
+    $token = $instance->createToken('lg-agent')->plainTextToken;
+    echo $token;
     return response()->json([
         'status' => '200',
         'token' => $token,

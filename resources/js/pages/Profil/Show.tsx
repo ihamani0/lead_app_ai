@@ -1,22 +1,47 @@
-// resources/js/Pages/Instances/Show.tsx
 import { Head, router } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { ArrowLeft, Loader2, Power, RefreshCw } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
-import { dashboard } from '@/routes/workspaces';
-import { disconnect, fetchQr, index, restart } from '@/routes/workspaces/instances';
+import { cn } from '@/lib/utils';
+import {
+    disconnect,
+    fetchQr,
+    index,
+    restart,
+} from '@/routes/workspaces/instances';
 import type { BreadcrumbItem, EvolutionInstance } from '@/types';
 
+import { AgentLinkCard } from './Partials/AgentLinkCard';
+import { ConnectedBanner } from './Partials/ConnectedBanner';
 import { ConnectingStatus } from './Partials/ConnectingStatus';
-import { ConnectionStatus } from './Partials/ConnectionStatus';
-import { InstanceTabs } from './Partials/InstanceTabs';
+import { InstanceDetailsSidebar } from './Partials/InstanceDetailsSidebar';
+import { InstanceQuickActions } from './Partials/InstanceQuickActions';
+import { InstanceStatsGrid } from './Partials/InstanceStatsGrid';
 import { QRScanner } from './Partials/QRScanner';
 
 interface Props {
     instance: EvolutionInstance;
 }
+
+const statusBadge: Record<string, { label: string; color: string }> = {
+    connected: {
+        label: 'Connecté',
+        color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    },
+    connecting: {
+        label: 'Connexion',
+        color: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    },
+    disconnected: {
+        label: 'Déconnecté',
+        color: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+    },
+};
 
 export default function InstanceShow({ instance }: Props) {
     const { t } = useTranslation();
@@ -24,14 +49,13 @@ export default function InstanceShow({ instance }: Props) {
     const slug = activeWorkspace?.slug;
 
     const [localInstance, setLocalInstance] = useState(instance);
-    const [qrCode, setQrCode] = useState<string | null>(null);
+    const [qrCode, setQrCode] = useState<string | null>(instance.qr_code ?? null);
     const [isLoadingQr, setIsLoadingQr] = useState(false);
     const [isRestarting, setIsRestarting] = useState(false);
     const [isWaitingForQr, setIsWaitingForQr] = useState(false);
 
     const previousStatusRef = useRef(instance.status);
 
-    // WebSocket setup
     const channel = `instance.${instance.instance_name}`;
 
     useEcho(channel, ['QrCodeUpdated', 'InstanceConnectionUpdated'], (e) => {
@@ -39,7 +63,6 @@ export default function InstanceShow({ instance }: Props) {
             setQrCode(e.qrCode);
             setIsLoadingQr(false);
             setIsWaitingForQr(false);
-            setLocalInstance((prev) => ({ ...prev, status: 'disconnected' }));
         }
 
         if (e.instance) {
@@ -49,9 +72,8 @@ export default function InstanceShow({ instance }: Props) {
             previousStatusRef.current = newStatus;
             setLocalInstance(newInstance);
 
-
-            if (newStatus === 'connecting') {
-                setQrCode(null); 
+            if (newStatus === 'connecting' && !newInstance.qr_code) {
+                setQrCode(null);
             }
 
             if (newStatus === 'connected') {
@@ -89,7 +111,7 @@ export default function InstanceShow({ instance }: Props) {
 
     const handleDisconnect = useCallback(() => {
         if (!slug) return;
-        if (confirm('Disconnect this WhatsApp number?')) {
+        if (confirm('Déconnecter ce numéro WhatsApp ?')) {
             router.post(
                 disconnect({ slug, id: localInstance.id }),
                 {},
@@ -106,11 +128,7 @@ export default function InstanceShow({ instance }: Props) {
             e.preventDefault();
             e.stopPropagation();
             if (!slug) return;
-            if (
-                confirm(
-                    'Are you sure you want to restart this instance manually?',
-                )
-            ) {
+            if (confirm('Redémarrer cette instance ?')) {
                 setIsRestarting(true);
                 router.put(
                     restart({ slug, id: localInstance.id }),
@@ -127,13 +145,19 @@ export default function InstanceShow({ instance }: Props) {
     );
 
     const breadcrumbs: BreadcrumbItem[] = [
-        { title: 'Dashboard', href: slug ? dashboard({ slug }).url : '#' },
+        {
+            title: 'Dashboard',
+            href: slug ? index({ slug }).url.replace('/instances', '') : '#',
+        },
         { title: 'Instances', href: slug ? index({ slug }).url : '#' },
         {
             title: localInstance.display_name || localInstance.instance_name,
             href: '',
         },
     ];
+
+    const isConnected = localInstance.status === 'connected';
+    const badge = statusBadge[localInstance.status] ?? statusBadge.disconnected;
 
     const renderStatusSection = () => {
         if (qrCode && localInstance.status !== 'connected') {
@@ -149,19 +173,14 @@ export default function InstanceShow({ instance }: Props) {
 
         switch (localInstance.status) {
             case 'connected':
-                return (
-                    <ConnectionStatus
-                        phoneNumber={localInstance.phone_number}
-                        onDisconnect={handleDisconnect}
-                    />
-                );
+                return null;
             case 'connecting':
                 return (
                     <ConnectingStatus
                         instanceName={localInstance.instance_name}
                         onRestart={handleRestart}
                         isRestarting={isRestarting}
-                        isWaitingForQr={isWaitingForQr} 
+                        isWaitingForQr={isWaitingForQr}
                     />
                 );
             default:
@@ -181,12 +200,130 @@ export default function InstanceShow({ instance }: Props) {
             <Head
                 title={`${localInstance.display_name || localInstance.instance_name} | Instance`}
             />
-            <div className="py-8 md:py-12">
+
+            <div className="py-6 md:py-10">
                 <div className="space-y-6 px-4 sm:px-6 lg:px-8">
-                    <div className="pt-4">{renderStatusSection()}</div>
-                    {localInstance.status === 'connected' && (
-                        <div className="pt-4">
-                            <InstanceTabs instance={localInstance} />
+                    {/* Back link */}
+                    <a
+                        href={slug ? index({ slug }).url : '#'}
+                        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    >
+                        <ArrowLeft className="h-4 w-4" />
+                        Retour aux instances
+                    </a>
+
+                    {/* Header */}
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-3">
+                            <div>
+                                <h1 className="text-2xl font-bold text-foreground">
+                                    {localInstance.display_name ||
+                                        localInstance.instance_name}
+                                </h1>
+                                <p className="mt-0.5 text-sm text-muted-foreground">
+                                    {localInstance.phone_number
+                                        ? `+${localInstance.phone_number}`
+                                        : '--- --- ---'}
+                                </p>
+                            </div>
+                            <Badge
+                                className={cn(
+                                    'gap-1.5 px-3 py-1 text-xs font-medium',
+                                    badge.color,
+                                )}
+                            >
+                                <span
+                                    className={cn(
+                                        'inline-block h-2 w-2 rounded-full',
+                                        isConnected && 'bg-emerald-500',
+                                        localInstance.status === 'connecting' &&
+                                            'animate-pulse bg-amber-500',
+                                        localInstance.status ===
+                                            'disconnected' && 'bg-red-500',
+                                    )}
+                                />
+                                {badge.label}
+                            </Badge>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            {isConnected && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={handleDisconnect}
+                                    className="gap-1.5 text-red-600"
+                                >
+                                    <Power className="h-4 w-4" />
+                                    Déconnecter
+                                </Button>
+                            )}
+                            <Button
+                                variant={isConnected ? 'outline' : 'default'}
+                                size="sm"
+                                onClick={handleRestart}
+                                disabled={isRestarting}
+                                className="gap-1.5"
+                            >
+                                {isRestarting ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                    <RefreshCw className="h-4 w-4" />
+                                )}
+                                {isConnected ? 'Redémarrer' : 'Connecter'}
+                            </Button>
+                        </div>
+                    </div>
+
+                    {/* Status section (QR / connecting) */}
+                    {renderStatusSection()}
+
+                    {/* Connected: full detail view */}
+                    {isConnected && (
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                            {/* Left column */}
+                            <div className="space-y-6 lg:col-span-2">
+                                <ConnectedBanner
+                                    phoneNumber={localInstance.phone_number}
+                                    messagesToday={
+                                        localInstance.messages_today ?? 0
+                                    }
+                                    lastConnectedAt={localInstance.connected_at}
+                                />
+                                <InstanceStatsGrid
+                                    messagesToday={
+                                        localInstance.messages_today ?? 0
+                                    }
+                                    leadsCount={localInstance.leads_count ?? 0}
+                                    connectionQuality={
+                                        localInstance.connection_quality ??
+                                        'faible'
+                                    }
+                                    connectedAt={localInstance.connected_at}
+                                />
+                                <AgentLinkCard
+                                    agentConfig={localInstance.agent_config}
+                                />
+                            </div>
+
+                            {/* Right sidebar */}
+                            <div className="space-y-4">
+                                <InstanceDetailsSidebar
+                                    instanceName={localInstance.instance_name}
+                                    phoneNumber={localInstance.phone_number}
+                                    webhookUrl={localInstance.webhook_url}
+                                    createdAt={localInstance.created_at}
+                                    connectedAt={localInstance.connected_at}
+                                />
+                                {slug && (
+                                    <InstanceQuickActions
+                                        slug={slug}
+                                        instanceId={localInstance.id}
+                                        isConnected={isConnected}
+                                        onFetchQr={handleFetchQr}
+                                    />
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -194,245 +331,3 @@ export default function InstanceShow({ instance }: Props) {
         </AppLayout>
     );
 }
-
-//  function InstanceShowBackUp({ instance }: Props) {
-//     const { t } = useTranslation();
-
-//     const [localInstance, setLocalInstance] = useState(instance);
-//     const [qrCode, setQrCode] = useState<string | null>(null);
-//     const [isLoadingQr, setIsLoadingQr] = useState(false);
-//     const [isRestarting, setIsRestarting] = useState(false);
-//     const [isReconnect, setIsReconnect] = useState(false);
-//     const [isWaitingForQr, setIsWaitingForQr] = useState(false);
-
-//     const [connectionStartTime, setConnectionStartTime] = useState<
-//         number | null
-//     >(null);
-
-//     const previousStatusRef = useRef(instance.status);
-
-//     // Initialize isReconnect based on was_connected from server
-//     useEffect(() => {
-//         const wasConnected =
-//             (instance.settings as Record<string, unknown>)?.was_connected ===
-//             true;
-//         if (instance.status === 'connecting') {
-//             setIsReconnect(wasConnected);
-//         }
-//     }, [instance.status, instance.settings]);
-
-//     // Track connection duration
-//     useEffect(() => {
-//         if (localInstance.status === 'connecting' && !connectionStartTime) {
-//             setConnectionStartTime(Date.now());
-//         } else if (localInstance.status === 'connected') {
-//             setConnectionStartTime(null);
-//         }
-//     }, [localInstance.status, connectionStartTime]);
-
-//     // Calculate elapsed time
-//     const elapsedTime = connectionStartTime
-//         ? Math.floor((Date.now() - connectionStartTime) / 1000)
-//         : 0;
-
-//     // WebSocket setup
-//     const channel = `instance.${instance.instance_name}`;
-
-//     useEcho(channel, ['QrCodeUpdated', 'InstanceConnectionUpdated'], (e) => {
-//         if (e.qrCode) {
-//             setQrCode(e.qrCode);
-//             setIsLoadingQr(false);
-//             setIsWaitingForQr(false);
-//             setLocalInstance((prev) => ({ ...prev, status: 'disconnected' }));
-//         }
-
-//         if (e.instance) {
-//             const newInstance = e.instance as EvolutionInstance;
-//             const prevStatus = previousStatusRef.current;
-//             const newStatus = newInstance.status;
-
-//             // Determine if this is a reconnect (was connected before)
-//             if (newStatus === 'connecting' && prevStatus === 'connected') {
-//                 setIsReconnect(true);
-//             }
-
-//             previousStatusRef.current = newStatus;
-//             setLocalInstance(newInstance);
-
-//             if (newStatus === 'connected') {
-//                 setQrCode(null);
-//                 setIsWaitingForQr(false);
-
-//                 router.reload({
-//                     only: ['instance'],
-//                 });
-//             }
-//         }
-//     });
-
-//     // Sync with server-side props when they change (e.g., after refresh)
-//     useEffect(() => {
-//         setLocalInstance(instance);
-//     }, [instance]);
-
-//     // Actions
-//     const handleFetchQr = useCallback(() => {
-//         setIsLoadingQr(true);
-//         setIsWaitingForQr(true);
-//         setQrCode(null);
-//         setIsReconnect(false); // This is a new connection attempt
-//         setLocalInstance((prev) => ({ ...prev, status: 'connecting' }));
-//         router.post(
-//             fetchQr(instance.id),
-//             {},
-//             {
-//                 preserveScroll: true,
-//                 preserveState: true,
-//                 onError: () => {
-//                     setIsLoadingQr(false);
-//                     setIsWaitingForQr(false);
-//                 },
-//             },
-//         );
-//     }, [instance.id]);
-
-//     const handleDisconnect = useCallback(() => {
-//         if (confirm('Disconnect this WhatsApp number?')) {
-//             router.post(
-//                 disconnect(localInstance.id),
-//                 {},
-//                 {
-//                     preserveScroll: true,
-//                     preserveState: true,
-//                 },
-//             );
-//         }
-//     }, [localInstance.id]);
-
-//     const handleRestart = useCallback(
-//         (e: React.MouseEvent) => {
-//             e.preventDefault();
-//             e.stopPropagation();
-//             if (confirm('Are you sure you want to restart this instance?')) {
-//                 setIsRestarting(true);
-//                 router.put(
-//                     restart(localInstance.id),
-//                     {},
-//                     {
-//                         preserveScroll: true,
-//                         preserveState: true,
-//                         onFinish: () => setIsRestarting(false),
-//                     },
-//                 );
-//             }
-//         },
-//         [localInstance.id],
-//     );
-
-//     const handleAutoRestart = useCallback(() => {
-//         setIsRestarting(true);
-//         router.put(
-//             restart(localInstance.id),
-//             {},
-//             {
-//                 preserveScroll: true,
-//                 preserveState: true,
-//                 onFinish: () => setIsRestarting(false),
-//             },
-//         );
-//     }, [localInstance.id]);
-
-//     const breadcrumbs: BreadcrumbItem[] = [
-//         { title: 'Dashboard', href: dashboard().url },
-//         { title: 'Instances', href: index().url },
-//         {
-//             title: localInstance.display_name || localInstance.instance_name,
-//             href: '',
-//         },
-//     ];
-
-//     // Render appropriate status component
-//     const renderStatusSection = () => {
-//         // Priority 1: Show QR Scanner if we have a QR code
-//         if (qrCode && localInstance.status !== 'connected') {
-//             return (
-//                 <QRScanner
-//                     qrCode={qrCode}
-//                     isLoading={isLoadingQr}
-//                     onGenerate={handleFetchQr}
-//                     t={t}
-//                 />
-//             );
-//         }
-
-//         // Priority 2: If waiting for QR (first connection), show spinner
-//         if (isWaitingForQr && localInstance.status === 'connecting') {
-//             return (
-//                 <ConnectingStatus
-//                     instanceName={localInstance.instance_name}
-//                     onRestart={handleRestart}
-//                     onAutoRestart={handleAutoRestart}
-//                     elapsedTime={elapsedTime}
-//                     isRestarting={isRestarting}
-//                     isReconnect={false}
-//                     isWaitingForQr={true}
-//                 />
-//             );
-//         }
-
-//         switch (localInstance.status) {
-//             case 'connected':
-//                 return (
-//                     <ConnectionStatus
-//                         phoneNumber={localInstance.phone_number}
-//                         onDisconnect={handleDisconnect}
-//                     />
-//                 );
-
-//             case 'connecting':
-//                 return (
-//                     <ConnectingStatus
-//                         instanceName={localInstance.instance_name}
-//                         onRestart={handleRestart}
-//                         onAutoRestart={handleAutoRestart}
-//                         elapsedTime={elapsedTime}
-//                         isRestarting={isRestarting}
-//                         isReconnect={isReconnect}
-//                         isWaitingForQr={false}
-//                     />
-//                 );
-
-//             default:
-//                 return (
-//                     <QRScanner
-//                         qrCode={qrCode}
-//                         isLoading={isLoadingQr}
-//                         onGenerate={handleFetchQr}
-//                         t={t}
-//                     />
-//                 );
-//         }
-//     };
-
-//     return (
-//         <AppLayout breadcrumbs={breadcrumbs}>
-//             <Head
-//                 title={`${localInstance.display_name || localInstance.instance_name} | Instance`}
-//             />
-
-//             <div className="py-8 md:py-12">
-//                 <div className="space-y-6 px-4 sm:px-6 lg:px-8">
-//                     {/* Status Section */}
-//                     <div className="pt-4">{renderStatusSection()}</div>
-
-//                     {/* Tabs Section - Only show when connected */}
-//                     {localInstance.status === 'connected' && (
-//                         <div className="pt-4">
-//                             <InstanceTabs instance={localInstance} />
-//                         </div>
-//                     )}
-//                 </div>
-//             </div>
-//         </AppLayout>
-//     );
-// }

@@ -9,8 +9,6 @@ use App\Models\Lead;
 use App\Models\MediaAsset;
 use App\Models\Team;
 use App\Models\Tenant;
-use App\Models\TokenTransaction;
-use App\Models\TokenTransactionDaily;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Inertia\Inertia;
@@ -34,8 +32,7 @@ class DashboardController extends Controller
             ],
             'recentLeads' => $this->getRecentLeadsList($scope),
             'token_stats' => $this->getTokenStats($request),
-            'token_daily_usage' => $this->getTokenDailyUsage($scope),
-            'token_transactions' => $this->getRecentTransactions($scope),
+            'workspace' => $this->getWorkspaceData($team, $request, $scope),
         ]);
     }
 
@@ -77,16 +74,11 @@ class DashboardController extends Controller
     {
         $media = MediaAsset::where($scope)->get();
 
-        $totalSize = 0;
-        foreach ($media as $m) {
-            foreach ($m->getMedia('assets') as $file) {
-                $totalSize += $file->size;
-            }
-        }
+        $totalSizeKb = $media->sum(fn ($m) => $m->size ?? 0);
 
         return [
             'total' => $media->count(),
-            'totalSize' => $totalSize,
+            'totalSize' => (int) $totalSizeKb * 1024,
         ];
     }
 
@@ -113,19 +105,70 @@ class DashboardController extends Controller
         ];
     }
 
-    private function getTokenDailyUsage(array $scope): Collection
+    private function getWorkspaceData(?Team $team, Request $request, array $scope): ?array
     {
-        return TokenTransactionDaily::where($scope)
-            ->where('date', '>=', now()->subDays(30)->toDateString())
-            ->orderBy('date')
-            ->get();
+        if (! $team) {
+            return null;
+        }
+
+        $team->loadMissing(['users', 'owner', 'roles']);
+
+        $leadCount = Lead::where($scope)->count();
+
+        $mediaItems = MediaAsset::where($scope)->get();
+        $totalSizeKb = $mediaItems->sum(fn ($m) => $m->size ?? 0);
+
+        $members = collect();
+        foreach ($team->users as $user) {
+            $members->push($this->formatMember($user, $team, $request));
+        }
+        if (! $members->firstWhere('id', $team->user_id)) {
+            $members->push($this->formatMember($team->owner, $team, $request));
+        }
+
+        return [
+            'name' => $team->name,
+            'description' => $team->description ?? '',
+            'status' => 'Actif',
+            'created_at' => $team->created_at->format('d/m/Y'),
+            'owner_name' => $team->owner?->name ?? '',
+            'usage' => [
+                'leads_used' => $leadCount,
+                'storage_used_bytes' => (int) $totalSizeKb * 1024,
+            ],
+            'members' => $members->values()->toArray(),
+        ];
     }
 
-    private function getRecentTransactions(array $scope): Collection
+    private function formatMember($user, Team $team, Request $request): array
     {
-        return TokenTransaction::where($scope)
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get();
+        $isOwner = $user->id === $team->user_id;
+
+        return [
+            'id' => $user->id,
+            'name' => $user->name,
+            'initials' => $this->getInitials($user->name),
+            'role' => $isOwner
+                ? 'Propriétaire'
+                : ($team->roles->firstWhere('id', $user->membership?->role_id)?->name ?? 'Membre'),
+            'is_current_user' => $user->id === $request->user()->id,
+            'color' => $this->getAvatarColor($user->name),
+        ];
+    }
+
+    private function getInitials(string $name): string
+    {
+        return collect(explode(' ', $name))
+            ->map(fn ($part) => strtoupper($part[0] ?? ''))
+            ->take(2)
+            ->join('');
+    }
+
+    private function getAvatarColor(string $name): string
+    {
+        $colors = ['purple', 'teal', 'coral', 'blue', 'amber'];
+        $index = abs(crc32($name)) % count($colors);
+
+        return $colors[$index];
     }
 }

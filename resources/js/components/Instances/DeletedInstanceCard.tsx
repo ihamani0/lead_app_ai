@@ -23,7 +23,11 @@ interface DeletedInstanceCardProps {
     canManage?: boolean;
 }
 
-export function DeletedInstanceCard({ instance, slug, canManage = true }: DeletedInstanceCardProps) {
+export function DeletedInstanceCard({
+    instance,
+    slug,
+    canManage = true,
+}: DeletedInstanceCardProps) {
     const { t } = useTranslation();
     const [deleteOpen, setDeleteOpen] = useState(false);
 

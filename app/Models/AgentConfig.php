@@ -55,4 +55,9 @@ class AgentConfig extends Model
     {
         return $this->hasMany(MediaAsset::class, 'agent_config_id');
     }
+
+    public function faqs()
+    {
+        return $this->hasMany(Faq::class, 'agent_config_id');
+    }
 }

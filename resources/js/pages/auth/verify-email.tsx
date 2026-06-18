@@ -22,7 +22,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
             <Head title="Email verification" />
 
             <div className="relative">
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
                     <div className="size-48 rounded-full bg-[#4C3BCF]/[0.04] blur-3xl" />
                 </div>
 
@@ -37,12 +37,13 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     )}
 
                     <div className="flex flex-col items-center gap-2">
-                        <div className="flex size-16 items-center justify-center rounded-2xl bg-linear-to-br from-[#4C3BCF] to-[#6B5AE0] shadow-lg shadow-[#4C3BCF]/20 ring-1 ring-[#4C3BCF]/10">
+                        <div className="flex size-16 items-center justify-center rounded-2xl bg-linear-to-br from-[#4C3BCF] to-[#6B5AE0] shadow-lg ring-1 shadow-[#4C3BCF]/20 ring-[#4C3BCF]/10">
                             <Mail className="size-7 text-white" />
                         </div>
                         <p className="mt-2 text-center text-sm leading-relaxed text-[#6B6B80]">
-                            We sent a verification link to your email. Check your
-                            inbox and click the link to activate your account.
+                            We sent a verification link to your email. Check
+                            your inbox and click the link to activate your
+                            account.
                         </p>
                     </div>
 

@@ -26,7 +26,20 @@
                     "status": "Status",
                     "actions": "Actions"
                 },
-                "actions": {
+    "sidebar": {
+        "dashboard": "Dashboard",
+        "tenantManagement": "TENANT MANAGEMENT",
+        "tenants": "Tenants",
+        "aiModels": "AI Models",
+        "plans": "Plans & Pricing",
+        "systemReports": "SYSTEM REPORTS",
+        "reports": "System Reports",
+        "tokenUsage": "Token Usage",
+        "administration": "ADMINISTRATION",
+        "allUsers": "All Users",
+        "systemSettings": "System Settings"
+    },
+    "actions": {
                     "view": "View",
                     "edit": "Edit",
                     "delete": "Delete"

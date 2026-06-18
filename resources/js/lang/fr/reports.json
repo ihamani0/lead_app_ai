@@ -5,7 +5,7 @@
         "leads": "Leads",
         "instances": "Instances",
         "agents": "Agents",
-        "media": "Médias"
+        "tokens": "Tokens"
     },
     "noData": "Aucune donnée disponible",
     "leads": {
@@ -19,14 +19,17 @@
             "last30DaysDesc": "30 derniers jours"
         },
         "charts": {
-            "byStatus": "Par Statut",
-            "byTemperature": "Par Température",
+            "aiQualification": "Statut Qualification IA",
+            "qualificationResult": "Résultat Qualification",
+            "treatmentStatus": "Statut Traitement",
             "leadsByInstance": "Leads par Instance",
-            "bySource": "Par Source"
+            "leadsOverTime": "Leads au Fil du Temps (30 Derniers Jours)"
         },
-        "unknown": "Inconnu",
-        "progress": {
-            "byStatus": "Par Statut"
+        "status": {
+            "qualified": "Qualifié",
+            "notQualified": "Non qualifié",
+            "treated": "Traité",
+            "notTreated": "Non traité"
         }
     },
     "instances": {
@@ -36,13 +39,13 @@
             "uptime": "% de disponibilité",
             "disconnected": "Déconnecté"
         },
-        "charts": {
-            "instanceStatus": "État de l'Instance",
-            "leadsPerInstance": "Leads par Instance"
-        },
-        "details": {
-            "leadsPerInstance": "Leads par Instance",
-            "description": "Nombre de leads capturés par chaque instance WhatsApp"
+        "table": {
+            "title": "Détails des Instances",
+            "name": "Nom",
+            "phone": "Téléphone",
+            "status": "État",
+            "leads": "Leads",
+            "connectedAt": "Connecté le"
         },
         "noInstances": "Aucune instance trouvée"
     },
@@ -50,10 +53,13 @@
         "summary": {
             "totalAgents": "Total des Agents",
             "activeAgents": "Agents Actifs",
-            "inactiveAgents": "Agents Inactifs"
+            "inactiveAgents": "Agents Inactifs",
+            "totalTokens": "Total des Tokens",
+            "allTimeTokens": "Tout le temps"
         },
         "charts": {
-            "agentStatus": "État de l'Agent"
+            "agentStatus": "État de l'Agent",
+            "tokenUsage": "Utilisation des Tokens par Agent"
         },
         "list": {
             "allAgents": "Tous les Agents"
@@ -63,16 +69,37 @@
         "inactive": "Inactif",
         "noAgents": "Aucun agent configuré"
     },
-    "media": {
+    "tokens": {
         "summary": {
-            "totalFiles": "Total des Fichiers",
-            "totalStorage": "Stockage Total",
-            "averageFileSize": "Taille Moyenne des Fichiers"
+            "totalTokens": "Total des Tokens",
+            "totalCost": "Coût Total",
+            "inputTokens": "Tokens d'Entrée",
+            "outputTokens": "Tokens de Sortie"
         },
         "charts": {
-            "byFileType": "Par Type de Fichier",
-            "fileTypeDistribution": "Distribution des Types de Fichiers"
+            "tokenUsage": "Utilisation des Tokens"
         },
-        "noMedia": "Aucun fichier média trouvé"
+        "toggle": {
+            "daily": "Quotidien",
+            "monthly": "Mensuel"
+        },
+        "legend": {
+            "inputTokens": "Tokens d'Entrée",
+            "outputTokens": "Tokens de Sortie"
+        },
+        "monthly": {
+            "title": "Résumé Mensuel"
+        },
+        "table": {
+            "month": "Mois",
+            "inputTokens": "Tokens d'Entrée",
+            "outputTokens": "Tokens de Sortie",
+            "totalTokens": "Total des Tokens",
+            "cost": "Coût",
+            "transactions": "Transactions"
+        },
+        "byAgent": {
+            "title": "Utilisation par Agent"
+        }
     }
 }

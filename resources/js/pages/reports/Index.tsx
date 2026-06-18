@@ -1,5 +1,5 @@
 import { Head, router } from '@inertiajs/react';
-import { Users, Phone, Bot, Image, ChartArea } from 'lucide-react';
+import { Users, Phone, Bot, Coins, ChartArea } from 'lucide-react';
 import { useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
@@ -12,13 +12,13 @@ import type {
     LeadsReportData,
     InstancesReportData,
     AgentsReportData,
-    MediaReportData,
+    TokenTransactionsReportData,
 } from '@/types/reports';
 import {
     LeadsReport,
     InstancesReport,
     AgentsReport,
-    MediaReport,
+    TokenTransactionsReport,
 } from './partials';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -36,7 +36,7 @@ type ReportData = {
     leads?: LeadsReportData;
     instances?: InstancesReportData;
     agents?: AgentsReportData;
-    media?: MediaReportData;
+    tokens?: TokenTransactionsReportData;
 };
 
 type ReportsIndexProps = {
@@ -65,34 +65,22 @@ export default function ReportsIndex({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('reports.title')} />
             <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
-                <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-emerald-500 via-green-600 to-teal-700 p-4 shadow-xl ring-1 ring-emerald-400/30 sm:p-5 md:p-6 dark:from-emerald-700 
-                dark:via-green-800 dark:to-teal-800
-                    dark:ring-emerald-400/30">
-
-                        <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            {/* LEFT */}
-                            <div className="space-y-1">
-                                <div className="flex items-center gap-2">
-                                    
-                                    <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-md">
-                                    <ChartArea className="h-5 w-5 text-white sm:h-6 sm:w-6" />
-                                    </div>
-
-                                    <h1 className="text-lg font-semibold text-white sm:text-xl md:text-3xl">
+                
+                <div className="mb-6 rounded-xl bg-card p-4 shadow-sm sm:p-5">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-3">
+                            <ChartArea className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
+                            <div>
+                                <h1 className="text-lg font-semibold sm:text-xl md:text-2xl">
                                     {t('reports.title')}
-                                    </h1>
-                                </div>
-
-                                <p className="text-xs text-white/80 sm:text-sm md:text-base max-w-xs sm:max-w-md">
-                                {t('reports.description')}
+                                </h1>
+                                <p className="text-xs text-muted-foreground sm:text-sm">
+                                    {t('reports.description')}
                                 </p>
                             </div>
-                            {/* Right */}
-                                            
-                            
                         </div>
                     </div>
-
+                </div>
 
                 <Tabs value={activeTab} onValueChange={handleTabChange}>
                     <TabsList className="grid w-full grid-cols-4">
@@ -118,11 +106,11 @@ export default function ReportsIndex({
                             {t('reports.tabs.agents')}
                         </TabsTrigger>
                         <TabsTrigger
-                            value="media"
+                            value="tokens"
                             className="flex items-center gap-2"
                         >
-                            <Image className="h-4 w-4" />
-                            {t('reports.tabs.media')}
+                            <Coins className="h-4 w-4" />
+                            {t('reports.tabs.tokens')}
                         </TabsTrigger>
                     </TabsList>
 
@@ -138,8 +126,8 @@ export default function ReportsIndex({
                         <AgentsReport data={reportData.agents ?? null} />
                     </TabsContent>
 
-                    <TabsContent value="media" className="mt-6">
-                        <MediaReport data={reportData.media ?? null} />
+                    <TabsContent value="tokens" className="mt-6">
+                        <TokenTransactionsReport data={reportData.tokens ?? null} />
                     </TabsContent>
                 </Tabs>
             </div>

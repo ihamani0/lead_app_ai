@@ -1,5 +1,5 @@
 // components/ConnectingStatus.tsx
-import { Loader2, RefreshCw,QrCode } from 'lucide-react';
+import { Loader2, RefreshCw, QrCode } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';

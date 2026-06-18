@@ -1,0 +1,170 @@
+{
+    "title": "Library",
+    "description": "Manage your knowledge base documents, FAQs, WhatsApp numbers, and media assets.",
+    "tabs": {
+        "documents": "Documents",
+        "faq": "FAQ",
+        "whatsapp": "WhatsApp Numbers",
+        "media": "Media"
+    },
+    "documents": {
+        "kpi": {
+            "documents": "Documents",
+            "documentsTrend": "+12 this month",
+            "words": "Words Analyzed",
+            "size": "Database Size"
+        },
+        "filters": {
+            "search": "Search document...",
+            "type": "Type",
+            "typeAll": "All types",
+            "status": "Status",
+            "statusAll": "All status",
+            "sort": "Sort by",
+            "sortRecent": "Most recent",
+            "sortOldest": "Oldest",
+            "sortName": "Name"
+        },
+        "table": {
+            "document": "Document",
+            "type": "Type",
+            "folder": "Folder",
+            "status": "Status",
+            "usedIn": "Used in",
+            "addedOn": "Added on",
+            "actions": "Actions"
+        },
+        "status": {
+            "analyzed": "Analyzed",
+            "processing": "Processing",
+            "failed": "Failed"
+        },
+        "actions": {
+            "view": "View",
+            "rename": "Rename",
+            "move": "Move",
+            "delete": "Delete"
+        },
+        "quality": {
+            "title": "Knowledge Quality",
+            "excellent": "Excellent",
+            "description": "Your knowledge base is well-structured and up to date.",
+            "recommendations": "View recommendations →"
+        },
+        "pagination": {
+            "showing": "Showing 1 to {from} of {total} documents",
+            "perPage": "/ page"
+        }
+    },
+    "faq": {
+        "title": "Frequently Asked Questions",
+        "addQuestion": "Add a question",
+        "filters": {
+            "search": "Search question...",
+            "category": "Category",
+            "categoryAll": "All categories",
+            "status": "Status",
+            "statusAll": "All status"
+        },
+        "table": {
+            "question": "Question",
+            "category": "Category",
+            "answers": "Answers",
+            "used": "Used",
+            "status": "Status",
+            "actions": "Actions",
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "form": {
+            "question": "Question",
+            "answer": "AI Answer",
+            "category": "Category",
+            "categoryPlaceholder": "Select a category",
+            "enable": "Enable this question",
+            "save": "Save",
+            "update": "Update",
+            "cancel": "Cancel"
+        },
+        "categories": {
+            "price": "Price",
+            "location": "Location",
+            "process": "Process",
+            "finance": "Finance",
+            "technical": "Technical",
+            "general": "General"
+        }
+    },
+    "whatsapp": {
+        "title": "WhatsApp Numbers",
+        "description": "Manage WhatsApp numbers connected to your AI agents.",
+        "addNumber": "Add a number",
+        "emptyTitle": "Add a WhatsApp Number",
+        "emptyAction": "Connect",
+        "stats": {
+            "connected": "Connected",
+            "total": "Total",
+            "messagesToday": "Messages today",
+            "availability": "Availability"
+        },
+        "status": {
+            "connected": "Connected",
+            "connecting": "Connecting",
+            "disconnected": "Disconnected"
+        },
+        "instanceId": "Instance ID",
+        "linkedAgent": "Linked Agent",
+        "messagesToday": "Messages today",
+        "lastActivity": "Last activity",
+        "connectionQuality": "Connection quality",
+        "excellent": "Excellent",
+        "good": "Good",
+        "poor": "Poor",
+        "actions": {
+            "viewDetails": "View details",
+            "reconnect": "Reconnect",
+            "rename": "Rename",
+            "disconnect": "Disconnect",
+            "delete": "Delete"
+        },
+        "upcoming": {
+            "title": "Upcoming Channels",
+            "notifyMe": "Notify me"
+        }
+    },
+    "media": {
+        "title": "Media",
+        "description": "Organize and manage images, videos, audio and documents used by your AI.",
+        "importMedia": "Import media",
+        "addMedia": "Add media",
+        "filters": {
+            "search": "Search media...",
+            "type": "Type",
+            "typeAll": "All types",
+            "category": "Category",
+            "categoryAll": "All categories",
+            "filters": "Filters",
+            "sort": "Sort by",
+            "sortRecent": "Most recent",
+            "sortOldest": "Oldest"
+        },
+        "count": "All media ({count})",
+        "types": {
+            "image": "Image",
+            "video": "Video",
+            "audio": "Audio",
+            "pdf": "PDF",
+            "document": "Document"
+        },
+        "categories": {
+            "residences": "Residences",
+            "plans": "Plans",
+            "visits": "Visits",
+            "brochures": "Brochures",
+            "location": "Location",
+            "logos": "Logos",
+            "audio": "Audio",
+            "interiors": "Interiors"
+        }
+    }
+}

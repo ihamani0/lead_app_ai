@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SummaryCard } from '@/components/ui/SummaryCard';
 import { useTranslation } from '@/hooks/use-translation';
-import AppLayout from '@/layouts/app-layout';
+import SuperAdminLayout from '@/layouts/super-admin-layout';
 import admin from '@/routes/admin';
 
 type DashboardProps = SharedPageProps & {
@@ -65,7 +65,7 @@ export default function Dashboard({
     };
 
     return (
-        <AppLayout>
+        <SuperAdminLayout>
             <div className="container mx-auto py-6">
                 <h1 className="mb-6 text-2xl font-bold">
                     Super Admin Dashboard
@@ -238,6 +238,6 @@ export default function Dashboard({
                     </Card>
                 </div>
             </div>
-        </AppLayout>
+        </SuperAdminLayout>
     );
 }

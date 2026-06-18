@@ -25,7 +25,6 @@ class Tenant extends Authenticatable
         'settings',
         'credit_millicents',
         'dollar_limit',
-        'is_low_credit',
         'llm_model_id',
     ];
 
@@ -34,7 +33,6 @@ class Tenant extends Authenticatable
         'is_active' => 'boolean',
         'credit_millicents' => 'integer',
         'dollar_limit' => 'integer',
-        'is_low_credit' => 'boolean',
     ];
 
     public function users()
@@ -62,13 +60,18 @@ class Tenant extends Authenticatable
         return $this->belongsTo(LlmModel::class, 'llm_model_id');
     }
 
-    public function isBelowThreshold(): bool
+    public function getCreditInDollarsAttribute(): float
+    {
+        return $this->credit_millicents / 100_000;
+    }
+
+    public function getIsLowCreditAttribute(): bool
     {
         return $this->credit_millicents < (config('services.token.threshold', 10) * 1000);
     }
 
-    public function getCreditInDollarsAttribute(): float
+    public function isBelowThreshold(): bool
     {
-        return $this->credit_millicents / 100_000;
+        return $this->is_low_credit;
     }
 }

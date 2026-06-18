@@ -26,7 +26,20 @@
                     "status": "Statut",
                     "actions": "Actions"
                 },
-                "actions": {
+    "sidebar": {
+        "dashboard": "Tableau de bord",
+        "tenantManagement": "GESTION DES TENANTS",
+        "tenants": "Tenants",
+        "aiModels": "Modèles IA",
+        "plans": "Plans & Tarifs",
+        "systemReports": "RAPPORTS SYSTÈME",
+        "reports": "Rapports système",
+        "tokenUsage": "Utilisation des tokens",
+        "administration": "ADMINISTRATION",
+        "allUsers": "Tous les utilisateurs",
+        "systemSettings": "Paramètres système"
+    },
+    "actions": {
                     "view": "Voir",
                     "edit": "Modifier",
                     "delete": "Supprimer"

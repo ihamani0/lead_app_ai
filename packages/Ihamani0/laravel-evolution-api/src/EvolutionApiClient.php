@@ -4,8 +4,11 @@ namespace Ihamani0\LaravelEvolutionApi;
 
 use Ihamani0\LaravelEvolutionApi\Exceptions\EvolutionApiException;
 use Ihamani0\LaravelEvolutionApi\Services\InstanceService;
+use Ihamani0\LaravelEvolutionApi\Services\MessageService;
 use Ihamani0\LaravelEvolutionApi\Services\N8NService;
+use Ihamani0\LaravelEvolutionApi\Services\SendService;
 use Ihamani0\LaravelEvolutionApi\Services\SettingsService;
+use Ihamani0\LaravelEvolutionApi\Services\UserService;
 use Ihamani0\LaravelEvolutionApi\Services\WebsocketService;
 use Illuminate\Support\Facades\Http;
 
@@ -16,6 +19,8 @@ class EvolutionApiClient
     protected string $admin_key;
 
     protected ?string $instance;
+
+    protected ?string $instanceToken = null;
 
     public function __construct(string $baseUrl, string $adminKey, ?string $instance = null)
     {
@@ -38,11 +43,28 @@ class EvolutionApiClient
         return $this->instance;
     }
 
-    public function setInstance(string $instance): static
+    /**
+     * Set the active instance and optionally its authentication token.
+     *
+     * @param  string  $instance  The instance name (used in URLs and as fallback token).
+     * @param  string|null  $token  The instance-specific API token. Falls back to $instance if null.
+     * @return $this
+     */
+    public function setInstance(string $instance, ?string $token = null): static
     {
         $this->instance = $instance;
+        $this->instanceToken = $token;
 
         return $this;
+    }
+
+    /**
+     * Get the instance-specific API token.
+     * Falls back to the instance name if no token was set.
+     */
+    public function getToken(): string
+    {
+        return $this->instanceToken ?? $this->getInstance();
     }
 
     // ----------------------------
@@ -126,5 +148,20 @@ class EvolutionApiClient
     public function n8n(): N8NService
     {
         return new N8NService($this);
+    }
+
+    public function message(): MessageService
+    {
+        return new MessageService($this);
+    }
+
+    public function user(): UserService
+    {
+        return new UserService($this);
+    }
+
+    public function send(): SendService
+    {
+        return new SendService($this);
     }
 }

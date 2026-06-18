@@ -44,6 +44,7 @@ return [
 
     'whatsapp' => [
         'webhook_url' => env('WHATSAPP_WEBHOOK_URL'),
+        'test_webhook_url' => env('TEST_WEBHOOK_URL'),
     ],
 
     'document' => [

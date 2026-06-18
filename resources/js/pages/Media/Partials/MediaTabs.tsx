@@ -13,7 +13,12 @@ interface MediaTabsProps {
     canManage?: boolean;
 }
 
-export function MediaTabs({ assets, onDelete, onSelect, canManage = true }: MediaTabsProps) {
+export function MediaTabs({
+    assets,
+    onDelete,
+    onSelect,
+    canManage = true,
+}: MediaTabsProps) {
     const [activeTab, setActiveTab] = useState('all');
 
     const images = assets.filter((a) => a.type === 'image');
@@ -28,7 +33,6 @@ export function MediaTabs({ assets, onDelete, onSelect, canManage = true }: Medi
             icon: ImageIcon,
         },
         { value: 'videos', label: 'Videos', count: videos.length, icon: Video },
-
     ];
 
     return (

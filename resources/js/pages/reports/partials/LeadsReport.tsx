@@ -12,6 +12,8 @@ import {
     Cell,
     BarChart,
     Bar,
+    AreaChart,
+    Area,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -19,12 +21,8 @@ import {
     ResponsiveContainer,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { useTranslation } from '@/hooks/use-translation';
-import {
-    calculatePercentage,
-    getChartColor,
-} from '@/lib/utils';
+import { getChartColor } from '@/lib/utils';
 import type { LeadsReportData } from '@/types/reports';
 import { SummaryCard } from './SummaryCard';
 
@@ -67,15 +65,16 @@ export function LeadsReport({ data }: LeadsReportProps) {
         byQualificationResult,
         byTreatmentStatus,
         byInstance,
+        leadsOverTime,
     } = data;
 
     const aiQualData = Object.entries(byAiQualification).map(
         ([name, value]) => ({
             name:
                 name === 'QUALIFIE'
-                    ? 'Qualifié'
+                    ? t('reports.leads.status.qualified')
                     : name === 'NON_QUALIFIE'
-                      ? 'Non qualifié'
+                      ? t('reports.leads.status.notQualified')
                       : name,
             value,
             color: aiQualificationColors[name] || getChartColor(1),
@@ -94,9 +93,9 @@ export function LeadsReport({ data }: LeadsReportProps) {
         ([name, value]) => ({
             name:
                 name === 'TRAITE'
-                    ? 'Traité'
+                    ? t('reports.leads.status.treated')
                     : name === 'NON_TRAITE'
-                      ? 'Non traité'
+                      ? t('reports.leads.status.notTreated')
                       : name,
             value,
             color: treatmentStatusColors[name] || getChartColor(1),
@@ -107,19 +106,6 @@ export function LeadsReport({ data }: LeadsReportProps) {
         name,
         value,
     }));
-
-    const totalAiQual = Object.values(byAiQualification).reduce(
-        (acc, val) => acc + val,
-        0,
-    );
-    const totalQualResult = Object.values(byQualificationResult).reduce(
-        (acc, val) => acc + val,
-        0,
-    );
-    const totalTreatment = Object.values(byTreatmentStatus).reduce(
-        (acc, val) => acc + val,
-        0,
-    );
 
     return (
         <div className="space-y-6">
@@ -154,6 +140,40 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 />
             </div>
 
+            {/* Leads Over Time - Area Chart */}
+            {leadsOverTime.length > 0 && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="text-sm md:text-base">
+                            {t('reports.leads.charts.leadsOverTime')}
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <AreaChart data={leadsOverTime}>
+                                <CartesianGrid
+                                    strokeDasharray="3 3"
+                                    className="stroke-muted"
+                                />
+                                <XAxis
+                                    dataKey="date"
+                                    tick={{ fontSize: 12 }}
+                                />
+                                <YAxis />
+                                <Tooltip />
+                                <Area
+                                    type="monotone"
+                                    dataKey="count"
+                                    stroke="#f97316"
+                                    fill="#fed7aa"
+                                    strokeWidth={2}
+                                />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </CardContent>
+                </Card>
+            )}
+
             {/* Charts Row - 3 Pie Charts */}
             <div className="grid gap-6 md:grid-cols-3">
                 {/* Pie Chart - AI Qualification Status */}
@@ -161,7 +181,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-sm md:text-base">
                             <Flame className="h-4 w-4 text-purple-500" />
-                            Statut Qualification IA
+                            {t('reports.leads.charts.aiQualification')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -197,7 +217,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                             </ResponsiveContainer>
                         ) : (
                             <div className="flex h-48 items-center justify-center text-muted-foreground">
-                                Aucune donnée
+                                {t('reports.noData')}
                             </div>
                         )}
                     </CardContent>
@@ -208,7 +228,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-sm md:text-base">
                             <Flame className="h-4 w-4 text-red-500" />
-                            Résultat Qualification
+                            {t('reports.leads.charts.qualificationResult')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -244,7 +264,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                             </ResponsiveContainer>
                         ) : (
                             <div className="flex h-48 items-center justify-center text-muted-foreground">
-                                Aucune donnée
+                                {t('reports.noData')}
                             </div>
                         )}
                     </CardContent>
@@ -255,7 +275,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2 text-sm md:text-base">
                             <CheckCircle className="h-4 w-4 text-emerald-500" />
-                            Statut Traitement
+                            {t('reports.leads.charts.treatmentStatus')}
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
@@ -291,7 +311,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                             </ResponsiveContainer>
                         ) : (
                             <div className="flex h-48 items-center justify-center text-muted-foreground">
-                                Aucune donnée
+                                {t('reports.noData')}
                             </div>
                         )}
                     </CardContent>
@@ -332,156 +352,6 @@ export function LeadsReport({ data }: LeadsReportProps) {
                 </Card>
             )}
 
-            {/* Detail Cards Grid - Progress Bars */}
-            <div className="grid gap-6 md:grid-cols-3">
-                {/* AI Qualification Progress */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm md:text-base">
-                            Qualification IA
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-3">
-                            {Object.entries(byAiQualification).map(
-                                ([status, count]) => (
-                                    <div
-                                        key={status}
-                                        className="flex items-center justify-between"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <div
-                                                className={`h-3 w-3 rounded-full ${
-                                                    status === 'QUALIFIE'
-                                                        ? 'bg-green-500'
-                                                        : 'bg-slate-400'
-                                                }`}
-                                            />
-                                            <span className="font-medium">
-                                                {status === 'QUALIFIE'
-                                                    ? 'Qualifié'
-                                                    : status === 'NON_QUALIFIE'
-                                                      ? 'Non qualifié'
-                                                      : status}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <Progress
-                                                value={calculatePercentage(
-                                                    count,
-                                                    totalAiQual,
-                                                )}
-                                                className="w-24"
-                                            />
-                                            <span className="w-12 text-right">
-                                                {count}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ),
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Qualification Result Progress */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm md:text-base">
-                            Résultat Qualification
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-3">
-                            {Object.entries(byQualificationResult).map(
-                                ([status, count]) => (
-                                    <div
-                                        key={status}
-                                        className="flex items-center justify-between"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <div
-                                                className={`h-3 w-3 rounded-full ${
-                                                    status === 'HOT'
-                                                        ? 'bg-red-500'
-                                                        : status === 'WARM'
-                                                          ? 'bg-orange-500'
-                                                          : 'bg-blue-500'
-                                                }`}
-                                            />
-                                            <span className="font-medium">
-                                                {status}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <Progress
-                                                value={calculatePercentage(
-                                                    count,
-                                                    totalQualResult,
-                                                )}
-                                                className="w-24"
-                                            />
-                                            <span className="w-12 text-right">
-                                                {count}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ),
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Treatment Status Progress */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm md:text-base">
-                            Statut Traitement
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-3">
-                            {Object.entries(byTreatmentStatus).map(
-                                ([status, count]) => (
-                                    <div
-                                        key={status}
-                                        className="flex items-center justify-between"
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <div
-                                                className={`h-3 w-3 rounded-full ${
-                                                    status === 'TRAITE'
-                                                        ? 'bg-emerald-500'
-                                                        : 'bg-amber-500'
-                                                }`}
-                                            />
-                                            <span className="font-medium">
-                                                {status === 'TRAITE'
-                                                    ? 'Traité'
-                                                    : status === 'NON_TRAITE'
-                                                      ? 'Non traité'
-                                                      : status}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <Progress
-                                                value={calculatePercentage(
-                                                    count,
-                                                    totalTreatment,
-                                                )}
-                                                className="w-24"
-                                            />
-                                            <span className="w-12 text-right">
-                                                {count}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ),
-                            )}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
         </div>
     );
 }

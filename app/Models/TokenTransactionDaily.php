@@ -12,7 +12,9 @@ class TokenTransactionDaily extends Model
     protected $fillable = [
         'tenant_id',
         'instance_id',
+        'agent_config_id',
         'llm_model_id',
+        'team_id',
         'date',
         'input_tokens_used',
         'output_tokens_used',
@@ -44,6 +46,11 @@ class TokenTransactionDaily extends Model
     public function instance(): BelongsTo
     {
         return $this->belongsTo(EvolutionInstance::class, 'instance_id');
+    }
+
+    public function agentConfig(): BelongsTo
+    {
+        return $this->belongsTo(AgentConfig::class);
     }
 
     public function llmModel(): BelongsTo

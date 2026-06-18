@@ -269,7 +269,7 @@ class N8NService extends BaseService
         return $this->client->post("n8n/changeStatus/{$this->client->getInstance()}", [
             'remoteJid' => $remoteJid,
             'status' => $status,
-        ], $this->client->getInstance());
+        ], $this->client->getToken());
     }
 
     /**
@@ -277,7 +277,7 @@ class N8NService extends BaseService
      */
     public function fetchSessions(string $n8nId): array
     {
-        return $this->client->get("n8n/fetchSessions/{$n8nId}/{$this->client->getInstance()}", $this->client->getInstance());
+        return $this->client->get("n8n/fetchSessions/{$n8nId}/{$this->client->getInstance()}", $this->client->getToken());
     }
 
     /**
@@ -285,17 +285,17 @@ class N8NService extends BaseService
      */
     public function allSessions(): array
     {
-        return $this->client->get("n8n/allSessions/{$this->client->getInstance()}", $this->client->getInstance());
+        return $this->client->get("n8n/allSessions/{$this->client->getInstance()}", $this->client->getToken());
     }
 
     /**
      * Add or remove a JID from the ignore list.
      */
-    public function ignoreJid(string $remoteJid, string $action = 'add'): array
+    public function ignoreJid(string $n8nId, string $remoteJid, string $action = 'add'): array
     {
-        return $this->client->post("n8n/ignoreJid/{$this->client->getInstance()}", [
+        return $this->client->post("n8n/ignoreJid/{$n8nId}/{$this->client->getInstance()}", [
             'remoteJid' => $remoteJid,
             'action' => $action,
-        ], $this->client->getInstance());
+        ], $this->client->getToken());
     }
 }

@@ -27,6 +27,10 @@ export interface EvolutionInstance {
     connected_at: string | null;
     created_at: string;
     updated_at: string;
+
+    leads_count?: number;
+    messages_today?: number;
+    connection_quality?: string;
 }
 
 // Optional: If you pass paginated data from Laravel
@@ -143,7 +147,7 @@ export interface Lead {
     notes: string | null;
     qualified_at: string | null;
     last_activity_at: string | null;
-    recent_messages: Array<{
+    recent_messages?: Array<{
         direction: 'client' | 'ai';
         message: string;
         timestamp: string;
@@ -154,6 +158,43 @@ export interface Lead {
     ai_summary: string;
     custom_data: string;
     instance?: EvolutionInstance;
+}
+
+export interface LeadMessage {
+    id: string;
+    lead_id: string;
+    remote_id: string | null;
+    direction: 'from_lead' | 'from_agent';
+    content: string | null;
+    type: 'text' | 'image' | 'video' | 'audio' | 'document';
+    status: 'sent' | 'delivered' | 'read' | 'failed';
+    metadata: Record<string, unknown> | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface BotSession {
+    id: string;
+    sessionId: string;
+    remoteJid: string;
+    pushName: string;
+    status: 'opened' | 'paused' | 'closed';
+    awaitUser: boolean;
+    context: string;
+    botId: string;
+    instanceId: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface SimilarLead {
+    id: string;
+    name: string;
+    phone: string;
+    status: LeadStatus;
+    qualification_result: QualificationResult | null;
+    qualification_score: number | null;
+    last_activity_at: string | null;
 }
 
 export interface Tenant {

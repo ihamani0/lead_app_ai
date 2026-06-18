@@ -16,7 +16,7 @@ import { UserMenuContent } from '@/components/user-menu-content';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 export function NavUser() {
-    const { auth } = usePage().props;
+    const { auth } = usePage<SharedPageProps>().props;
     const { state } = useSidebar();
     const isMobile = useIsMobile();
 
@@ -26,12 +26,12 @@ export function NavUser() {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
-                        size="lg"
-                        className="group"
-                        data-test="sidebar-menu-button"
+                            size="lg"
+                            className="group"
+                            data-test="sidebar-menu-button"
                         >
-                        <UserInfo user={auth.user} />
-                        <ChevronsUpDown className="ml-auto size-4" />
+                            <UserInfo user={auth.user} />
+                            <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent

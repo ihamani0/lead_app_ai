@@ -64,10 +64,9 @@ export default function InstanceIndex({
                 <div className="space-y-5">
                     {/* Header - Orange/Amber Gradient */}
                     <div
-                        className="relative mb-6 overflow-hidden rounded-2xl "data-tour="instances-header"
+                        className="relative mb-6 overflow-hidden rounded-2xl"
+                        data-tour="instances-header"
                     >
-                        
-
                         {/* Glow (smaller + cleaner) */}
                         <div className="absolute -top-8 -right-8 h-16 w-16 rounded-full bg-emerald-300/20 blur-2xl" />
                         <div className="absolute -bottom-8 -left-8 h-16 w-16 rounded-full bg-green-300/20 blur-2xl" />
@@ -101,7 +100,10 @@ export default function InstanceIndex({
                                 </div>
                                 {canCreate && (
                                     <div data-tour="create-instance">
-                                            <CreateInstanceDialog t={t} slug={activeWorkspace?.slug} />
+                                        <CreateInstanceDialog
+                                            t={t}
+                                            slug={activeWorkspace?.slug}
+                                        />
                                     </div>
                                 )}
                             </div>
@@ -183,7 +185,10 @@ export default function InstanceIndex({
                                     </p>
                                     {canCreate && (
                                         <div className="mt-8 flex justify-center">
-                                            <CreateInstanceDialog t={t} slug={activeWorkspace?.slug} />
+                                            <CreateInstanceDialog
+                                                t={t}
+                                                slug={activeWorkspace?.slug}
+                                            />
                                         </div>
                                     )}
                                 </div>

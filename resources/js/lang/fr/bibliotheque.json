@@ -1,0 +1,170 @@
+{
+    "title": "Bibliothèque",
+    "description": "Gérez vos documents de base de connaissances, FAQ, numéros WhatsApp et ressources médias.",
+    "tabs": {
+        "documents": "Documents",
+        "faq": "Questions fréquentes",
+        "whatsapp": "Numéros WhatsApp",
+        "media": "Médias"
+    },
+    "documents": {
+        "kpi": {
+            "documents": "Documents",
+            "documentsTrend": "+12 ce mois",
+            "words": "Mots analysés",
+            "size": "Taille de la base"
+        },
+        "filters": {
+            "search": "Rechercher un document...",
+            "type": "Type",
+            "typeAll": "Tous les types",
+            "status": "Statut",
+            "statusAll": "Tous les statuts",
+            "sort": "Trier par",
+            "sortRecent": "Plus récent",
+            "sortOldest": "Plus ancien",
+            "sortName": "Nom"
+        },
+        "table": {
+            "document": "Document",
+            "type": "Type",
+            "folder": "Dossier",
+            "status": "Statut",
+            "usedIn": "Utilisé dans",
+            "addedOn": "Ajouté le",
+            "actions": "Actions"
+        },
+        "status": {
+            "analyzed": "Analysé",
+            "processing": "En cours",
+            "failed": "Échec"
+        },
+        "actions": {
+            "view": "Voir",
+            "rename": "Renommer",
+            "move": "Déplacer",
+            "delete": "Supprimer"
+        },
+        "quality": {
+            "title": "Qualité des connaissances",
+            "excellent": "Excellente",
+            "description": "Votre base de connaissances est bien structurée et à jour.",
+            "recommendations": "Voir les recommandations →"
+        },
+        "pagination": {
+            "showing": "Affichage de 1 à {from} sur {total} documents",
+            "perPage": "/ page"
+        }
+    },
+    "faq": {
+        "title": "Questions fréquentes",
+        "addQuestion": "Ajouter une question",
+        "filters": {
+            "search": "Rechercher une question...",
+            "category": "Catégorie",
+            "categoryAll": "Toutes les catégories",
+            "status": "Statut",
+            "statusAll": "Tous les statuts"
+        },
+        "table": {
+            "question": "Question",
+            "category": "Catégorie",
+            "answers": "Réponses",
+            "used": "Utilisée",
+            "status": "Statut",
+            "actions": "Actions",
+            "active": "Active",
+            "inactive": "Inactive"
+        },
+        "form": {
+            "question": "Question",
+            "answer": "Réponse de l'IA",
+            "category": "Catégorie",
+            "categoryPlaceholder": "Sélectionnez une catégorie",
+            "enable": "Activer cette question",
+            "save": "Enregistrer",
+            "update": "Mettre à jour",
+            "cancel": "Annuler"
+        },
+        "categories": {
+            "price": "Prix",
+            "location": "Localisation",
+            "process": "Processus",
+            "finance": "Finance",
+            "technical": "Technique",
+            "general": "Général"
+        }
+    },
+    "whatsapp": {
+        "title": "Numéros WhatsApp",
+        "description": "Gérez les numéros WhatsApp connectés à vos agents IA.",
+        "addNumber": "Ajouter un numéro",
+        "emptyTitle": "Ajouter un numéro WhatsApp",
+        "emptyAction": "Connecter",
+        "stats": {
+            "connected": "Connectés",
+            "total": "Total",
+            "messagesToday": "Messages aujourd'hui",
+            "availability": "Disponibilité"
+        },
+        "status": {
+            "connected": "Connecté",
+            "connecting": "Connexion",
+            "disconnected": "Déconnecté"
+        },
+        "instanceId": "ID d'instance",
+        "linkedAgent": "Agent lié",
+        "messagesToday": "Messages aujourd'hui",
+        "lastActivity": "Dernière activité",
+        "connectionQuality": "Qualité connexion",
+        "excellent": "Excellente",
+        "good": "Bonne",
+        "poor": "Faible",
+        "actions": {
+            "viewDetails": "Voir les détails",
+            "reconnect": "Reconnecter",
+            "rename": "Renommer",
+            "disconnect": "Déconnecter",
+            "delete": "Supprimer"
+        },
+        "upcoming": {
+            "title": "Prochains canaux",
+            "notifyMe": "Me prévenir"
+        }
+    },
+    "media": {
+        "title": "Médias",
+        "description": "Organisez et gérez les images, vidéos, audios et documents utilisés par votre IA.",
+        "importMedia": "Importer un média",
+        "addMedia": "Ajouter un média",
+        "filters": {
+            "search": "Rechercher un média...",
+            "type": "Type",
+            "typeAll": "Tous les types",
+            "category": "Catégorie",
+            "categoryAll": "Toutes les catégories",
+            "filters": "Filtres",
+            "sort": "Trier par",
+            "sortRecent": "Plus récent",
+            "sortOldest": "Plus ancien"
+        },
+        "count": "Tous les médias ({count})",
+        "types": {
+            "image": "Image",
+            "video": "Vidéo",
+            "audio": "Audio",
+            "pdf": "PDF",
+            "document": "Document"
+        },
+        "categories": {
+            "residences": "Résidences",
+            "plans": "Plans",
+            "visits": "Visites",
+            "brochures": "Brochures",
+            "location": "Localisation",
+            "logos": "Logos",
+            "audio": "Audio",
+            "interiors": "Intérieurs"
+        }
+    }
+}

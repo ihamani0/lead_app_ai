@@ -114,18 +114,6 @@ class EvolutionInstance extends Model
     // ACTIONS
     // ==========================================
 
-    /**
-     * Permanent delete (only if no leads attached)
-     */
-    public function forceDeleteSafely(): bool
-    {
-        if ($this->leads()->exists()) {
-            throw new \Exception('Cannot delete: instance has associated leads');
-        }
-
-        return parent::forceDelete();
-    }
-
     public function canConnect(): bool
     {
         return ! $this->trashed()

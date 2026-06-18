@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\InstanceConnectionUpdated;
-use App\Events\LeadMessageUpdated;
 use App\Events\QrCodeUpdated;
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessLeadMessage;
+use App\Jobs\ProcessMessageReceipt;
 use App\Models\EvolutionInstance;
-use App\Models\Lead;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -34,15 +34,11 @@ class EvolutionWebhookController extends Controller
 
         $instanceName = $instance->instance_name;
 
-        /*
-        |--------------------------------------------------------------------------
-        | QR CODE
-        |--------------------------------------------------------------------------
-        */
         if ($event === 'QRCode') {
             $data = $payload['data'] ?? [];
             $qrCode = $data['code'] ?? null;
 
+            $instance->update(['qr_code' => $qrCode]);
             broadcast(new QrCodeUpdated($instanceName, $qrCode));
 
             if ($qrCode) {
@@ -52,16 +48,9 @@ class EvolutionWebhookController extends Controller
             return response()->json(['status' => 'success']);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | CONNECTION EVENTS
-        |--------------------------------------------------------------------------
-        */
         if ($event === 'Connected') {
             $data = $payload['data'] ?? [];
-            $status = $data['status'] ?? 'open';
             $jid = $data['jid'] ?? null;
-            $pushName = $data['pushName'] ?? null;
 
             $phone = $jid ? explode(':', explode('@', $jid)[0])[0] : null;
 
@@ -69,6 +58,7 @@ class EvolutionWebhookController extends Controller
                 'status' => 'connected',
                 'phone_number' => $phone,
                 'connected_at' => now(),
+                'qr_code' => null,
             ]);
 
             broadcast(new InstanceConnectionUpdated($instance));
@@ -80,7 +70,6 @@ class EvolutionWebhookController extends Controller
         if ($event === 'PairSuccess') {
             $data = $payload['data'] ?? [];
             $jid = $data['jid'] ?? null;
-            $pushName = $data['pushName'] ?? '';
 
             $phone = $jid ? explode(':', explode('@', $jid)[0])[0] : null;
 
@@ -88,6 +77,7 @@ class EvolutionWebhookController extends Controller
                 'status' => 'connected',
                 'phone_number' => $phone,
                 'connected_at' => now(),
+                'qr_code' => null,
             ]);
 
             broadcast(new InstanceConnectionUpdated($instance));
@@ -97,14 +87,51 @@ class EvolutionWebhookController extends Controller
         }
 
         if ($event === 'LoggedOut') {
+            $data = $payload['data'] ?? [];
+            $reason = $data['Reason'] ?? $data['reason'] ?? '';
+
             $instance->update([
                 'status' => 'disconnected',
                 'phone_number' => null,
                 'connected_at' => null,
+                'qr_code' => null,
+                'settings' => array_merge($instance->settings ?? [], ['disconnect_reason' => $reason]),
             ]);
 
             broadcast(new InstanceConnectionUpdated($instance));
-            Log::info("Instance {$instanceName} logged out");
+            Log::warning("Instance {$instanceName} logged out: {$reason}");
+
+            return response()->json(['status' => 'success']);
+        }
+
+        if ($event === 'Disconnected') {
+            $instance->update(['status' => 'connecting']);
+            broadcast(new InstanceConnectionUpdated($instance));
+            Log::info("Instance {$instanceName} disconnected, evo-go will auto-reconnect");
+
+            return response()->json(['status' => 'success']);
+        }
+
+        if ($event === 'ConnectFailure') {
+            $data = $payload['data'] ?? [];
+            $reason = $data['reason'] ?? '';
+            $code = $this->extractFailureCode($reason);
+
+            if (in_array($code, [401, 403, 406, 400, 402])) {
+                $instance->update([
+                    'status' => 'disconnected',
+                    'qr_code' => null,
+                    'settings' => array_merge($instance->settings ?? [], ['disconnect_reason' => $reason]),
+                ]);
+            } else {
+                $instance->update([
+                    'status' => 'connecting',
+                    'settings' => array_merge($instance->settings ?? [], ['disconnect_reason' => $reason]),
+                ]);
+            }
+
+            broadcast(new InstanceConnectionUpdated($instance));
+            Log::warning("Instance {$instanceName} connection failed: {$reason} (code: {$code})");
 
             return response()->json(['status' => 'success']);
         }
@@ -115,104 +142,31 @@ class EvolutionWebhookController extends Controller
             return response()->json(['status' => 'success']);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | MESSAGE EVENTS
-        |--------------------------------------------------------------------------
-        */
         if ($event === 'Message' || $event === 'SendMessage') {
-            $data = $payload['data'] ?? [];
-            $info = $data['Info'] ?? [];
-            $message = $data['Message'] ?? [];
+            ProcessLeadMessage::dispatch($payload);
 
-            $isFromMe = $info['IsFromMe'] ?? true;
-            $direction = $isFromMe ? 'ai' : 'client';
+            return response()->json(['status' => 'queued']);
+        }
 
-            $messageText = $this->extractMessageText($message);
+        if ($event === 'Receipt') {
+            ProcessMessageReceipt::dispatch($payload);
 
-            if ($messageText) {
-                $phone = $this->normalizePhone($info['Chat'] ?? null);
-
-                if ($phone) {
-                    $this->saveMessage($phone, $direction, $messageText);
-                }
-            }
+            return response()->json(['status' => 'queued']);
         }
 
         return response()->json(['status' => 'success']);
     }
 
-    private function extractMessageText(array $messageData): ?string
+    private function extractFailureCode(?string $reason): ?int
     {
-        if (isset($messageData['conversation'])) {
-            return $messageData['conversation'];
+        if ($reason === null || $reason === '') {
+            return null;
         }
 
-        if (isset($messageData['extendedTextMessage']['text'])) {
-            return $messageData['extendedTextMessage']['text'];
-        }
-
-        if (isset($messageData['imageMessage']['caption'])) {
-            return $messageData['imageMessage']['caption'];
-        }
-
-        if (isset($messageData['videoMessage']['caption'])) {
-            return $messageData['videoMessage']['caption'];
+        if (preg_match('/^(\d{3})/', $reason, $matches)) {
+            return (int) $matches[1];
         }
 
         return null;
-    }
-
-    private function normalizePhone(?string $remoteJid): ?string
-    {
-        if (! $remoteJid) {
-            return null;
-        }
-
-        $phone = preg_replace('/@.*$/', '', $remoteJid);
-
-        if (! $phone) {
-            return null;
-        }
-
-        $digits = preg_replace('/[^0-9]/', '', $phone);
-
-        if (str_starts_with($digits, '0')) {
-            $digits = substr($digits, 1);
-        }
-
-        return $digits;
-    }
-
-    private function saveMessage(string $phone, string $direction, string $messageText): void
-    {
-        $lead = Lead::where(function ($query) use ($phone) {
-            $query->where('phone', $phone)
-                ->orWhere('phone', 'like', $phone.'%');
-        })->first();
-
-        if (! $lead) {
-            Log::warning("Lead not found for phone: {$phone}");
-
-            return;
-        }
-
-        $newMessage = [
-            'direction' => $direction,
-            'message' => $messageText,
-            'timestamp' => now()->toISOString(),
-        ];
-
-        $recentMessages = $lead->recent_messages ?? [];
-        array_unshift($recentMessages, $newMessage);
-        $recentMessages = array_slice($recentMessages, 0, 5);
-
-        $lead->update([
-            'last_activity_at' => now(),
-            'recent_messages' => $recentMessages,
-        ]);
-
-        event(new LeadMessageUpdated($lead));
-        Log::info("Lead {$lead->id} message updated from {$direction}: ".substr($messageText, 0, 50));
     }
 }

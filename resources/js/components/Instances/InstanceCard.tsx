@@ -12,7 +12,11 @@ interface InstanceCardProps {
     canManage?: boolean;
 }
 
-export default function InstanceCard({ instance, slug, canManage = true }: InstanceCardProps) {
+export default function InstanceCard({
+    instance,
+    slug,
+    canManage = true,
+}: InstanceCardProps) {
     const { t } = useTranslation();
 
     const displayName =
@@ -90,18 +94,15 @@ export default function InstanceCard({ instance, slug, canManage = true }: Insta
                 {/* Action Buttons */}
                 {/* delete button */}
                 {canManage && (
-                    <div className="absolute top-3 right-3 z-20 
-                    opacity-100 sm:opacity-0 group-hover:opacity-100 
-                    transition-opacity">
-                    <button
-                        onClick={handleDelete}
-                        className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full 
-                                bg-destructive/10 text-destructive transition hover:scale-110"
-                        title={t('profil.deleteInstance')}
-                    >
-                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                    </button>
-                </div>
+                    <div className="absolute top-3 right-3 z-20 opacity-100 transition-opacity group-hover:opacity-100 sm:opacity-0">
+                        <button
+                            onClick={handleDelete}
+                            className="flex h-6 w-6 items-center justify-center rounded-full bg-destructive/10 text-destructive transition hover:scale-110 sm:h-8 sm:w-8"
+                            title={t('profil.deleteInstance')}
+                        >
+                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                        </button>
+                    </div>
                 )}
 
                 <CardHeader className="flex flex-row items-start justify-between px-6 pt-6">

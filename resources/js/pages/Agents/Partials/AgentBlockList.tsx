@@ -57,7 +57,10 @@ export default function AgentBlockList({ agent }: Props) {
         const updatedBlocklist = [...blocklist, cleanPhoneNumber(newPhone)];
 
         router.patch(
-            workspaces.agents.updateSettings({ slug: activeWorkspace.slug, agent: agent.id }).url,
+            workspaces.agents.updateSettings({
+                slug: activeWorkspace.slug,
+                agent: agent.id,
+            }).url,
             { settings: { blocklist: updatedBlocklist } },
             {
                 onFinish: () => {
@@ -73,7 +76,10 @@ export default function AgentBlockList({ agent }: Props) {
         const updatedBlocklist = blocklist.filter((p) => p !== phone);
 
         router.patch(
-            workspaces.agents.updateSettings({ slug: activeWorkspace.slug, agent: agent.id }).url,
+            workspaces.agents.updateSettings({
+                slug: activeWorkspace.slug,
+                agent: agent.id,
+            }).url,
             { settings: { blocklist: updatedBlocklist } },
             { onFinish: () => setIsSaving(false) },
         );
