@@ -3,8 +3,6 @@ nixPkgs = ["...", "python311Packages.supervisor"]
 
 [phases.build]
 cmds = [
-    "mkdir -p /app/bootstrap/cache storage/framework/views storage/framework/cache storage/framework/sessions",
-    "php artisan wayfinder:generate || true",
     "npm run build",
     "mkdir -p /etc/supervisor/conf.d/",
     "cp /assets/worker-*.conf /etc/supervisor/conf.d/",
