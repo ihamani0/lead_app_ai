@@ -35,15 +35,22 @@ until php -r "
 done
 echo "✅ DB ready"
 
+echo "📁 Creating required directories..."
+mkdir -p /app/storage/framework/views
+mkdir -p /app/storage/framework/cache/data
+mkdir -p /app/storage/framework/sessions
+mkdir -p /app/storage/logs
+mkdir -p /app/bootstrap/cache
+
+echo "🔑 Fixing permissions..."
+chown -R www-data:www-data /app/storage /app/bootstrap/cache
+chmod -R 775 /app/storage /app/bootstrap/cache
+
 echo "🔧 Bootstrapping Laravel..."
 php /app/artisan config:cache
 php /app/artisan route:cache
 php /app/artisan view:cache
 php /app/artisan migrate --force
-
-echo "🔑 Fixing permissions..."
-chown -R www-data:www-data /app/storage /app/bootstrap/cache
-chmod -R 775 /app/storage /app/bootstrap/cache
 
 echo "🚀 Starting Supervisor..."
 node /assets/scripts/prestart.mjs /assets/nginx.template.conf /etc/nginx.conf
