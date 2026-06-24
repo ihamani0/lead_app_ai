@@ -25,7 +25,8 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
-        },
+
+    },
     },
     esbuild: {
         jsx: 'automatic',
