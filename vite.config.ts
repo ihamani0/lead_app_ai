@@ -18,9 +18,9 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
-        // wayfinder({
-        //     formVariants: false,
-        // }),
+        wayfinder({
+            formVariants: false,
+        }),
     ],
     resolve: {
         alias: {
