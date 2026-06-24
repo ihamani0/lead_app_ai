@@ -11,6 +11,7 @@ use Ihamani0\LaravelEvolutionApi\Services\SettingsService;
 use Ihamani0\LaravelEvolutionApi\Services\UserService;
 use Ihamani0\LaravelEvolutionApi\Services\WebsocketService;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class EvolutionApiClient
 {
@@ -72,13 +73,37 @@ class EvolutionApiClient
     // ----------------------------
     public function post(string $endpoint, array $data = [], ?string $token = null, array $extraHeaders = []): array
     {
+        $apiKey = $token ?? $this->admin_key;
+
         $headers = array_merge([
-            'apikey' => $token ?? $this->admin_key,
-            'Content-Type' => 'application/json',
+            'apikey' => $apiKey,
         ], $extraHeaders);
 
+        Log::debug('Evolution API request (outgoing)', [
+            'method' => 'POST',
+            'url' => "{$this->base_url}/{$endpoint}",
+            'headers' => $headers,
+            'body' => $data,
+        ]);
+
         $response = Http::withHeaders($headers)
+            ->asJson()
             ->post("{$this->base_url}/{$endpoint}", $data);
+
+        Log::debug('Evolution API response', [
+            'method' => 'POST',
+            'url' => "{$this->base_url}/{$endpoint}",
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
+
+        if ($response->failed()) {
+            Log::warning('Evolution API request failed', [
+                'url' => "{$this->base_url}/{$endpoint}",
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+        }
 
         return $response->json();
     }
@@ -109,12 +134,37 @@ class EvolutionApiClient
 
     public function put(string $endpoint, array $data = [], ?string $token = null, array $extraHeaders = []): array
     {
+        $apiKey = $token ?? $this->admin_key;
+
         $headers = array_merge([
-            'apikey' => $token ?? $this->admin_key,
+            'apikey' => $apiKey,
         ], $extraHeaders);
 
+        Log::debug('Evolution API request (outgoing)', [
+            'method' => 'PUT',
+            'url' => "{$this->base_url}/{$endpoint}",
+            'headers' => $headers,
+            'body' => $data,
+        ]);
+
         $response = Http::withHeaders($headers)
+            ->asJson()
             ->put("{$this->base_url}/{$endpoint}", $data);
+
+        Log::debug('Evolution API response', [
+            'method' => 'PUT',
+            'url' => "{$this->base_url}/{$endpoint}",
+            'status' => $response->status(),
+            'body' => $response->body(),
+        ]);
+
+        if ($response->failed()) {
+            Log::warning('Evolution API request failed', [
+                'url' => "{$this->base_url}/{$endpoint}",
+                'status' => $response->status(),
+                'body' => $response->body(),
+            ]);
+        }
 
         return $response->json();
     }

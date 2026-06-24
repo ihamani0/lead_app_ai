@@ -17,7 +17,6 @@ echo "🧹 Clearing and caching config..."
 php artisan cache:clear
 php artisan config:cache
 php artisan route:cache
-php artisan view:cache
 php artisan event:cache
 
 echo "🗄️ Running migrations..."
