@@ -3,7 +3,6 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import laravel from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
-import { resolve } from 'node:path';
 
 export default defineConfig({
     plugins: [
@@ -18,9 +17,9 @@ export default defineConfig({
             },
         }),
         tailwindcss(),
-        wayfinder({
-            formVariants: false,
-        }),
+        // wayfinder({
+        //     formVariants: false,
+        // }),
     ],
     resolve: {
         alias: {
