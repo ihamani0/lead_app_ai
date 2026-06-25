@@ -2,6 +2,7 @@
 [variables]
 NIXPACKS_PHP_VERSION = "8.3"
 NIXPACKS_NODE_VERSION = "22"
+LOG_CHANNEL = "stderr"
 
 [phases.setup]
 nixPkgs = ["php83", "php83Extensions.redis", "php83Packages.composer", "nodejs_22", "nginx", "python311Packages.supervisor"]
@@ -94,8 +95,10 @@ process_name=%(program_name)s_%(process_num)02d
 command=nginx -c /etc/nginx.conf
 autostart=true
 autorestart=true
-stdout_logfile=/var/log/worker-nginx.log
-stderr_logfile=/var/log/worker-nginx.log
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
 priority=5
 '''
 
@@ -105,8 +108,10 @@ process_name=%(program_name)s_%(process_num)02d
 command=php-fpm -y /assets/php-fpm.conf -F
 autostart=true
 autorestart=true
-stdout_logfile=/var/log/worker-phpfpm.log
-stderr_logfile=/var/log/worker-phpfpm.log
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
 priority=10
 '''
 
@@ -122,8 +127,10 @@ killasgroup=true
 numprocs=2
 startsecs=0
 stopwaitsecs=3600
-stdout_logfile=/var/log/worker-laravel.log
-stderr_logfile=/var/log/worker-laravel.log
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
 priority=15
 '''
 
@@ -137,8 +144,10 @@ autorestart=true
 stopasgroup=true
 killasgroup=true
 startsecs=0
-stdout_logfile=/var/log/worker-reverb.log
-stderr_logfile=/var/log/worker-reverb.log
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
 priority=20
 '''
 
@@ -149,8 +158,10 @@ command=bash -c 'while true; do php /app/artisan schedule:run --no-interaction; 
 user=www-data
 autostart=true
 autorestart=true
-stdout_logfile=/var/log/worker-scheduler.log
-stderr_logfile=/var/log/worker-scheduler.log
+stdout_logfile=/dev/stdout
+stdout_logfile_maxbytes=0
+stderr_logfile=/dev/stderr
+stderr_logfile_maxbytes=0
 priority=25
 '''
 
