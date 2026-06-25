@@ -228,7 +228,8 @@ http {
         index index.php;
         charset utf-8;
 
-        location /app/ {
+        # ✅ FIX 1: Proxy both /app/ (WebSockets) and /apps/ (Broadcasting API) to Reverb
+        location ~ ^/(app|apps)/ {
             proxy_pass http://reverb;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
@@ -251,7 +252,12 @@ http {
 
         location ~ \.php$ {
             fastcgi_pass 127.0.0.1:9000;
-            fastcgi_buffer_size 8k;
+            
+            # ✅ FIX 2: Increase FastCGI buffer sizes to prevent "upstream sent too big header" 502 errors
+            fastcgi_buffer_size 32k;
+            fastcgi_buffers 16 16k;
+            fastcgi_busy_buffers_size 64k;
+            
             fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
             include $!{nginx}/conf/fastcgi_params;
             include $!{nginx}/conf/fastcgi.conf;
