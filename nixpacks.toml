@@ -69,7 +69,8 @@ exec supervisord -c /etc/supervisord.conf -n
 file=/assets/supervisor.sock
 
 [supervisord]
-logfile=/var/log/supervisord.log
+logfile=/dev/stdout
+logfile_maxbytes=0
 logfile_maxbytes=50MB
 logfile_backups=10
 loglevel=info
@@ -173,6 +174,9 @@ group = www-data
 listen.owner = www-data
 listen.group = www-data
 pm = dynamic
+catch_workers_output = yes                        # ✅ add this
+php_admin_value[error_log] = /dev/stderr          # ✅ add this
+php_admin_flag[log_errors] = on                   # ✅ add this
 pm.max_children = 50
 pm.min_spare_servers = 4
 pm.max_spare_servers = 32
@@ -202,8 +206,8 @@ http {
     log_format   main '$remote_addr - $remote_user [$time_local]  $status '
         '"$request" $body_bytes_sent "$http_referer" '
         '"$http_user_agent" "$http_x_forwarded_for"';
-    access_log /var/log/nginx-access.log;
-    error_log /var/log/nginx-error.log;
+    access_log /dev/stdout main;
+    error_log /dev/stderr warn;
     sendfile     on;
     tcp_nopush   on;
     server_names_hash_bucket_size 128;
