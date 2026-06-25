@@ -1,9 +1,10 @@
 
 [variables]
 NIXPACKS_PHP_VERSION = "8.3"
+NIXPACKS_NODE_VERSION = "22"
 
 [phases.setup]
-nixPkgs = ["php83", "php83Extensions.redis", "php83Packages.composer", "python311Packages.supervisor"]
+nixPkgs = ["php83", "php83Extensions.redis", "php83Packages.composer", "nodejs_22", "nginx", "python311Packages.supervisor"]
 
 
 [phases.build]
