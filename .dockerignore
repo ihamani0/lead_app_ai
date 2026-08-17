@@ -5,9 +5,6 @@
 /.env
 /storage/app/public
 /storage/debugbar
-/storage/framework/cache
-/storage/framework/sessions
-/storage/framework/views
 /storage/logs
 /.phpunit.result.cache
 /.prettierignore
