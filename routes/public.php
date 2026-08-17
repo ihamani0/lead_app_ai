@@ -13,6 +13,12 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect()->route('teams.index')
+        : redirect()->route('home');
+});
+
 Route::get('/welcome', function () {
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),

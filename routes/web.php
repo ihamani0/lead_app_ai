@@ -28,9 +28,6 @@ Route::get('/invitation/{invitation}/accept', [TeamInvitationController::class, 
  */
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Root redirect → workspace list
-    Route::get('/', fn () => redirect()->route('teams.index'));
-
     // Workspace-scoped features (leads, agents, instances, media, knowledge, reports, team mgmt)
     require __DIR__.'/workspace.php';
 
