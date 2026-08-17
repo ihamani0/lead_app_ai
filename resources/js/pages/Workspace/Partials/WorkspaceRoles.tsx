@@ -38,11 +38,7 @@ import teams from '@/routes/teams';
 const teamsRolesStoreRoute = teams.roles.store;
 const teamsRolesUpdateRoute = teams.roles.update;
 const teamsRolesDestroyRoute = teams.roles.destroy;
-import {
-    PERMISSION_GROUPS,
-    type Workspace,
-    type WorkspaceRole,
-} from '@/types';
+import { PERMISSION_GROUPS, type Workspace, type WorkspaceRole } from '@/types';
 
 interface WorkspaceRolesProps {
     workspace: Workspace;
@@ -53,7 +49,9 @@ export function WorkspaceRoles({ workspace, roles }: WorkspaceRolesProps) {
     const { t } = useTranslation();
     const [createOpen, setCreateOpen] = useState(false);
     const [editingRole, setEditingRole] = useState<WorkspaceRole | null>(null);
-    const [roleToDelete, setRoleToDelete] = useState<WorkspaceRole | null>(null);
+    const [roleToDelete, setRoleToDelete] = useState<WorkspaceRole | null>(
+        null,
+    );
 
     const { data, setData, post, processing, reset } = useForm({
         name: '',
@@ -200,10 +198,7 @@ export function WorkspaceRoles({ workspace, roles }: WorkspaceRolesProps) {
                                     id="create-description"
                                     value={data.description}
                                     onChange={(e) =>
-                                        setData(
-                                            'description',
-                                            e.target.value,
-                                        )
+                                        setData('description', e.target.value)
                                     }
                                     rows={2}
                                 />
@@ -222,8 +217,7 @@ export function WorkspaceRoles({ workspace, roles }: WorkspaceRolesProps) {
                                             <div className="flex flex-wrap gap-1">
                                                 {group.permissions.map(
                                                     (perm) => {
-                                                        const permCode =
-                                                            `${group.key}.${perm}`;
+                                                        const permCode = `${group.key}.${perm}`;
                                                         const isSelected =
                                                             data.permissions.includes(
                                                                 permCode,
@@ -309,9 +303,7 @@ export function WorkspaceRoles({ workspace, roles }: WorkspaceRolesProps) {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>
-                                    {t('workspace.roles.role_code')}
-                                </Label>
+                                <Label>{t('workspace.roles.role_code')}</Label>
                                 <Input
                                     value={data.code}
                                     disabled
@@ -334,9 +326,7 @@ export function WorkspaceRoles({ workspace, roles }: WorkspaceRolesProps) {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>
-                                {t('workspace.roles.permissions')}
-                            </Label>
+                            <Label>{t('workspace.roles.permissions')}</Label>
                             <div className="max-h-60 space-y-3 overflow-y-auto rounded-lg border p-3">
                                 {PERMISSION_GROUPS.map((group) => (
                                     <div key={group.key}>
@@ -345,8 +335,7 @@ export function WorkspaceRoles({ workspace, roles }: WorkspaceRolesProps) {
                                         </p>
                                         <div className="flex flex-wrap gap-1">
                                             {group.permissions.map((perm) => {
-                                                const permCode =
-                                                    `${group.key}.${perm}`;
+                                                const permCode = `${group.key}.${perm}`;
                                                 const isSelected =
                                                     data.permissions.includes(
                                                         permCode,
@@ -446,9 +435,15 @@ export function WorkspaceRoles({ workspace, roles }: WorkspaceRolesProps) {
                             )}
                             <div className="flex flex-wrap gap-1">
                                 {role.permissions.map((permission, idx) => {
-                                    const code = typeof permission === 'string' ? permission : permission.code;
+                                    const code =
+                                        typeof permission === 'string'
+                                            ? permission
+                                            : permission.code;
                                     return (
-                                        <Badge key={code ?? idx} variant="outline">
+                                        <Badge
+                                            key={code ?? idx}
+                                            variant="outline"
+                                        >
                                             {code}
                                         </Badge>
                                     );
@@ -469,17 +464,29 @@ export function WorkspaceRoles({ workspace, roles }: WorkspaceRolesProps) {
             )}
 
             {/* Delete Role Confirmation */}
-            <AlertDialog open={!!roleToDelete} onOpenChange={(open) => { if (!open) setRoleToDelete(null); }}>
+            <AlertDialog
+                open={!!roleToDelete}
+                onOpenChange={(open) => {
+                    if (!open) setRoleToDelete(null);
+                }}
+            >
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{t('workspace.roles.delete')}</AlertDialogTitle>
+                        <AlertDialogTitle>
+                            {t('workspace.roles.delete')}
+                        </AlertDialogTitle>
                         <AlertDialogDescription>
                             {t('workspace.roles.delete_confirm')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-                        <AlertDialogAction variant="destructive" onClick={confirmDeleteRole}>
+                        <AlertDialogCancel>
+                            {t('common.cancel')}
+                        </AlertDialogCancel>
+                        <AlertDialogAction
+                            variant="destructive"
+                            onClick={confirmDeleteRole}
+                        >
                             {t('common.delete')}
                         </AlertDialogAction>
                     </AlertDialogFooter>

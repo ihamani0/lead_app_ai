@@ -139,7 +139,9 @@ export default function AgentInstanceManager({
     const [localInstance, setLocalInstance] = useState<
         EvolutionInstance | undefined | null
     >(agent.instance);
-    const [qrCode, setQrCode] = useState<string | null>(agent.instance?.qr_code ?? null);
+    const [qrCode, setQrCode] = useState<string | null>(
+        agent.instance?.qr_code ?? null,
+    );
     const [isLoadingQr, setIsLoadingQr] = useState(false);
     const [isWaitingForQr, setIsWaitingForQr] = useState(false);
     const [isRestarting, setIsRestarting] = useState(false);

@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import { FileText, HelpCircle, Image, Library, Phone } from 'lucide-react';
 import { useCallback, useState } from 'react';
+import { FeatureGate } from '@/components/feature-gate';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useActiveWorkspace } from '@/hooks/use-active-workspace';
@@ -62,6 +63,7 @@ interface BibliothequeIndexProps {
     canCreate: boolean;
     canManage: boolean;
     tenantId: string;
+    features: Record<string, boolean>;
 }
 
 export default function BibliothequeIndex({
@@ -77,6 +79,7 @@ export default function BibliothequeIndex({
     canCreate,
     canManage,
     tenantId,
+    features,
 }: BibliothequeIndexProps) {
     const activeWorkspace = useActiveWorkspace();
     const { t } = useTranslation();
@@ -181,23 +184,27 @@ export default function BibliothequeIndex({
                         </TabsList>
 
                         <TabsContent value="documents" className="mt-6">
-                            <DocumentsTab
-                                documents={documents}
-                                stats={documentStats}
-                                qualityScore={qualityScore}
-                                canManage={canManage}
-                                tenantId={tenantId}
-                            />
+                            <FeatureGate feature={features.knowledge_base}>
+                                <DocumentsTab
+                                    documents={documents}
+                                    stats={documentStats}
+                                    qualityScore={qualityScore}
+                                    canManage={canManage}
+                                    tenantId={tenantId}
+                                />
+                            </FeatureGate>
                         </TabsContent>
 
                         <TabsContent value="faq" className="mt-6">
-                            <FaqTab
-                                faqs={faqs}
-                                suggestions={suggestions}
-                                agents={agents}
-                                canCreate={canCreate}
-                                canManage={canManage}
-                            />
+                            <FeatureGate feature={features.faq}>
+                                <FaqTab
+                                    faqs={faqs}
+                                    suggestions={suggestions}
+                                    agents={agents}
+                                    canCreate={canCreate}
+                                    canManage={canManage}
+                                />
+                            </FeatureGate>
                         </TabsContent>
 
                         <TabsContent value="whatsapp" className="mt-6">
@@ -211,11 +218,13 @@ export default function BibliothequeIndex({
                         </TabsContent>
 
                         <TabsContent value="media" className="mt-6">
-                            <MediaTab
-                                assets={assets}
-                                canCreate={canCreate}
-                                canManage={canManage}
-                            />
+                            <FeatureGate feature={features.media_library}>
+                                <MediaTab
+                                    assets={assets}
+                                    canCreate={canCreate}
+                                    canManage={canManage}
+                                />
+                            </FeatureGate>
                         </TabsContent>
                     </Tabs>
                 </div>

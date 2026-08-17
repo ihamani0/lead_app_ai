@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\FaqController::index
-* @see app/Http/Controllers/FaqController.php:17
+* @see app/Http/Controllers/FaqController.php:18
 * @route '/workspaces/{slug}/faqs'
 */
 export const index = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\FaqController::index
-* @see app/Http/Controllers/FaqController.php:17
+* @see app/Http/Controllers/FaqController.php:18
 * @route '/workspaces/{slug}/faqs'
 */
 index.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ index.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\FaqController::index
-* @see app/Http/Controllers/FaqController.php:17
+* @see app/Http/Controllers/FaqController.php:18
 * @route '/workspaces/{slug}/faqs'
 */
 index.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ index.get = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\FaqController::index
-* @see app/Http/Controllers/FaqController.php:17
+* @see app/Http/Controllers/FaqController.php:18
 * @route '/workspaces/{slug}/faqs'
 */
 index.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ index.head = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\FaqController::store
-* @see app/Http/Controllers/FaqController.php:47
+* @see app/Http/Controllers/FaqController.php:52
 * @route '/workspaces/{slug}/faqs'
 */
 export const store = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -78,7 +78,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\FaqController::store
-* @see app/Http/Controllers/FaqController.php:47
+* @see app/Http/Controllers/FaqController.php:52
 * @route '/workspaces/{slug}/faqs'
 */
 store.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ store.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\FaqController::store
-* @see app/Http/Controllers/FaqController.php:47
+* @see app/Http/Controllers/FaqController.php:52
 * @route '/workspaces/{slug}/faqs'
 */
 store.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ store.post = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\FaqController::analyze
-* @see app/Http/Controllers/FaqController.php:111
+* @see app/Http/Controllers/FaqController.php:136
 * @route '/workspaces/{slug}/faqs/analyze'
 */
 export const analyze = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -130,7 +130,7 @@ analyze.definition = {
 
 /**
 * @see \App\Http\Controllers\FaqController::analyze
-* @see app/Http/Controllers/FaqController.php:111
+* @see app/Http/Controllers/FaqController.php:136
 * @route '/workspaces/{slug}/faqs/analyze'
 */
 analyze.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -157,7 +157,7 @@ analyze.url = (args: { slug: string | number } | [slug: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\FaqController::analyze
-* @see app/Http/Controllers/FaqController.php:111
+* @see app/Http/Controllers/FaqController.php:136
 * @route '/workspaces/{slug}/faqs/analyze'
 */
 analyze.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -167,10 +167,10 @@ analyze.post = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\FaqController::update
-* @see app/Http/Controllers/FaqController.php:63
+* @see app/Http/Controllers/FaqController.php:72
 * @route '/workspaces/{slug}/faqs/{faq}'
 */
-export const update = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -182,10 +182,10 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\FaqController::update
-* @see app/Http/Controllers/FaqController.php:63
+* @see app/Http/Controllers/FaqController.php:72
 * @route '/workspaces/{slug}/faqs/{faq}'
 */
-update.url = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+update.url = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -210,20 +210,20 @@ update.url = (args: { slug: string | number, faq: string | number | { id: string
 
 /**
 * @see \App\Http\Controllers\FaqController::update
-* @see app/Http/Controllers/FaqController.php:63
+* @see app/Http/Controllers/FaqController.php:72
 * @route '/workspaces/{slug}/faqs/{faq}'
 */
-update.put = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
 
 /**
 * @see \App\Http\Controllers\FaqController::destroy
-* @see app/Http/Controllers/FaqController.php:78
+* @see app/Http/Controllers/FaqController.php:91
 * @route '/workspaces/{slug}/faqs/{faq}'
 */
-export const destroy = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -235,10 +235,10 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\FaqController::destroy
-* @see app/Http/Controllers/FaqController.php:78
+* @see app/Http/Controllers/FaqController.php:91
 * @route '/workspaces/{slug}/faqs/{faq}'
 */
-destroy.url = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+destroy.url = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -263,20 +263,20 @@ destroy.url = (args: { slug: string | number, faq: string | number | { id: strin
 
 /**
 * @see \App\Http\Controllers\FaqController::destroy
-* @see app/Http/Controllers/FaqController.php:78
+* @see app/Http/Controllers/FaqController.php:91
 * @route '/workspaces/{slug}/faqs/{faq}'
 */
-destroy.delete = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
 
 /**
 * @see \App\Http\Controllers\FaqController::toggle
-* @see app/Http/Controllers/FaqController.php:88
+* @see app/Http/Controllers/FaqController.php:105
 * @route '/workspaces/{slug}/faqs/{faq}/toggle'
 */
-export const toggle = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const toggle = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: toggle.url(args, options),
     method: 'post',
 })
@@ -288,10 +288,10 @@ toggle.definition = {
 
 /**
 * @see \App\Http\Controllers\FaqController::toggle
-* @see app/Http/Controllers/FaqController.php:88
+* @see app/Http/Controllers/FaqController.php:105
 * @route '/workspaces/{slug}/faqs/{faq}/toggle'
 */
-toggle.url = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+toggle.url = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -316,20 +316,20 @@ toggle.url = (args: { slug: string | number, faq: string | number | { id: string
 
 /**
 * @see \App\Http\Controllers\FaqController::toggle
-* @see app/Http/Controllers/FaqController.php:88
+* @see app/Http/Controllers/FaqController.php:105
 * @route '/workspaces/{slug}/faqs/{faq}/toggle'
 */
-toggle.post = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+toggle.post = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: toggle.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\FaqController::accept
-* @see app/Http/Controllers/FaqController.php:98
+* @see app/Http/Controllers/FaqController.php:119
 * @route '/workspaces/{slug}/faqs/{faq}/accept'
 */
-export const accept = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const accept = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: accept.url(args, options),
     method: 'post',
 })
@@ -341,10 +341,10 @@ accept.definition = {
 
 /**
 * @see \App\Http\Controllers\FaqController::accept
-* @see app/Http/Controllers/FaqController.php:98
+* @see app/Http/Controllers/FaqController.php:119
 * @route '/workspaces/{slug}/faqs/{faq}/accept'
 */
-accept.url = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+accept.url = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -369,10 +369,10 @@ accept.url = (args: { slug: string | number, faq: string | number | { id: string
 
 /**
 * @see \App\Http\Controllers\FaqController::accept
-* @see app/Http/Controllers/FaqController.php:98
+* @see app/Http/Controllers/FaqController.php:119
 * @route '/workspaces/{slug}/faqs/{faq}/accept'
 */
-accept.post = (args: { slug: string | number, faq: string | number | { id: string | number } } | [slug: string | number, faq: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+accept.post = (args: { slug: string | number, faq: number | { id: number } } | [slug: string | number, faq: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: accept.url(args, options),
     method: 'post',
 })

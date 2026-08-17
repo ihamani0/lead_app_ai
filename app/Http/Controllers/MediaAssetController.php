@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\MediaAsset;
+use App\Services\PlanEnforcementService;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -38,6 +39,7 @@ class MediaAssetController extends Controller
             'assets' => $assets,
             'canCreate' => $canManage,
             'canManage' => $canManage,
+            'features' => $request->user()->tenant->plan?->features ?? [],
         ]);
     }
 
@@ -80,6 +82,16 @@ class MediaAssetController extends Controller
     public function store(Request $request)
     {
         $this->authorizeRole($request, ['owner', 'admin']);
+
+        $tenant = $request->user()->tenant;
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($tenant, 'media_library')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
+        if ($request->hasFile('file') && ! app(PlanEnforcementService::class)->canStore($tenant, $request->file('file')->getSize())) {
+            return back()->with('error', __('messages.error.plan_limit_storage'));
+        }
 
         try {
 
@@ -125,6 +137,10 @@ class MediaAssetController extends Controller
     public function presign(Request $request)
     {
         $this->authorizeRole($request, ['owner', 'admin']);
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'media_library')) {
+            return response()->json(['error' => __('messages.error.plan_feature_unavailable')], 403);
+        }
 
         Log::info('Media presign request', [
             'tenant_id' => $request->user()->tenant_id,
@@ -172,6 +188,22 @@ class MediaAssetController extends Controller
     public function finalize(Request $request)
     {
         $this->authorizeRole($request, ['owner', 'admin']);
+
+        $tenant = $request->user()->tenant;
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($tenant, 'media_library')) {
+            return response()->json(['error' => __('messages.error.plan_feature_unavailable')], 403);
+        }
+
+        if ($request->filled('s3_key') && Storage::disk('s3')->exists($request->s3_key)) {
+            $fileSize = Storage::disk('s3')->size($request->s3_key);
+
+            if (! app(PlanEnforcementService::class)->canStore($tenant, $fileSize)) {
+                Storage::disk('s3')->delete($request->s3_key);
+
+                return response()->json(['error' => __('messages.error.plan_limit_storage')], 422);
+            }
+        }
 
         Log::info('Media finalize request', [
             'tenant_id' => $request->user()->tenant_id,

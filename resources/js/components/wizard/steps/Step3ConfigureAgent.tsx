@@ -1,4 +1,16 @@
-import { Bot, Calendar, Check, ChevronsUpDown, Info, MapPin, MessageSquare, Paintbrush, Settings, Star, X } from 'lucide-react';
+import {
+    Bot,
+    Calendar,
+    Check,
+    ChevronsUpDown,
+    Info,
+    MapPin,
+    MessageSquare,
+    Paintbrush,
+    Settings,
+    Star,
+    X,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -271,7 +283,9 @@ export function Step3ConfigureAgent({
                                                         className="gap-0.5 border-amber-300 bg-amber-50 text-[10px] text-amber-700"
                                                     >
                                                         <Star className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />
-                                                        {t('wizard.step3.recommended')}
+                                                        {t(
+                                                            'wizard.step3.recommended',
+                                                        )}
                                                     </Badge>
                                                 )}
                                             </div>
@@ -583,9 +597,7 @@ export function Step3ConfigureAgent({
                             onChange={(e) =>
                                 updateField('prompt', e.target.value)
                             }
-                            placeholder={t(
-                                'wizard.step3.prompt_placeholder',
-                            )}
+                            placeholder={t('wizard.step3.prompt_placeholder')}
                             className="min-h-[120px]"
                         />
                         <p className="text-xs text-muted-foreground">

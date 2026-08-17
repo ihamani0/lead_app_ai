@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::download
-* @see app/Http/Controllers/KnowledgeBaseController.php:79
+* @see app/Http/Controllers/KnowledgeBaseController.php:91
 * @route '/workspaces/{slug}/knowledge/download/{id}'
 */
 export const download = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ download.definition = {
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::download
-* @see app/Http/Controllers/KnowledgeBaseController.php:79
+* @see app/Http/Controllers/KnowledgeBaseController.php:91
 * @route '/workspaces/{slug}/knowledge/download/{id}'
 */
 download.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -42,7 +42,7 @@ download.url = (args: { slug: string | number, id: string | number } | [slug: st
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::download
-* @see app/Http/Controllers/KnowledgeBaseController.php:79
+* @see app/Http/Controllers/KnowledgeBaseController.php:91
 * @route '/workspaces/{slug}/knowledge/download/{id}'
 */
 download.get = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -52,7 +52,7 @@ download.get = (args: { slug: string | number, id: string | number } | [slug: st
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::download
-* @see app/Http/Controllers/KnowledgeBaseController.php:79
+* @see app/Http/Controllers/KnowledgeBaseController.php:91
 * @route '/workspaces/{slug}/knowledge/download/{id}'
 */
 download.head = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({

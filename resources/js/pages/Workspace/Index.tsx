@@ -1,6 +1,6 @@
 import { Head, usePage } from '@inertiajs/react';
 import axios from 'axios';
-import { Bot, Building2, CreditCard, Smartphone, Users } from 'lucide-react';
+import { Bot, Building2, CreditCard, Lock, Smartphone, Users } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { SummaryCard } from '@/components/ui/SummaryCard';
@@ -10,7 +10,6 @@ import { stats as workspacesStats } from '@/routes/workspaces';
 import type { Workspace } from '@/types';
 import { WorkspaceCard } from './Partials/WorkspaceCard';
 import { WorkspaceCreateDialog } from './Partials/WorkspaceCreateDialog';
-
 
 interface WorkspaceIndexProps {
     workspaces: Workspace[];
@@ -37,7 +36,6 @@ export default function WorkspaceIndex({
     canCreate,
     stats,
 }: WorkspaceIndexProps) {
-
     const { t } = useTranslation();
 
     const { props } = usePage<SharedPageProps>();
@@ -154,7 +152,7 @@ export default function WorkspaceIndex({
                                 />
                             ))}
 
-                            {canCreate && (
+                            {canCreate ? (
                                 <WorkspaceCreateDialog>
                                     <div className="flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-muted-foreground/20 p-6 transition-colors hover:border-primary/50 hover:bg-muted/30">
                                         <div className="flex size-12 items-center justify-center rounded-full bg-muted">
@@ -167,6 +165,29 @@ export default function WorkspaceIndex({
                                         </span>
                                     </div>
                                 </WorkspaceCreateDialog>
+                            ) : (
+                                <div className="group relative flex min-h-[200px] cursor-not-allowed flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-muted-foreground/10 p-6">
+                                    <div className="opacity-40">
+                                        <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-muted">
+                                            <span className="text-2xl font-light text-muted-foreground">
+                                                +
+                                            </span>
+                                        </div>
+                                        <span className="text-sm font-medium text-muted-foreground">
+                                            {t('workspace.create_new')}
+                                        </span>
+                                    </div>
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <div className="flex size-10 items-center justify-center rounded-full bg-background/80 shadow-sm">
+                                            <Lock className="size-5 text-muted-foreground" />
+                                        </div>
+                                    </div>
+                                    <div className="absolute -top-2 left-1/2 z-10 hidden -translate-x-1/2 -translate-y-full group-hover:block">
+                                        <div className="whitespace-nowrap rounded-md bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md">
+                                            {t('messages.error.plan_limit_teams')}
+                                        </div>
+                                    </div>
+                                </div>
                             )}
                         </div>
                     </div>
@@ -192,13 +213,25 @@ function EmptyState({ canCreate }: { canCreate: boolean }) {
                     {t('workspace.empty.description')}
                 </p>
             </div>
-            {canCreate && (
+            {canCreate ? (
                 <WorkspaceCreateDialog>
                     <Button variant="outline" className="gap-2">
                         <span className="text-lg">+</span>
                         {t('workspace.create')}
                     </Button>
                 </WorkspaceCreateDialog>
+            ) : (
+                <div className="group relative">
+                    <Button variant="outline" className="gap-2 opacity-40" disabled>
+                        <Lock className="size-4" />
+                        {t('workspace.create')}
+                    </Button>
+                    <div className="absolute left-1/2 top-0 z-10 hidden -translate-x-1/2 -translate-y-full group-hover:block">
+                        <div className="whitespace-nowrap rounded-md bg-popover px-3 py-1.5 text-xs text-popover-foreground shadow-md">
+                            {t('messages.error.plan_limit_teams')}
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

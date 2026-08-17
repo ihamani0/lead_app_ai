@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefa
 * @see app/Http/Controllers/SessionController.php:66
 * @route '/workspaces/{slug}/leads/{lead}/session/status'
 */
-export const status = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const status = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: status.url(args, options),
     method: 'post',
 })
@@ -19,7 +19,7 @@ status.definition = {
 * @see app/Http/Controllers/SessionController.php:66
 * @route '/workspaces/{slug}/leads/{lead}/session/status'
 */
-status.url = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+status.url = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -47,7 +47,7 @@ status.url = (args: { slug: string | number, lead: string | number | { id: strin
 * @see app/Http/Controllers/SessionController.php:66
 * @route '/workspaces/{slug}/leads/{lead}/session/status'
 */
-status.post = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+status.post = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: status.url(args, options),
     method: 'post',
 })

@@ -112,11 +112,11 @@ class TokenService
         });
     }
 
-    public function addDollars(Tenant $tenant, float $dollars, string $description, ?int $teamId = null): void
+    public function addDollars(Tenant $tenant, float $dollars, string $description, ?int $teamId = null, string $referenceType = 'admin_recharge'): void
     {
         $millicents = self::dollarsToMillicents($dollars);
 
-        DB::transaction(function () use ($tenant, $description, $millicents) {
+        DB::transaction(function () use ($tenant, $description, $millicents, $referenceType) {
             $tenant->increment('credit_millicents', $millicents);
 
             TokenTransaction::create([
@@ -129,7 +129,7 @@ class TokenService
                 'output_cost_millicents' => 0,
                 'total_cost_millicents' => $millicents,
                 'type' => 'recharge',
-                'reference_type' => 'admin_recharge',
+                'reference_type' => $referenceType,
                 'reference_id' => $description,
             ]);
 

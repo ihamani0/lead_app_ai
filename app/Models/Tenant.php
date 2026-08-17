@@ -3,13 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Paddle\Billable;
 use Laravel\Sanctum\HasApiTokens;
 
 class Tenant extends Authenticatable
 {
-    use HasApiTokens, HasUlids, Notifiable;
+    use Billable, HasApiTokens, HasFactory, HasUlids, Notifiable;
 
     protected $table = 'tenants';
 
@@ -20,12 +22,14 @@ class Tenant extends Authenticatable
     protected $fillable = [
         'name',
         'slug',
-        'plan',
+        'plan_id',
         'is_active',
         'settings',
         'credit_millicents',
         'dollar_limit',
         'llm_model_id',
+        'paddle_id',
+        'paddle_email',
     ];
 
     protected $casts = [
@@ -33,11 +37,22 @@ class Tenant extends Authenticatable
         'is_active' => 'boolean',
         'credit_millicents' => 'integer',
         'dollar_limit' => 'integer',
+        'plan_id' => 'integer',
     ];
+
+    public function plan()
+    {
+        return $this->belongsTo(Plan::class);
+    }
 
     public function users()
     {
         return $this->hasMany(User::class);
+    }
+
+    public function teams()
+    {
+        return $this->hasManyThrough(Team::class, User::class, 'tenant_id', 'user_id');
     }
 
     public function instances()
@@ -73,5 +88,20 @@ class Tenant extends Authenticatable
     public function isBelowThreshold(): bool
     {
         return $this->is_low_credit;
+    }
+
+    public function subscription()
+    {
+        return $this->hasOne(Subscription::class);
+    }
+
+    public function planChanges()
+    {
+        return $this->hasMany(PlanChange::class);
+    }
+
+    public function paddleEmail(): ?string
+    {
+        return $this->users()->first()?->email;
     }
 }

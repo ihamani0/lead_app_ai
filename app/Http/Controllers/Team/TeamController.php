@@ -8,6 +8,7 @@ use App\Models\EvolutionInstance;
 use App\Models\Lead;
 use App\Models\Team;
 use App\Models\User;
+use App\Services\PlanEnforcementService;
 use App\Services\TeamService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,7 +16,10 @@ use Jurager\Teams\Models\Owner;
 
 class TeamController extends Controller
 {
-    public function __construct(protected TeamService $teamService) {}
+    public function __construct(
+        protected TeamService $teamService,
+        protected PlanEnforcementService $planEnforcement,
+    ) {}
 
     public function index(Request $request)
     {
@@ -60,7 +64,7 @@ class TeamController extends Controller
 
         return Inertia::render('Workspace/Index', [
             'workspaces' => $teams,
-            'canCreate' => true,
+            'canCreate' => $this->planEnforcement->canCreateTeam($user->tenant),
             'stats' => [
                 'total_workspaces' => $teams->count(),
                 'total_leads' => $totalLeads,
@@ -73,12 +77,16 @@ class TeamController extends Controller
 
     public function store(Request $request)
     {
+        $user = $request->user();
+
+        if (! $this->planEnforcement->canCreateTeam($user->tenant)) {
+            return back()->with('error', __('messages.error.plan_limit_teams'));
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string|max:500',
         ]);
-
-        $user = $request->user();
 
         $team = Team::create([
             'user_id' => $user->id,
@@ -245,12 +253,12 @@ class TeamController extends Controller
         $email = $validated['email'];
         $existingUser = User::where('email', $email)->first();
 
-        // if ($existingUser && $existingUser->tenant_id !== $user->tenant_id) {
-        //     return back()->with('error', __('messages.error.cross_tenant_invite_not_allowed'));
-        // }
-
         if ($existingUser && $team->hasUser($existingUser)) {
             return back()->with('error', __('messages.error.user_already_member'));
+        }
+
+        if (! $existingUser && ! $this->planEnforcement->canAddMember($user->tenant)) {
+            return back()->with('error', __('messages.error.plan_limit_members'));
         }
 
         $team->inviteUser($email, $validated['role_code']);

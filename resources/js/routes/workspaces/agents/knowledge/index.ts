@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AgentController::download
-* @see app/Http/Controllers/AgentController.php:457
+* @see app/Http/Controllers/AgentController.php:467
 * @route '/api/n8n/workspaces/{slug}/agents/{agent}/download/{id}'
 */
 export const download = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ download.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::download
-* @see app/Http/Controllers/AgentController.php:457
+* @see app/Http/Controllers/AgentController.php:467
 * @route '/api/n8n/workspaces/{slug}/agents/{agent}/download/{id}'
 */
 download.url = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -45,7 +45,7 @@ download.url = (args: { slug: string | number, agent: string | number, id: strin
 
 /**
 * @see \App\Http\Controllers\AgentController::download
-* @see app/Http/Controllers/AgentController.php:457
+* @see app/Http/Controllers/AgentController.php:467
 * @route '/api/n8n/workspaces/{slug}/agents/{agent}/download/{id}'
 */
 download.get = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -55,7 +55,7 @@ download.get = (args: { slug: string | number, agent: string | number, id: strin
 
 /**
 * @see \App\Http\Controllers\AgentController::download
-* @see app/Http/Controllers/AgentController.php:457
+* @see app/Http/Controllers/AgentController.php:467
 * @route '/api/n8n/workspaces/{slug}/agents/{agent}/download/{id}'
 */
 download.head = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -65,7 +65,7 @@ download.head = (args: { slug: string | number, agent: string | number, id: stri
 
 /**
 * @see \App\Http\Controllers\AgentController::store
-* @see app/Http/Controllers/AgentController.php:410
+* @see app/Http/Controllers/AgentController.php:420
 * @route '/workspaces/{slug}/agents/{agent}/knowledge'
 */
 export const store = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -80,7 +80,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::store
-* @see app/Http/Controllers/AgentController.php:410
+* @see app/Http/Controllers/AgentController.php:420
 * @route '/workspaces/{slug}/agents/{agent}/knowledge'
 */
 store.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (args: { slug: string | number, agent: string | number } | [slug: st
 
 /**
 * @see \App\Http\Controllers\AgentController::store
-* @see app/Http/Controllers/AgentController.php:410
+* @see app/Http/Controllers/AgentController.php:420
 * @route '/workspaces/{slug}/agents/{agent}/knowledge'
 */
 store.post = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (args: { slug: string | number, agent: string | number } | [slug: s
 
 /**
 * @see \App\Http\Controllers\AgentController::destroy
-* @see app/Http/Controllers/AgentController.php:440
+* @see app/Http/Controllers/AgentController.php:450
 * @route '/workspaces/{slug}/agents/{agent}/knowledge/{id}'
 */
 export const destroy = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -131,7 +131,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::destroy
-* @see app/Http/Controllers/AgentController.php:440
+* @see app/Http/Controllers/AgentController.php:450
 * @route '/workspaces/{slug}/agents/{agent}/knowledge/{id}'
 */
 destroy.url = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -160,7 +160,7 @@ destroy.url = (args: { slug: string | number, agent: string | number, id: string
 
 /**
 * @see \App\Http\Controllers\AgentController::destroy
-* @see app/Http/Controllers/AgentController.php:440
+* @see app/Http/Controllers/AgentController.php:450
 * @route '/workspaces/{slug}/agents/{agent}/knowledge/{id}'
 */
 destroy.delete = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

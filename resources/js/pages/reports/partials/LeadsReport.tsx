@@ -155,10 +155,7 @@ export function LeadsReport({ data }: LeadsReportProps) {
                                     strokeDasharray="3 3"
                                     className="stroke-muted"
                                 />
-                                <XAxis
-                                    dataKey="date"
-                                    tick={{ fontSize: 12 }}
-                                />
+                                <XAxis dataKey="date" tick={{ fontSize: 12 }} />
                                 <YAxis />
                                 <Tooltip />
                                 <Area
@@ -199,7 +196,13 @@ export function LeadsReport({ data }: LeadsReportProps) {
                                         outerRadius={80}
                                         paddingAngle={2}
                                         dataKey="value"
-                                        label={({ name, percent }: { name?: string; percent?: number }) =>
+                                        label={({
+                                            name,
+                                            percent,
+                                        }: {
+                                            name?: string;
+                                            percent?: number;
+                                        }) =>
                                             `${name ?? ''} ${((percent || 0) * 100).toFixed(0)}%`
                                         }
                                     >
@@ -246,7 +249,13 @@ export function LeadsReport({ data }: LeadsReportProps) {
                                         outerRadius={80}
                                         paddingAngle={2}
                                         dataKey="value"
-                                        label={({ name, percent }: { name?: string; percent?: number }) =>
+                                        label={({
+                                            name,
+                                            percent,
+                                        }: {
+                                            name?: string;
+                                            percent?: number;
+                                        }) =>
                                             `${name ?? ''} ${((percent || 0) * 100).toFixed(0)}%`
                                         }
                                     >
@@ -293,7 +302,13 @@ export function LeadsReport({ data }: LeadsReportProps) {
                                         outerRadius={80}
                                         paddingAngle={2}
                                         dataKey="value"
-                                        label={({ name, percent }: { name?: string; percent?: number }) =>
+                                        label={({
+                                            name,
+                                            percent,
+                                        }: {
+                                            name?: string;
+                                            percent?: number;
+                                        }) =>
                                             `${name ?? ''} ${((percent || 0) * 100).toFixed(0)}%`
                                         }
                                     >
@@ -351,7 +366,6 @@ export function LeadsReport({ data }: LeadsReportProps) {
                     </CardContent>
                 </Card>
             )}
-
         </div>
     );
 }

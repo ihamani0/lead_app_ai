@@ -31,7 +31,7 @@ type DashboardProps = SharedPageProps & {
     recent_tenants: Array<{
         id: string;
         name: string;
-        plan: string;
+        plan: { slug: string; name: string } | null;
         is_active: boolean;
     }>;
 };
@@ -68,15 +68,15 @@ export default function Dashboard({
         <SuperAdminLayout>
             <div className="container mx-auto py-6">
                 <h1 className="mb-6 text-2xl font-bold">
-                    Super Admin Dashboard
+                    {t('superAdmin.dashboard.title')}
                 </h1>
 
-                <div className="w-full mb-3">
+                <div className="mb-3 w-full">
                     {/* OpenRouter Credits Card */}
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between pb-2">
                             <CardTitle className="text-xl">
-                                OpenRouter Credit
+                                {t('superAdmin.dashboard.openRouterCredit')}
                             </CardTitle>
                             <Button
                                 variant="outline"
@@ -87,7 +87,7 @@ export default function Dashboard({
                                 <RefreshCw
                                     className={`mr-2 h-4 w-4 ${loadingCredits ? 'animate-spin' : ''}`}
                                 />
-                                Refresh
+                                {t('superAdmin.dashboard.refresh')}
                             </Button>
                         </CardHeader>
                         <CardContent>
@@ -100,7 +100,7 @@ export default function Dashboard({
                                         )}
                                     </p>
                                     <p className="text-base text-muted-foreground">
-                                        Used: $
+                                        {t('superAdmin.dashboard.used')} $
                                         {openRouterCredits.total_usage.toFixed(
                                             2,
                                         )}
@@ -108,7 +108,7 @@ export default function Dashboard({
                                 </div>
                             ) : (
                                 <p className="text-sm text-muted-foreground">
-                                    Click refresh to load
+                                    {t('superAdmin.dashboard.clickToLoad')}
                                 </p>
                             )}
                         </CardContent>
@@ -152,7 +152,9 @@ export default function Dashboard({
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Plan Distribution</CardTitle>
+                            <CardTitle>
+                                {t('superAdmin.dashboard.planDistribution')}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {Object.entries(plan_distribution).map(
@@ -175,7 +177,9 @@ export default function Dashboard({
 
                     <Card>
                         <CardHeader>
-                            <CardTitle>Top Consumers (Last 30 Days)</CardTitle>
+                            <CardTitle>
+                                {t('superAdmin.dashboard.topConsumers')}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {top_consumers.map((item, idx) => (
@@ -187,10 +191,11 @@ export default function Dashboard({
                                     className="flex justify-between border-b py-2 hover:text-blue-600"
                                 >
                                     <span>
-                                        {item.tenant?.name ?? 'Unknown'}
+                                        {item.tenant?.name ??
+                                            t('superAdmin.dashboard.unknown')}
                                     </span>
                                     <span className="font-medium">
-                                        ${((item.total ?? 0) / 100000)}
+                                        ${(item.total ?? 0) / 100000}
                                     </span>
                                 </Link>
                             ))}
@@ -202,7 +207,9 @@ export default function Dashboard({
                 <div className="mt-6">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Recent Tenants</CardTitle>
+                            <CardTitle>
+                                {t('superAdmin.dashboard.recentTenants')}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2">
@@ -217,7 +224,7 @@ export default function Dashboard({
                                         </span>
                                         <div className="flex items-center gap-4">
                                             <span className="text-sm capitalize">
-                                                {tenant.plan}
+                                                {tenant.plan?.name}
                                             </span>
                                             <span
                                                 className={
@@ -227,8 +234,12 @@ export default function Dashboard({
                                                 }
                                             >
                                                 {tenant.is_active
-                                                    ? 'Active'
-                                                    : 'Inactive'}
+                                                    ? t(
+                                                          'superAdmin.dashboard.active',
+                                                      )
+                                                    : t(
+                                                          'superAdmin.dashboard.inactive',
+                                                      )}
                                             </span>
                                         </div>
                                     </Link>

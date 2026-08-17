@@ -120,6 +120,7 @@
         "excellent": "Excellent",
         "good": "Good",
         "poor": "Poor",
+        "faible": "Faible",
         "actions": {
             "viewDetails": "View details",
             "reconnect": "Reconnect",

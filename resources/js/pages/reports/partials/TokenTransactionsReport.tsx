@@ -1,4 +1,11 @@
-import { Coins, ArrowDownCircle, ArrowUpCircle, Activity, Calendar, Bot } from 'lucide-react';
+import {
+    Coins,
+    ArrowDownCircle,
+    ArrowUpCircle,
+    Activity,
+    Calendar,
+    Bot,
+} from 'lucide-react';
 import { useState, useMemo } from 'react';
 import {
     BarChart,
@@ -38,7 +45,9 @@ const formatTokens = (value: number) => {
 
 const formatCost = (value: number) => `$${value.toFixed(2)}`;
 
-export function TokenTransactionsReport({ data }: TokenTransactionsReportProps) {
+export function TokenTransactionsReport({
+    data,
+}: TokenTransactionsReportProps) {
     const { t } = useTranslation();
     const [view, setView] = useState<'daily' | 'monthly'>('daily');
 
@@ -75,7 +84,8 @@ export function TokenTransactionsReport({ data }: TokenTransactionsReportProps) 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const tooltipFormatter = (value: any, name: any) => {
         const numValue = typeof value === 'number' ? value : 0;
-        if (typeof name === 'string' && name.includes('cost')) return formatCost(numValue);
+        if (typeof name === 'string' && name.includes('cost'))
+            return formatCost(numValue);
         return formatTokens(numValue);
     };
 
@@ -154,13 +164,25 @@ export function TokenTransactionsReport({ data }: TokenTransactionsReportProps) 
                 <CardContent>
                     {chartData.length > 0 ? (
                         <ResponsiveContainer width="100%" height={350}>
-                            <BarChart data={chartData as unknown as Record<string, unknown>[]}>
-                                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                            <BarChart
+                                data={
+                                    chartData as unknown as Record<
+                                        string,
+                                        unknown
+                                    >[]
+                                }
+                            >
+                                <CartesianGrid
+                                    strokeDasharray="3 3"
+                                    className="stroke-muted"
+                                />
                                 <XAxis
                                     dataKey="label"
                                     tick={{ fontSize: 12 }}
                                     angle={view === 'daily' ? -45 : 0}
-                                    textAnchor={view === 'daily' ? 'end' : 'middle'}
+                                    textAnchor={
+                                        view === 'daily' ? 'end' : 'middle'
+                                    }
                                     height={view === 'daily' ? 80 : 40}
                                 />
                                 <YAxis tickFormatter={formatTokens} />
@@ -168,13 +190,17 @@ export function TokenTransactionsReport({ data }: TokenTransactionsReportProps) 
                                 <Legend />
                                 <Bar
                                     dataKey="input_tokens"
-                                    name={t('reports.tokens.legend.inputTokens')}
+                                    name={t(
+                                        'reports.tokens.legend.inputTokens',
+                                    )}
                                     fill="#8b5cf6"
                                     radius={[4, 4, 0, 0]}
                                 />
                                 <Bar
                                     dataKey="output_tokens"
-                                    name={t('reports.tokens.legend.outputTokens')}
+                                    name={t(
+                                        'reports.tokens.legend.outputTokens',
+                                    )}
                                     fill="#10b981"
                                     radius={[4, 4, 0, 0]}
                                 />
@@ -198,10 +224,27 @@ export function TokenTransactionsReport({ data }: TokenTransactionsReportProps) 
                         </CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <ResponsiveContainer width="100%" height={Math.max(200, byAgent.length * 60)}>
-                            <BarChart data={byAgent as unknown as Record<string, unknown>[]} layout="vertical">
-                                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                                <XAxis type="number" tickFormatter={formatTokens} />
+                        <ResponsiveContainer
+                            width="100%"
+                            height={Math.max(200, byAgent.length * 60)}
+                        >
+                            <BarChart
+                                data={
+                                    byAgent as unknown as Record<
+                                        string,
+                                        unknown
+                                    >[]
+                                }
+                                layout="vertical"
+                            >
+                                <CartesianGrid
+                                    strokeDasharray="3 3"
+                                    className="stroke-muted"
+                                />
+                                <XAxis
+                                    type="number"
+                                    tickFormatter={formatTokens}
+                                />
                                 <YAxis
                                     dataKey="agent_name"
                                     type="category"
@@ -212,13 +255,17 @@ export function TokenTransactionsReport({ data }: TokenTransactionsReportProps) 
                                 <Legend />
                                 <Bar
                                     dataKey="input_tokens"
-                                    name={t('reports.tokens.legend.inputTokens')}
+                                    name={t(
+                                        'reports.tokens.legend.inputTokens',
+                                    )}
                                     fill="#8b5cf6"
                                     radius={[0, 4, 4, 0]}
                                 />
                                 <Bar
                                     dataKey="output_tokens"
-                                    name={t('reports.tokens.legend.outputTokens')}
+                                    name={t(
+                                        'reports.tokens.legend.outputTokens',
+                                    )}
                                     fill="#10b981"
                                     radius={[0, 4, 4, 0]}
                                 />
@@ -241,23 +288,60 @@ export function TokenTransactionsReport({ data }: TokenTransactionsReportProps) 
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b">
-                                        <th className="pb-2 text-left font-medium">{t('reports.tokens.table.month')}</th>
-                                        <th className="pb-2 text-right font-medium">{t('reports.tokens.table.inputTokens')}</th>
-                                        <th className="pb-2 text-right font-medium">{t('reports.tokens.table.outputTokens')}</th>
-                                        <th className="pb-2 text-right font-medium">{t('reports.tokens.table.totalTokens')}</th>
-                                        <th className="pb-2 text-right font-medium">{t('reports.tokens.table.cost')}</th>
-                                        <th className="pb-2 text-right font-medium">{t('reports.tokens.table.transactions')}</th>
+                                        <th className="pb-2 text-left font-medium">
+                                            {t('reports.tokens.table.month')}
+                                        </th>
+                                        <th className="pb-2 text-right font-medium">
+                                            {t(
+                                                'reports.tokens.table.inputTokens',
+                                            )}
+                                        </th>
+                                        <th className="pb-2 text-right font-medium">
+                                            {t(
+                                                'reports.tokens.table.outputTokens',
+                                            )}
+                                        </th>
+                                        <th className="pb-2 text-right font-medium">
+                                            {t(
+                                                'reports.tokens.table.totalTokens',
+                                            )}
+                                        </th>
+                                        <th className="pb-2 text-right font-medium">
+                                            {t('reports.tokens.table.cost')}
+                                        </th>
+                                        <th className="pb-2 text-right font-medium">
+                                            {t(
+                                                'reports.tokens.table.transactions',
+                                            )}
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {monthly.map((row) => (
-                                        <tr key={row.month} className="border-b last:border-0">
-                                            <td className="py-2 font-medium">{row.month}</td>
-                                            <td className="py-2 text-right">{formatTokens(row.input_tokens)}</td>
-                                            <td className="py-2 text-right">{formatTokens(row.output_tokens)}</td>
-                                            <td className="py-2 text-right">{formatTokens(row.total_tokens)}</td>
-                                            <td className="py-2 text-right">{formatCost(row.total_cost)}</td>
-                                            <td className="py-2 text-right">{row.transaction_count}</td>
+                                        <tr
+                                            key={row.month}
+                                            className="border-b last:border-0"
+                                        >
+                                            <td className="py-2 font-medium">
+                                                {row.month}
+                                            </td>
+                                            <td className="py-2 text-right">
+                                                {formatTokens(row.input_tokens)}
+                                            </td>
+                                            <td className="py-2 text-right">
+                                                {formatTokens(
+                                                    row.output_tokens,
+                                                )}
+                                            </td>
+                                            <td className="py-2 text-right">
+                                                {formatTokens(row.total_tokens)}
+                                            </td>
+                                            <td className="py-2 text-right">
+                                                {formatCost(row.total_cost)}
+                                            </td>
+                                            <td className="py-2 text-right">
+                                                {row.transaction_count}
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>

@@ -1,6 +1,16 @@
 import { useEcho } from '@laravel/echo-react';
 import axios from 'axios';
-import { ArrowUp, Bot, Brain, Check, Loader2, MessageSquare, RefreshCw, Search, Zap } from 'lucide-react';
+import {
+    ArrowUp,
+    Bot,
+    Brain,
+    Check,
+    Loader2,
+    MessageSquare,
+    RefreshCw,
+    Search,
+    Zap,
+} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -32,14 +42,47 @@ interface Props {
     testConversation: TestConversation | null;
 }
 
-type TypingStage = 'starting' | 'thinking' | 'searching' | 'parsing' | 'completed';
+type TypingStage =
+    | 'starting'
+    | 'thinking'
+    | 'searching'
+    | 'parsing'
+    | 'completed';
 
-const STAGE_CONFIG: Record<TypingStage, { icon: LucideIcon; label: string; animation: string; color: string }> = {
-    starting: { icon: Zap, label: 'Démarrage...', animation: 'animate-pulse', color: 'text-yellow-500' },
-    thinking: { icon: Brain, label: 'Réflexion en cours...', animation: 'animate-pulse', color: 'text-purple-500' },
-    searching: { icon: Search, label: 'Recherche dans la base...', animation: 'animate-spin', color: 'text-blue-500' },
-    parsing: { icon: Loader2, label: 'Finalisation de la réponse...', animation: 'animate-spin', color: 'text-green-500' },
-    completed: { icon: Check, label: 'Terminé', animation: '', color: 'text-green-500' },
+const STAGE_CONFIG: Record<
+    TypingStage,
+    { icon: LucideIcon; label: string; animation: string; color: string }
+> = {
+    starting: {
+        icon: Zap,
+        label: 'Démarrage...',
+        animation: 'animate-pulse',
+        color: 'text-yellow-500',
+    },
+    thinking: {
+        icon: Brain,
+        label: 'Réflexion en cours...',
+        animation: 'animate-pulse',
+        color: 'text-purple-500',
+    },
+    searching: {
+        icon: Search,
+        label: 'Recherche dans la base...',
+        animation: 'animate-spin',
+        color: 'text-blue-500',
+    },
+    parsing: {
+        icon: Loader2,
+        label: 'Finalisation de la réponse...',
+        animation: 'animate-spin',
+        color: 'text-green-500',
+    },
+    completed: {
+        icon: Check,
+        label: 'Terminé',
+        animation: '',
+        color: 'text-green-500',
+    },
 };
 
 function MediaViewer({ asset }: { asset: TestAsset }) {
@@ -83,7 +126,10 @@ export default function TestChat({ agent, testConversation }: Props) {
     );
     const [input, setInput] = useState('');
     const [sending, setSending] = useState(false);
-    const [typingStage, setTypingStage] = useState<{ isTyping: boolean; stage: TypingStage | null }>({
+    const [typingStage, setTypingStage] = useState<{
+        isTyping: boolean;
+        stage: TypingStage | null;
+    }>({
         isTyping: false,
         stage: null,
     });
@@ -98,7 +144,10 @@ export default function TestChat({ agent, testConversation }: Props) {
     });
 
     useEcho(channel, ['TestAgentTyping'], (e) => {
-        setTypingStage({ isTyping: e.is_typing as boolean, stage: e.stage as TypingStage });
+        setTypingStage({
+            isTyping: e.is_typing as boolean,
+            stage: e.stage as TypingStage,
+        });
     });
 
     const scrollToBottom = useCallback(() => {
@@ -257,19 +306,21 @@ export default function TestChat({ agent, testConversation }: Props) {
                         Ceci est un test. Les réponses peuvent varier en
                         conditions réelles.
                     </p>
-                    {typingStage.isTyping && typingStage.stage && typingStage.stage !== 'completed' && (
-                        <div className="mt-2 flex items-center justify-center gap-2">
-                            <div className="h-0.5 w-16 overflow-hidden rounded-full bg-purple-100 dark:bg-purple-900/30">
-                                <div className="h-full w-full animate-pulse bg-purple-400 dark:bg-purple-500" />
+                    {typingStage.isTyping &&
+                        typingStage.stage &&
+                        typingStage.stage !== 'completed' && (
+                            <div className="mt-2 flex items-center justify-center gap-2">
+                                <div className="h-0.5 w-16 overflow-hidden rounded-full bg-purple-100 dark:bg-purple-900/30">
+                                    <div className="h-full w-full animate-pulse bg-purple-400 dark:bg-purple-500" />
+                                </div>
+                                <span className="text-xs text-purple-500 dark:text-purple-400">
+                                    L'IA génère votre réponse...
+                                </span>
+                                <div className="h-0.5 w-16 overflow-hidden rounded-full bg-purple-100 dark:bg-purple-900/30">
+                                    <div className="h-full w-full animate-pulse bg-purple-400 dark:bg-purple-500" />
+                                </div>
                             </div>
-                            <span className="text-xs text-purple-500 dark:text-purple-400">
-                                L'IA génère votre réponse...
-                            </span>
-                            <div className="h-0.5 w-16 overflow-hidden rounded-full bg-purple-100 dark:bg-purple-900/30">
-                                <div className="h-full w-full animate-pulse bg-purple-400 dark:bg-purple-500" />
-                            </div>
-                        </div>
-                    )}
+                        )}
                 </div>
             </div>
         </div>
@@ -353,13 +404,15 @@ function TypingSkeleton({ stage }: { stage: TypingStage }) {
                 <div className="flex items-center gap-2">
                     <div className="relative flex h-7 w-7 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/30">
                         <Bot className="h-4 w-4 text-purple-600 dark:text-purple-400" />
-                        <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3 items-center justify-center">
+                        <span className="absolute -right-0.5 -bottom-0.5 flex h-3 w-3 items-center justify-center">
                             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-purple-400 opacity-75" />
                             <span className="relative inline-flex h-2 w-2 rounded-full bg-purple-500" />
                         </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                        <StageIcon className={`h-3.5 w-3.5 ${config.color} ${config.animation}`} />
+                        <StageIcon
+                            className={`h-3.5 w-3.5 ${config.color} ${config.animation}`}
+                        />
                         <span className="text-xs font-medium text-muted-foreground">
                             {config.label}
                         </span>
@@ -367,8 +420,14 @@ function TypingSkeleton({ stage }: { stage: TypingStage }) {
                 </div>
                 <div className="mt-2.5 space-y-2">
                     <div className="h-2.5 w-48 animate-pulse rounded-full bg-muted" />
-                    <div className="h-2.5 w-32 animate-pulse rounded-full bg-muted" style={{ animationDelay: '0.15s' }} />
-                    <div className="h-2.5 w-40 animate-pulse rounded-full bg-muted" style={{ animationDelay: '0.3s' }} />
+                    <div
+                        className="h-2.5 w-32 animate-pulse rounded-full bg-muted"
+                        style={{ animationDelay: '0.15s' }}
+                    />
+                    <div
+                        className="h-2.5 w-40 animate-pulse rounded-full bg-muted"
+                        style={{ animationDelay: '0.3s' }}
+                    />
                 </div>
             </div>
         </div>

@@ -1,5 +1,12 @@
 import { router } from '@inertiajs/react';
-import { ChevronDown, Eye, MoreHorizontal, ShieldOff, CheckCircle, XCircle } from 'lucide-react';
+import {
+    ChevronDown,
+    Eye,
+    MoreHorizontal,
+    ShieldOff,
+    CheckCircle,
+    XCircle,
+} from 'lucide-react';
 import type { FC } from 'react';
 import { useCallback, useState } from 'react';
 import {
@@ -34,15 +41,37 @@ interface LeadChatHeaderProps {
     onBlocked?: () => void;
 }
 
-const statusConfig: Record<string, { bg: string; text: string; label: string }> = {
+const statusConfig: Record<
+    string,
+    { bg: string; text: string; label: string }
+> = {
     new: { bg: 'bg-blue-100', text: 'text-blue-800', label: 'Nouveau' },
-    contacted: { bg: 'bg-purple-100', text: 'text-purple-800', label: 'En cours' },
-    qualified: { bg: 'bg-green-100', text: 'text-green-800', label: 'Qualifié' },
-    unqualified: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Non qualifié' },
-    converted: { bg: 'bg-emerald-100', text: 'text-emerald-800', label: 'Converti' },
+    contacted: {
+        bg: 'bg-purple-100',
+        text: 'text-purple-800',
+        label: 'En cours',
+    },
+    qualified: {
+        bg: 'bg-green-100',
+        text: 'text-green-800',
+        label: 'Qualifié',
+    },
+    unqualified: {
+        bg: 'bg-gray-100',
+        text: 'text-gray-700',
+        label: 'Non qualifié',
+    },
+    converted: {
+        bg: 'bg-emerald-100',
+        text: 'text-emerald-800',
+        label: 'Converti',
+    },
 };
 
-export const LeadChatHeader: FC<LeadChatHeaderProps> = ({ lead, onBlocked }) => {
+export const LeadChatHeader: FC<LeadChatHeaderProps> = ({
+    lead,
+    onBlocked,
+}) => {
     const activeWorkspace = useActiveWorkspace();
     const [currentStatus, setCurrentStatus] = useState<string>(lead.status);
     const [showProfile, setShowProfile] = useState(false);
@@ -59,9 +88,16 @@ export const LeadChatHeader: FC<LeadChatHeaderProps> = ({ lead, onBlocked }) => 
 
     const updateStatus = useCallback(
         (status: string) => {
-            const url = update({ slug: activeWorkspace!.slug, id: lead.id }).url;
+            const url = update({
+                slug: activeWorkspace!.slug,
+                id: lead.id,
+            }).url;
             setCurrentStatus(status);
-            router.put(url, { status }, { preserveScroll: true, preserveState: true });
+            router.put(
+                url,
+                { status },
+                { preserveScroll: true, preserveState: true },
+            );
         },
         [activeWorkspace, lead.id],
     );
@@ -71,7 +107,10 @@ export const LeadChatHeader: FC<LeadChatHeaderProps> = ({ lead, onBlocked }) => 
         const isTreated = lead.treatment_status === 'TRAITE';
         router.put(
             url,
-            { treatment_status: isTreated ? 'NON_TRAITE' : 'TRAITE', is_new: isTreated },
+            {
+                treatment_status: isTreated ? 'NON_TRAITE' : 'TRAITE',
+                is_new: isTreated,
+            },
             { preserveScroll: true, preserveState: true },
         );
     }, [activeWorkspace, lead.id, lead.treatment_status]);
@@ -125,7 +164,10 @@ export const LeadChatHeader: FC<LeadChatHeaderProps> = ({ lead, onBlocked }) => 
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         {Object.entries(statusConfig).map(([key, config]) => (
-                            <DropdownMenuItem key={key} onClick={() => updateStatus(key)}>
+                            <DropdownMenuItem
+                                key={key}
+                                onClick={() => updateStatus(key)}
+                            >
                                 {currentStatus === key && (
                                     <span className="mr-2 text-primary">✓</span>
                                 )}
@@ -180,17 +222,25 @@ export const LeadChatHeader: FC<LeadChatHeaderProps> = ({ lead, onBlocked }) => 
             />
 
             {/* Block confirmation dialog */}
-            <AlertDialog open={showBlockConfirm} onOpenChange={setShowBlockConfirm}>
+            <AlertDialog
+                open={showBlockConfirm}
+                onOpenChange={setShowBlockConfirm}
+            >
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Bloquer ce contact ?</AlertDialogTitle>
+                        <AlertDialogTitle>
+                            Bloquer ce contact ?
+                        </AlertDialogTitle>
                         <AlertDialogDescription>
-                            Le bot sera mis en pause et ce contact sera ajouté à la liste
-                            d'interception. Vous pourrez reprendre la conversation manuellement.
+                            Le bot sera mis en pause et ce contact sera ajouté à
+                            la liste d'interception. Vous pourrez reprendre la
+                            conversation manuellement.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={blocking}>Annuler</AlertDialogCancel>
+                        <AlertDialogCancel disabled={blocking}>
+                            Annuler
+                        </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleBlock}
                             disabled={blocking}

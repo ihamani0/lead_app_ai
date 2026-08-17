@@ -7,6 +7,7 @@ use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
 use App\Models\Lead;
 use App\Models\TokenTransactionDaily;
+use App\Services\PlanEnforcementService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,12 @@ class ReportController extends Controller
 
     public function index(Request $request)
     {
+        $this->authorizeRole($request, ['owner', 'admin', 'member', 'viewer']);
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'reports')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $tab = $request->input('tab', 'leads');
 
         $data = [];

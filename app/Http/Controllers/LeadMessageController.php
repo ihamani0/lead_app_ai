@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Jobs\SendLeadMessage;
 use App\Models\Lead;
+use App\Services\PlanEnforcementService;
 use Illuminate\Http\Request;
 
 class LeadMessageController extends Controller
@@ -25,6 +26,10 @@ class LeadMessageController extends Controller
     public function send(Request $request, string $slug, Lead $lead)
     {
         $this->authorizeRole($request, ['owner', 'admin']);
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'talk_from_lead')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
 
         $lead = $this->findScoped($request, Lead::class, $lead->id);
 

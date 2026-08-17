@@ -4,7 +4,7 @@ import members from './members'
 import roles from './roles'
 /**
 * @see \App\Http\Controllers\Team\TeamController::invite
-* @see app/Http/Controllers/Team/TeamController.php:221
+* @see app/Http/Controllers/Team/TeamController.php:229
 * @route '/workspaces/{slug}/invite'
 */
 export const invite = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -19,7 +19,7 @@ invite.definition = {
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::invite
-* @see app/Http/Controllers/Team/TeamController.php:221
+* @see app/Http/Controllers/Team/TeamController.php:229
 * @route '/workspaces/{slug}/invite'
 */
 invite.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -46,7 +46,7 @@ invite.url = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::invite
-* @see app/Http/Controllers/Team/TeamController.php:221
+* @see app/Http/Controllers/Team/TeamController.php:229
 * @route '/workspaces/{slug}/invite'
 */
 invite.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -56,7 +56,7 @@ invite.post = (args: { slug: string | number } | [slug: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::index
-* @see app/Http/Controllers/Team/TeamController.php:20
+* @see app/Http/Controllers/Team/TeamController.php:24
 * @route '/workspaces'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -71,7 +71,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::index
-* @see app/Http/Controllers/Team/TeamController.php:20
+* @see app/Http/Controllers/Team/TeamController.php:24
 * @route '/workspaces'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -80,7 +80,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::index
-* @see app/Http/Controllers/Team/TeamController.php:20
+* @see app/Http/Controllers/Team/TeamController.php:24
 * @route '/workspaces'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -90,7 +90,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::index
-* @see app/Http/Controllers/Team/TeamController.php:20
+* @see app/Http/Controllers/Team/TeamController.php:24
 * @route '/workspaces'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -100,7 +100,7 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::store
-* @see app/Http/Controllers/Team/TeamController.php:74
+* @see app/Http/Controllers/Team/TeamController.php:78
 * @route '/workspaces'
 */
 export const store = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::store
-* @see app/Http/Controllers/Team/TeamController.php:74
+* @see app/Http/Controllers/Team/TeamController.php:78
 * @route '/workspaces'
 */
 store.url = (options?: RouteQueryOptions) => {
@@ -124,7 +124,7 @@ store.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::store
-* @see app/Http/Controllers/Team/TeamController.php:74
+* @see app/Http/Controllers/Team/TeamController.php:78
 * @route '/workspaces'
 */
 store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -134,7 +134,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::show
-* @see app/Http/Controllers/Team/TeamController.php:102
+* @see app/Http/Controllers/Team/TeamController.php:110
 * @route '/workspaces/{slug}'
 */
 export const show = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -149,7 +149,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::show
-* @see app/Http/Controllers/Team/TeamController.php:102
+* @see app/Http/Controllers/Team/TeamController.php:110
 * @route '/workspaces/{slug}'
 */
 show.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -176,7 +176,7 @@ show.url = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::show
-* @see app/Http/Controllers/Team/TeamController.php:102
+* @see app/Http/Controllers/Team/TeamController.php:110
 * @route '/workspaces/{slug}'
 */
 show.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -186,7 +186,7 @@ show.get = (args: { slug: string | number } | [slug: string | number ] | string 
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::show
-* @see app/Http/Controllers/Team/TeamController.php:102
+* @see app/Http/Controllers/Team/TeamController.php:110
 * @route '/workspaces/{slug}'
 */
 show.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -196,7 +196,7 @@ show.head = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::update
-* @see app/Http/Controllers/Team/TeamController.php:177
+* @see app/Http/Controllers/Team/TeamController.php:185
 * @route '/workspaces/{slug}'
 */
 export const update = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -211,7 +211,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::update
-* @see app/Http/Controllers/Team/TeamController.php:177
+* @see app/Http/Controllers/Team/TeamController.php:185
 * @route '/workspaces/{slug}'
 */
 update.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -238,7 +238,7 @@ update.url = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::update
-* @see app/Http/Controllers/Team/TeamController.php:177
+* @see app/Http/Controllers/Team/TeamController.php:185
 * @route '/workspaces/{slug}'
 */
 update.put = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -248,7 +248,7 @@ update.put = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::destroy
-* @see app/Http/Controllers/Team/TeamController.php:203
+* @see app/Http/Controllers/Team/TeamController.php:211
 * @route '/workspaces/{slug}'
 */
 export const destroy = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -263,7 +263,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::destroy
-* @see app/Http/Controllers/Team/TeamController.php:203
+* @see app/Http/Controllers/Team/TeamController.php:211
 * @route '/workspaces/{slug}'
 */
 destroy.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -290,7 +290,7 @@ destroy.url = (args: { slug: string | number } | [slug: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\Team\TeamController::destroy
-* @see app/Http/Controllers/Team/TeamController.php:203
+* @see app/Http/Controllers/Team/TeamController.php:211
 * @route '/workspaces/{slug}'
 */
 destroy.delete = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

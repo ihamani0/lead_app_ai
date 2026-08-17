@@ -28,7 +28,7 @@ type PageProps = {
     auth: {
         user: {
             tenant: {
-                plan: string;
+                plan: { slug: string; name: string } | null;
             };
         };
         workspaces?: Workspace[];
@@ -42,7 +42,7 @@ export function WorkspaceSelector() {
     const activeWorkspace = useActiveWorkspace();
     const [open, setOpen] = useState(false);
 
-    const plan = auth?.user?.tenant?.plan ?? '';
+    const plan = auth?.user?.tenant?.plan;
     const workspaces = auth?.workspaces ?? [];
 
     if (!activeWorkspace) {
@@ -80,7 +80,7 @@ export function WorkspaceSelector() {
                                 variant="secondary"
                                 className="px-1.5 py-0 text-[10px] font-semibold uppercase"
                             >
-                                {plan}
+                                {plan?.name}
                             </Badge>
                         )}
                         <ChevronsUpDown className="size-3.5 text-muted-foreground" />
@@ -144,7 +144,7 @@ export function WorkspaceSelector() {
                                                     variant="secondary"
                                                     className="px-1.5 py-0 text-[10px] font-semibold uppercase"
                                                 >
-                                                    {plan}
+                                                    {plan?.name}
                                                 </Badge>
                                             )}
                                             {activeWorkspace.id ===

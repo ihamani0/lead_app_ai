@@ -1,4 +1,4 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import {
     Bot,
     ChevronLeft,
@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { ComponentType } from 'react';
+import { FeatureGate } from '@/components/feature-gate';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { WhatsAppIcon } from '@/components/ui/WhatsAppIcon';
@@ -96,6 +97,7 @@ export default function AgentShow({
 }: Props) {
     const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
 
     const tabs: TabConfig[] = [
         { id: 'identite', label: 'Identité', icon: User },
@@ -274,17 +276,21 @@ export default function AgentShow({
                             </TabsContent>
 
                             <TabsContent value="test" className="mt-0">
-                                <TestChat
-                                    agent={agent}
-                                    testConversation={testConversation}
-                                />
+                                <FeatureGate feature={features.test_ia}>
+                                    <TestChat
+                                        agent={agent}
+                                        testConversation={testConversation}
+                                    />
+                                </FeatureGate>
                             </TabsContent>
 
                             <TabsContent value="medias" className="mt-0">
-                                <MediasPlaceholder
-                                    agent={agent}
-                                    assets={mediaAssets}
-                                />
+                                <FeatureGate feature={features.media_library}>
+                                    <MediasPlaceholder
+                                        agent={agent}
+                                        assets={mediaAssets}
+                                    />
+                                </FeatureGate>
                             </TabsContent>
                         </div>
                     </div>

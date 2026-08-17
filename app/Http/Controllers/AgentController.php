@@ -11,6 +11,7 @@ use App\Services\AgentService;
 use App\Services\EvolutionService;
 use App\Services\InstanceService;
 use App\Services\KnowledgeBaseService;
+use App\Services\PlanEnforcementService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -28,6 +29,7 @@ class AgentController extends Controller
         private AgentService $agentService,
         private InstanceService $instanceService,
         private EvolutionService $evolutionService,
+        private PlanEnforcementService $planEnforcement,
     ) {}
 
     // ─────────────────────────────────────────────
@@ -57,7 +59,7 @@ class AgentController extends Controller
         return Inertia::render('Agents/Index', [
             'agents' => $agents,
             'availableInstances' => $availableInstances,
-            'canCreate' => $canManage,
+            'canCreate' => $canManage && $this->planEnforcement->canCreateAgent($request->user()->tenant),
             'canManage' => $canManage,
         ]);
     }
@@ -101,6 +103,10 @@ class AgentController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        if (! $this->planEnforcement->canCreateAgent($request->user()->tenant)) {
+            return back()->with('error', __('messages.error.plan_limit_agents'));
+        }
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -190,6 +196,10 @@ class AgentController extends Controller
     public function clone(Request $request)
     {
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        if (! $this->planEnforcement->canUseFeature($request->user()->tenant, 'agent_clone')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
 
         $agent = $this->findScoped($request, AgentConfig::class, $request->route('agent'));
 

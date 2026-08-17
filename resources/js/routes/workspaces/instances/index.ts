@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::index
-* @see app/Http/Controllers/EvolutionInstanceController.php:22
+* @see app/Http/Controllers/EvolutionInstanceController.php:23
 * @route '/workspaces/{slug}/instances'
 */
 export const index = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::index
-* @see app/Http/Controllers/EvolutionInstanceController.php:22
+* @see app/Http/Controllers/EvolutionInstanceController.php:23
 * @route '/workspaces/{slug}/instances'
 */
 index.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ index.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::index
-* @see app/Http/Controllers/EvolutionInstanceController.php:22
+* @see app/Http/Controllers/EvolutionInstanceController.php:23
 * @route '/workspaces/{slug}/instances'
 */
 index.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ index.get = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::index
-* @see app/Http/Controllers/EvolutionInstanceController.php:22
+* @see app/Http/Controllers/EvolutionInstanceController.php:23
 * @route '/workspaces/{slug}/instances'
 */
 index.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ index.head = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::store
-* @see app/Http/Controllers/EvolutionInstanceController.php:63
+* @see app/Http/Controllers/EvolutionInstanceController.php:64
 * @route '/workspaces/{slug}/instances'
 */
 export const store = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -78,7 +78,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::store
-* @see app/Http/Controllers/EvolutionInstanceController.php:63
+* @see app/Http/Controllers/EvolutionInstanceController.php:64
 * @route '/workspaces/{slug}/instances'
 */
 store.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ store.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::store
-* @see app/Http/Controllers/EvolutionInstanceController.php:63
+* @see app/Http/Controllers/EvolutionInstanceController.php:64
 * @route '/workspaces/{slug}/instances'
 */
 store.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ store.post = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::show
-* @see app/Http/Controllers/EvolutionInstanceController.php:128
+* @see app/Http/Controllers/EvolutionInstanceController.php:133
 * @route '/workspaces/{slug}/instances/{id}'
 */
 export const show = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -130,7 +130,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::show
-* @see app/Http/Controllers/EvolutionInstanceController.php:128
+* @see app/Http/Controllers/EvolutionInstanceController.php:133
 * @route '/workspaces/{slug}/instances/{id}'
 */
 show.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -156,7 +156,7 @@ show.url = (args: { slug: string | number, id: string | number } | [slug: string
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::show
-* @see app/Http/Controllers/EvolutionInstanceController.php:128
+* @see app/Http/Controllers/EvolutionInstanceController.php:133
 * @route '/workspaces/{slug}/instances/{id}'
 */
 show.get = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -166,7 +166,7 @@ show.get = (args: { slug: string | number, id: string | number } | [slug: string
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::show
-* @see app/Http/Controllers/EvolutionInstanceController.php:128
+* @see app/Http/Controllers/EvolutionInstanceController.php:133
 * @route '/workspaces/{slug}/instances/{id}'
 */
 show.head = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -176,7 +176,7 @@ show.head = (args: { slug: string | number, id: string | number } | [slug: strin
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::fetchQr
-* @see app/Http/Controllers/EvolutionInstanceController.php:153
+* @see app/Http/Controllers/EvolutionInstanceController.php:158
 * @route '/workspaces/{slug}/instances/{id}/qr'
 */
 export const fetchQr = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -191,7 +191,7 @@ fetchQr.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::fetchQr
-* @see app/Http/Controllers/EvolutionInstanceController.php:153
+* @see app/Http/Controllers/EvolutionInstanceController.php:158
 * @route '/workspaces/{slug}/instances/{id}/qr'
 */
 fetchQr.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -217,7 +217,7 @@ fetchQr.url = (args: { slug: string | number, id: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::fetchQr
-* @see app/Http/Controllers/EvolutionInstanceController.php:153
+* @see app/Http/Controllers/EvolutionInstanceController.php:158
 * @route '/workspaces/{slug}/instances/{id}/qr'
 */
 fetchQr.post = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -227,7 +227,7 @@ fetchQr.post = (args: { slug: string | number, id: string | number } | [slug: st
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::disconnect
-* @see app/Http/Controllers/EvolutionInstanceController.php:183
+* @see app/Http/Controllers/EvolutionInstanceController.php:188
 * @route '/workspaces/{slug}/instances/{id}/disconnect'
 */
 export const disconnect = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -242,7 +242,7 @@ disconnect.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::disconnect
-* @see app/Http/Controllers/EvolutionInstanceController.php:183
+* @see app/Http/Controllers/EvolutionInstanceController.php:188
 * @route '/workspaces/{slug}/instances/{id}/disconnect'
 */
 disconnect.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -268,7 +268,7 @@ disconnect.url = (args: { slug: string | number, id: string | number } | [slug: 
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::disconnect
-* @see app/Http/Controllers/EvolutionInstanceController.php:183
+* @see app/Http/Controllers/EvolutionInstanceController.php:188
 * @route '/workspaces/{slug}/instances/{id}/disconnect'
 */
 disconnect.post = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -278,7 +278,7 @@ disconnect.post = (args: { slug: string | number, id: string | number } | [slug:
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::restart
-* @see app/Http/Controllers/EvolutionInstanceController.php:169
+* @see app/Http/Controllers/EvolutionInstanceController.php:174
 * @route '/workspaces/{slug}/instances/{id}/restart'
 */
 export const restart = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -293,7 +293,7 @@ restart.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::restart
-* @see app/Http/Controllers/EvolutionInstanceController.php:169
+* @see app/Http/Controllers/EvolutionInstanceController.php:174
 * @route '/workspaces/{slug}/instances/{id}/restart'
 */
 restart.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -319,7 +319,7 @@ restart.url = (args: { slug: string | number, id: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::restart
-* @see app/Http/Controllers/EvolutionInstanceController.php:169
+* @see app/Http/Controllers/EvolutionInstanceController.php:174
 * @route '/workspaces/{slug}/instances/{id}/restart'
 */
 restart.put = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -329,7 +329,7 @@ restart.put = (args: { slug: string | number, id: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::restore
-* @see app/Http/Controllers/EvolutionInstanceController.php:290
+* @see app/Http/Controllers/EvolutionInstanceController.php:295
 * @route '/workspaces/{slug}/instances/{id}/restore'
 */
 export const restore = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -344,7 +344,7 @@ restore.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::restore
-* @see app/Http/Controllers/EvolutionInstanceController.php:290
+* @see app/Http/Controllers/EvolutionInstanceController.php:295
 * @route '/workspaces/{slug}/instances/{id}/restore'
 */
 restore.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -370,7 +370,7 @@ restore.url = (args: { slug: string | number, id: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::restore
-* @see app/Http/Controllers/EvolutionInstanceController.php:290
+* @see app/Http/Controllers/EvolutionInstanceController.php:295
 * @route '/workspaces/{slug}/instances/{id}/restore'
 */
 restore.post = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -380,7 +380,7 @@ restore.post = (args: { slug: string | number, id: string | number } | [slug: st
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::update
-* @see app/Http/Controllers/EvolutionInstanceController.php:114
+* @see app/Http/Controllers/EvolutionInstanceController.php:119
 * @route '/workspaces/{slug}/instances/{id}'
 */
 export const update = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -395,7 +395,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::update
-* @see app/Http/Controllers/EvolutionInstanceController.php:114
+* @see app/Http/Controllers/EvolutionInstanceController.php:119
 * @route '/workspaces/{slug}/instances/{id}'
 */
 update.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -421,7 +421,7 @@ update.url = (args: { slug: string | number, id: string | number } | [slug: stri
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::update
-* @see app/Http/Controllers/EvolutionInstanceController.php:114
+* @see app/Http/Controllers/EvolutionInstanceController.php:119
 * @route '/workspaces/{slug}/instances/{id}'
 */
 update.put = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -431,7 +431,7 @@ update.put = (args: { slug: string | number, id: string | number } | [slug: stri
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::destroy
-* @see app/Http/Controllers/EvolutionInstanceController.php:226
+* @see app/Http/Controllers/EvolutionInstanceController.php:231
 * @route '/workspaces/{slug}/instances/{id}'
 */
 export const destroy = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -446,7 +446,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::destroy
-* @see app/Http/Controllers/EvolutionInstanceController.php:226
+* @see app/Http/Controllers/EvolutionInstanceController.php:231
 * @route '/workspaces/{slug}/instances/{id}'
 */
 destroy.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -472,7 +472,7 @@ destroy.url = (args: { slug: string | number, id: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::destroy
-* @see app/Http/Controllers/EvolutionInstanceController.php:226
+* @see app/Http/Controllers/EvolutionInstanceController.php:231
 * @route '/workspaces/{slug}/instances/{id}'
 */
 destroy.delete = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -482,7 +482,7 @@ destroy.delete = (args: { slug: string | number, id: string | number } | [slug: 
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::forceDestroy
-* @see app/Http/Controllers/EvolutionInstanceController.php:269
+* @see app/Http/Controllers/EvolutionInstanceController.php:274
 * @route '/workspaces/{slug}/instances/{id}/force'
 */
 export const forceDestroy = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -497,7 +497,7 @@ forceDestroy.definition = {
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::forceDestroy
-* @see app/Http/Controllers/EvolutionInstanceController.php:269
+* @see app/Http/Controllers/EvolutionInstanceController.php:274
 * @route '/workspaces/{slug}/instances/{id}/force'
 */
 forceDestroy.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -523,7 +523,7 @@ forceDestroy.url = (args: { slug: string | number, id: string | number } | [slug
 
 /**
 * @see \App\Http\Controllers\EvolutionInstanceController::forceDestroy
-* @see app/Http/Controllers/EvolutionInstanceController.php:269
+* @see app/Http/Controllers/EvolutionInstanceController.php:274
 * @route '/workspaces/{slug}/instances/{id}/force'
 */
 forceDestroy.delete = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

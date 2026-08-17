@@ -119,7 +119,7 @@
         "connectionQuality": "Qualité connexion",
         "excellent": "Excellente",
         "good": "Bonne",
-        "poor": "Faible",
+        "faible": "Faible",
         "actions": {
             "viewDetails": "Voir les détails",
             "reconnect": "Reconnecter",

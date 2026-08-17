@@ -28,9 +28,13 @@ export function Step2ConnectWhatsApp({
 }: Step2ConnectWhatsAppProps) {
     const activeWorkspace = useActiveWorkspace()!;
     const { t } = useTranslation();
-    const [qrCode, setQrCode] = useState<string | null>(formData.instance?.qr_code ?? null);
+    const [qrCode, setQrCode] = useState<string | null>(
+        formData.instance?.qr_code ?? null,
+    );
     const [isLoadingQr, setIsLoadingQr] = useState(false);
-    const [isWaitingForQr, setIsWaitingForQr] = useState(!formData.instance?.qr_code);
+    const [isWaitingForQr, setIsWaitingForQr] = useState(
+        !formData.instance?.qr_code,
+    );
     const [qrError, setQrError] = useState<string | null>(null);
     const [showFallback, setShowFallback] = useState(false);
 

@@ -122,7 +122,47 @@ register.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/public.php:21
+* @see routes/public.php:16
+* @route '/welcome'
+*/
+export const home = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: home.url(options),
+    method: 'get',
+})
+
+home.definition = {
+    methods: ["get","head"],
+    url: '/welcome',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see routes/public.php:16
+* @route '/welcome'
+*/
+home.url = (options?: RouteQueryOptions) => {
+    return home.definition.url + queryParams(options)
+}
+
+/**
+* @see routes/public.php:16
+* @route '/welcome'
+*/
+home.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: home.url(options),
+    method: 'get',
+})
+
+/**
+* @see routes/public.php:16
+* @route '/welcome'
+*/
+home.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: home.url(options),
+    method: 'head',
+})
+
+/**
+* @see routes/public.php:23
 * @route '/terms'
 */
 export const terms = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -136,7 +176,7 @@ terms.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/public.php:21
+* @see routes/public.php:23
 * @route '/terms'
 */
 terms.url = (options?: RouteQueryOptions) => {
@@ -144,7 +184,7 @@ terms.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/public.php:21
+* @see routes/public.php:23
 * @route '/terms'
 */
 terms.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -153,7 +193,7 @@ terms.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/public.php:21
+* @see routes/public.php:23
 * @route '/terms'
 */
 terms.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -162,7 +202,7 @@ terms.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 })
 
 /**
-* @see routes/public.php:22
+* @see routes/public.php:24
 * @route '/privacy'
 */
 export const privacy = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -176,7 +216,7 @@ privacy.definition = {
 } satisfies RouteDefinition<["get","head"]>
 
 /**
-* @see routes/public.php:22
+* @see routes/public.php:24
 * @route '/privacy'
 */
 privacy.url = (options?: RouteQueryOptions) => {
@@ -184,7 +224,7 @@ privacy.url = (options?: RouteQueryOptions) => {
 }
 
 /**
-* @see routes/public.php:22
+* @see routes/public.php:24
 * @route '/privacy'
 */
 privacy.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -193,7 +233,7 @@ privacy.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 })
 
 /**
-* @see routes/public.php:22
+* @see routes/public.php:24
 * @route '/privacy'
 */
 privacy.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({

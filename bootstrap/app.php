@@ -50,6 +50,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->validateCsrfTokens([
             'webhooks/*',
+            'paddle/*',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -5,6 +5,7 @@
  * - /create-n8n-token: Generates a Sanctum API token for a new n8n tenant
  * - Commented-out test routes for manual API testing
  */
+use App\Models\Plan;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Route;
 
@@ -12,13 +13,14 @@ Route::get('/create-n8n-token', function () {
     $instance = Tenant::create([
         'name' => 'lg-agent',
         'slug' => 'lg-agent',
-        'plan' => 'free',
+        'plan_id' => Plan::default()->first()->id,
         'is_active' => true,
         'settings' => [],
     ]);
 
     $token = $instance->createToken('lg-agent')->plainTextToken;
     echo $token;
+
     return response()->json([
         'status' => '200',
         'token' => $token,

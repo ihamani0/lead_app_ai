@@ -1,14 +1,14 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../wayfinder'
 import agents from './agents'
-import leads from './leads'
-import wizard from './wizard'
-import instances from './instances'
-import media from './media'
-import reports from './reports'
-import knowledge from './knowledge'
-import faqs from './faqs'
 import bibliotheque from './bibliotheque'
+import faqs from './faqs'
+import instances from './instances'
+import knowledge from './knowledge'
+import leads from './leads'
+import media from './media'
 import members from './members'
+import reports from './reports'
+import wizard from './wizard'
 /**
 * @see \App\Http\Controllers\Api\WorkspaceStatsController::stats
 * @see app/Http/Controllers/Api/WorkspaceStatsController.php:13

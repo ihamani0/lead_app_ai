@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefa
 import sessionB29d8e from './session'
 /**
 * @see \App\Http\Controllers\LeadController::index
-* @see app/Http/Controllers/LeadController.php:17
+* @see app/Http/Controllers/LeadController.php:18
 * @route '/workspaces/{slug}/leads'
 */
 export const index = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -17,7 +17,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadController::index
-* @see app/Http/Controllers/LeadController.php:17
+* @see app/Http/Controllers/LeadController.php:18
 * @route '/workspaces/{slug}/leads'
 */
 index.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ index.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\LeadController::index
-* @see app/Http/Controllers/LeadController.php:17
+* @see app/Http/Controllers/LeadController.php:18
 * @route '/workspaces/{slug}/leads'
 */
 index.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.get = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\LeadController::index
-* @see app/Http/Controllers/LeadController.php:17
+* @see app/Http/Controllers/LeadController.php:18
 * @route '/workspaces/{slug}/leads'
 */
 index.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -64,7 +64,7 @@ index.head = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\LeadController::exportMethod
-* @see app/Http/Controllers/LeadController.php:102
+* @see app/Http/Controllers/LeadController.php:103
 * @route '/workspaces/{slug}/leads/export'
 */
 export const exportMethod = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ exportMethod.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadController::exportMethod
-* @see app/Http/Controllers/LeadController.php:102
+* @see app/Http/Controllers/LeadController.php:103
 * @route '/workspaces/{slug}/leads/export'
 */
 exportMethod.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ exportMethod.url = (args: { slug: string | number } | [slug: string | number ] |
 
 /**
 * @see \App\Http\Controllers\LeadController::exportMethod
-* @see app/Http/Controllers/LeadController.php:102
+* @see app/Http/Controllers/LeadController.php:103
 * @route '/workspaces/{slug}/leads/export'
 */
 exportMethod.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -116,7 +116,7 @@ exportMethod.get = (args: { slug: string | number } | [slug: string | number ] |
 
 /**
 * @see \App\Http\Controllers\LeadController::exportMethod
-* @see app/Http/Controllers/LeadController.php:102
+* @see app/Http/Controllers/LeadController.php:103
 * @route '/workspaces/{slug}/leads/export'
 */
 exportMethod.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -126,10 +126,10 @@ exportMethod.head = (args: { slug: string | number } | [slug: string | number ] 
 
 /**
 * @see \App\Http\Controllers\LeadController::profile
-* @see app/Http/Controllers/LeadController.php:262
+* @see app/Http/Controllers/LeadController.php:275
 * @route '/workspaces/{slug}/leads/{lead}/profile'
 */
-export const profile = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const profile = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: profile.url(args, options),
     method: 'get',
 })
@@ -141,10 +141,10 @@ profile.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadController::profile
-* @see app/Http/Controllers/LeadController.php:262
+* @see app/Http/Controllers/LeadController.php:275
 * @route '/workspaces/{slug}/leads/{lead}/profile'
 */
-profile.url = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+profile.url = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -169,30 +169,30 @@ profile.url = (args: { slug: string | number, lead: string | number | { id: stri
 
 /**
 * @see \App\Http\Controllers\LeadController::profile
-* @see app/Http/Controllers/LeadController.php:262
+* @see app/Http/Controllers/LeadController.php:275
 * @route '/workspaces/{slug}/leads/{lead}/profile'
 */
-profile.get = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+profile.get = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: profile.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\LeadController::profile
-* @see app/Http/Controllers/LeadController.php:262
+* @see app/Http/Controllers/LeadController.php:275
 * @route '/workspaces/{slug}/leads/{lead}/profile'
 */
-profile.head = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+profile.head = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: profile.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\LeadController::block
-* @see app/Http/Controllers/LeadController.php:306
+* @see app/Http/Controllers/LeadController.php:319
 * @route '/workspaces/{slug}/leads/{lead}/block'
 */
-export const block = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const block = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: block.url(args, options),
     method: 'post',
 })
@@ -204,10 +204,10 @@ block.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadController::block
-* @see app/Http/Controllers/LeadController.php:306
+* @see app/Http/Controllers/LeadController.php:319
 * @route '/workspaces/{slug}/leads/{lead}/block'
 */
-block.url = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+block.url = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -232,17 +232,17 @@ block.url = (args: { slug: string | number, lead: string | number | { id: string
 
 /**
 * @see \App\Http\Controllers\LeadController::block
-* @see app/Http/Controllers/LeadController.php:306
+* @see app/Http/Controllers/LeadController.php:319
 * @route '/workspaces/{slug}/leads/{lead}/block'
 */
-block.post = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+block.post = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: block.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\LeadController::show
-* @see app/Http/Controllers/LeadController.php:66
+* @see app/Http/Controllers/LeadController.php:67
 * @route '/workspaces/{slug}/leads/{lead}'
 */
 export const show = (args: { slug: string | number, lead: string | number } | [slug: string | number, lead: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -257,7 +257,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadController::show
-* @see app/Http/Controllers/LeadController.php:66
+* @see app/Http/Controllers/LeadController.php:67
 * @route '/workspaces/{slug}/leads/{lead}'
 */
 show.url = (args: { slug: string | number, lead: string | number } | [slug: string | number, lead: string | number ], options?: RouteQueryOptions) => {
@@ -283,7 +283,7 @@ show.url = (args: { slug: string | number, lead: string | number } | [slug: stri
 
 /**
 * @see \App\Http\Controllers\LeadController::show
-* @see app/Http/Controllers/LeadController.php:66
+* @see app/Http/Controllers/LeadController.php:67
 * @route '/workspaces/{slug}/leads/{lead}'
 */
 show.get = (args: { slug: string | number, lead: string | number } | [slug: string | number, lead: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -293,7 +293,7 @@ show.get = (args: { slug: string | number, lead: string | number } | [slug: stri
 
 /**
 * @see \App\Http\Controllers\LeadController::show
-* @see app/Http/Controllers/LeadController.php:66
+* @see app/Http/Controllers/LeadController.php:67
 * @route '/workspaces/{slug}/leads/{lead}'
 */
 show.head = (args: { slug: string | number, lead: string | number } | [slug: string | number, lead: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -303,7 +303,7 @@ show.head = (args: { slug: string | number, lead: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\LeadController::update
-* @see app/Http/Controllers/LeadController.php:161
+* @see app/Http/Controllers/LeadController.php:166
 * @route '/workspaces/{slug}/leads/{id}'
 */
 export const update = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -318,7 +318,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadController::update
-* @see app/Http/Controllers/LeadController.php:161
+* @see app/Http/Controllers/LeadController.php:166
 * @route '/workspaces/{slug}/leads/{id}'
 */
 update.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -344,7 +344,7 @@ update.url = (args: { slug: string | number, id: string | number } | [slug: stri
 
 /**
 * @see \App\Http\Controllers\LeadController::update
-* @see app/Http/Controllers/LeadController.php:161
+* @see app/Http/Controllers/LeadController.php:166
 * @route '/workspaces/{slug}/leads/{id}'
 */
 update.put = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -354,7 +354,7 @@ update.put = (args: { slug: string | number, id: string | number } | [slug: stri
 
 /**
 * @see \App\Http\Controllers\LeadController::triggerQualification
-* @see app/Http/Controllers/LeadController.php:190
+* @see app/Http/Controllers/LeadController.php:195
 * @route '/workspaces/{slug}/leads/{id}/trigger-qualification'
 */
 export const triggerQualification = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -369,7 +369,7 @@ triggerQualification.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadController::triggerQualification
-* @see app/Http/Controllers/LeadController.php:190
+* @see app/Http/Controllers/LeadController.php:195
 * @route '/workspaces/{slug}/leads/{id}/trigger-qualification'
 */
 triggerQualification.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -395,7 +395,7 @@ triggerQualification.url = (args: { slug: string | number, id: string | number }
 
 /**
 * @see \App\Http\Controllers\LeadController::triggerQualification
-* @see app/Http/Controllers/LeadController.php:190
+* @see app/Http/Controllers/LeadController.php:195
 * @route '/workspaces/{slug}/leads/{id}/trigger-qualification'
 */
 triggerQualification.post = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -405,7 +405,7 @@ triggerQualification.post = (args: { slug: string | number, id: string | number 
 
 /**
 * @see \App\Http\Controllers\LeadController::bulkQualify
-* @see app/Http/Controllers/LeadController.php:211
+* @see app/Http/Controllers/LeadController.php:220
 * @route '/workspaces/{slug}/leads/bulk-qualify'
 */
 export const bulkQualify = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -420,7 +420,7 @@ bulkQualify.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadController::bulkQualify
-* @see app/Http/Controllers/LeadController.php:211
+* @see app/Http/Controllers/LeadController.php:220
 * @route '/workspaces/{slug}/leads/bulk-qualify'
 */
 bulkQualify.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -447,7 +447,7 @@ bulkQualify.url = (args: { slug: string | number } | [slug: string | number ] | 
 
 /**
 * @see \App\Http\Controllers\LeadController::bulkQualify
-* @see app/Http/Controllers/LeadController.php:211
+* @see app/Http/Controllers/LeadController.php:220
 * @route '/workspaces/{slug}/leads/bulk-qualify'
 */
 bulkQualify.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -457,10 +457,10 @@ bulkQualify.post = (args: { slug: string | number } | [slug: string | number ] |
 
 /**
 * @see \App\Http\Controllers\LeadMessageController::messages
-* @see app/Http/Controllers/LeadMessageController.php:14
+* @see app/Http/Controllers/LeadMessageController.php:15
 * @route '/workspaces/{slug}/leads/{lead}/messages'
 */
-export const messages = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const messages = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: messages.url(args, options),
     method: 'get',
 })
@@ -472,10 +472,10 @@ messages.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadMessageController::messages
-* @see app/Http/Controllers/LeadMessageController.php:14
+* @see app/Http/Controllers/LeadMessageController.php:15
 * @route '/workspaces/{slug}/leads/{lead}/messages'
 */
-messages.url = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+messages.url = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -500,30 +500,30 @@ messages.url = (args: { slug: string | number, lead: string | number | { id: str
 
 /**
 * @see \App\Http\Controllers\LeadMessageController::messages
-* @see app/Http/Controllers/LeadMessageController.php:14
+* @see app/Http/Controllers/LeadMessageController.php:15
 * @route '/workspaces/{slug}/leads/{lead}/messages'
 */
-messages.get = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+messages.get = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: messages.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\LeadMessageController::messages
-* @see app/Http/Controllers/LeadMessageController.php:14
+* @see app/Http/Controllers/LeadMessageController.php:15
 * @route '/workspaces/{slug}/leads/{lead}/messages'
 */
-messages.head = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+messages.head = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: messages.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\LeadMessageController::send
-* @see app/Http/Controllers/LeadMessageController.php:25
+* @see app/Http/Controllers/LeadMessageController.php:26
 * @route '/workspaces/{slug}/leads/{lead}/send'
 */
-export const send = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const send = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: send.url(args, options),
     method: 'post',
 })
@@ -535,10 +535,10 @@ send.definition = {
 
 /**
 * @see \App\Http\Controllers\LeadMessageController::send
-* @see app/Http/Controllers/LeadMessageController.php:25
+* @see app/Http/Controllers/LeadMessageController.php:26
 * @route '/workspaces/{slug}/leads/{lead}/send'
 */
-send.url = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+send.url = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -563,10 +563,10 @@ send.url = (args: { slug: string | number, lead: string | number | { id: string 
 
 /**
 * @see \App\Http\Controllers\LeadMessageController::send
-* @see app/Http/Controllers/LeadMessageController.php:25
+* @see app/Http/Controllers/LeadMessageController.php:26
 * @route '/workspaces/{slug}/leads/{lead}/send'
 */
-send.post = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+send.post = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: send.url(args, options),
     method: 'post',
 })
@@ -576,7 +576,7 @@ send.post = (args: { slug: string | number, lead: string | number | { id: string
 * @see app/Http/Controllers/SessionController.php:35
 * @route '/workspaces/{slug}/leads/{lead}/session'
 */
-export const session = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const session = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: session.url(args, options),
     method: 'get',
 })
@@ -591,7 +591,7 @@ session.definition = {
 * @see app/Http/Controllers/SessionController.php:35
 * @route '/workspaces/{slug}/leads/{lead}/session'
 */
-session.url = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+session.url = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -619,7 +619,7 @@ session.url = (args: { slug: string | number, lead: string | number | { id: stri
 * @see app/Http/Controllers/SessionController.php:35
 * @route '/workspaces/{slug}/leads/{lead}/session'
 */
-session.get = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+session.get = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: session.url(args, options),
     method: 'get',
 })
@@ -629,7 +629,7 @@ session.get = (args: { slug: string | number, lead: string | number | { id: stri
 * @see app/Http/Controllers/SessionController.php:35
 * @route '/workspaces/{slug}/leads/{lead}/session'
 */
-session.head = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+session.head = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: session.url(args, options),
     method: 'head',
 })
@@ -639,7 +639,7 @@ session.head = (args: { slug: string | number, lead: string | number | { id: str
 * @see app/Http/Controllers/SessionController.php:52
 * @route '/workspaces/{slug}/leads/{lead}/sessions'
 */
-export const sessions = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const sessions = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: sessions.url(args, options),
     method: 'get',
 })
@@ -654,7 +654,7 @@ sessions.definition = {
 * @see app/Http/Controllers/SessionController.php:52
 * @route '/workspaces/{slug}/leads/{lead}/sessions'
 */
-sessions.url = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+sessions.url = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -682,7 +682,7 @@ sessions.url = (args: { slug: string | number, lead: string | number | { id: str
 * @see app/Http/Controllers/SessionController.php:52
 * @route '/workspaces/{slug}/leads/{lead}/sessions'
 */
-sessions.get = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+sessions.get = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: sessions.url(args, options),
     method: 'get',
 })
@@ -692,7 +692,7 @@ sessions.get = (args: { slug: string | number, lead: string | number | { id: str
 * @see app/Http/Controllers/SessionController.php:52
 * @route '/workspaces/{slug}/leads/{lead}/sessions'
 */
-sessions.head = (args: { slug: string | number, lead: string | number | { id: string | number } } | [slug: string | number, lead: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+sessions.head = (args: { slug: string | number, lead: string | { id: string } } | [slug: string | number, lead: string | { id: string } ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: sessions.url(args, options),
     method: 'head',
 })

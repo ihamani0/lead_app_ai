@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import {
     ChevronDown,
@@ -14,6 +14,7 @@ import {
     X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { FeatureGate } from '@/components/feature-gate';
 import Pagination from '@/components/pagination';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -70,6 +71,7 @@ export default function LeadsIndex({
 }: Props) {
     const { t } = useTranslation();
     const activeWorkspace = useActiveWorkspace();
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
 
     const [leads, setLeads] = useState<LeadType[]>(initialLeads.data);
 
@@ -313,8 +315,7 @@ export default function LeadsIndex({
             <Head title={t('leads.title')} />
 
             <div className="min-h-screen bg-background">
-                <div className="border-b   px-4 py-5 sm:px-6 lg:px-8">
-                        
+                <div className="border-b px-4 py-5 sm:px-6 lg:px-8">
                     <div className="flex items-center gap-3">
                         <Users className="h-5 w-5 shrink-0 text-muted-foreground" />
                         <div className="min-w-0 flex-1">
@@ -332,21 +333,29 @@ export default function LeadsIndex({
                         </div>
                     </div>
                     <div className="flex items-center justify-between">
-
                         <div className="flex items-center gap-2">
-                            <a
-                                href={exportLeads({ slug: activeWorkspace!.slug }).url + '?' + new URLSearchParams(
-                                    Object.fromEntries(
-                                        Object.entries(params).filter(([, v]) => v !== ''),
-                                    ),
-                                ).toString()}
-                                download
-                            >
-                                <Button variant="outline" size="sm">
-                                    <Download className="mr-1.5 h-4 w-4" />
-                                    {t('leads.actions.export')}
-                                </Button>
-                            </a>
+                            <FeatureGate feature={features.lead_export}>
+                                <a
+                                    href={
+                                        exportLeads({ slug: activeWorkspace!.slug })
+                                            .url +
+                                        '?' +
+                                        new URLSearchParams(
+                                            Object.fromEntries(
+                                                Object.entries(params).filter(
+                                                    ([, v]) => v !== '',
+                                                ),
+                                            ),
+                                        ).toString()
+                                    }
+                                    download
+                                >
+                                    <Button variant="outline" size="sm">
+                                        <Download className="mr-1.5 h-4 w-4" />
+                                        {t('leads.actions.export')}
+                                    </Button>
+                                </a>
+                            </FeatureGate>
                         </div>
                     </div>
                 </div>
@@ -560,19 +569,21 @@ export default function LeadsIndex({
                                     {selectedLeads.size}{' '}
                                     {t('leads.table.selected')}
                                 </span>
-                                <Button
-                                    size="sm"
-                                    onClick={handleBulkQualify}
-                                    disabled={bulkTriggering}
-                                    className="ml-auto"
-                                >
-                                    {bulkTriggering ? (
-                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                    ) : (
-                                        <Sparkles className="mr-2 h-4 w-4" />
-                                    )}
-                                    {t('leads.actions.triggerQualification')}
-                                </Button>
+                                <FeatureGate feature={features.qualification_lead}>
+                                    <Button
+                                        size="sm"
+                                        onClick={handleBulkQualify}
+                                        disabled={bulkTriggering}
+                                        className="ml-auto"
+                                    >
+                                        {bulkTriggering ? (
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        ) : (
+                                            <Sparkles className="mr-2 h-4 w-4" />
+                                        )}
+                                        {t('leads.actions.triggerQualification')}
+                                    </Button>
+                                </FeatureGate>
                             </div>
                         )}
                         <Table>
@@ -796,30 +807,32 @@ export default function LeadsIndex({
                                                     <EditLead lead={lead} />
                                                 )}
                                                 {canManage && (
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8"
-                                                        onClick={() =>
-                                                            handleTriggerQualification(
-                                                                lead.id,
-                                                            )
-                                                        }
-                                                        disabled={
-                                                            triggeringLeadId ===
-                                                            lead.id
-                                                        }
-                                                        title={t(
-                                                            'leads.actions.triggerQualification',
-                                                        )}
-                                                    >
-                                                        {triggeringLeadId ===
-                                                        lead.id ? (
-                                                            <Loader2 className="h-4 w-4 animate-spin" />
-                                                        ) : (
-                                                            <Sparkles className="h-4 w-4 text-yellow-500" />
-                                                        )}
-                                                    </Button>
+                                                    <FeatureGate feature={features.qualification_lead} message={undefined}>
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8"
+                                                            onClick={() =>
+                                                                handleTriggerQualification(
+                                                                    lead.id,
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                triggeringLeadId ===
+                                                                lead.id
+                                                            }
+                                                            title={t(
+                                                                'leads.actions.triggerQualification',
+                                                            )}
+                                                        >
+                                                            {triggeringLeadId ===
+                                                            lead.id ? (
+                                                                <Loader2 className="h-4 w-4 animate-spin" />
+                                                            ) : (
+                                                                <Sparkles className="h-4 w-4 text-yellow-500" />
+                                                            )}
+                                                        </Button>
+                                                    </FeatureGate>
                                                 )}
                                             </div>
                                         </TableCell>

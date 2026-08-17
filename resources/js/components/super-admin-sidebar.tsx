@@ -3,11 +3,13 @@ import {
     Activity,
     BarChart3,
     Bot,
+    Contact2,
     CreditCard,
     LayoutDashboard,
     LayoutGrid,
     Settings,
     Users,
+    Wallet,
 } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
 import {
@@ -44,7 +46,7 @@ export function SuperAdminSidebar() {
 
     const superAdminGroups: { label: string; items: NavItem[] }[] = [
         {
-            label: 'Dashboard',
+            label: t('superAdmin.sidebar.dashboard'),
             items: [
                 {
                     title: t('superAdmin.sidebar.dashboard'),
@@ -62,14 +64,24 @@ export function SuperAdminSidebar() {
                     icon: Users,
                 },
                 {
+                    title: t('superAdmin.sidebar.leads'),
+                    href: admin.leads.index().url,
+                    icon: Contact2,
+                },
+                {
                     title: t('superAdmin.sidebar.aiModels'),
                     href: '/super-admin/models',
                     icon: Bot,
                 },
                 {
                     title: t('superAdmin.sidebar.plans'),
-                    href: '/super-admin/plans',
+                    href: admin.plan.index().url,
                     icon: CreditCard,
+                },
+                {
+                    title: t('superAdmin.sidebar.creditPackages'),
+                    href: admin.creditPackages.index().url,
+                    icon: Wallet,
                 },
             ],
         },
@@ -78,12 +90,12 @@ export function SuperAdminSidebar() {
             items: [
                 {
                     title: t('superAdmin.sidebar.reports'),
-                    href: '/super-admin/reports',
+                    href: admin.reports.index().url,
                     icon: BarChart3,
                 },
                 {
                     title: t('superAdmin.sidebar.tokenUsage'),
-                    href: '/super-admin/token-usage',
+                    href: admin.tokenUsage.index().url,
                     icon: Activity,
                 },
             ],

@@ -25,7 +25,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslation } from '@/hooks/use-translation';
-import { show as teamsShow , destroy as teamsDestroy } from '@/routes/teams';
+import { show as teamsShow, destroy as teamsDestroy } from '@/routes/teams';
 import type { Workspace } from '@/types';
 
 interface WorkspaceSettingsProps {
@@ -160,22 +160,34 @@ export function WorkspaceSettings({ workspace }: WorkspaceSettingsProps) {
                 <CardContent>
                     <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
                         <AlertDialogTrigger asChild>
-                            <Button variant="destructive" onClick={handleDelete}>
+                            <Button
+                                variant="destructive"
+                                onClick={handleDelete}
+                            >
                                 {t('workspace.settings.danger.delete')}
                             </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                             <AlertDialogHeader>
                                 <AlertDialogTitle>
-                                    {t('workspace.settings.danger.delete_confirm')}
+                                    {t(
+                                        'workspace.settings.danger.delete_confirm',
+                                    )}
                                 </AlertDialogTitle>
                                 <AlertDialogDescription>
-                                    {t('workspace.settings.danger.delete_confirm_description')}
+                                    {t(
+                                        'workspace.settings.danger.delete_confirm_description',
+                                    )}
                                 </AlertDialogDescription>
                             </AlertDialogHeader>
                             <AlertDialogFooter>
-                                <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-                                <AlertDialogAction variant="destructive" onClick={confirmDelete}>
+                                <AlertDialogCancel>
+                                    {t('common.cancel')}
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                    variant="destructive"
+                                    onClick={confirmDelete}
+                                >
                                     {t('workspace.settings.danger.delete')}
                                 </AlertDialogAction>
                             </AlertDialogFooter>

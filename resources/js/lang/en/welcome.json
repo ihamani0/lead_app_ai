@@ -10,6 +10,20 @@
         "heading": "Pricing",
         "getStarted": "Get Started",
         "tryFree": "Try Free",
+        "monthly": "Monthly",
+        "yearly": "Yearly",
+        "perMonth": "/month",
+        "perYear": "/year",
+        "billedAnnually": "billed annually",
+        "savePercent": "Save :percent%",
+        "dynamic": {
+            "basicAnalytics": "Basic Analytics",
+            "advancedAnalytics": "Advanced Analytics",
+            "apiAccess": "API Access",
+            "customRoles": "Custom Roles",
+            "prioritySupport": "Priority Support",
+            "slaGuarantee": "SLA Guarantee"
+        },
 
         "free": {
             "price": "Free",

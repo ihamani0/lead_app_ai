@@ -5,9 +5,9 @@ declare global {
         name: string;
         auth: Auth;
         sidebarOpen: boolean;
-        locale: string;               // already used, make it explicit
-        langVersion: number;          // already used
-        availableLocales: string[];   // optional, if you use them
+        locale: string; // already used, make it explicit
+        langVersion: number; // already used
+        availableLocales: string[]; // optional, if you use them
         route_name: string;
         support_email: string;
         [key: string]: unknown;
@@ -21,7 +21,8 @@ declare global {
         url: string | null;
         label: string;
         active: boolean;
-    }
+    };
+
 }
 
 declare module '@inertiajs/core' {

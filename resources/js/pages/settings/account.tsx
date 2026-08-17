@@ -226,7 +226,9 @@ function PasswordSection({
             <CardHeader>
                 <div className="flex items-center gap-2">
                     <Key className="size-5 text-primary" />
-                    <CardTitle>{t('settings.account.password.title')}</CardTitle>
+                    <CardTitle>
+                        {t('settings.account.password.title')}
+                    </CardTitle>
                 </div>
                 <CardDescription>
                     {t('settings.account.password.description')}
@@ -244,7 +246,9 @@ function PasswordSection({
                                 ref={currentPasswordInput}
                                 type="password"
                                 autoComplete="current-password"
-                                placeholder={t('settings.account.password.currentPlaceholder')}
+                                placeholder={t(
+                                    'settings.account.password.currentPlaceholder',
+                                )}
                                 value={form.data.current_password}
                                 onChange={(e) =>
                                     form.setData(
@@ -269,7 +273,9 @@ function PasswordSection({
                             ref={passwordInput}
                             type="password"
                             autoComplete="new-password"
-                            placeholder={t('settings.account.password.newPlaceholder')}
+                            placeholder={t(
+                                'settings.account.password.newPlaceholder',
+                            )}
                             value={form.data.password}
                             onChange={(e) =>
                                 form.setData('password', e.target.value)
@@ -287,7 +293,9 @@ function PasswordSection({
                             id="settings-confirm-password"
                             type="password"
                             autoComplete="new-password"
-                            placeholder={t('settings.account.password.confirmPlaceholder')}
+                            placeholder={t(
+                                'settings.account.password.confirmPlaceholder',
+                            )}
                             value={form.data.password_confirmation}
                             onChange={(e) =>
                                 form.setData(
@@ -334,7 +342,9 @@ function AppearanceSection() {
             <CardHeader>
                 <div className="flex items-center gap-2">
                     <Sun className="size-5 text-primary" />
-                    <CardTitle>{t('settings.account.appearance.title')}</CardTitle>
+                    <CardTitle>
+                        {t('settings.account.appearance.title')}
+                    </CardTitle>
                 </div>
                 <CardDescription>
                     {t('settings.account.appearance.description')}
@@ -388,7 +398,9 @@ function TwoFactorSection({
             <CardHeader>
                 <div className="flex items-center gap-2">
                     <ShieldCheck className="size-5 text-primary" />
-                    <CardTitle>{t('settings.account.twoFactor.title')}</CardTitle>
+                    <CardTitle>
+                        {t('settings.account.twoFactor.title')}
+                    </CardTitle>
                 </div>
                 <CardDescription>
                     {t('settings.account.twoFactor.description')}
@@ -426,7 +438,9 @@ function TwoFactorSection({
                             {t('settings.account.twoFactor.disabled')}
                         </Badge>
                         <p className="text-sm text-muted-foreground">
-                            {t('settings.account.twoFactor.disabledDescription')}
+                            {t(
+                                'settings.account.twoFactor.disabledDescription',
+                            )}
                         </p>
 
                         {hasSetupData ? (

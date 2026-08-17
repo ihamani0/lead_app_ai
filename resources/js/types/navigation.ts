@@ -11,5 +11,6 @@ export type NavItem = {
     href: NonNullable<InertiaLinkProps['href']>;
     icon?: ComponentType<SVGProps<SVGSVGElement>> | null;
     isActive?: boolean;
+    locked?: boolean;
     'data-tour'?: string;
 };

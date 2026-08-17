@@ -24,7 +24,7 @@ export default function Privacy() {
             <div className="min-h-screen bg-white">
                 <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:px-8">
                     <Link
-                        href="/"
+                        href="/welcome"
                         className="inline-flex items-center gap-1.5 text-sm text-[#6B6B80] transition-colors hover:text-[#4C3BCF]"
                     >
                         <svg

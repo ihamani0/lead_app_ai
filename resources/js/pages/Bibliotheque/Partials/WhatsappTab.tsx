@@ -477,8 +477,6 @@ export function WhatsappTab({
                         </div>
                     </CardContent>
                 </Card>
-
-                 
             </div>
         </div>
     );

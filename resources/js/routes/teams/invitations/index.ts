@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefa
 * @see app/Http/Controllers/Team/TeamInvitationController.php:45
 * @route '/invitation/{invitation}/accept'
 */
-export const accept = (args: { invitation: string | number | { id: string | number } } | [invitation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const accept = (args: { invitation: number | { id: number } } | [invitation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: accept.url(args, options),
     method: 'get',
 })
@@ -19,7 +19,7 @@ accept.definition = {
 * @see app/Http/Controllers/Team/TeamInvitationController.php:45
 * @route '/invitation/{invitation}/accept'
 */
-accept.url = (args: { invitation: string | number | { id: string | number } } | [invitation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+accept.url = (args: { invitation: number | { id: number } } | [invitation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { invitation: args }
     }
@@ -52,7 +52,7 @@ accept.url = (args: { invitation: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/Team/TeamInvitationController.php:45
 * @route '/invitation/{invitation}/accept'
 */
-accept.get = (args: { invitation: string | number | { id: string | number } } | [invitation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+accept.get = (args: { invitation: number | { id: number } } | [invitation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: accept.url(args, options),
     method: 'get',
 })
@@ -62,7 +62,7 @@ accept.get = (args: { invitation: string | number | { id: string | number } } | 
 * @see app/Http/Controllers/Team/TeamInvitationController.php:45
 * @route '/invitation/{invitation}/accept'
 */
-accept.head = (args: { invitation: string | number | { id: string | number } } | [invitation: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+accept.head = (args: { invitation: number | { id: number } } | [invitation: number | { id: number } ] | number | { id: number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: accept.url(args, options),
     method: 'head',
 })
@@ -72,7 +72,7 @@ accept.head = (args: { invitation: string | number | { id: string | number } } |
 * @see app/Http/Controllers/Team/TeamInvitationController.php:22
 * @route '/workspaces/{slug}/invitations/{invitation}'
 */
-export const destroy = (args: { slug: string | number, invitation: string | number | { id: string | number } } | [slug: string | number, invitation: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { slug: string | number, invitation: number | { id: number } } | [slug: string | number, invitation: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -87,7 +87,7 @@ destroy.definition = {
 * @see app/Http/Controllers/Team/TeamInvitationController.php:22
 * @route '/workspaces/{slug}/invitations/{invitation}'
 */
-destroy.url = (args: { slug: string | number, invitation: string | number | { id: string | number } } | [slug: string | number, invitation: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+destroy.url = (args: { slug: string | number, invitation: number | { id: number } } | [slug: string | number, invitation: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -115,7 +115,7 @@ destroy.url = (args: { slug: string | number, invitation: string | number | { id
 * @see app/Http/Controllers/Team/TeamInvitationController.php:22
 * @route '/workspaces/{slug}/invitations/{invitation}'
 */
-destroy.delete = (args: { slug: string | number, invitation: string | number | { id: string | number } } | [slug: string | number, invitation: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { slug: string | number, invitation: number | { id: number } } | [slug: string | number, invitation: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })

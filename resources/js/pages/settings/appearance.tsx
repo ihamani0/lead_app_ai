@@ -16,7 +16,9 @@ export default function Appearance() {
                     <Heading
                         variant="small"
                         title={t('settings.appearance.heading')}
-                        description={t('settings.appearance.headingDescription')}
+                        description={t(
+                            'settings.appearance.headingDescription',
+                        )}
                     />
                     <AppearanceTabs />
                 </div>

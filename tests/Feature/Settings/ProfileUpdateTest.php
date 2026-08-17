@@ -7,6 +7,7 @@ use App\Models\AgentConversationMessage;
 use App\Models\KnowledgeBase;
 use App\Models\Lead;
 use App\Models\MediaAsset;
+use App\Models\Plan;
 use App\Models\Team;
 use App\Models\Tenant;
 use App\Models\TourProgress;
@@ -25,10 +26,11 @@ class ProfileUpdateTest extends TestCase
 
     protected function createUser(array $overrides = []): User
     {
+        $plan = Plan::factory()->free()->create();
         $tenant = Tenant::create([
             'name' => 'Test Tenant',
             'slug' => fake()->unique()->slug(),
-            'plan' => 'free',
+            'plan_id' => $plan->id,
             'is_active' => true,
         ]);
 

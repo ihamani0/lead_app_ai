@@ -34,7 +34,7 @@ type PageProps = {
             tenant: {
                 name: string;
                 slug: string;
-                plan: string;
+                plan: { slug: string; name: string } | null;
                 credit: number;
                 is_low_credit: boolean;
             };
@@ -52,7 +52,7 @@ export default function WorkspaceLayout({ children, title }: Props) {
     const page = usePage<PageProps>();
     const { locale, langVersion, auth, availableLocales } = page.props;
     const getInitials = useInitials();
-    const plan = auth?.user?.tenant?.plan ?? '';
+    const plan = auth?.user?.tenant?.plan;
     const credit = auth?.user?.tenant?.credit ?? 0;
     const isLowCredit = auth?.user?.tenant?.is_low_credit ?? false;
 
@@ -92,7 +92,7 @@ export default function WorkspaceLayout({ children, title }: Props) {
                             variant="secondary"
                             className="hidden px-2.5 py-0.5 text-[11px] font-semibold tracking-wider uppercase md:inline-flex"
                         >
-                            {plan}
+                            {plan?.name}
                         </Badge>
                     )}
 

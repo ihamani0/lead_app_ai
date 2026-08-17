@@ -8,6 +8,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import SuperAdminLayout from '@/layouts/super-admin-layout';
 import admin from '@/routes/admin';
 import type { Tenant } from '@/types';
@@ -17,6 +18,8 @@ type IndexProps = SharedPageProps & {
 };
 
 export default function Index({ tenants }: IndexProps) {
+    const { t } = useTranslation();
+
     const formatNumber = (num: number): string => {
         return new Intl.NumberFormat('en-US').format(num);
     };
@@ -25,20 +28,50 @@ export default function Index({ tenants }: IndexProps) {
         <SuperAdminLayout>
             <div className="container mx-auto py-6">
                 <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">Tenants Management</h1>
+                    <h1 className="text-2xl font-bold">
+                        {t('superAdmin.tenants.list.title')}
+                    </h1>
                 </div>
 
                 <div className="rounded-md border">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Name</TableHead>
-                                <TableHead>Slug</TableHead>
-                                <TableHead>Plan</TableHead>
-                                <TableHead>Status</TableHead>
-                                <TableHead>Token Balance</TableHead>
-                                <TableHead>Users</TableHead>
-                                <TableHead>Actions</TableHead>
+                                <TableHead>
+                                    {t(
+                                        'superAdmin.tenants.list.table.headers.name',
+                                    )}
+                                </TableHead>
+                                <TableHead>
+                                    {t(
+                                        'superAdmin.tenants.list.table.headers.slug',
+                                    )}
+                                </TableHead>
+                                <TableHead>
+                                    {t(
+                                        'superAdmin.tenants.list.table.headers.plan',
+                                    )}
+                                </TableHead>
+                                <TableHead>
+                                    {t(
+                                        'superAdmin.tenants.list.table.headers.status',
+                                    )}
+                                </TableHead>
+                                <TableHead>
+                                    {t(
+                                        'superAdmin.tenants.list.table.headers.tokenBalance',
+                                    )}
+                                </TableHead>
+                                <TableHead>
+                                    {t(
+                                        'superAdmin.tenants.list.table.headers.users',
+                                    )}
+                                </TableHead>
+                                <TableHead>
+                                    {t(
+                                        'superAdmin.tenants.list.table.headers.actions',
+                                    )}
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -50,7 +83,7 @@ export default function Index({ tenants }: IndexProps) {
                                     <TableCell>{tenant.slug}</TableCell>
                                     <TableCell>
                                         <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
-                                            {tenant.plan}
+                                            {tenant.plan?.name ?? tenant.plan}
                                         </span>
                                     </TableCell>
                                     <TableCell>
@@ -62,8 +95,12 @@ export default function Index({ tenants }: IndexProps) {
                                             }`}
                                         >
                                             {tenant.is_active
-                                                ? 'Active'
-                                                : 'Inactive'}
+                                                ? t(
+                                                      'superAdmin.tenants.list.status.active',
+                                                  )
+                                                : t(
+                                                      'superAdmin.tenants.list.status.inactive',
+                                                  )}
                                         </span>
                                     </TableCell>
                                     <TableCell>
@@ -83,9 +120,14 @@ export default function Index({ tenants }: IndexProps) {
                                             size="sm"
                                         >
                                             <Link
-                                                href={admin.tenant.show(tenant.id).url}
+                                                href={
+                                                    admin.tenant.show(tenant.id)
+                                                        .url
+                                                }
                                             >
-                                                Manage
+                                                {t(
+                                                    'superAdmin.tenants.list.table.actions.manage',
+                                                )}
                                             </Link>
                                         </Button>
                                     </TableCell>
@@ -97,7 +139,9 @@ export default function Index({ tenants }: IndexProps) {
                                         colSpan={7}
                                         className="text-center"
                                     >
-                                        No tenants found.
+                                        {t(
+                                            'superAdmin.tenants.list.table.empty',
+                                        )}
                                     </TableCell>
                                 </TableRow>
                             )}

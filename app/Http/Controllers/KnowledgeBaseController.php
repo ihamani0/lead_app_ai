@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\AgentConfig;
 use App\Models\KnowledgeBase;
 use App\Services\KnowledgeBaseService;
+use App\Services\PlanEnforcementService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -15,6 +16,10 @@ class KnowledgeBaseController extends Controller
 
     public function index(Request $request)
     {
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'knowledge_base')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $query = $this->scopedQuery($request, KnowledgeBase::class)
             ->with('agent')
             ->latest();
@@ -43,14 +48,21 @@ class KnowledgeBaseController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'knowledge_base')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
 
         $request->validate([
             'file' => 'required|file|mimes:pdf,txt,docx|max:30720',
             'name' => 'required|string|max:255',
             'agent_config_id' => 'required|ulid|exists:agent_configs,id',
         ]);
+
+        if (! app(PlanEnforcementService::class)->canStore($request->user()->tenant, $request->file('file')->getSize())) {
+            return back()->with('error', __('messages.error.plan_limit_storage'));
+        }
 
         $this->findScoped($request, AgentConfig::class, $request->agent_config_id);
 

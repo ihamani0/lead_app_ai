@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
@@ -10,7 +10,11 @@ import { WorkspaceSettings } from './Partials/WorkspaceSettings';
 
 interface WorkspaceShowProps {
     workspace: Workspace & { users_count?: number };
-    workspaceRole: { code?: string; name?: string; description?: string } | null;
+    workspaceRole: {
+        code?: string;
+        name?: string;
+        description?: string;
+    } | null;
     members: WorkspaceMember[];
     roles: WorkspaceRole[];
     canManageTeam: boolean;
@@ -27,6 +31,7 @@ export default function WorkspaceShow({
     canManageTeam,
 }: WorkspaceShowProps) {
     const { t } = useTranslation();
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
     const [activeTab, setActiveTab] = useState<TabType>('overview');
 
     const workspaceWithMeta = {
@@ -43,7 +48,11 @@ export default function WorkspaceShow({
 
     const tabs: { id: TabType; label: string; visible: boolean }[] = [
         { id: 'overview', label: t('workspace.tabs.overview'), visible: true },
-        { id: 'roles', label: t('workspace.tabs.roles'), visible: canManageTeam },
+        {
+            id: 'roles',
+            label: t('workspace.tabs.roles'),
+            visible: canManageTeam && features.custom_roles,
+        },
         {
             id: 'settings',
             label: t('workspace.tabs.settings'),

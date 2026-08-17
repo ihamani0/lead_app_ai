@@ -82,7 +82,7 @@ store.post = (options?: RouteQueryOptions): RouteDefinition<'post'> => ({
 * @see app/Http/Controllers/SuperAdmin/LlmModelController.php:38
 * @route '/super-admin/models/{llmModel}'
 */
-export const update = (args: { llmModel: string | number | { id: string | number } } | [llmModel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const update = (args: { llmModel: string | { id: string } } | [llmModel: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(args, options),
     method: 'post',
 })
@@ -97,7 +97,7 @@ update.definition = {
 * @see app/Http/Controllers/SuperAdmin/LlmModelController.php:38
 * @route '/super-admin/models/{llmModel}'
 */
-update.url = (args: { llmModel: string | number | { id: string | number } } | [llmModel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+update.url = (args: { llmModel: string | { id: string } } | [llmModel: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { llmModel: args }
     }
@@ -130,7 +130,7 @@ update.url = (args: { llmModel: string | number | { id: string | number } } | [l
 * @see app/Http/Controllers/SuperAdmin/LlmModelController.php:38
 * @route '/super-admin/models/{llmModel}'
 */
-update.post = (args: { llmModel: string | number | { id: string | number } } | [llmModel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+update.post = (args: { llmModel: string | { id: string } } | [llmModel: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: update.url(args, options),
     method: 'post',
 })
@@ -140,7 +140,7 @@ update.post = (args: { llmModel: string | number | { id: string | number } } | [
 * @see app/Http/Controllers/SuperAdmin/LlmModelController.php:55
 * @route '/super-admin/models/{llmModel}'
 */
-export const destroy = (args: { llmModel: string | number | { id: string | number } } | [llmModel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { llmModel: string | { id: string } } | [llmModel: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -155,7 +155,7 @@ destroy.definition = {
 * @see app/Http/Controllers/SuperAdmin/LlmModelController.php:55
 * @route '/super-admin/models/{llmModel}'
 */
-destroy.url = (args: { llmModel: string | number | { id: string | number } } | [llmModel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+destroy.url = (args: { llmModel: string | { id: string } } | [llmModel: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { llmModel: args }
     }
@@ -188,7 +188,7 @@ destroy.url = (args: { llmModel: string | number | { id: string | number } } | [
 * @see app/Http/Controllers/SuperAdmin/LlmModelController.php:55
 * @route '/super-admin/models/{llmModel}'
 */
-destroy.delete = (args: { llmModel: string | number | { id: string | number } } | [llmModel: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { llmModel: string | { id: string } } | [llmModel: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })

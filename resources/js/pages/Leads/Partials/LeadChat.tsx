@@ -17,8 +17,6 @@ interface LeadChatProps {
 }
 
 export const LeadChat: FC<LeadChatProps> = ({ lead }) => {
-
-
     const activeWorkspace = useActiveWorkspace();
     const [messages, setMessages] = useState<LeadMessage[]>([]);
     const [hasMore, setHasMore] = useState(true);
@@ -101,7 +99,7 @@ export const LeadChat: FC<LeadChatProps> = ({ lead }) => {
         setSessionLoading(true);
         try {
             await changeSessionStatus(activeWorkspace!.slug, lead.id, 'paused');
-            setSession((prev) => prev ? { ...prev, status: 'paused' } : null);
+            setSession((prev) => (prev ? { ...prev, status: 'paused' } : null));
         } finally {
             setSessionLoading(false);
         }
@@ -111,7 +109,7 @@ export const LeadChat: FC<LeadChatProps> = ({ lead }) => {
         setSessionLoading(true);
         try {
             await changeSessionStatus(activeWorkspace!.slug, lead.id, 'opened');
-            setSession((prev) => prev ? { ...prev, status: 'opened' } : null);
+            setSession((prev) => (prev ? { ...prev, status: 'opened' } : null));
         } finally {
             setSessionLoading(false);
         }
@@ -126,7 +124,7 @@ export const LeadChat: FC<LeadChatProps> = ({ lead }) => {
             prevHeightRef.current = el.scrollHeight;
 
             const nextPage = pageRef.current + 1; // ← read from ref, always current
-            pageRef.current = nextPage;            // ← update ref immediately, sync
+            pageRef.current = nextPage; // ← update ref immediately, sync
 
             loadPage(nextPage).then(() => {
                 requestAnimationFrame(() => {
@@ -160,7 +158,8 @@ export const LeadChat: FC<LeadChatProps> = ({ lead }) => {
         setMessages((prev) => [...prev, optimistic]);
         requestAnimationFrame(() => {
             if (viewportRef.current) {
-                viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
+                viewportRef.current.scrollTop =
+                    viewportRef.current.scrollHeight;
             }
         });
         try {
@@ -178,7 +177,7 @@ export const LeadChat: FC<LeadChatProps> = ({ lead }) => {
         <div className="flex min-h-0 flex-1 flex-col">
             <LeadChatHeader lead={lead} />
             <ScrollArea
-                className="flex-1 min-h-0 bg-[#F0F2F5] dark:bg-gray-950 [&_*]:scrollbar-thin [&_*]:scrollbar-thumb-rounded-full [&_*]:scrollbar-thumb-gray-300 dark:[&_*]:scrollbar-thumb-gray-600"
+                className="[&_*]:scrollbar-thin [&_*]:scrollbar-thumb-rounded-full [&_*]:scrollbar-thumb-gray-300 dark:[&_*]:scrollbar-thumb-gray-600 min-h-0 flex-1 bg-[#F0F2F5] dark:bg-gray-950"
                 viewportRef={viewportRef}
                 onScroll={handleScroll}
             >
@@ -200,7 +199,6 @@ export const LeadChat: FC<LeadChatProps> = ({ lead }) => {
                         </div>
                     )}
 
-
                     {grouped.map((group) => (
                         <div key={group.date}>
                             <div className="flex justify-center py-2">
@@ -209,23 +207,31 @@ export const LeadChat: FC<LeadChatProps> = ({ lead }) => {
                                 </span>
                             </div>
                             {group.messages.map((msg, idx) => (
-                                
                                 <ChatBubble
                                     key={msg.id}
-                                    direction={msg.direction === 'from_lead' ? 'client' : 'ai'}
+                                    direction={
+                                        msg.direction === 'from_lead'
+                                            ? 'client'
+                                            : 'ai'
+                                    }
                                     message={msg.content || ''}
                                     timestamp={msg.created_at}
                                     type={msg.type}
                                     mediaUrl={
-                                        (msg.metadata as Record<string, unknown> | null)?.local_url as string | undefined
+                                        (
+                                            msg.metadata as Record<
+                                                string,
+                                                unknown
+                                            > | null
+                                        )?.local_url as string | undefined
                                     }
                                     metadata={msg.metadata}
                                     isConsecutive={
                                         idx > 0 &&
-                                        group.messages[idx - 1].direction === msg.direction
+                                        group.messages[idx - 1].direction ===
+                                            msg.direction
                                     }
                                 />
-                                
                             ))}
                         </div>
                     ))}

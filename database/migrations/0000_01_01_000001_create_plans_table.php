@@ -19,9 +19,11 @@ return new class extends Migration
             $table->integer('max_leads')->nullable();
             $table->integer('max_agents')->nullable();
             $table->integer('max_instances')->nullable();
+            $table->integer('max_storage_mb')->nullable();
             $table->bigInteger('dollar_limit')->nullable();
             $table->jsonb('features')->nullable();
             $table->boolean('is_active')->default(true);
+            $table->boolean('is_default')->default(false);
             $table->timestamps();
         });
     }

@@ -1,4 +1,5 @@
 {
+    "teams": "Workspaces",
     "welcome": "Welcome",
     "dashboard": "Home",
     "whatsapp": "Whatsapp",
@@ -54,6 +55,7 @@
     },
     "error": {
         "no_found_agent": "Agent not found",
-        "document_uploaded": "Failed to upload document"
+        "document_uploaded": "Failed to upload document",
+        "plan_limit_teams": "Your plan limit for workspaces has been reached."
     }
 }

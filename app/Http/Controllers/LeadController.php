@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\EvolutionInstance;
 use App\Models\Lead;
+use App\Services\PlanEnforcementService;
 use Ihamani0\LaravelEvolutionApi\Facades\EvolutionApi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -103,6 +104,10 @@ class LeadController extends Controller
     {
         $this->authorizeRole($request, ['owner', 'admin']);
 
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'lead_export')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $leads = $this->scopedQuery($request, Lead::class)
             ->with(['instance:id,instance_name,phone_number'])
             ->when($request->search, function ($query, $search) {
@@ -191,6 +196,10 @@ class LeadController extends Controller
     {
         $this->authorizeRole($request, ['owner', 'admin']);
 
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'qualification_lead')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $lead = $this->scopedQuery($request, Lead::class)->with('instance')->findOrFail($request->route('id'));
 
         // Set status to QUALIFYING before calling N8n
@@ -211,6 +220,10 @@ class LeadController extends Controller
     public function bulkQualify(Request $request)
     {
         $this->authorizeRole($request, ['owner', 'admin']);
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'qualification_lead')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
 
         $leadIds = $request->input('lead_ids', []);
 

@@ -1,4 +1,4 @@
-import type { ToursData } from "./tour";
+import type { ToursData } from './tour';
 
 export type User = {
     id: number;
@@ -16,11 +16,11 @@ export type User = {
     tenant: {
         name: string;
         slug: string;
-        plan: string;
+        plan: { slug: string; name: string } | null;
+        features: Record<string, boolean>;
         is_low_credit: boolean;
         credit: number;
     };
-
 };
 
 export type Auth = {

@@ -58,10 +58,22 @@ export default function WizardIndex() {
 
     const steps: StepItem[] = [
         { number: 1, title: t('wizard.steps.configure_agent'), icon: 'bot' },
-        { number: 2, title: t('wizard.steps.create_instance'), icon: 'smartphone' },
-        { number: 3, title: t('wizard.steps.connect_whatsapp'), icon: 'qr-code' },
+        {
+            number: 2,
+            title: t('wizard.steps.create_instance'),
+            icon: 'smartphone',
+        },
+        {
+            number: 3,
+            title: t('wizard.steps.connect_whatsapp'),
+            icon: 'qr-code',
+        },
         { number: 4, title: t('wizard.steps.media'), icon: 'media' },
-        { number: 5, title: t('wizard.steps.knowledge_base'), icon: 'database' },
+        {
+            number: 5,
+            title: t('wizard.steps.knowledge_base'),
+            icon: 'database',
+        },
     ];
 
     const handleNext = () => {
@@ -100,13 +112,18 @@ export default function WizardIndex() {
         const formDataToSend = new FormData();
         formDataToSend.append('instance_id', formData.instance.id);
         formDataToSend.append('agent_name', formData.agent_name);
-        formData.languages.forEach((lang) => formDataToSend.append('languages[]', lang));
+        formData.languages.forEach((lang) =>
+            formDataToSend.append('languages[]', lang),
+        );
         formDataToSend.append('main_objective', formData.main_objective);
         formDataToSend.append('tone', formData.tone);
         if (formData.sector) formDataToSend.append('sector', formData.sector);
-        if (formData.google_maps_url) formDataToSend.append('google_maps_url', formData.google_maps_url);
-        if (formData.calendar_url) formDataToSend.append('calendar_url', formData.calendar_url);
-        if (formData.additional_info) formDataToSend.append('additional_info', formData.additional_info);
+        if (formData.google_maps_url)
+            formDataToSend.append('google_maps_url', formData.google_maps_url);
+        if (formData.calendar_url)
+            formDataToSend.append('calendar_url', formData.calendar_url);
+        if (formData.additional_info)
+            formDataToSend.append('additional_info', formData.additional_info);
         if (formData.prompt) formDataToSend.append('prompt', formData.prompt);
         formData.knowledge_files.forEach((file) => {
             formDataToSend.append('knowledge_files[]', file);
@@ -155,10 +172,7 @@ export default function WizardIndex() {
                 );
             case 4:
                 return (
-                    <Step4Media
-                        formData={formData}
-                        setFormData={setFormData}
-                    />
+                    <Step4Media formData={formData} setFormData={setFormData} />
                 );
             case 5:
                 return (
@@ -196,7 +210,9 @@ export default function WizardIndex() {
                             ← {t('wizard.back_to_agents')}
                         </Button>
                     </div>
-                    <h1 className="text-lg font-semibold">{t('wizard.title')}</h1>
+                    <h1 className="text-lg font-semibold">
+                        {t('wizard.title')}
+                    </h1>
                     <div className="w-24" />
                 </div>
             </div>

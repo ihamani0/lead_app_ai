@@ -63,6 +63,13 @@ return [
         'cannot_remove_owner' => 'Cannot remove the workspace owner.',
         'cannot_delete_owner_role' => 'Cannot delete the owner role.',
         'invitation_accept_failed' => 'Failed to accept invitation: :message',
+        'plan_limit_teams' => 'Your plan limit for workspaces has been reached.',
+        'plan_limit_members' => 'Your plan limit for team members has been reached.',
+        'plan_limit_agents' => 'Your plan limit for AI agents has been reached.',
+        'plan_limit_instances' => 'Your plan limit for instances has been reached.',
+        'plan_limit_leads' => 'Your plan limit for leads has been reached.',
+        'plan_limit_storage' => 'Your storage limit has been reached. Upgrade your plan to store more files.',
+        'plan_feature_unavailable' => 'This feature is not available on your current plan.',
 
     ],
 

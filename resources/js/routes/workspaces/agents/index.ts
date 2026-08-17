@@ -1,10 +1,10 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
+import document from './document'
 import knowledge from './knowledge'
 import test from './test'
-import document from './document'
 /**
 * @see \App\Http\Controllers\AgentController::index
-* @see app/Http/Controllers/AgentController.php:37
+* @see app/Http/Controllers/AgentController.php:39
 * @route '/workspaces/{slug}/agents'
 */
 export const index = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -19,7 +19,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::index
-* @see app/Http/Controllers/AgentController.php:37
+* @see app/Http/Controllers/AgentController.php:39
 * @route '/workspaces/{slug}/agents'
 */
 index.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -46,7 +46,7 @@ index.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\AgentController::index
-* @see app/Http/Controllers/AgentController.php:37
+* @see app/Http/Controllers/AgentController.php:39
 * @route '/workspaces/{slug}/agents'
 */
 index.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -56,7 +56,7 @@ index.get = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\AgentController::index
-* @see app/Http/Controllers/AgentController.php:37
+* @see app/Http/Controllers/AgentController.php:39
 * @route '/workspaces/{slug}/agents'
 */
 index.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -66,7 +66,7 @@ index.head = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\AgentController::store
-* @see app/Http/Controllers/AgentController.php:101
+* @see app/Http/Controllers/AgentController.php:103
 * @route '/workspaces/{slug}/agents'
 */
 export const store = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -81,7 +81,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::store
-* @see app/Http/Controllers/AgentController.php:101
+* @see app/Http/Controllers/AgentController.php:103
 * @route '/workspaces/{slug}/agents'
 */
 store.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -108,7 +108,7 @@ store.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\AgentController::store
-* @see app/Http/Controllers/AgentController.php:101
+* @see app/Http/Controllers/AgentController.php:103
 * @route '/workspaces/{slug}/agents'
 */
 store.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -179,7 +179,7 @@ promptHistory.head = (args: { slug: string | number, agent: string | number } | 
 
 /**
 * @see \App\Http\Controllers\AgentController::linkInstance
-* @see app/Http/Controllers/AgentController.php:259
+* @see app/Http/Controllers/AgentController.php:269
 * @route '/workspaces/{slug}/agents/{agent}/link-instance'
 */
 export const linkInstance = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -194,7 +194,7 @@ linkInstance.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::linkInstance
-* @see app/Http/Controllers/AgentController.php:259
+* @see app/Http/Controllers/AgentController.php:269
 * @route '/workspaces/{slug}/agents/{agent}/link-instance'
 */
 linkInstance.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -220,7 +220,7 @@ linkInstance.url = (args: { slug: string | number, agent: string | number } | [s
 
 /**
 * @see \App\Http\Controllers\AgentController::linkInstance
-* @see app/Http/Controllers/AgentController.php:259
+* @see app/Http/Controllers/AgentController.php:269
 * @route '/workspaces/{slug}/agents/{agent}/link-instance'
 */
 linkInstance.post = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -230,7 +230,7 @@ linkInstance.post = (args: { slug: string | number, agent: string | number } | [
 
 /**
 * @see \App\Http\Controllers\AgentController::unlinkInstance
-* @see app/Http/Controllers/AgentController.php:285
+* @see app/Http/Controllers/AgentController.php:295
 * @route '/workspaces/{slug}/agents/{agent}/unlink-instance'
 */
 export const unlinkInstance = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -245,7 +245,7 @@ unlinkInstance.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::unlinkInstance
-* @see app/Http/Controllers/AgentController.php:285
+* @see app/Http/Controllers/AgentController.php:295
 * @route '/workspaces/{slug}/agents/{agent}/unlink-instance'
 */
 unlinkInstance.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -271,7 +271,7 @@ unlinkInstance.url = (args: { slug: string | number, agent: string | number } | 
 
 /**
 * @see \App\Http\Controllers\AgentController::unlinkInstance
-* @see app/Http/Controllers/AgentController.php:285
+* @see app/Http/Controllers/AgentController.php:295
 * @route '/workspaces/{slug}/agents/{agent}/unlink-instance'
 */
 unlinkInstance.post = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -281,7 +281,7 @@ unlinkInstance.post = (args: { slug: string | number, agent: string | number } |
 
 /**
 * @see \App\Http\Controllers\AgentController::clone
-* @see app/Http/Controllers/AgentController.php:190
+* @see app/Http/Controllers/AgentController.php:196
 * @route '/workspaces/{slug}/agents/{agent}/clone'
 */
 export const clone = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -296,7 +296,7 @@ clone.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::clone
-* @see app/Http/Controllers/AgentController.php:190
+* @see app/Http/Controllers/AgentController.php:196
 * @route '/workspaces/{slug}/agents/{agent}/clone'
 */
 clone.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -322,7 +322,7 @@ clone.url = (args: { slug: string | number, agent: string | number } | [slug: st
 
 /**
 * @see \App\Http\Controllers\AgentController::clone
-* @see app/Http/Controllers/AgentController.php:190
+* @see app/Http/Controllers/AgentController.php:196
 * @route '/workspaces/{slug}/agents/{agent}/clone'
 */
 clone.post = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -332,7 +332,7 @@ clone.post = (args: { slug: string | number, agent: string | number } | [slug: s
 
 /**
 * @see \App\Http\Controllers\AgentController::toggle
-* @see app/Http/Controllers/AgentController.php:205
+* @see app/Http/Controllers/AgentController.php:215
 * @route '/workspaces/{slug}/agents/{agent}/toggle'
 */
 export const toggle = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -347,7 +347,7 @@ toggle.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::toggle
-* @see app/Http/Controllers/AgentController.php:205
+* @see app/Http/Controllers/AgentController.php:215
 * @route '/workspaces/{slug}/agents/{agent}/toggle'
 */
 toggle.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -373,7 +373,7 @@ toggle.url = (args: { slug: string | number, agent: string | number } | [slug: s
 
 /**
 * @see \App\Http\Controllers\AgentController::toggle
-* @see app/Http/Controllers/AgentController.php:205
+* @see app/Http/Controllers/AgentController.php:215
 * @route '/workspaces/{slug}/agents/{agent}/toggle'
 */
 toggle.patch = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -383,7 +383,7 @@ toggle.patch = (args: { slug: string | number, agent: string | number } | [slug:
 
 /**
 * @see \App\Http\Controllers\AgentController::updateSettings
-* @see app/Http/Controllers/AgentController.php:228
+* @see app/Http/Controllers/AgentController.php:238
 * @route '/workspaces/{slug}/agents/{agent}/settings'
 */
 export const updateSettings = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -398,7 +398,7 @@ updateSettings.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::updateSettings
-* @see app/Http/Controllers/AgentController.php:228
+* @see app/Http/Controllers/AgentController.php:238
 * @route '/workspaces/{slug}/agents/{agent}/settings'
 */
 updateSettings.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -424,7 +424,7 @@ updateSettings.url = (args: { slug: string | number, agent: string | number } | 
 
 /**
 * @see \App\Http\Controllers\AgentController::updateSettings
-* @see app/Http/Controllers/AgentController.php:228
+* @see app/Http/Controllers/AgentController.php:238
 * @route '/workspaces/{slug}/agents/{agent}/settings'
 */
 updateSettings.patch = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'patch'> => ({
@@ -539,7 +539,7 @@ restoreIdentity.post = (args: { slug: string | number, agent: string | number, v
 
 /**
 * @see \App\Http\Controllers\AgentController::destroy
-* @see app/Http/Controllers/AgentController.php:166
+* @see app/Http/Controllers/AgentController.php:172
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 export const destroy = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -554,7 +554,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::destroy
-* @see app/Http/Controllers/AgentController.php:166
+* @see app/Http/Controllers/AgentController.php:172
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 destroy.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -580,7 +580,7 @@ destroy.url = (args: { slug: string | number, agent: string | number } | [slug: 
 
 /**
 * @see \App\Http\Controllers\AgentController::destroy
-* @see app/Http/Controllers/AgentController.php:166
+* @see app/Http/Controllers/AgentController.php:172
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 destroy.delete = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -590,7 +590,7 @@ destroy.delete = (args: { slug: string | number, agent: string | number } | [slu
 
 /**
 * @see \App\Http\Controllers\AgentController::update
-* @see app/Http/Controllers/AgentController.php:125
+* @see app/Http/Controllers/AgentController.php:131
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 export const update = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -605,7 +605,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::update
-* @see app/Http/Controllers/AgentController.php:125
+* @see app/Http/Controllers/AgentController.php:131
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 update.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -631,7 +631,7 @@ update.url = (args: { slug: string | number, agent: string | number } | [slug: s
 
 /**
 * @see \App\Http\Controllers\AgentController::update
-* @see app/Http/Controllers/AgentController.php:125
+* @see app/Http/Controllers/AgentController.php:131
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 update.put = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -641,7 +641,7 @@ update.put = (args: { slug: string | number, agent: string | number } | [slug: s
 
 /**
 * @see \App\Http\Controllers\AgentController::show
-* @see app/Http/Controllers/AgentController.php:65
+* @see app/Http/Controllers/AgentController.php:67
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 export const show = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -656,7 +656,7 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::show
-* @see app/Http/Controllers/AgentController.php:65
+* @see app/Http/Controllers/AgentController.php:67
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 show.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -682,7 +682,7 @@ show.url = (args: { slug: string | number, agent: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\AgentController::show
-* @see app/Http/Controllers/AgentController.php:65
+* @see app/Http/Controllers/AgentController.php:67
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 show.get = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -692,7 +692,7 @@ show.get = (args: { slug: string | number, agent: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\AgentController::show
-* @see app/Http/Controllers/AgentController.php:65
+* @see app/Http/Controllers/AgentController.php:67
 * @route '/workspaces/{slug}/agents/{agent}'
 */
 show.head = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -702,7 +702,7 @@ show.head = (args: { slug: string | number, agent: string | number } | [slug: st
 
 /**
 * @see \App\Http\Controllers\AgentController::qr
-* @see app/Http/Controllers/AgentController.php:309
+* @see app/Http/Controllers/AgentController.php:319
 * @route '/workspaces/{slug}/agents/{agent}/qr'
 */
 export const qr = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -717,7 +717,7 @@ qr.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::qr
-* @see app/Http/Controllers/AgentController.php:309
+* @see app/Http/Controllers/AgentController.php:319
 * @route '/workspaces/{slug}/agents/{agent}/qr'
 */
 qr.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -743,7 +743,7 @@ qr.url = (args: { slug: string | number, agent: string | number } | [slug: strin
 
 /**
 * @see \App\Http\Controllers\AgentController::qr
-* @see app/Http/Controllers/AgentController.php:309
+* @see app/Http/Controllers/AgentController.php:319
 * @route '/workspaces/{slug}/agents/{agent}/qr'
 */
 qr.post = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -753,7 +753,7 @@ qr.post = (args: { slug: string | number, agent: string | number } | [slug: stri
 
 /**
 * @see \App\Http\Controllers\AgentController::disconnect
-* @see app/Http/Controllers/AgentController.php:329
+* @see app/Http/Controllers/AgentController.php:339
 * @route '/workspaces/{slug}/agents/{agent}/disconnect'
 */
 export const disconnect = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -768,7 +768,7 @@ disconnect.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::disconnect
-* @see app/Http/Controllers/AgentController.php:329
+* @see app/Http/Controllers/AgentController.php:339
 * @route '/workspaces/{slug}/agents/{agent}/disconnect'
 */
 disconnect.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -794,7 +794,7 @@ disconnect.url = (args: { slug: string | number, agent: string | number } | [slu
 
 /**
 * @see \App\Http\Controllers\AgentController::disconnect
-* @see app/Http/Controllers/AgentController.php:329
+* @see app/Http/Controllers/AgentController.php:339
 * @route '/workspaces/{slug}/agents/{agent}/disconnect'
 */
 disconnect.post = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -804,7 +804,7 @@ disconnect.post = (args: { slug: string | number, agent: string | number } | [sl
 
 /**
 * @see \App\Http\Controllers\AgentController::restart
-* @see app/Http/Controllers/AgentController.php:349
+* @see app/Http/Controllers/AgentController.php:359
 * @route '/workspaces/{slug}/agents/{agent}/restart'
 */
 export const restart = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -819,7 +819,7 @@ restart.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::restart
-* @see app/Http/Controllers/AgentController.php:349
+* @see app/Http/Controllers/AgentController.php:359
 * @route '/workspaces/{slug}/agents/{agent}/restart'
 */
 restart.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -845,7 +845,7 @@ restart.url = (args: { slug: string | number, agent: string | number } | [slug: 
 
 /**
 * @see \App\Http\Controllers\AgentController::restart
-* @see app/Http/Controllers/AgentController.php:349
+* @see app/Http/Controllers/AgentController.php:359
 * @route '/workspaces/{slug}/agents/{agent}/restart'
 */
 restart.put = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -855,7 +855,7 @@ restart.put = (args: { slug: string | number, agent: string | number } | [slug: 
 
 /**
 * @see \App\Http\Controllers\AgentController::createInstance
-* @see app/Http/Controllers/AgentController.php:369
+* @see app/Http/Controllers/AgentController.php:379
 * @route '/workspaces/{slug}/agents/{agent}/create-instance'
 */
 export const createInstance = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -870,7 +870,7 @@ createInstance.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::createInstance
-* @see app/Http/Controllers/AgentController.php:369
+* @see app/Http/Controllers/AgentController.php:379
 * @route '/workspaces/{slug}/agents/{agent}/create-instance'
 */
 createInstance.url = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions) => {
@@ -896,7 +896,7 @@ createInstance.url = (args: { slug: string | number, agent: string | number } | 
 
 /**
 * @see \App\Http\Controllers\AgentController::createInstance
-* @see app/Http/Controllers/AgentController.php:369
+* @see app/Http/Controllers/AgentController.php:379
 * @route '/workspaces/{slug}/agents/{agent}/create-instance'
 */
 createInstance.post = (args: { slug: string | number, agent: string | number } | [slug: string | number, agent: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({

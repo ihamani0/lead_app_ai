@@ -54,11 +54,7 @@ export const ChatBubble: FC<ChatBubbleProps> = ({
                 );
             case 'audio':
                 return (
-                    <audio
-                        src={mediaUrl}
-                        controls
-                        className="mb-1 w-full"
-                    />
+                    <audio src={mediaUrl} controls className="mb-1 w-full" />
                 );
             case 'document':
                 return (

@@ -10,6 +10,20 @@
         "heading": "Des tarifs accessibles",
         "getStarted": "Commencer",
         "tryFree": "Essayer gratuitement",
+        "monthly": "Mensuel",
+        "yearly": "Annuel",
+        "perMonth": "/mois",
+        "perYear": "/an",
+        "billedAnnually": "facturé annuellement",
+        "savePercent": "Économisez :percent%",
+        "dynamic": {
+            "basicAnalytics": "Analytique de base",
+            "advancedAnalytics": "Analytique avancée",
+            "apiAccess": "Accès API",
+            "customRoles": "Rôles personnalisés",
+            "prioritySupport": "Support prioritaire",
+            "slaGuarantee": "Garantie SLA"
+        },
 
         "free": {
             "price": "Gratuit",

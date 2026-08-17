@@ -1,4 +1,4 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { ArrowLeft, Home, ShieldAlert, FileQuestion } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { GridPattern } from '@/components/ui/grid-pattern';
@@ -35,12 +35,17 @@ const errorConfig: Record<
 };
 
 export default function ErrorPage({ status }: ErrorPageProps) {
+    const page = usePage<{ auth?: { user: { id: number } | null } }>();
+    const homeHref = page.props.auth?.user ? '/' : '/welcome';
+
     const config = errorConfig[status] ?? {
         icon: ShieldAlert,
         title: `${status} — Error`,
         description: 'An unexpected error occurred. Please try again.',
-        primaryAction: { label: 'Go Home', href: '/' },
+        primaryAction: { label: 'Go Home', href: homeHref },
     };
+
+    config.primaryAction.href = homeHref;
 
     const Icon = config.icon;
 

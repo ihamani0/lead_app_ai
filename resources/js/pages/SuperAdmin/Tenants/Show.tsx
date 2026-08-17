@@ -1,6 +1,18 @@
-import { useForm } from '@inertiajs/react';
-import { AlertTriangle, CheckCircle } from 'lucide-react';
+import { useForm, router } from '@inertiajs/react';
+import { AlertTriangle, CheckCircle, Shield } from 'lucide-react';
+import { useState } from 'react';
 import Chart from 'react-apexcharts';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -21,6 +33,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import SuperAdminLayout from '@/layouts/super-admin-layout';
 import admin from '@/routes/admin';
 
@@ -29,7 +42,17 @@ type ShowProps = SharedPageProps & {
         id: string;
         name: string;
         slug: string;
-        plan: string;
+        plan: {
+            id: number;
+            slug: string;
+            name: string;
+            max_teams: number | null;
+            max_members: number | null;
+            max_leads: number | null;
+            max_agents: number | null;
+            max_instances: number | null;
+            max_storage_mb: number | null;
+        } | null;
         is_active: boolean;
         credit_millicents: number;
         dollar_limit: number;
@@ -71,6 +94,25 @@ type ShowProps = SharedPageProps & {
         name: string;
         display_name: string;
     }>;
+    plans: Array<{
+        id: number;
+        name: string;
+        slug: string;
+        max_teams: number | null;
+        max_members: number | null;
+        max_leads: number | null;
+        max_agents: number | null;
+        max_instances: number | null;
+        max_storage_mb: number | null;
+        features: Record<string, boolean>;
+        is_default: boolean;
+    }>;
+    subscription?: {
+        id: number;
+        provider: string;
+        status: string;
+        plan: { slug: string; name: string };
+    } | null;
 };
 
 export default function Show({
@@ -78,7 +120,15 @@ export default function Show({
     daily_usage,
     transactions,
     available_models,
+    plans,
+    subscription,
 }: ShowProps) {
+    const { t } = useTranslation();
+    const [changePlanOpen, setChangePlanOpen] = useState(false);
+    const [selectedPlanId, setSelectedPlanId] = useState<string>(
+        String(tenant.plan?.id ?? ''),
+    );
+
     const creditForm = useForm({
         type: 'purchase',
         dollar_amount: '',
@@ -88,6 +138,20 @@ export default function Show({
     const modelForm = useForm({
         llm_model_id: tenant.llm_model_id ?? '',
     });
+
+    const handleChangePlan = () => {
+        router.post(
+            admin.tenant.changePlan(tenant.id).url,
+            { plan_id: Number(selectedPlanId) },
+            {
+                onSuccess: () => setChangePlanOpen(false),
+            },
+        );
+    };
+
+    const selectedPlan = plans.find(
+        (p) => String(p.id) === selectedPlanId,
+    );
 
     const formatNumber = (num: number): string => {
         return new Intl.NumberFormat('en-US').format(num);
@@ -123,33 +187,45 @@ export default function Show({
                     {/* Tenant Information */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Tenant Information</CardTitle>
+                            <CardTitle>
+                                {t(
+                                    'superAdmin.tenants.show.sections.information',
+                                )}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">
-                                        Name
+                                        {t(
+                                            'superAdmin.tenants.show.labels.name',
+                                        )}
                                     </p>
                                     <p className="text-lg">{tenant.name}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">
-                                        Slug
+                                        {t(
+                                            'superAdmin.tenants.show.labels.slug',
+                                        )}
                                     </p>
                                     <p className="text-lg">{tenant.slug}</p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">
-                                        Plan
+                                        {t(
+                                            'superAdmin.tenants.show.labels.plan',
+                                        )}
                                     </p>
                                     <p className="text-lg capitalize">
-                                        {tenant.plan}
+                                        {tenant.plan?.name}
                                     </p>
                                 </div>
                                 <div>
                                     <p className="text-sm font-medium text-muted-foreground">
-                                        Status
+                                        {t(
+                                            'superAdmin.tenants.show.labels.status',
+                                        )}
                                     </p>
                                     <span
                                         className={`inline-block rounded-full px-2 py-1 text-xs font-semibold ${
@@ -158,7 +234,13 @@ export default function Show({
                                                 : 'bg-red-100 text-red-800'
                                         }`}
                                     >
-                                        {tenant.is_active ? 'Active' : 'Inactive'}
+                                        {tenant.is_active
+                                            ? t(
+                                                  'superAdmin.tenants.list.status.active',
+                                              )
+                                            : t(
+                                                  'superAdmin.tenants.list.status.inactive',
+                                              )}
                                     </span>
                                 </div>
                             </div>
@@ -167,7 +249,7 @@ export default function Show({
                             <div
                                 className={`rounded-lg p-4 ${
                                     tenant.is_low_credit
-                                        ? 'bg-red-50 border border-red-200'
+                                        ? 'border border-red-200 bg-red-50'
                                         : 'bg-muted'
                                 }`}
                             >
@@ -178,22 +260,43 @@ export default function Show({
                                         <CheckCircle className="h-5 w-5 text-green-500" />
                                     )}
                                     <p className="text-sm font-medium text-muted-foreground">
-                                        Credit Balance
+                                        {t(
+                                            'superAdmin.tenants.show.labels.creditBalance',
+                                        )}
                                     </p>
                                 </div>
                                 <p className="text-3xl font-bold">
-                                    ${((tenant.credit_millicents || 0) / 100_000).toFixed(2)}
+                                    $
+                                    {(
+                                        (tenant.credit_millicents || 0) /
+                                        100_000
+                                    ).toFixed(2)}
                                 </p>
                                 {tenant.is_low_credit && (
                                     <p className="text-sm text-red-600">
-                                        Below ${((tenant.dollar_limit || 0) / 100_000).toFixed(2)} threshold
+                                        {t(
+                                            'superAdmin.tenants.show.messages.belowThreshold',
+                                            {
+                                                amount: (
+                                                    (tenant.dollar_limit || 0) /
+                                                    100_000
+                                                ).toFixed(2),
+                                            },
+                                        )}
                                     </p>
                                 )}
                             </div>
 
                             {/* Model Selection */}
-                            <form onSubmit={handleUpdateModel} className="space-y-2">
-                                <Label>AI Model</Label>
+                            <form
+                                onSubmit={handleUpdateModel}
+                                className="space-y-2"
+                            >
+                                <Label>
+                                    {t(
+                                        'superAdmin.tenants.show.labels.aiModel',
+                                    )}
+                                </Label>
                                 <Select
                                     value={modelForm.data.llm_model_id}
                                     onValueChange={(value) =>
@@ -201,11 +304,17 @@ export default function Show({
                                     }
                                 >
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select model" />
+                                        <SelectValue
+                                            placeholder={t(
+                                                'superAdmin.tenants.show.placeholders.selectModel',
+                                            )}
+                                        />
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectItem value="default">
-                                            Default (DeepSeek)
+                                            {t(
+                                                'superAdmin.tenants.show.options.defaultModel',
+                                            )}
                                         </SelectItem>
                                         {available_models.map((model) => (
                                             <SelectItem
@@ -223,7 +332,9 @@ export default function Show({
                                     size="sm"
                                     disabled={modelForm.processing}
                                 >
-                                    Update Model
+                                    {t(
+                                        'superAdmin.tenants.show.buttons.update_model',
+                                    )}
                                 </Button>
                             </form>
                         </CardContent>
@@ -232,7 +343,11 @@ export default function Show({
                     {/* Add Credit */}
                     <Card>
                         <CardHeader>
-                            <CardTitle>Add Credit</CardTitle>
+                            <CardTitle>
+                                {t(
+                                    'superAdmin.tenants.show.sections.add_credit',
+                                )}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form
@@ -241,7 +356,9 @@ export default function Show({
                             >
                                 <div className="space-y-2">
                                     <Label htmlFor="type">
-                                        Transaction Type
+                                        {t(
+                                            'superAdmin.tenants.show.labels.transactionType',
+                                        )}
                                     </Label>
                                     <Select
                                         value={creditForm.data.type}
@@ -250,17 +367,27 @@ export default function Show({
                                         }
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select type" />
+                                            <SelectValue
+                                                placeholder={t(
+                                                    'superAdmin.tenants.show.placeholders.selectType',
+                                                )}
+                                            />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="purchase">
-                                                Purchase
+                                                {t(
+                                                    'superAdmin.tenants.show.options.purchase',
+                                                )}
                                             </SelectItem>
                                             <SelectItem value="bonus">
-                                                Bonus
+                                                {t(
+                                                    'superAdmin.tenants.show.options.bonus',
+                                                )}
                                             </SelectItem>
                                             <SelectItem value="adjustment">
-                                                Adjustment
+                                                {t(
+                                                    'superAdmin.tenants.show.options.adjustment',
+                                                )}
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
@@ -268,7 +395,9 @@ export default function Show({
 
                                 <div className="space-y-2">
                                     <Label htmlFor="dollar_amount">
-                                        Dollar Amount ($)
+                                        {t(
+                                            'superAdmin.tenants.show.labels.dollarAmount',
+                                        )}
                                     </Label>
                                     <Input
                                         id="dollar_amount"
@@ -282,14 +411,18 @@ export default function Show({
                                                 e.target.value,
                                             )
                                         }
-                                        placeholder="10.00"
+                                        placeholder={t(
+                                            'superAdmin.tenants.show.placeholders.dollarAmount',
+                                        )}
                                         required
                                     />
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="description">
-                                        Description (Optional)
+                                        {t(
+                                            'superAdmin.tenants.show.labels.description',
+                                        )}
                                     </Label>
                                     <Input
                                         id="description"
@@ -300,32 +433,46 @@ export default function Show({
                                                 e.target.value,
                                             )
                                         }
-                                        placeholder="Payment via bank transfer"
+                                        placeholder={t(
+                                            'superAdmin.tenants.show.placeholders.description',
+                                        )}
                                     />
                                 </div>
 
                                 <Button
                                     type="submit"
                                     disabled={
-                                        creditForm.processing || !creditForm.data.dollar_amount
+                                        creditForm.processing ||
+                                        !creditForm.data.dollar_amount
                                     }
                                 >
                                     {creditForm.processing
-                                        ? 'Adding...'
-                                        : 'Add Credit'}
+                                        ? t(
+                                              'superAdmin.tenants.show.buttons.adding',
+                                          )
+                                        : t(
+                                              'superAdmin.tenants.show.buttons.add_credit',
+                                          )}
                                 </Button>
                             </form>
 
                             <Separator className="my-4" />
 
                             <div className="rounded-lg bg-muted p-3 text-sm">
-                                <p className="font-medium">Quick Add:</p>
+                                <p className="font-medium">
+                                    {t(
+                                        'superAdmin.tenants.show.labels.quickAdd',
+                                    )}
+                                </p>
                                 <div className="mt-2 grid grid-cols-2 gap-2">
                                     <Button
                                         variant="outline"
                                         size="sm"
                                         onClick={() =>
-                                            creditForm.setData('dollar_amount', '10')
+                                            creditForm.setData(
+                                                'dollar_amount',
+                                                '10',
+                                            )
                                         }
                                     >
                                         $10
@@ -334,7 +481,10 @@ export default function Show({
                                         variant="outline"
                                         size="sm"
                                         onClick={() =>
-                                            creditForm.setData('dollar_amount', '25')
+                                            creditForm.setData(
+                                                'dollar_amount',
+                                                '25',
+                                            )
                                         }
                                     >
                                         $25
@@ -343,7 +493,10 @@ export default function Show({
                                         variant="outline"
                                         size="sm"
                                         onClick={() =>
-                                            creditForm.setData('dollar_amount', '50')
+                                            creditForm.setData(
+                                                'dollar_amount',
+                                                '50',
+                                            )
                                         }
                                     >
                                         $50
@@ -352,7 +505,10 @@ export default function Show({
                                         variant="outline"
                                         size="sm"
                                         onClick={() =>
-                                            creditForm.setData('dollar_amount', '100')
+                                            creditForm.setData(
+                                                'dollar_amount',
+                                                '100',
+                                            )
                                         }
                                     >
                                         $100
@@ -362,10 +518,260 @@ export default function Show({
                         </CardContent>
                     </Card>
 
+                    {/* Plan Management */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Shield className="h-5 w-5" />
+                                {t(
+                                    'superAdmin.tenants.show.sections.plan',
+                                )}
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm text-muted-foreground">
+                                        {t(
+                                            'superAdmin.tenants.show.labels.currentPlan',
+                                        )}
+                                    </p>
+                                    <p className="text-xl font-bold capitalize">
+                                        {tenant.plan?.name ?? '—'}
+                                    </p>
+                                </div>
+                                <Badge variant="secondary">
+                                    {subscription?.provider ?? 'manual'}
+                                </Badge>
+                            </div>
+
+                            {subscription && (
+                                <p className="text-xs text-muted-foreground">
+                                    {t(
+                                        'superAdmin.tenants.show.labels.subscriptionStatus',
+                                    )}{' '}
+                                    <span className="font-medium capitalize">
+                                        {subscription.status}
+                                    </span>
+                                </p>
+                            )}
+
+                            <Separator />
+
+                            <div className="grid grid-cols-3 gap-3 text-center text-sm">
+                                <div className="rounded-lg bg-muted p-2">
+                                    <p className="text-lg font-bold">
+                                        {tenant.plan?.max_teams ?? '∞'}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t(
+                                            'superAdmin.plans.labels.maxTeams',
+                                        )}
+                                    </p>
+                                </div>
+                                <div className="rounded-lg bg-muted p-2">
+                                    <p className="text-lg font-bold">
+                                        {tenant.plan?.max_members ?? '∞'}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t(
+                                            'superAdmin.plans.labels.maxMembers',
+                                        )}
+                                    </p>
+                                </div>
+                                <div className="rounded-lg bg-muted p-2">
+                                    <p className="text-lg font-bold">
+                                        {tenant.plan?.max_leads ?? '∞'}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t(
+                                            'superAdmin.plans.labels.maxLeads',
+                                        )}
+                                    </p>
+                                </div>
+                                <div className="rounded-lg bg-muted p-2">
+                                    <p className="text-lg font-bold">
+                                        {tenant.plan?.max_agents ?? '∞'}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t(
+                                            'superAdmin.plans.labels.maxAgents',
+                                        )}
+                                    </p>
+                                </div>
+                                <div className="rounded-lg bg-muted p-2">
+                                    <p className="text-lg font-bold">
+                                        {tenant.plan?.max_instances ?? '∞'}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t(
+                                            'superAdmin.plans.labels.maxInstances',
+                                        )}
+                                    </p>
+                                </div>
+                                <div className="rounded-lg bg-muted p-2">
+                                    <p className="text-lg font-bold">
+                                        {tenant.plan?.max_storage_mb != null
+                                            ? tenant.plan.max_storage_mb >= 1024
+                                                ? `${(tenant.plan.max_storage_mb / 1024).toFixed(1)} GB`
+                                                : `${tenant.plan.max_storage_mb} MB`
+                                            : '∞'}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {t(
+                                            'superAdmin.plans.labels.maxStorage',
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <Button
+                                className="w-full"
+                                variant="outline"
+                                onClick={() => {
+                                    setSelectedPlanId(
+                                        String(tenant.plan?.id ?? ''),
+                                    );
+                                    setChangePlanOpen(true);
+                                }}
+                            >
+                                {t(
+                                    'superAdmin.tenants.show.buttons.changePlan',
+                                )}
+                            </Button>
+                        </CardContent>
+                    </Card>
+
+                    {/* Change Plan Dialog */}
+                    <AlertDialog
+                        open={changePlanOpen}
+                        onOpenChange={setChangePlanOpen}
+                    >
+                        <AlertDialogContent>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                    {t(
+                                        'superAdmin.tenants.show.dialogs.changePlan.title',
+                                    )}
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    {t(
+                                        'superAdmin.tenants.show.dialogs.changePlan.description',
+                                    )}
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+
+                            <div className="space-y-4">
+                                <Select
+                                    value={selectedPlanId}
+                                    onValueChange={setSelectedPlanId}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue
+                                            placeholder={t(
+                                                'superAdmin.tenants.show.placeholders.selectPlan',
+                                            )}
+                                        />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {plans.map((plan) => (
+                                            <SelectItem
+                                                key={plan.id}
+                                                value={String(plan.id)}
+                                            >
+                                                {plan.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+
+                                {selectedPlan && selectedPlan.id !== Number(tenant.plan?.id) && (
+                                    <div className="rounded-lg border p-3 text-sm">
+                                        <p className="mb-2 font-medium">
+                                            {selectedPlan.name}{' '}
+                                            {t(
+                                                'superAdmin.tenants.show.dialogs.changePlan.limits',
+                                            )}
+                                        </p>
+                                        <div className="grid grid-cols-3 gap-2 text-center">
+                                            <div>
+                                                <p className="font-semibold">
+                                                    {selectedPlan.max_teams ?? '∞'}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {t('superAdmin.plans.labels.maxTeams')}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">
+                                                    {selectedPlan.max_members ?? '∞'}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {t('superAdmin.plans.labels.maxMembers')}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">
+                                                    {selectedPlan.max_leads ?? '∞'}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {t('superAdmin.plans.labels.maxLeads')}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">
+                                                    {selectedPlan.max_agents ?? '∞'}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {t('superAdmin.plans.labels.maxAgents')}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">
+                                                    {selectedPlan.max_instances ?? '∞'}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {t('superAdmin.plans.labels.maxInstances')}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">
+                                                    {selectedPlan.max_storage_mb != null
+                                                        ? selectedPlan.max_storage_mb >= 1024
+                                                            ? `${(selectedPlan.max_storage_mb / 1024).toFixed(1)} GB`
+                                                            : `${selectedPlan.max_storage_mb} MB`
+                                                        : '∞'}
+                                                </p>
+                                                <p className="text-xs text-muted-foreground">
+                                                    {t('superAdmin.plans.labels.maxStorage')}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <AlertDialogFooter>
+                                <AlertDialogCancel>
+                                    {t('superAdmin.tenants.show.buttons.cancel')}
+                                </AlertDialogCancel>
+                                <AlertDialogAction onClick={handleChangePlan}>
+                                    {t(
+                                        'superAdmin.tenants.show.buttons.apply',
+                                    )}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
+
                     {/* Users */}
                     <Card className="md:col-span-2">
                         <CardHeader>
-                            <CardTitle>Users ({tenant.users.length})</CardTitle>
+                            <CardTitle>
+                                {t('superAdmin.tenants.show.users.title', {
+                                    count: tenant.users.length,
+                                })}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="space-y-2">
@@ -397,7 +803,9 @@ export default function Show({
                                 ))}
                                 {tenant.users.length === 0 && (
                                     <p className="text-center text-muted-foreground">
-                                        No users found.
+                                        {t(
+                                            'superAdmin.tenants.show.users.empty',
+                                        )}
                                     </p>
                                 )}
                             </div>
@@ -408,7 +816,9 @@ export default function Show({
                     <Card className="md:col-span-2">
                         <CardHeader>
                             <CardTitle>
-                                Daily Token Usage (Last 30 Days)
+                                {t(
+                                    'superAdmin.tenants.show.charts.dailyTokenUsage',
+                                )}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -426,19 +836,29 @@ export default function Show({
                                                 ).toLocaleDateString(),
                                             ),
                                         },
-                                        yaxis: { title: { text: 'Tokens' } },
+                                        yaxis: {
+                                            title: {
+                                                text: t(
+                                                    'superAdmin.tenants.show.charts.yAxisLabel',
+                                                ),
+                                            },
+                                        },
                                         colors: ['#3b82f6', '#10b981'],
                                         legend: { position: 'top' },
                                     }}
                                     series={[
                                         {
-                                            name: 'Input Tokens',
+                                            name: t(
+                                                'superAdmin.tenants.show.charts.inputTokens',
+                                            ),
                                             data: daily_usage.map(
                                                 (d) => d.input_tokens_used,
                                             ),
                                         },
                                         {
-                                            name: 'Output Tokens',
+                                            name: t(
+                                                'superAdmin.tenants.show.charts.outputTokens',
+                                            ),
                                             data: daily_usage.map(
                                                 (d) => d.output_tokens_used,
                                             ),
@@ -449,7 +869,7 @@ export default function Show({
                                 />
                             ) : (
                                 <p className="text-muted-foreground">
-                                    No usage data yet.
+                                    {t('superAdmin.tenants.show.charts.empty')}
                                 </p>
                             )}
                         </CardContent>
@@ -459,7 +879,9 @@ export default function Show({
                     <Card className="md:col-span-2">
                         <CardHeader>
                             <CardTitle>
-                                Daily Usage History (Last 30 Days)
+                                {t(
+                                    'superAdmin.tenants.show.tables.daily_usage.title',
+                                )}
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -467,12 +889,36 @@ export default function Show({
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Input</TableHead>
-                                            <TableHead>Output</TableHead>
-                                            <TableHead>Total</TableHead>
-                                            <TableHead>Cost</TableHead>
-                                            <TableHead>Recharged</TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.daily_usage.headers.date',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.daily_usage.headers.input',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.daily_usage.headers.output',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.daily_usage.headers.total',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.daily_usage.headers.cost',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.daily_usage.headers.recharged',
+                                                )}
+                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -484,10 +930,14 @@ export default function Show({
                                                     ).toLocaleDateString()}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {formatNumber(day.input_tokens_used)}
+                                                    {formatNumber(
+                                                        day.input_tokens_used,
+                                                    )}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {formatNumber(day.output_tokens_used)}
+                                                    {formatNumber(
+                                                        day.output_tokens_used,
+                                                    )}
                                                 </TableCell>
                                                 <TableCell className="font-medium">
                                                     {formatNumber(
@@ -495,10 +945,12 @@ export default function Show({
                                                     )}
                                                 </TableCell>
                                                 <TableCell className="text-red-600">
-                                                    {day.total_cost_millicents / 100000}
+                                                    {day.total_cost_millicents /
+                                                        100000}
                                                 </TableCell>
                                                 <TableCell className="text-green-600">
-                                                    {day.millicents_recharged > 0
+                                                    {day.millicents_recharged >
+                                                    0
                                                         ? formatCurrency(
                                                               day.millicents_recharged,
                                                           )
@@ -510,7 +962,9 @@ export default function Show({
                                 </Table>
                             ) : (
                                 <p className="text-muted-foreground">
-                                    No usage data yet.
+                                    {t(
+                                        'superAdmin.tenants.show.tables.daily_usage.empty',
+                                    )}
                                 </p>
                             )}
                         </CardContent>
@@ -519,20 +973,52 @@ export default function Show({
                     {/* Per-Transaction History */}
                     <Card className="md:col-span-2">
                         <CardHeader>
-                            <CardTitle>Recent Transactions (Last 50)</CardTitle>
+                            <CardTitle>
+                                {t(
+                                    'superAdmin.tenants.show.tables.transactions.title',
+                                )}
+                            </CardTitle>
                         </CardHeader>
                         <CardContent>
                             {transactions && transactions.length > 0 ? (
                                 <Table>
                                     <TableHeader>
                                         <TableRow>
-                                            <TableHead>Date</TableHead>
-                                            <TableHead>Type</TableHead>
-                                            <TableHead>Input</TableHead>
-                                            <TableHead>Output</TableHead>
-                                            <TableHead>Total</TableHead>
-                                            <TableHead>Cost</TableHead>
-                                            <TableHead>Reference</TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.transactions.headers.date',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.transactions.headers.type',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.transactions.headers.input',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.transactions.headers.output',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.transactions.headers.total',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.transactions.headers.cost',
+                                                )}
+                                            </TableHead>
+                                            <TableHead>
+                                                {t(
+                                                    'superAdmin.tenants.show.tables.transactions.headers.reference',
+                                                )}
+                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -556,19 +1042,29 @@ export default function Show({
                                                     </span>
                                                 </TableCell>
                                                 <TableCell>
-                                                    {formatNumber(tx.input_tokens)}
+                                                    {formatNumber(
+                                                        tx.input_tokens,
+                                                    )}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {formatNumber(tx.output_tokens)}
+                                                    {formatNumber(
+                                                        tx.output_tokens,
+                                                    )}
                                                 </TableCell>
                                                 <TableCell className="font-medium">
-                                                    {formatNumber(tx.total_tokens)}
+                                                    {formatNumber(
+                                                        tx.total_tokens,
+                                                    )}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {tx.total_cost_millicents / 100000}
+                                                    {tx.total_cost_millicents /
+                                                        100000}
                                                 </TableCell>
                                                 <TableCell>
-                                                    {tx.reference_type ?? 'N/A'}
+                                                    {tx.reference_type ??
+                                                        t(
+                                                            'superAdmin.tenants.show.tables.transactions.na',
+                                                        )}
                                                 </TableCell>
                                             </TableRow>
                                         ))}
@@ -576,7 +1072,9 @@ export default function Show({
                                 </Table>
                             ) : (
                                 <p className="text-muted-foreground">
-                                    No transactions yet.
+                                    {t(
+                                        'superAdmin.tenants.show.tables.transactions.empty',
+                                    )}
                                 </p>
                             )}
                         </CardContent>

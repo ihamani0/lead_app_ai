@@ -1,4 +1,5 @@
 {
+    "teams": "Espaces de travail",
     "welcome": "Bienvenue",
     "dashboard": "Accueil",
     "whatsapp": "Whatsapp",
@@ -43,5 +44,8 @@
         "morning": "Bonjour",
         "afternoon": "Bon après-midi",
         "evening": "Bonsoir"
+    },
+    "error": {
+        "plan_limit_teams": "La limite de votre plan pour les espaces de travail a été atteinte."
     }
 }

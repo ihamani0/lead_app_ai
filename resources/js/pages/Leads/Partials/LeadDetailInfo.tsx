@@ -62,11 +62,15 @@ export const LeadDetailInfo: FC<LeadDetailInfoProps> = ({ lead }) => {
     const saveTagsToServer = async (updatedTags: string[]) => {
         setSavingTags(true);
         const url = update({ slug: activeWorkspace!.slug, id: lead.id }).url;
-        router.put(url, { custom_data: { tags: updatedTags } }, {
-            preserveScroll: true,
-            preserveState: true,
-            onFinish: () => setSavingTags(false),
-        });
+        router.put(
+            url,
+            { custom_data: { tags: updatedTags } },
+            {
+                preserveScroll: true,
+                preserveState: true,
+                onFinish: () => setSavingTags(false),
+            },
+        );
     };
 
     const addTag = () => {
@@ -98,12 +102,20 @@ export const LeadDetailInfo: FC<LeadDetailInfoProps> = ({ lead }) => {
 
     const saveName = (name: string) => {
         const url = update({ slug: activeWorkspace!.slug, id: lead.id }).url;
-        router.put(url, { name }, { preserveScroll: true, preserveState: true });
+        router.put(
+            url,
+            { name },
+            { preserveScroll: true, preserveState: true },
+        );
     };
 
     const saveNotes = (notes: string) => {
         const url = update({ slug: activeWorkspace!.slug, id: lead.id }).url;
-        router.put(url, { notes }, { preserveScroll: true, preserveState: true });
+        router.put(
+            url,
+            { notes },
+            { preserveScroll: true, preserveState: true },
+        );
     };
 
     return (
@@ -201,7 +213,9 @@ export const LeadDetailInfo: FC<LeadDetailInfoProps> = ({ lead }) => {
                             'border-0 text-[11px] font-medium',
                         )}
                     >
-                        {lead.treatment_status === 'TRAITE' ? 'Traité' : 'Non traité'}
+                        {lead.treatment_status === 'TRAITE'
+                            ? 'Traité'
+                            : 'Non traité'}
                     </Badge>
                 </div>
                 <Separator />

@@ -1,11 +1,6 @@
 import { Phone, TrendingUp, BarChart3 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
 import { calculatePercentage } from '@/lib/utils';
 import type { InstancesReportData } from '@/types/reports';
@@ -76,13 +71,17 @@ export function InstancesReport({ data }: InstancesReportProps) {
                                             {t('reports.instances.table.phone')}
                                         </th>
                                         <th className="pb-3 text-left font-medium text-muted-foreground">
-                                            {t('reports.instances.table.status')}
+                                            {t(
+                                                'reports.instances.table.status',
+                                            )}
                                         </th>
                                         <th className="pb-3 text-right font-medium text-muted-foreground">
                                             {t('reports.instances.table.leads')}
                                         </th>
                                         <th className="pb-3 text-right font-medium text-muted-foreground">
-                                            {t('reports.instances.table.connectedAt')}
+                                            {t(
+                                                'reports.instances.table.connectedAt',
+                                            )}
                                         </th>
                                     </tr>
                                 </thead>
@@ -101,7 +100,8 @@ export function InstancesReport({ data }: InstancesReportProps) {
                                             <td className="py-3">
                                                 <Badge
                                                     variant={
-                                                        instance.status === 'connected'
+                                                        instance.status ===
+                                                        'connected'
                                                             ? 'default'
                                                             : 'secondary'
                                                     }
@@ -110,7 +110,9 @@ export function InstancesReport({ data }: InstancesReportProps) {
                                                 </Badge>
                                             </td>
                                             <td className="py-3 text-right">
-                                                {leadsByInstance[instance.name] ?? 0}
+                                                {leadsByInstance[
+                                                    instance.name
+                                                ] ?? 0}
                                             </td>
                                             <td className="py-3 text-right text-muted-foreground">
                                                 {instance.connected_at

@@ -1,4 +1,4 @@
-import { Head, router, useForm } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import {
     FileText,
@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { FeatureGate } from '@/components/feature-gate';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -71,6 +72,7 @@ export default function KnowledgeBaseIndex({
 }: KnowledgeBaseIndexProps) {
     const activeWorkspace = useActiveWorkspace();
     const { t } = useTranslation();
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
 
     const breadcrumbs: BreadcrumbItem[] = [
         {
@@ -216,8 +218,9 @@ export default function KnowledgeBaseIndex({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('knowledgeBase.title')} />
 
-            <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
-                <div className="space-y-10">
+            <FeatureGate feature={features.knowledge_base}>
+                <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
+                    <div className="space-y-10">
                     {/* Header - Stone Gradient (Dark for both modes) */}
                     <div
                         className="relative block overflow-hidden rounded-2xl bg-linear-to-br from-stone-600 via-stone-700 to-stone-800 p-4 shadow-xl ring-1 ring-stone-400/30 sm:p-5 md:p-6 dark:from-stone-700 dark:via-stone-800 dark:to-stone-800 dark:ring-stone-400/30"
@@ -824,6 +827,7 @@ export default function KnowledgeBaseIndex({
                     </div>
                 </div>
             </div>
+            </FeatureGate>
         </AppLayout>
     );
 }

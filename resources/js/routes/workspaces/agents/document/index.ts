@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AgentController::download
-* @see app/Http/Controllers/AgentController.php:457
+* @see app/Http/Controllers/AgentController.php:467
 * @route '/workspaces/{slug}/agents/{agent}/knowledge/{id}/download'
 */
 export const download = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ download.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::download
-* @see app/Http/Controllers/AgentController.php:457
+* @see app/Http/Controllers/AgentController.php:467
 * @route '/workspaces/{slug}/agents/{agent}/knowledge/{id}/download'
 */
 download.url = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -45,7 +45,7 @@ download.url = (args: { slug: string | number, agent: string | number, id: strin
 
 /**
 * @see \App\Http\Controllers\AgentController::download
-* @see app/Http/Controllers/AgentController.php:457
+* @see app/Http/Controllers/AgentController.php:467
 * @route '/workspaces/{slug}/agents/{agent}/knowledge/{id}/download'
 */
 download.get = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -55,7 +55,7 @@ download.get = (args: { slug: string | number, agent: string | number, id: strin
 
 /**
 * @see \App\Http\Controllers\AgentController::download
-* @see app/Http/Controllers/AgentController.php:457
+* @see app/Http/Controllers/AgentController.php:467
 * @route '/workspaces/{slug}/agents/{agent}/knowledge/{id}/download'
 */
 download.head = (args: { slug: string | number, agent: string | number, id: string | number } | [slug: string | number, agent: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'head'> => ({

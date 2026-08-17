@@ -1,5 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { ArrowRight, MoreVertical, Settings, Trash2, Users } from 'lucide-react';
+import {
+    ArrowRight,
+    MoreVertical,
+    Settings,
+    Trash2,
+    Users,
+} from 'lucide-react';
 import { useState } from 'react';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -91,10 +97,7 @@ export function WorkspaceCard({
                     <div className="flex items-center gap-3">
                         <Avatar className="size-11">
                             <AvatarFallback
-                                className={cn(
-                                    'text-sm font-bold',
-                                    avatarColor,
-                                )}
+                                className={cn('text-sm font-bold', avatarColor)}
                             >
                                 {initials}
                             </AvatarFallback>

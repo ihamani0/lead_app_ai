@@ -1,4 +1,4 @@
-import { Head, useForm, router } from '@inertiajs/react';
+import { Head, useForm, router, usePage } from '@inertiajs/react';
 import {
     UserPlus,
     MoreHorizontal,
@@ -8,6 +8,7 @@ import {
     UserCheck,
 } from 'lucide-react';
 import { useState } from 'react';
+import { FeatureGate } from '@/components/feature-gate';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -92,6 +93,7 @@ export default function MembersIndex({
     invitations,
 }: MembersIndexProps) {
     const { t } = useTranslation();
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
     const [inviteOpen, setInviteOpen] = useState(false);
     const [memberToRemove, setMemberToRemove] =
         useState<WorkspaceMember | null>(null);
@@ -168,25 +170,24 @@ export default function MembersIndex({
             <Head title={t('workspace.members.title')} />
 
             <div className="flex flex-col gap-6 p-4 md:p-6">
+                <FeatureGate feature={features.custom_roles}>
                 {/* Header with Invite Button */}
                 <div className="mb-6 rounded-xl bg-card p-4 shadow-sm sm:p-5">
-                        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                            <div className="flex items-center gap-3">
-                                <UserCheck className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
-                                <div>
-                                    <h1 className="text-lg font-semibold sm:text-xl md:text-2xl">
-                                        {t('workspace.members.title')}
-                                    </h1>
-                                    <p className="text-xs text-muted-foreground sm:text-sm">
-                                        {t('workspace.members.description')}
-                                    </p>
-                                </div>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="flex items-center gap-3">
+                            <UserCheck className="h-5 w-5 shrink-0 sm:h-6 sm:w-6" />
+                            <div>
+                                <h1 className="text-lg font-semibold sm:text-xl md:text-2xl">
+                                    {t('workspace.members.title')}
+                                </h1>
+                                <p className="text-xs text-muted-foreground sm:text-sm">
+                                    {t('workspace.members.description')}
+                                </p>
                             </div>
                         </div>
                     </div>
+                </div>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    
-
                     {canInvite && (
                         <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
                             <DialogTrigger asChild>
@@ -526,6 +527,7 @@ export default function MembersIndex({
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>
+                </FeatureGate>
             </div>
         </AppLayout>
     );

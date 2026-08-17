@@ -134,6 +134,7 @@ class BibliothequeController extends Controller
             'canCreate' => $canManage,
             'canManage' => $canManage,
             'tenantId' => $tenantId,
+            'features' => $request->user()->tenant->plan?->features ?? [],
         ]);
     }
 

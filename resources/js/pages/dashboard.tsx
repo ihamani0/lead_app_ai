@@ -1,6 +1,7 @@
-import { Head } from '@inertiajs/react';
+import { Head, usePage } from '@inertiajs/react';
 import { Activity, Bot, HardDrive, Users } from 'lucide-react';
 import { DashboardWelcomeOverlay } from '@/components/dashboard/DashboardWelcomeOverlay';
+import { FeatureGate } from '@/components/feature-gate';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { useTranslation } from '@/hooks/use-translation';
@@ -61,6 +62,7 @@ export default function Dashboard({
     workspace,
 }: DashboardProps) {
     const { t } = useTranslation();
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
 
     const breadcrumbs: BreadcrumbItem[] = [
         { title: t('dashboard.title'), href: 'dashboard().url' },
@@ -168,7 +170,8 @@ export default function Dashboard({
                 )}
 
                 <div className="grid gap-4 md:grid-cols-3">
-                    <LeadConversionFunnel
+                    <FeatureGate feature={features.advanced_analytics}>
+                        <LeadConversionFunnel
                         byAiQualification={stats.leads.byAiQualification}
                         byQualificationResult={
                             stats.leads.byQualificationResult
@@ -178,6 +181,7 @@ export default function Dashboard({
                         recent={stats.leads.recent}
                         today={stats.leads.today}
                     />
+                    </FeatureGate>
 
                     <div className="flex flex-col gap-4 md:col-span-1">
                         <Card className="bg-linear-to-br from-slate-50 to-white dark:from-slate-900/50 dark:to-slate-900/20">

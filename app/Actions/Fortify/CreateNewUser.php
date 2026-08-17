@@ -4,6 +4,7 @@ namespace App\Actions\Fortify;
 
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
+use App\Models\Plan;
 use App\Models\Team;
 use App\Models\Tenant;
 use App\Models\User;
@@ -24,6 +25,8 @@ class CreateNewUser implements CreatesNewUsers
             'password' => $this->passwordRules(),
         ])->validate();
 
+        $defaultPlanId = Plan::default()->first()->id;
+
         // Check if there's an invitation id
         $invitationId = request()->query('invitation');
 
@@ -43,7 +46,7 @@ class CreateNewUser implements CreatesNewUsers
                 $userTenant = Tenant::create([
                     'name' => $input['name'],
                     'slug' => Str::slug($input['name']),
-                    'plan' => 'starter',
+                    'plan_id' => $defaultPlanId,
                     'is_active' => true,
                     'settings' => [],
                 ]);
@@ -71,7 +74,7 @@ class CreateNewUser implements CreatesNewUsers
         $newTenant = Tenant::create([
             'name' => $input['name'],
             'slug' => Str::slug($input['name']),
-            'plan' => 'starter',
+            'plan_id' => $defaultPlanId,
             'is_active' => true,
             'settings' => [],
         ]);

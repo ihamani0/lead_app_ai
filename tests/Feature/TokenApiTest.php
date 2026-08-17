@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Plan;
 use App\Models\Tenant;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -17,10 +18,11 @@ class TokenApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        $plan = Plan::factory()->basic()->create();
         $this->tenant = Tenant::create([
             'name' => 'Test Tenant',
             'slug' => 'test-tenant',
-            'plan' => 'basic',
+            'plan_id' => $plan->id,
             'is_active' => true,
             'token_balance' => 10000,
         ]);

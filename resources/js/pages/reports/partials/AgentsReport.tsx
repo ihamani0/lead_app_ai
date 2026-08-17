@@ -178,7 +178,10 @@ export function AgentsReport({ data }: AgentsReportProps) {
                         </CardHeader>
                         <CardContent>
                             <ResponsiveContainer width="100%" height={250}>
-                                <BarChart data={tokenChartData} layout="vertical">
+                                <BarChart
+                                    data={tokenChartData}
+                                    layout="vertical"
+                                >
                                     <CartesianGrid
                                         strokeDasharray="3 3"
                                         className="stroke-muted"
@@ -194,10 +197,10 @@ export function AgentsReport({ data }: AgentsReportProps) {
                                         formatter={(value, name) =>
                                             name === 'tokens'
                                                 ? Number(value) >= 1_000_000
-                                                  ? `${(Number(value) / 1_000_000).toFixed(1)}M tokens`
-                                                  : Number(value) >= 1_000
-                                                    ? `${(Number(value) / 1_000).toFixed(1)}K tokens`
-                                                    : `${value} tokens`
+                                                    ? `${(Number(value) / 1_000_000).toFixed(1)}M tokens`
+                                                    : Number(value) >= 1_000
+                                                      ? `${(Number(value) / 1_000).toFixed(1)}K tokens`
+                                                      : `${value} tokens`
                                                 : `$${Number(value).toFixed(2)}`
                                         }
                                     />

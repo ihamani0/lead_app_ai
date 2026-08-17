@@ -9,9 +9,13 @@ use App\Models\User;
 
 class TeamService
 {
+    public function __construct(
+        private readonly PlanEnforcementService $planEnforcement,
+    ) {}
+
     public function createTeam(Tenant $tenant, User $user, array $data): Team
     {
-        return $tenant->teams()->create([
+        return Team::create([
             'user_id' => $user->id,
             'name' => $data['name'],
         ]);
@@ -19,13 +23,7 @@ class TeamService
 
     public function canCreateTeam(Tenant $tenant): bool
     {
-        $plan = Plan::where('slug', $tenant->plan)->first();
-
-        if (! $plan || $plan->max_teams === null) {
-            return true;
-        }
-
-        return $tenant->teams()->count() < $plan->max_teams;
+        return app(PlanEnforcementService::class)->canCreateTeam($tenant);
     }
 
     public function createDefaultWorkspace(User $user, Tenant $tenant): Team

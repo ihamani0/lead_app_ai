@@ -1,4 +1,6 @@
+import { usePage } from '@inertiajs/react';
 import { Copy, Play, Pause, BarChart3 } from 'lucide-react';
+import { FeatureGate } from '@/components/feature-gate';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -21,6 +23,7 @@ export default function AgentParametres({
     onClone,
     isCloning,
 }: Props) {
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
     return (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
             {/* Left: Actions + Blocklist */}
@@ -58,8 +61,10 @@ export default function AgentParametres({
                             onClick={onClone}
                             disabled={isCloning}
                         >
-                            <Copy className="h-4 w-4" />
-                            Dupliquer
+                            <FeatureGate feature={features.agent_clone} message={undefined}>
+                                <Copy className="h-4 w-4" />
+                                Dupliquer
+                            </FeatureGate>
                         </Button>
                     </CardContent>
                 </Card>

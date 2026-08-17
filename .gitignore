@@ -8,6 +8,7 @@
 /storage/pail
 /resources/js/actions
 /vendor
+docker-compose.yml
 .DS_Store
 .env
 .env.backup

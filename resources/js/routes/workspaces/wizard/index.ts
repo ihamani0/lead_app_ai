@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\AgentController::index
-* @see app/Http/Controllers/AgentController.php:471
+* @see app/Http/Controllers/AgentController.php:481
 * @route '/workspaces/{slug}/wizard'
 */
 export const index = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::index
-* @see app/Http/Controllers/AgentController.php:471
+* @see app/Http/Controllers/AgentController.php:481
 * @route '/workspaces/{slug}/wizard'
 */
 index.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ index.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\AgentController::index
-* @see app/Http/Controllers/AgentController.php:471
+* @see app/Http/Controllers/AgentController.php:481
 * @route '/workspaces/{slug}/wizard'
 */
 index.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ index.get = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\AgentController::index
-* @see app/Http/Controllers/AgentController.php:471
+* @see app/Http/Controllers/AgentController.php:481
 * @route '/workspaces/{slug}/wizard'
 */
 index.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ index.head = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\AgentController::instance
-* @see app/Http/Controllers/AgentController.php:483
+* @see app/Http/Controllers/AgentController.php:493
 * @route '/workspaces/{slug}/wizard/instance'
 */
 export const instance = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -78,7 +78,7 @@ instance.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::instance
-* @see app/Http/Controllers/AgentController.php:483
+* @see app/Http/Controllers/AgentController.php:493
 * @route '/workspaces/{slug}/wizard/instance'
 */
 instance.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ instance.url = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\AgentController::instance
-* @see app/Http/Controllers/AgentController.php:483
+* @see app/Http/Controllers/AgentController.php:493
 * @route '/workspaces/{slug}/wizard/instance'
 */
 instance.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ instance.post = (args: { slug: string | number } | [slug: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\AgentController::qr
-* @see app/Http/Controllers/AgentController.php:513
+* @see app/Http/Controllers/AgentController.php:523
 * @route '/workspaces/{slug}/wizard/qr'
 */
 export const qr = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -130,7 +130,7 @@ qr.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::qr
-* @see app/Http/Controllers/AgentController.php:513
+* @see app/Http/Controllers/AgentController.php:523
 * @route '/workspaces/{slug}/wizard/qr'
 */
 qr.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -157,7 +157,7 @@ qr.url = (args: { slug: string | number } | [slug: string | number ] | string | 
 
 /**
 * @see \App\Http\Controllers\AgentController::qr
-* @see app/Http/Controllers/AgentController.php:513
+* @see app/Http/Controllers/AgentController.php:523
 * @route '/workspaces/{slug}/wizard/qr'
 */
 qr.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -167,7 +167,7 @@ qr.post = (args: { slug: string | number } | [slug: string | number ] | string |
 
 /**
 * @see \App\Http\Controllers\AgentController::complete
-* @see app/Http/Controllers/AgentController.php:537
+* @see app/Http/Controllers/AgentController.php:547
 * @route '/workspaces/{slug}/wizard/complete'
 */
 export const complete = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -182,7 +182,7 @@ complete.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::complete
-* @see app/Http/Controllers/AgentController.php:537
+* @see app/Http/Controllers/AgentController.php:547
 * @route '/workspaces/{slug}/wizard/complete'
 */
 complete.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -209,7 +209,7 @@ complete.url = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\AgentController::complete
-* @see app/Http/Controllers/AgentController.php:537
+* @see app/Http/Controllers/AgentController.php:547
 * @route '/workspaces/{slug}/wizard/complete'
 */
 complete.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -219,7 +219,7 @@ complete.post = (args: { slug: string | number } | [slug: string | number ] | st
 
 /**
 * @see \App\Http\Controllers\AgentController::dismissWelcome
-* @see app/Http/Controllers/AgentController.php:646
+* @see app/Http/Controllers/AgentController.php:656
 * @route '/workspaces/{slug}/wizard/dismiss-welcome'
 */
 export const dismissWelcome = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -234,7 +234,7 @@ dismissWelcome.definition = {
 
 /**
 * @see \App\Http\Controllers\AgentController::dismissWelcome
-* @see app/Http/Controllers/AgentController.php:646
+* @see app/Http/Controllers/AgentController.php:656
 * @route '/workspaces/{slug}/wizard/dismiss-welcome'
 */
 dismissWelcome.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -261,7 +261,7 @@ dismissWelcome.url = (args: { slug: string | number } | [slug: string | number ]
 
 /**
 * @see \App\Http\Controllers\AgentController::dismissWelcome
-* @see app/Http/Controllers/AgentController.php:646
+* @see app/Http/Controllers/AgentController.php:656
 * @route '/workspaces/{slug}/wizard/dismiss-welcome'
 */
 dismissWelcome.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({

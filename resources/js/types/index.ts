@@ -1,7 +1,14 @@
 export type * from './auth';
 export type * from './navigation';
 export type * from './ui';
-export type { Workspace, WorkspaceMember, WorkspaceRole, WorkspaceInvitation, WorkspacePermissions, WorkspaceUser } from './workspace';
+export type {
+    Workspace,
+    WorkspaceMember,
+    WorkspaceRole,
+    WorkspaceInvitation,
+    WorkspacePermissions,
+    WorkspaceUser,
+} from './workspace';
 export { DEFAULT_PERMISSIONS, PERMISSION_GROUPS } from './workspace';
 
 export type InstanceStatus = 'connecting' | 'connected' | 'disconnected';
@@ -201,7 +208,7 @@ export interface Tenant {
     id: string;
     name: string;
     slug: string;
-    plan: string;
+    plan: { slug: string; name: string } | null;
     is_active: boolean;
     token_balance: number;
     token_limit: number | null;

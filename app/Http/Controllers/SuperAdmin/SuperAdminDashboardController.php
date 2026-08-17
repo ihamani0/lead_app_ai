@@ -22,9 +22,11 @@ class SuperAdminDashboardController extends Controller
                 ->sum('millicents_recharged'),
         ];
 
-        $planDistribution = Tenant::select('plan', DB::raw('count(*) as count'))
-            ->groupBy('plan')
-            ->pluck('count', 'plan')
+        $planDistribution = Tenant::select('plan_id', DB::raw('count(*) as count'))
+            ->groupBy('plan_id')
+            ->with('plan:id,slug')
+            ->get()
+            ->mapWithKeys(fn ($item) => [$item->plan?->slug ?? 'unknown' => $item->count])
             ->toArray();
 
         $topConsumers = TokenTransactionDaily::with('tenant')
@@ -36,6 +38,7 @@ class SuperAdminDashboardController extends Controller
             ->get();
 
         $recentTenants = Tenant::withCount('users')
+            ->with('plan:id,slug,name')
             ->latest()
             ->take(5)
             ->get();

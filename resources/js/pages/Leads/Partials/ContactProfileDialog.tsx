@@ -97,8 +97,12 @@ function ContactProfileContent({ profile }: { profile: ContactProfile }) {
 
             {profile.about && (
                 <div className="rounded-lg bg-muted/50 p-3">
-                    <p className="text-xs font-medium text-muted-foreground">À propos</p>
-                    <p className="mt-1 text-sm text-foreground">{profile.about}</p>
+                    <p className="text-xs font-medium text-muted-foreground">
+                        À propos
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                        {profile.about}
+                    </p>
                 </div>
             )}
 
@@ -175,7 +179,9 @@ function ProfileRow({
             <span className="text-muted-foreground">{icon}</span>
             <div className="min-w-0 flex-1">
                 <p className="text-xs text-muted-foreground">{label}</p>
-                <p className="truncate text-sm font-medium text-foreground">{value}</p>
+                <p className="truncate text-sm font-medium text-foreground">
+                    {value}
+                </p>
             </div>
         </div>
     );

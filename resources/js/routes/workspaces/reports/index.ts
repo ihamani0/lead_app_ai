@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\ReportController::index
-* @see app/Http/Controllers/ReportController.php:19
+* @see app/Http/Controllers/ReportController.php:20
 * @route '/workspaces/{slug}/reports'
 */
 export const index = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\ReportController::index
-* @see app/Http/Controllers/ReportController.php:19
+* @see app/Http/Controllers/ReportController.php:20
 * @route '/workspaces/{slug}/reports'
 */
 index.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ index.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\ReportController::index
-* @see app/Http/Controllers/ReportController.php:19
+* @see app/Http/Controllers/ReportController.php:20
 * @route '/workspaces/{slug}/reports'
 */
 index.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ index.get = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\ReportController::index
-* @see app/Http/Controllers/ReportController.php:19
+* @see app/Http/Controllers/ReportController.php:20
 * @route '/workspaces/{slug}/reports'
 */
 index.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\Team\TeamRoleController::store
-* @see app/Http/Controllers/Team/TeamRoleController.php:12
+* @see app/Http/Controllers/Team/TeamRoleController.php:13
 * @route '/workspaces/{slug}/roles'
 */
 export const store = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -16,7 +16,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\Team\TeamRoleController::store
-* @see app/Http/Controllers/Team/TeamRoleController.php:12
+* @see app/Http/Controllers/Team/TeamRoleController.php:13
 * @route '/workspaces/{slug}/roles'
 */
 store.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ store.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\Team\TeamRoleController::store
-* @see app/Http/Controllers/Team/TeamRoleController.php:12
+* @see app/Http/Controllers/Team/TeamRoleController.php:13
 * @route '/workspaces/{slug}/roles'
 */
 store.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -53,10 +53,10 @@ store.post = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\Team\TeamRoleController::update
-* @see app/Http/Controllers/Team/TeamRoleController.php:48
+* @see app/Http/Controllers/Team/TeamRoleController.php:53
 * @route '/workspaces/{slug}/roles/{role}'
 */
-export const update = (args: { slug: string | number, role: string | number | { id: string | number } } | [slug: string | number, role: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const update = (args: { slug: string | number, role: number | { id: number } } | [slug: string | number, role: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
@@ -68,10 +68,10 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\Team\TeamRoleController::update
-* @see app/Http/Controllers/Team/TeamRoleController.php:48
+* @see app/Http/Controllers/Team/TeamRoleController.php:53
 * @route '/workspaces/{slug}/roles/{role}'
 */
-update.url = (args: { slug: string | number, role: string | number | { id: string | number } } | [slug: string | number, role: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+update.url = (args: { slug: string | number, role: number | { id: number } } | [slug: string | number, role: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -96,20 +96,20 @@ update.url = (args: { slug: string | number, role: string | number | { id: strin
 
 /**
 * @see \App\Http\Controllers\Team\TeamRoleController::update
-* @see app/Http/Controllers/Team/TeamRoleController.php:48
+* @see app/Http/Controllers/Team/TeamRoleController.php:53
 * @route '/workspaces/{slug}/roles/{role}'
 */
-update.put = (args: { slug: string | number, role: string | number | { id: string | number } } | [slug: string | number, role: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+update.put = (args: { slug: string | number, role: number | { id: number } } | [slug: string | number, role: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: update.url(args, options),
     method: 'put',
 })
 
 /**
 * @see \App\Http\Controllers\Team\TeamRoleController::destroy
-* @see app/Http/Controllers/Team/TeamRoleController.php:87
+* @see app/Http/Controllers/Team/TeamRoleController.php:96
 * @route '/workspaces/{slug}/roles/{role}'
 */
-export const destroy = (args: { slug: string | number, role: string | number | { id: string | number } } | [slug: string | number, role: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { slug: string | number, role: number | { id: number } } | [slug: string | number, role: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -121,10 +121,10 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\Team\TeamRoleController::destroy
-* @see app/Http/Controllers/Team/TeamRoleController.php:87
+* @see app/Http/Controllers/Team/TeamRoleController.php:96
 * @route '/workspaces/{slug}/roles/{role}'
 */
-destroy.url = (args: { slug: string | number, role: string | number | { id: string | number } } | [slug: string | number, role: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+destroy.url = (args: { slug: string | number, role: number | { id: number } } | [slug: string | number, role: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -149,10 +149,10 @@ destroy.url = (args: { slug: string | number, role: string | number | { id: stri
 
 /**
 * @see \App\Http\Controllers\Team\TeamRoleController::destroy
-* @see app/Http/Controllers/Team/TeamRoleController.php:87
+* @see app/Http/Controllers/Team/TeamRoleController.php:96
 * @route '/workspaces/{slug}/roles/{role}'
 */
-destroy.delete = (args: { slug: string | number, role: string | number | { id: string | number } } | [slug: string | number, role: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { slug: string | number, role: number | { id: number } } | [slug: string | number, role: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })

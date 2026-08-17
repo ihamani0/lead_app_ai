@@ -504,7 +504,10 @@ const sprints = [
     },
 ];
 
-const priorityConfig: Record<string, { label: string; color: string; bg: string }> = {
+const priorityConfig: Record<
+    string,
+    { label: string; color: string; bg: string }
+> = {
     critical: { label: 'Critical', color: '#EF4444', bg: '#FEF2F2' },
     high: { label: 'High', color: '#F97316', bg: '#FFF7ED' },
     medium: { label: 'Medium', color: '#3B82F6', bg: '#EFF6FF' },
@@ -515,28 +518,47 @@ export default function ScrumBoard() {
     const [openStory, setOpenStory] = useState<string | null>(null);
     const [done, setDone] = useState<Record<string, boolean>>({});
 
-    const toggleTask = (key: string) => setDone((p) => ({ ...p, [key]: !p[key] }));
+    const toggleTask = (key: string) =>
+        setDone((p) => ({ ...p, [key]: !p[key] }));
 
     const totalPoints = sprints.reduce(
-        (a: number, s: { stories: { points: number }[] }) => a + s.stories.reduce((b: number, st: { points: number }) => b + st.points, 0),
+        (a: number, s: { stories: { points: number }[] }) =>
+            a +
+            s.stories.reduce(
+                (b: number, st: { points: number }) => b + st.points,
+                0,
+            ),
         0,
     );
     const totalDone = Object.values(done).filter(Boolean).length;
     const totalTasks = sprints.reduce(
-        (a: number, s: { stories: { tasks: unknown[] }[] }) => a + s.stories.reduce((b: number, st: { tasks: unknown[] }) => b + st.tasks.length, 0),
+        (a: number, s: { stories: { tasks: unknown[] }[] }) =>
+            a +
+            s.stories.reduce(
+                (b: number, st: { tasks: unknown[] }) => b + st.tasks.length,
+                0,
+            ),
         0,
     );
 
     const sprint = sprints.find((s: { id: number }) => s.id === openSprint);
 
-    const sprintDoneCount = (s: { stories: { id: string; tasks: unknown[] }[] }) =>
+    const sprintDoneCount = (s: {
+        stories: { id: string; tasks: unknown[] }[];
+    }) =>
         s.stories.reduce(
             (a: number, st: { id: string; tasks: unknown[] }) =>
-                a + st.tasks.filter((_: unknown, i: number) => done[`${st.id}-${i}`]).length,
+                a +
+                st.tasks.filter(
+                    (_: unknown, i: number) => done[`${st.id}-${i}`],
+                ).length,
             0,
         );
     const sprintTotalTasks = (s: { stories: { tasks: unknown[] }[] }) =>
-        s.stories.reduce((a: number, st: { tasks: unknown[] }) => a + st.tasks.length, 0);
+        s.stories.reduce(
+            (a: number, st: { tasks: unknown[] }) => a + st.tasks.length,
+            0,
+        );
 
     return (
         <div

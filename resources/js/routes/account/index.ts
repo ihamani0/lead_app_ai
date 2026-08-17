@@ -45,7 +45,7 @@ settings.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\Settings\BillingController::billing
-* @see app/Http/Controllers/Settings/BillingController.php:15
+* @see app/Http/Controllers/Settings/BillingController.php:12
 * @route '/account/billing'
 */
 export const billing = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -60,7 +60,7 @@ billing.definition = {
 
 /**
 * @see \App\Http\Controllers\Settings\BillingController::billing
-* @see app/Http/Controllers/Settings/BillingController.php:15
+* @see app/Http/Controllers/Settings/BillingController.php:12
 * @route '/account/billing'
 */
 billing.url = (options?: RouteQueryOptions) => {
@@ -69,7 +69,7 @@ billing.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\Settings\BillingController::billing
-* @see app/Http/Controllers/Settings/BillingController.php:15
+* @see app/Http/Controllers/Settings/BillingController.php:12
 * @route '/account/billing'
 */
 billing.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -79,7 +79,7 @@ billing.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\Settings\BillingController::billing
-* @see app/Http/Controllers/Settings/BillingController.php:15
+* @see app/Http/Controllers/Settings/BillingController.php:12
 * @route '/account/billing'
 */
 billing.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -87,9 +87,54 @@ billing.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     method: 'head',
 })
 
+/**
+* @see \App\Http\Controllers\Settings\SubscriptionController::subscriptions
+* @see app/Http/Controllers/Settings/SubscriptionController.php:13
+* @route '/account/subscriptions'
+*/
+export const subscriptions = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: subscriptions.url(options),
+    method: 'get',
+})
+
+subscriptions.definition = {
+    methods: ["get","head"],
+    url: '/account/subscriptions',
+} satisfies RouteDefinition<["get","head"]>
+
+/**
+* @see \App\Http\Controllers\Settings\SubscriptionController::subscriptions
+* @see app/Http/Controllers/Settings/SubscriptionController.php:13
+* @route '/account/subscriptions'
+*/
+subscriptions.url = (options?: RouteQueryOptions) => {
+    return subscriptions.definition.url + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\Settings\SubscriptionController::subscriptions
+* @see app/Http/Controllers/Settings/SubscriptionController.php:13
+* @route '/account/subscriptions'
+*/
+subscriptions.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+    url: subscriptions.url(options),
+    method: 'get',
+})
+
+/**
+* @see \App\Http\Controllers\Settings\SubscriptionController::subscriptions
+* @see app/Http/Controllers/Settings/SubscriptionController.php:13
+* @route '/account/subscriptions'
+*/
+subscriptions.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+    url: subscriptions.url(options),
+    method: 'head',
+})
+
 const account = {
     settings: Object.assign(settings, settings),
     billing: Object.assign(billing, billing),
+    subscriptions: Object.assign(subscriptions, subscriptions),
 }
 
 export default account

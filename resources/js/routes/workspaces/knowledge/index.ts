@@ -2,7 +2,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefa
 import web from './web'
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::index
-* @see app/Http/Controllers/KnowledgeBaseController.php:16
+* @see app/Http/Controllers/KnowledgeBaseController.php:17
 * @route '/workspaces/{slug}/knowledge'
 */
 export const index = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -17,7 +17,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::index
-* @see app/Http/Controllers/KnowledgeBaseController.php:16
+* @see app/Http/Controllers/KnowledgeBaseController.php:17
 * @route '/workspaces/{slug}/knowledge'
 */
 index.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -44,7 +44,7 @@ index.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::index
-* @see app/Http/Controllers/KnowledgeBaseController.php:16
+* @see app/Http/Controllers/KnowledgeBaseController.php:17
 * @route '/workspaces/{slug}/knowledge'
 */
 index.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -54,7 +54,7 @@ index.get = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::index
-* @see app/Http/Controllers/KnowledgeBaseController.php:16
+* @see app/Http/Controllers/KnowledgeBaseController.php:17
 * @route '/workspaces/{slug}/knowledge'
 */
 index.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -64,7 +64,7 @@ index.head = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::store
-* @see app/Http/Controllers/KnowledgeBaseController.php:44
+* @see app/Http/Controllers/KnowledgeBaseController.php:49
 * @route '/workspaces/{slug}/knowledge'
 */
 export const store = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -79,7 +79,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::store
-* @see app/Http/Controllers/KnowledgeBaseController.php:44
+* @see app/Http/Controllers/KnowledgeBaseController.php:49
 * @route '/workspaces/{slug}/knowledge'
 */
 store.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -106,7 +106,7 @@ store.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::store
-* @see app/Http/Controllers/KnowledgeBaseController.php:44
+* @see app/Http/Controllers/KnowledgeBaseController.php:49
 * @route '/workspaces/{slug}/knowledge'
 */
 store.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -116,7 +116,7 @@ store.post = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::destroy
-* @see app/Http/Controllers/KnowledgeBaseController.php:91
+* @see app/Http/Controllers/KnowledgeBaseController.php:103
 * @route '/workspaces/{slug}/knowledge/{id}'
 */
 export const destroy = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -131,7 +131,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::destroy
-* @see app/Http/Controllers/KnowledgeBaseController.php:91
+* @see app/Http/Controllers/KnowledgeBaseController.php:103
 * @route '/workspaces/{slug}/knowledge/{id}'
 */
 destroy.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -157,7 +157,7 @@ destroy.url = (args: { slug: string | number, id: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\KnowledgeBaseController::destroy
-* @see app/Http/Controllers/KnowledgeBaseController.php:91
+* @see app/Http/Controllers/KnowledgeBaseController.php:103
 * @route '/workspaces/{slug}/knowledge/{id}'
 */
 destroy.delete = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({

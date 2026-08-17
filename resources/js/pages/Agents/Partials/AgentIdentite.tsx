@@ -42,8 +42,8 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import workspaces from '@/routes/workspaces';
-import { SECTORS } from '@/types/wizard';
 import type { AgentConfig } from '@/types';
+import { SECTORS } from '@/types/wizard';
 
 interface AgentStats {
     total_conversations: number;

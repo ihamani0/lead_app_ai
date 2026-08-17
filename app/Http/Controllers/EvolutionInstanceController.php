@@ -7,6 +7,7 @@ use App\Http\Controllers\Concerns\WorkspaceScoped;
 use App\Models\EvolutionInstance;
 use App\Models\Tenant;
 use App\Services\EvolutionService;
+use App\Services\PlanEnforcementService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -55,7 +56,7 @@ class EvolutionInstanceController extends Controller
         return Inertia::render('Profil/Index', [
             'instances' => $instances,
             'deletedInstances' => $deletedInstances,
-            'canCreate' => $canManage,
+            'canCreate' => $canManage && app(PlanEnforcementService::class)->canCreateInstance($request->user()->tenant),
             'canManage' => $canManage,
         ]);
     }
@@ -69,6 +70,10 @@ class EvolutionInstanceController extends Controller
         ]);
 
         $user = $request->user();
+
+        if (! app(PlanEnforcementService::class)->canCreateInstance($user->tenant)) {
+            return back()->with('error', __('messages.error.plan_limit_instances'));
+        }
 
         $evolutionInstanceName = $this->generateInstanceName(
             tenant: $user->tenant,

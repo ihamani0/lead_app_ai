@@ -87,8 +87,8 @@ class EvolutionApiClient
         ]);
 
         error_log("EVOLUTION REQUEST → POST {$this->base_url}/{$endpoint}");
-        error_log("EVOLUTION HEADERS: " . json_encode($headers));
-        error_log("EVOLUTION BODY: " . json_encode($data));
+        error_log('EVOLUTION HEADERS: '.json_encode($headers));
+        error_log('EVOLUTION BODY: '.json_encode($data));
 
         $response = Http::withHeaders($headers)
             ->asJson()
@@ -101,7 +101,7 @@ class EvolutionApiClient
             'body' => $response->body(),
         ]);
 
-        error_log("EVOLUTION RESPONSE ← {$response->status()}: " . $response->body());
+        error_log("EVOLUTION RESPONSE ← {$response->status()}: ".$response->body());
 
         if ($response->failed()) {
             Log::warning('Evolution API request failed', [

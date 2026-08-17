@@ -8,13 +8,15 @@
  * - Translation refresh
  */
 use App\Http\Controllers\TranslationController;
+use App\Models\Plan;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
-Route::get('/', function () {
+Route::get('/welcome', function () {
     return Inertia::render('welcome', [
         'canRegister' => Features::enabled(Features::registration()),
+        'plans' => Plan::where('is_active', true)->orderBy('price_millicents')->get(['name', 'slug', 'price_millicents', 'price_yearly_millicents', 'description', 'features', 'max_teams', 'max_members', 'max_leads', 'max_agents', 'max_instances']),
     ]);
 })->name('home')->middleware('guest');
 

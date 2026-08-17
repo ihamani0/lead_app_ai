@@ -125,7 +125,7 @@ class TestAiController extends Controller
             'settings' => $agent->settings,
             'test_mode' => true,
         ]);
-        
+
         Http::timeout(30)
             ->post($webhookTestAgentUrl, [
                 'message' => $message,

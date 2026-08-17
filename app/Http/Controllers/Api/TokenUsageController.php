@@ -30,7 +30,7 @@ class TokenUsageController extends Controller
                 ]
             );
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage() , 'code' => $e->getCode(), 'line'=> $e->getLine()]);
+            return response()->json(['error' => $e->getMessage(), 'code' => $e->getCode(), 'line' => $e->getLine()]);
         }
 
         return response()->json(['status' => 'success']);

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -46,10 +47,12 @@ class SocialiteController extends Controller
         }
 
         if (! $user) {
+            $defaultPlanId = Plan::default()->first()->id;
+
             $tenant = Tenant::create([
                 'name' => $googleUser->name,
                 'slug' => Str::slug($googleUser->name).'-'.Str::random(4),
-                'plan' => 'starter',
+                'plan_id' => $defaultPlanId,
                 'is_active' => true,
                 'settings' => [],
             ]);

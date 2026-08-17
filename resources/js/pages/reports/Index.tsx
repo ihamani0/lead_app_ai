@@ -1,6 +1,7 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, usePage } from '@inertiajs/react';
 import { Users, Phone, Bot, Coins, ChartArea } from 'lucide-react';
 import { useCallback } from 'react';
+import { FeatureGate } from '@/components/feature-gate';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { useActiveWorkspace } from '@/hooks/use-active-workspace';
@@ -50,6 +51,7 @@ export default function ReportsIndex({
 }: ReportsIndexProps) {
     const activeWorkspace = useActiveWorkspace();
     const { t } = useTranslation();
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
     const handleTabChange = useCallback((tab: string) => {
         router.get(
             index({ slug: activeWorkspace!.slug }).url,
@@ -64,8 +66,8 @@ export default function ReportsIndex({
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('reports.title')} />
-            <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
-                
+            <FeatureGate feature={features.reports}>
+                <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
                 <div className="mb-6 rounded-xl bg-card p-4 shadow-sm sm:p-5">
                     <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                         <div className="flex items-center gap-3">
@@ -127,10 +129,13 @@ export default function ReportsIndex({
                     </TabsContent>
 
                     <TabsContent value="tokens" className="mt-6">
-                        <TokenTransactionsReport data={reportData.tokens ?? null} />
+                        <TokenTransactionsReport
+                            data={reportData.tokens ?? null}
+                        />
                     </TabsContent>
                 </Tabs>
             </div>
+            </FeatureGate>
         </AppLayout>
     );
 }

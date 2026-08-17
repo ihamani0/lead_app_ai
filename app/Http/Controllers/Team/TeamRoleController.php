@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Team;
 
 use App\Http\Controllers\Controller;
 use App\Models\Team;
+use App\Services\PlanEnforcementService;
 use Illuminate\Http\Request;
 use Jurager\Teams\Models\Role;
 
@@ -11,6 +12,10 @@ class TeamRoleController extends Controller
 {
     public function store(Request $request, string $slug)
     {
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'custom_roles')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|max:255|alpha_dash',
@@ -47,6 +52,10 @@ class TeamRoleController extends Controller
 
     public function update(Request $request, string $slug, Role $role)
     {
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'custom_roles')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $validated = $request->validate([
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string|max:500',
@@ -86,6 +95,10 @@ class TeamRoleController extends Controller
 
     public function destroy(Request $request, string $slug, Role $role)
     {
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'custom_roles')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $team = Team::where('slug', $slug)->firstOrFail();
 
         if (! $team->hasUser($request->user())) {

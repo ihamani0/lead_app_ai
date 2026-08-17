@@ -4,7 +4,7 @@ import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefa
 * @see app/Http/Controllers/Team/TeamMemberController.php:90
 * @route '/workspaces/{slug}/members/{user}'
 */
-export const updateRole = (args: { slug: string | number, user: string | number | { id: string | number } } | [slug: string | number, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+export const updateRole = (args: { slug: string | number, user: number | { id: number } } | [slug: string | number, user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: updateRole.url(args, options),
     method: 'put',
 })
@@ -19,7 +19,7 @@ updateRole.definition = {
 * @see app/Http/Controllers/Team/TeamMemberController.php:90
 * @route '/workspaces/{slug}/members/{user}'
 */
-updateRole.url = (args: { slug: string | number, user: string | number | { id: string | number } } | [slug: string | number, user: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+updateRole.url = (args: { slug: string | number, user: number | { id: number } } | [slug: string | number, user: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -47,7 +47,7 @@ updateRole.url = (args: { slug: string | number, user: string | number | { id: s
 * @see app/Http/Controllers/Team/TeamMemberController.php:90
 * @route '/workspaces/{slug}/members/{user}'
 */
-updateRole.put = (args: { slug: string | number, user: string | number | { id: string | number } } | [slug: string | number, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
+updateRole.put = (args: { slug: string | number, user: number | { id: number } } | [slug: string | number, user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
     url: updateRole.url(args, options),
     method: 'put',
 })
@@ -57,7 +57,7 @@ updateRole.put = (args: { slug: string | number, user: string | number | { id: s
 * @see app/Http/Controllers/Team/TeamMemberController.php:126
 * @route '/workspaces/{slug}/members/{user}'
 */
-export const destroy = (args: { slug: string | number, user: string | number | { id: string | number } } | [slug: string | number, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+export const destroy = (args: { slug: string | number, user: number | { id: number } } | [slug: string | number, user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })
@@ -72,7 +72,7 @@ destroy.definition = {
 * @see app/Http/Controllers/Team/TeamMemberController.php:126
 * @route '/workspaces/{slug}/members/{user}'
 */
-destroy.url = (args: { slug: string | number, user: string | number | { id: string | number } } | [slug: string | number, user: string | number | { id: string | number } ], options?: RouteQueryOptions) => {
+destroy.url = (args: { slug: string | number, user: number | { id: number } } | [slug: string | number, user: number | { id: number } ], options?: RouteQueryOptions) => {
     if (Array.isArray(args)) {
         args = {
             slug: args[0],
@@ -100,7 +100,7 @@ destroy.url = (args: { slug: string | number, user: string | number | { id: stri
 * @see app/Http/Controllers/Team/TeamMemberController.php:126
 * @route '/workspaces/{slug}/members/{user}'
 */
-destroy.delete = (args: { slug: string | number, user: string | number | { id: string | number } } | [slug: string | number, user: string | number | { id: string | number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
+destroy.delete = (args: { slug: string | number, user: number | { id: number } } | [slug: string | number, user: number | { id: number } ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
     url: destroy.url(args, options),
     method: 'delete',
 })

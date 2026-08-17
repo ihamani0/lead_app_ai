@@ -32,19 +32,67 @@ export interface WizardProps {
 }
 
 export const SECTORS = [
-    { value: 'immobilier', labelKey: 'wizard.sectors.immobilier', label: 'Immobilier' },
-    { value: 'automobile', labelKey: 'wizard.sectors.automobile', label: 'Automobile' },
-    { value: 'assurance', labelKey: 'wizard.sectors.assurance', label: 'Assurance' },
-    { value: 'banque', labelKey: 'wizard.sectors.banque', label: 'Banque & Finance' },
+    {
+        value: 'immobilier',
+        labelKey: 'wizard.sectors.immobilier',
+        label: 'Immobilier',
+    },
+    {
+        value: 'automobile',
+        labelKey: 'wizard.sectors.automobile',
+        label: 'Automobile',
+    },
+    {
+        value: 'assurance',
+        labelKey: 'wizard.sectors.assurance',
+        label: 'Assurance',
+    },
+    {
+        value: 'banque',
+        labelKey: 'wizard.sectors.banque',
+        label: 'Banque & Finance',
+    },
     { value: 'sante', labelKey: 'wizard.sectors.sante', label: 'Santé' },
-    { value: 'education', labelKey: 'wizard.sectors.education', label: 'Éducation' },
-    { value: 'commerce', labelKey: 'wizard.sectors.commerce', label: 'Commerce & E-commerce' },
-    { value: 'voyage', labelKey: 'wizard.sectors.voyage', label: 'Voyage & Tourisme' },
-    { value: 'restauration', labelKey: 'wizard.sectors.restauration', label: 'Restauration' },
-    { value: 'service', labelKey: 'wizard.sectors.service', label: 'Service Client' },
-    { value: 'construction', labelKey: 'wizard.sectors.construction', label: 'Bâtiment & Construction' },
-    { value: 'technologie', labelKey: 'wizard.sectors.technologie', label: 'Technologie & IT' },
-    { value: 'juridique', labelKey: 'wizard.sectors.juridique', label: 'Juridique & Avocat' },
+    {
+        value: 'education',
+        labelKey: 'wizard.sectors.education',
+        label: 'Éducation',
+    },
+    {
+        value: 'commerce',
+        labelKey: 'wizard.sectors.commerce',
+        label: 'Commerce & E-commerce',
+    },
+    {
+        value: 'voyage',
+        labelKey: 'wizard.sectors.voyage',
+        label: 'Voyage & Tourisme',
+    },
+    {
+        value: 'restauration',
+        labelKey: 'wizard.sectors.restauration',
+        label: 'Restauration',
+    },
+    {
+        value: 'service',
+        labelKey: 'wizard.sectors.service',
+        label: 'Service Client',
+    },
+    {
+        value: 'construction',
+        labelKey: 'wizard.sectors.construction',
+        label: 'Bâtiment & Construction',
+    },
+    {
+        value: 'technologie',
+        labelKey: 'wizard.sectors.technologie',
+        label: 'Technologie & IT',
+    },
+    {
+        value: 'juridique',
+        labelKey: 'wizard.sectors.juridique',
+        label: 'Juridique & Avocat',
+    },
     { value: 'autre', labelKey: 'wizard.sectors.autre', label: 'Autre' },
 ] as const;
 

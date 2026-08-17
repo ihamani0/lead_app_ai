@@ -7,6 +7,7 @@ use App\Http\Requests\AnalyzeFaqsRequest;
 use App\Http\Requests\FaqRequest;
 use App\Models\AgentConfig;
 use App\Models\Faq;
+use App\Services\PlanEnforcementService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 
@@ -17,6 +18,10 @@ class FaqController extends Controller
     public function index(Request $request, string $slug)
     {
         $this->authorizeRole($request, ['owner', 'admin', 'member', 'viewer']);
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'faq')) {
+            return response()->json(['faqs' => [], 'suggestions' => [], 'agents' => [], 'canCreate' => false, 'canManage' => false]);
+        }
 
         $faqs = $this->scopedQuery($request, Faq::class)
             ->where('is_suggestion', false)
@@ -48,6 +53,10 @@ class FaqController extends Controller
     {
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
 
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'faq')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         Faq::create($this->withTeam($request, [
             'tenant_id' => $request->user()->tenant_id,
             'agent_config_id' => $request->agent_config_id,
@@ -65,6 +74,10 @@ class FaqController extends Controller
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
         $this->findScoped($request, Faq::class, $faq->id);
 
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'faq')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $faq->update([
             'question' => $request->question,
             'answer' => $request->answer,
@@ -80,6 +93,10 @@ class FaqController extends Controller
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
         $this->findScoped($request, Faq::class, $faq->id);
 
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'faq')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $faq->delete();
 
         return back();
@@ -90,6 +107,10 @@ class FaqController extends Controller
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
         $this->findScoped($request, Faq::class, $faq->id);
 
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'faq')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
+
         $faq->update(['is_active' => ! $faq->is_active]);
 
         return back();
@@ -99,6 +120,10 @@ class FaqController extends Controller
     {
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
         $this->findScoped($request, Faq::class, $faq->id);
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'faq')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
 
         $faq->update([
             'is_suggestion' => false,
@@ -111,6 +136,10 @@ class FaqController extends Controller
     public function triggerAnalysis(AnalyzeFaqsRequest $request, string $slug)
     {
         $this->authorizeRole($request, ['owner', 'admin', 'member']);
+
+        if (! app(PlanEnforcementService::class)->canUseFeature($request->user()->tenant, 'faq')) {
+            return back()->with('error', __('messages.error.plan_feature_unavailable'));
+        }
 
         $params = $request->filled('agent_config_id')
             ? ['--agent' => $request->agent_config_id]

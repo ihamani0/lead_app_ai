@@ -1,3 +1,4 @@
+import { usePage } from '@inertiajs/react';
 import {
     Bot,
     Phone,
@@ -10,6 +11,7 @@ import {
     Loader2,
     Image,
 } from 'lucide-react';
+import { FeatureGate } from '@/components/feature-gate';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { useTranslation } from '@/hooks/use-translation';
@@ -36,6 +38,7 @@ export function AgentCard({
     onClone,
     cloningId,
 }: AgentCardProps) {
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
     const isLinked = agent.evolution_instance_id !== null;
     const isConnected = isLinked && agent.instance?.status === 'connected';
     const isActive = agent.is_active && isConnected;
@@ -200,6 +203,7 @@ function AgentCardFooter({
     onClone,
     cloningId,
 }: Omit<AgentCardProps, 'onUpdate'> & { isLinked: boolean }) {
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
     return (
         <div className="flex w-full flex-wrap items-center justify-between gap-2 border-t border-zinc-100 pt-3 dark:border-zinc-800/50">
             <div className="flex gap-2">
@@ -225,18 +229,20 @@ function AgentCardFooter({
 
             {/* Right side buttons */}
             <div className="flex items-center gap-1">
-                <button
-                    onClick={() => onClone(agent.id)}
-                    disabled={cloningId === agent.id}
-                    className="flex flex-col items-center gap-1 rounded-xl px-3 py-2 text-[11px] font-medium text-blue-700 transition-colors hover:bg-blue-100 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-blue-950/20"
-                >
-                    {cloningId === agent.id ? (
-                        <Loader2 className="h-4.5 w-4.5 animate-spin" />
-                    ) : (
-                        <Copy className="h-4.5 w-4.5" />
-                    )}
-                    Duplicate
-                </button>
+                <FeatureGate feature={features.agent_clone}>
+                    <button
+                        onClick={() => onClone(agent.id)}
+                        disabled={cloningId === agent.id}
+                        className="flex flex-col items-center gap-1 rounded-xl px-3 py-2 text-[11px] font-medium text-blue-700 transition-colors hover:bg-blue-100 disabled:pointer-events-none disabled:opacity-50 dark:hover:bg-blue-950/20"
+                    >
+                        {cloningId === agent.id ? (
+                            <Loader2 className="h-4.5 w-4.5 animate-spin" />
+                        ) : (
+                            <Copy className="h-4.5 w-4.5" />
+                        )}
+                        Duplicate
+                    </button>
+                </FeatureGate>
                 <button
                     onClick={() => onOpenConfig(agent.id)}
                     className="flex flex-col items-center gap-1 rounded-xl px-3 py-2 text-[11px] font-medium text-green-700 transition-colors hover:bg-green-100 dark:hover:bg-green-950/20"

@@ -4,9 +4,11 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\LlmModel;
+use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\TokenTransaction;
 use App\Models\TokenTransactionDaily;
+use App\Services\SubscriptionService;
 use App\Services\TokenService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -15,7 +17,8 @@ class SuperAdminTenantController extends Controller
 {
     public function index()
     {
-        $tenants = Tenant::withCount('users')
+        $tenants = Tenant::with('plan:id,name,slug')
+            ->withCount('users')
             ->whereDoesntHave('users', function ($query) {
                 $query->where('is_super_admin', true);
             })
@@ -29,7 +32,7 @@ class SuperAdminTenantController extends Controller
 
     public function show(Tenant $tenant)
     {
-        $tenant->load('users', 'llmModel');
+        $tenant->load('plan', 'subscription.plan:id,name,slug', 'users', 'llmModel');
 
         $dailyUsage = TokenTransactionDaily::where('tenant_id', $tenant->id)
             ->where('date', '>=', now()->subDays(30)->toDateString())
@@ -43,11 +46,14 @@ class SuperAdminTenantController extends Controller
 
         $availableModels = LlmModel::where('is_active', true)->get();
 
+        $plans = Plan::where('is_active', true)->get();
+
         return Inertia::render('SuperAdmin/Tenants/Show', [
             'tenant' => $tenant,
             'daily_usage' => $dailyUsage,
             'transactions' => $transactions,
             'available_models' => $availableModels,
+            'plans' => $plans,
         ]);
     }
 
@@ -78,5 +84,23 @@ class SuperAdminTenantController extends Controller
         $tenant->update(['llm_model_id' => $validated['llm_model_id'] ?: null]);
 
         return back()->with('success', 'Model updated successfully.');
+    }
+
+    public function changePlan(Request $request, Tenant $tenant, SubscriptionService $subscriptionService)
+    {
+        $validated = $request->validate([
+            'plan_id' => 'required|integer|exists:plans,id',
+        ]);
+
+        $newPlan = Plan::findOrFail($validated['plan_id']);
+
+        $subscriptionService->changePlan(
+            $tenant,
+            $newPlan,
+            $request->user()->email,
+            $request->input('reason'),
+        );
+
+        return back()->with('success', "Plan changed to {$newPlan->name} for {$tenant->name}.");
     }
 }

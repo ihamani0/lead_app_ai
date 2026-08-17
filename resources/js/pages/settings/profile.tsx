@@ -61,7 +61,9 @@ export default function Profile({
                                 }
                                 required
                                 autoComplete="name"
-                                placeholder={t('settings.profile.namePlaceholder')}
+                                placeholder={t(
+                                    'settings.profile.namePlaceholder',
+                                )}
                             />
 
                             <InputError
@@ -85,7 +87,9 @@ export default function Profile({
                                 }
                                 required
                                 autoComplete="username"
-                                placeholder={t('settings.profile.emailPlaceholder')}
+                                placeholder={t(
+                                    'settings.profile.emailPlaceholder',
+                                )}
                             />
 
                             <InputError
@@ -104,13 +108,17 @@ export default function Profile({
                                             as="button"
                                             className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current! dark:decoration-neutral-500"
                                         >
-                                            {t('settings.profile.resendVerification')}
+                                            {t(
+                                                'settings.profile.resendVerification',
+                                            )}
                                         </Link>
                                     </p>
 
                                     {status === 'verification-link-sent' && (
                                         <div className="mt-2 text-xs font-medium text-green-600 md:text-sm">
-                                            {t('settings.profile.verificationSent')}
+                                            {t(
+                                                'settings.profile.verificationSent',
+                                            )}
                                         </div>
                                     )}
                                 </div>

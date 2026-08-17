@@ -148,11 +148,12 @@ export function NotificationBell() {
                                                     {n.data.reason}
                                                 </p>
                                             )}
-                                            {isFromFlag && n.data.agent_name && (
-                                                <p className="mt-0.5 text-[10px] text-muted-foreground/50">
-                                                    by {n.data.agent_name}
-                                                </p>
-                                            )}
+                                            {isFromFlag &&
+                                                n.data.agent_name && (
+                                                    <p className="mt-0.5 text-[10px] text-muted-foreground/50">
+                                                        by {n.data.agent_name}
+                                                    </p>
+                                                )}
                                             <p className="mt-1 text-[10px] text-muted-foreground/60">
                                                 {relativeTime(n.created_at)}
                                             </p>
@@ -163,12 +164,15 @@ export function NotificationBell() {
                                                 activeWorkspace &&
                                                 n.data.lead_id && (
                                                     <Link
-                                                        href={workspaces.leads
-                                                            .show({
-                                                                slug: activeWorkspace.slug,
-                                                                lead: n.data.lead_id,
-                                                            })
-                                                            .url}
+                                                        href={
+                                                            workspaces.leads.show(
+                                                                {
+                                                                    slug: activeWorkspace.slug,
+                                                                    lead: n.data
+                                                                        .lead_id,
+                                                                },
+                                                            ).url
+                                                        }
                                                         className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted"
                                                     >
                                                         <ExternalLink className="h-3.5 w-3.5" />

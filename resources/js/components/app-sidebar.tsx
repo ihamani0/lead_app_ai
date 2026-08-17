@@ -32,10 +32,8 @@ import { Separator } from './ui/separator';
 export function AppSidebar() {
     const { t } = useTranslation();
     const activeWorkspace = useActiveWorkspace();
-    const { locale, availableLocales } = usePage<{
-        locale: string;
-        availableLocales: string[];
-    }>().props;
+    const { locale, availableLocales } = usePage<SharedPageProps>().props;
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
 
     const mainNavItems: NavItem[] = [
         {
@@ -77,6 +75,7 @@ export function AppSidebar() {
                 ? workspaces.members.index({ slug: activeWorkspace.slug }).url
                 : teams.index().url,
             icon: UserCheck,
+            locked: !features.custom_roles,
             'data-tour': 'sidebar-members',
         },
         {
@@ -85,6 +84,7 @@ export function AppSidebar() {
                 ? workspaces.reports.index({ slug: activeWorkspace.slug }).url
                 : teams.index().url,
             icon: BarChart3,
+            locked: !features.reports,
             'data-tour': 'sidebar-reports',
         },
     ];

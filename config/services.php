@@ -55,4 +55,13 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
+
+    'paddle' => [
+        'enabled' => env('PADDLE_ENABLED', false),
+        'client_side_token' => env('PADDLE_CLIENT_SIDE_TOKEN'),
+        'api_key' => env('PADDLE_API_KEY'),
+        'webhook_secret' => env('PADDLE_WEBHOOK_SECRET'),
+        'retain_key' => env('PADDLE_RETAIN_KEY'),
+        'sandbox' => env('PADDLE_SANDBOX', true),
+    ],
 ];

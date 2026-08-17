@@ -21,6 +21,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { useTranslation } from '@/hooks/use-translation';
 import SuperAdminLayout from '@/layouts/super-admin-layout';
 
 interface LlmModel {
@@ -41,6 +42,8 @@ interface PageProps {
 }
 
 export default function Index({ models }: PageProps) {
+    const { t } = useTranslation();
+
     const createForm = useForm({
         name: '',
         display_name: '',
@@ -53,12 +56,12 @@ export default function Index({ models }: PageProps) {
 
     return (
         <SuperAdminLayout>
-            <Head title="LLM Models" />
+            <Head title={t('superAdmin.llmModels.title')} />
 
             <div className="flex flex-col gap-6 p-6">
                 <div className="flex items-center justify-between">
                     <h1 className="text-2xl font-bold lg:text-4xl">
-                        LLM Models
+                        {t('superAdmin.llmModels.pageTitle')}
                     </h1>
                 </div>
 
@@ -68,22 +71,27 @@ export default function Index({ models }: PageProps) {
                 <Card>
                     <CardHeader>
                         <div className="flex items-center justify-between">
-                            <CardTitle>Available Models</CardTitle>
+                            <CardTitle>
+                                {t('superAdmin.llmModels.cardTitle')}
+                            </CardTitle>
                             <Dialog>
                                 <DialogTrigger asChild>
                                     <Button>
                                         <Plus className="mr-2 h-4 w-4" />
-                                        Add Model
+                                        {t('superAdmin.llmModels.addModel')}
                                     </Button>
                                 </DialogTrigger>
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>
-                                            Add New LLM Model
+                                            {t(
+                                                'superAdmin.llmModels.dialogTitle',
+                                            )}
                                         </DialogTitle>
                                         <DialogDescription>
-                                            Configure pricing for a new AI
-                                            model.
+                                            {t(
+                                                'superAdmin.llmModels.dialogDescription',
+                                            )}
                                         </DialogDescription>
                                     </DialogHeader>
                                     <form
@@ -98,7 +106,9 @@ export default function Index({ models }: PageProps) {
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <Label htmlFor="name">
-                                                    Internal Name
+                                                    {t(
+                                                        'superAdmin.llmModels.labels.internalName',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="name"
@@ -109,12 +119,16 @@ export default function Index({ models }: PageProps) {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="deepseek"
+                                                    placeholder={t(
+                                                        'superAdmin.llmModels.placeholders.name',
+                                                    )}
                                                 />
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="provider">
-                                                    Provider
+                                                    {t(
+                                                        'superAdmin.llmModels.labels.provider',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="provider"
@@ -127,13 +141,17 @@ export default function Index({ models }: PageProps) {
                                                             e.target.value,
                                                         )
                                                     }
-                                                    placeholder="deepseek"
+                                                    placeholder={t(
+                                                        'superAdmin.llmModels.placeholders.provider',
+                                                    )}
                                                 />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="display_name">
-                                                Display Name
+                                                {t(
+                                                    'superAdmin.llmModels.labels.displayName',
+                                                )}
                                             </Label>
                                             <Input
                                                 id="display_name"
@@ -146,20 +164,25 @@ export default function Index({ models }: PageProps) {
                                                         e.target.value,
                                                     )
                                                 }
-                                                placeholder="DeepSeek"
+                                                placeholder={t(
+                                                    'superAdmin.llmModels.placeholders.displayName',
+                                                )}
                                             />
                                         </div>
                                         <Separator />
                                         <div className="space-y-2">
                                             <Label className="text-base font-semibold">
-                                                Your Pricing (cents per 1M
-                                                tokens)
+                                                {t(
+                                                    'superAdmin.llmModels.sections.yourPricing',
+                                                )}
                                             </Label>
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <Label htmlFor="input_rate_cents">
-                                                    Input Rate (cents)
+                                                    {t(
+                                                        'superAdmin.llmModels.fields.inputRate',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="input_rate_cents"
@@ -180,7 +203,9 @@ export default function Index({ models }: PageProps) {
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="output_rate_cents">
-                                                    Output Rate (cents)
+                                                    {t(
+                                                        'superAdmin.llmModels.fields.outputRate',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="output_rate_cents"
@@ -202,13 +227,17 @@ export default function Index({ models }: PageProps) {
                                         </div>
                                         <div className="space-y-2">
                                             <Label className="text-base font-semibold">
-                                                Your Cost (cents per 1M tokens)
+                                                {t(
+                                                    'superAdmin.llmModels.sections.yourCost',
+                                                )}
                                             </Label>
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <Label htmlFor="cost_input_cents">
-                                                    Input Cost (cents)
+                                                    {t(
+                                                        'superAdmin.llmModels.fields.inputCost',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="cost_input_cents"
@@ -229,7 +258,9 @@ export default function Index({ models }: PageProps) {
                                             </div>
                                             <div className="space-y-2">
                                                 <Label htmlFor="cost_output_cents">
-                                                    Output Cost (cents)
+                                                    {t(
+                                                        'superAdmin.llmModels.fields.outputCost',
+                                                    )}
                                                 </Label>
                                                 <Input
                                                     id="cost_output_cents"
@@ -251,7 +282,9 @@ export default function Index({ models }: PageProps) {
                                         </div>
                                         <div className="flex justify-end gap-2 pt-4">
                                             <Button type="submit">
-                                                Create Model
+                                                {t(
+                                                    'superAdmin.llmModels.button',
+                                                )}
                                             </Button>
                                         </div>
                                     </form>
@@ -263,14 +296,46 @@ export default function Index({ models }: PageProps) {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Name</TableHead>
-                                    <TableHead>Provider</TableHead>
-                                    <TableHead>Your Input</TableHead>
-                                    <TableHead>Your Output</TableHead>
-                                    <TableHead>Cost Input</TableHead>
-                                    <TableHead>Cost Output</TableHead>
-                                    <TableHead>Margin</TableHead>
-                                    <TableHead>Status</TableHead>
+                                    <TableHead>
+                                        {t(
+                                            'superAdmin.llmModels.table.headers.name',
+                                        )}
+                                    </TableHead>
+                                    <TableHead>
+                                        {t(
+                                            'superAdmin.llmModels.table.headers.provider',
+                                        )}
+                                    </TableHead>
+                                    <TableHead>
+                                        {t(
+                                            'superAdmin.llmModels.table.headers.yourInput',
+                                        )}
+                                    </TableHead>
+                                    <TableHead>
+                                        {t(
+                                            'superAdmin.llmModels.table.headers.yourOutput',
+                                        )}
+                                    </TableHead>
+                                    <TableHead>
+                                        {t(
+                                            'superAdmin.llmModels.table.headers.costInput',
+                                        )}
+                                    </TableHead>
+                                    <TableHead>
+                                        {t(
+                                            'superAdmin.llmModels.table.headers.costOutput',
+                                        )}
+                                    </TableHead>
+                                    <TableHead>
+                                        {t(
+                                            'superAdmin.llmModels.table.headers.margin',
+                                        )}
+                                    </TableHead>
+                                    <TableHead>
+                                        {t(
+                                            'superAdmin.llmModels.table.headers.status',
+                                        )}
+                                    </TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -344,8 +409,12 @@ export default function Index({ models }: PageProps) {
                                                 }
                                             >
                                                 {model.is_active
-                                                    ? 'Active'
-                                                    : 'Inactive'}
+                                                    ? t(
+                                                          'superAdmin.llmModels.table.status.active',
+                                                      )
+                                                    : t(
+                                                          'superAdmin.llmModels.table.status.inactive',
+                                                      )}
                                             </span>
                                         </TableCell>
                                     </TableRow>

@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::index
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:16
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:18
 * @route '/super-admin/tenants'
 */
 export const index = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::index
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:16
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:18
 * @route '/super-admin/tenants'
 */
 index.url = (options?: RouteQueryOptions) => {
@@ -25,7 +25,7 @@ index.url = (options?: RouteQueryOptions) => {
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::index
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:16
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:18
 * @route '/super-admin/tenants'
 */
 index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -35,7 +35,7 @@ index.get = (options?: RouteQueryOptions): RouteDefinition<'get'> => ({
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::index
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:16
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:18
 * @route '/super-admin/tenants'
 */
 index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -45,10 +45,10 @@ index.head = (options?: RouteQueryOptions): RouteDefinition<'head'> => ({
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::show
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:30
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:33
 * @route '/super-admin/tenants/{tenant}'
 */
-export const show = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+export const show = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
@@ -60,10 +60,10 @@ show.definition = {
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::show
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:30
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:33
 * @route '/super-admin/tenants/{tenant}'
 */
-show.url = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+show.url = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { tenant: args }
     }
@@ -93,30 +93,30 @@ show.url = (args: { tenant: string | number | { id: string | number } } | [tenan
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::show
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:30
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:33
 * @route '/super-admin/tenants/{tenant}'
 */
-show.get = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
+show.get = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
     url: show.url(args, options),
     method: 'get',
 })
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::show
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:30
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:33
 * @route '/super-admin/tenants/{tenant}'
 */
-show.head = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
+show.head = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
     url: show.url(args, options),
     method: 'head',
 })
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::addDollars
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:54
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:60
 * @route '/super-admin/tenants/{tenant}/add-dollars'
 */
-export const addDollars = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const addDollars = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: addDollars.url(args, options),
     method: 'post',
 })
@@ -128,10 +128,10 @@ addDollars.definition = {
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::addDollars
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:54
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:60
 * @route '/super-admin/tenants/{tenant}/add-dollars'
 */
-addDollars.url = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+addDollars.url = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { tenant: args }
     }
@@ -161,20 +161,20 @@ addDollars.url = (args: { tenant: string | number | { id: string | number } } | 
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::addDollars
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:54
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:60
 * @route '/super-admin/tenants/{tenant}/add-dollars'
 */
-addDollars.post = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+addDollars.post = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: addDollars.url(args, options),
     method: 'post',
 })
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::updateModel
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:72
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:78
 * @route '/super-admin/tenants/{tenant}/update-model'
 */
-export const updateModel = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+export const updateModel = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: updateModel.url(args, options),
     method: 'post',
 })
@@ -186,10 +186,10 @@ updateModel.definition = {
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::updateModel
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:72
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:78
 * @route '/super-admin/tenants/{tenant}/update-model'
 */
-updateModel.url = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions) => {
+updateModel.url = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
     if (typeof args === 'string' || typeof args === 'number') {
         args = { tenant: args }
     }
@@ -219,11 +219,69 @@ updateModel.url = (args: { tenant: string | number | { id: string | number } } |
 
 /**
 * @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::updateModel
-* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:72
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:78
 * @route '/super-admin/tenants/{tenant}/update-model'
 */
-updateModel.post = (args: { tenant: string | number | { id: string | number } } | [tenant: string | number | { id: string | number } ] | string | number | { id: string | number }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+updateModel.post = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
     url: updateModel.url(args, options),
+    method: 'post',
+})
+
+/**
+* @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::changePlan
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:89
+* @route '/super-admin/tenants/{tenant}/change-plan'
+*/
+export const changePlan = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: changePlan.url(args, options),
+    method: 'post',
+})
+
+changePlan.definition = {
+    methods: ["post"],
+    url: '/super-admin/tenants/{tenant}/change-plan',
+} satisfies RouteDefinition<["post"]>
+
+/**
+* @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::changePlan
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:89
+* @route '/super-admin/tenants/{tenant}/change-plan'
+*/
+changePlan.url = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions) => {
+    if (typeof args === 'string' || typeof args === 'number') {
+        args = { tenant: args }
+    }
+
+    if (typeof args === 'object' && !Array.isArray(args) && 'id' in args) {
+        args = { tenant: args.id }
+    }
+
+    if (Array.isArray(args)) {
+        args = {
+            tenant: args[0],
+        }
+    }
+
+    args = applyUrlDefaults(args)
+
+    const parsedArgs = {
+        tenant: typeof args.tenant === 'object'
+        ? args.tenant.id
+        : args.tenant,
+    }
+
+    return changePlan.definition.url
+            .replace('{tenant}', parsedArgs.tenant.toString())
+            .replace(/\/+$/, '') + queryParams(options)
+}
+
+/**
+* @see \App\Http\Controllers\SuperAdmin\SuperAdminTenantController::changePlan
+* @see app/Http/Controllers/SuperAdmin/SuperAdminTenantController.php:89
+* @route '/super-admin/tenants/{tenant}/change-plan'
+*/
+changePlan.post = (args: { tenant: string | { id: string } } | [tenant: string | { id: string } ] | string | { id: string }, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
+    url: changePlan.url(args, options),
     method: 'post',
 })
 
@@ -232,6 +290,7 @@ const tenant = {
     show: Object.assign(show, show),
     addDollars: Object.assign(addDollars, addDollars),
     updateModel: Object.assign(updateModel, updateModel),
+    changePlan: Object.assign(changePlan, changePlan),
 }
 
 export default tenant

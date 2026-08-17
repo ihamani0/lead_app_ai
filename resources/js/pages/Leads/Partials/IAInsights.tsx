@@ -25,11 +25,7 @@ export const IAInsights: FC<IAInsightsProps> = ({ lead }) => {
         (lead.qualification_result === null && score >= 4);
 
     const gaugeColor = isHot ? '#ef4444' : isWarm ? '#f59e0b' : '#3b82f6';
-    const gaugeLabel = isHot
-        ? 'Très chaud 🔥'
-        : isWarm
-          ? 'Tiède'
-          : 'Froid';
+    const gaugeLabel = isHot ? 'Très chaud 🔥' : isWarm ? 'Tiède' : 'Froid';
 
     const customData =
         typeof lead.custom_data === 'string'

@@ -5,6 +5,7 @@ namespace Tests\Unit;
 use App\Models\AgentConfig;
 use App\Models\EvolutionInstance;
 use App\Models\LlmModel;
+use App\Models\Plan;
 use App\Models\Tenant;
 use App\Models\TokenTransaction;
 use App\Models\TokenTransactionDaily;
@@ -27,10 +28,11 @@ class TokenServiceTest extends TestCase
         parent::setUp();
         $this->service = new TokenService;
 
+        $plan = Plan::factory()->basic()->create();
         $this->tenant = Tenant::create([
             'name' => 'Test Tenant',
             'slug' => 'test-tenant',
-            'plan' => 'basic',
+            'plan_id' => $plan->id,
             'is_active' => true,
             'credit_millicents' => 100_000_00,
             'dollar_limit' => 10_000,

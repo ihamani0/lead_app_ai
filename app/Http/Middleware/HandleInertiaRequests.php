@@ -9,32 +9,13 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
-    /**
-     * The root template that's loaded on the first page visit.
-     *
-     * @see https://inertiajs.com/server-side-setup#root-template
-     *
-     * @var string
-     */
     protected $rootView = 'app';
 
-    /**
-     * Determines the current asset version.
-     *
-     * @see https://inertiajs.com/asset-versioning
-     */
     public function version(Request $request): ?string
     {
         return parent::version($request);
     }
 
-    /**
-     * Define the props that are shared by default.
-     *
-     * @see https://inertiajs.com/shared-data
-     *
-     * @return array<string, mixed>
-     */
     public function share(Request $request): array
     {
         $locale = $request->user()?->tenant?->settings['locale'] ?? 'en';
@@ -48,6 +29,9 @@ class HandleInertiaRequests extends Middleware
             'availableLocales' => ['en', 'fr'],
             'langVersion' => app(TranslationController::class)->getVersion($locale),
             'route_name' => $request->route()?->getName(),
+            'paddleEnabled' => config('services.paddle.enabled'),
+            'paddleSandbox' => config('services.paddle.sandbox', false),
+            'paddleClientToken' => config('services.paddle.client_side_token'),
             'auth' => [
                 'user' => $user ? [
                     'id' => $user->id,
@@ -60,7 +44,8 @@ class HandleInertiaRequests extends Middleware
                     'tenant' => [
                         'name' => $user->tenant->name,
                         'slug' => $user->tenant->slug,
-                        'plan' => $user->tenant->plan,
+                        'plan' => $user->tenant->plan()->first()?->only('slug', 'name'),
+                        'features' => $user->tenant->plan?->features ?? [],
                         'is_low_credit' => $user->tenant->is_low_credit,
                         'credit' => $user->tenant->credit_in_dollars,
                     ],

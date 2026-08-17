@@ -66,7 +66,9 @@ export const BotSessionManager: FC<BotSessionManagerProps> = ({
                     </Button>
                 )}
                 {noSession && (
-                    <span className="text-[11px] italic opacity-60">Aucune action disponible</span>
+                    <span className="text-[11px] italic opacity-60">
+                        Aucune action disponible
+                    </span>
                 )}
             </div>
         </div>

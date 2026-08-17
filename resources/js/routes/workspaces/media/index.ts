@@ -1,7 +1,7 @@
 import { queryParams, type RouteQueryOptions, type RouteDefinition, applyUrlDefaults } from './../../../wayfinder'
 /**
 * @see \App\Http\Controllers\MediaAssetController::index
-* @see app/Http/Controllers/MediaAssetController.php:17
+* @see app/Http/Controllers/MediaAssetController.php:18
 * @route '/workspaces/{slug}/media'
 */
 export const index = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -16,7 +16,7 @@ index.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::index
-* @see app/Http/Controllers/MediaAssetController.php:17
+* @see app/Http/Controllers/MediaAssetController.php:18
 * @route '/workspaces/{slug}/media'
 */
 index.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -43,7 +43,7 @@ index.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::index
-* @see app/Http/Controllers/MediaAssetController.php:17
+* @see app/Http/Controllers/MediaAssetController.php:18
 * @route '/workspaces/{slug}/media'
 */
 index.get = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'get'> => ({
@@ -53,7 +53,7 @@ index.get = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::index
-* @see app/Http/Controllers/MediaAssetController.php:17
+* @see app/Http/Controllers/MediaAssetController.php:18
 * @route '/workspaces/{slug}/media'
 */
 index.head = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'head'> => ({
@@ -63,7 +63,7 @@ index.head = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::store
-* @see app/Http/Controllers/MediaAssetController.php:80
+* @see app/Http/Controllers/MediaAssetController.php:82
 * @route '/workspaces/{slug}/media'
 */
 export const store = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -78,7 +78,7 @@ store.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::store
-* @see app/Http/Controllers/MediaAssetController.php:80
+* @see app/Http/Controllers/MediaAssetController.php:82
 * @route '/workspaces/{slug}/media'
 */
 store.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -105,7 +105,7 @@ store.url = (args: { slug: string | number } | [slug: string | number ] | string
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::store
-* @see app/Http/Controllers/MediaAssetController.php:80
+* @see app/Http/Controllers/MediaAssetController.php:82
 * @route '/workspaces/{slug}/media'
 */
 store.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -115,7 +115,7 @@ store.post = (args: { slug: string | number } | [slug: string | number ] | strin
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::update
-* @see app/Http/Controllers/MediaAssetController.php:57
+* @see app/Http/Controllers/MediaAssetController.php:59
 * @route '/workspaces/{slug}/media/{id}'
 */
 export const update = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -130,7 +130,7 @@ update.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::update
-* @see app/Http/Controllers/MediaAssetController.php:57
+* @see app/Http/Controllers/MediaAssetController.php:59
 * @route '/workspaces/{slug}/media/{id}'
 */
 update.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -156,7 +156,7 @@ update.url = (args: { slug: string | number, id: string | number } | [slug: stri
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::update
-* @see app/Http/Controllers/MediaAssetController.php:57
+* @see app/Http/Controllers/MediaAssetController.php:59
 * @route '/workspaces/{slug}/media/{id}'
 */
 update.put = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'put'> => ({
@@ -166,7 +166,7 @@ update.put = (args: { slug: string | number, id: string | number } | [slug: stri
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::destroy
-* @see app/Http/Controllers/MediaAssetController.php:248
+* @see app/Http/Controllers/MediaAssetController.php:280
 * @route '/workspaces/{slug}/media/{id}'
 */
 export const destroy = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -181,7 +181,7 @@ destroy.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::destroy
-* @see app/Http/Controllers/MediaAssetController.php:248
+* @see app/Http/Controllers/MediaAssetController.php:280
 * @route '/workspaces/{slug}/media/{id}'
 */
 destroy.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -207,7 +207,7 @@ destroy.url = (args: { slug: string | number, id: string | number } | [slug: str
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::destroy
-* @see app/Http/Controllers/MediaAssetController.php:248
+* @see app/Http/Controllers/MediaAssetController.php:280
 * @route '/workspaces/{slug}/media/{id}'
 */
 destroy.delete = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'delete'> => ({
@@ -217,7 +217,7 @@ destroy.delete = (args: { slug: string | number, id: string | number } | [slug: 
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::toggleDefault
-* @see app/Http/Controllers/MediaAssetController.php:44
+* @see app/Http/Controllers/MediaAssetController.php:46
 * @route '/workspaces/{slug}/media/{id}/toggle-default'
 */
 export const toggleDefault = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -232,7 +232,7 @@ toggleDefault.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::toggleDefault
-* @see app/Http/Controllers/MediaAssetController.php:44
+* @see app/Http/Controllers/MediaAssetController.php:46
 * @route '/workspaces/{slug}/media/{id}/toggle-default'
 */
 toggleDefault.url = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions) => {
@@ -258,7 +258,7 @@ toggleDefault.url = (args: { slug: string | number, id: string | number } | [slu
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::toggleDefault
-* @see app/Http/Controllers/MediaAssetController.php:44
+* @see app/Http/Controllers/MediaAssetController.php:46
 * @route '/workspaces/{slug}/media/{id}/toggle-default'
 */
 toggleDefault.post = (args: { slug: string | number, id: string | number } | [slug: string | number, id: string | number ], options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -268,7 +268,7 @@ toggleDefault.post = (args: { slug: string | number, id: string | number } | [sl
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::presign
-* @see app/Http/Controllers/MediaAssetController.php:125
+* @see app/Http/Controllers/MediaAssetController.php:137
 * @route '/workspaces/{slug}/media/presign'
 */
 export const presign = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -283,7 +283,7 @@ presign.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::presign
-* @see app/Http/Controllers/MediaAssetController.php:125
+* @see app/Http/Controllers/MediaAssetController.php:137
 * @route '/workspaces/{slug}/media/presign'
 */
 presign.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -310,7 +310,7 @@ presign.url = (args: { slug: string | number } | [slug: string | number ] | stri
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::presign
-* @see app/Http/Controllers/MediaAssetController.php:125
+* @see app/Http/Controllers/MediaAssetController.php:137
 * @route '/workspaces/{slug}/media/presign'
 */
 presign.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -320,7 +320,7 @@ presign.post = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::finalize
-* @see app/Http/Controllers/MediaAssetController.php:172
+* @see app/Http/Controllers/MediaAssetController.php:188
 * @route '/workspaces/{slug}/media/finalize'
 */
 export const finalize = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({
@@ -335,7 +335,7 @@ finalize.definition = {
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::finalize
-* @see app/Http/Controllers/MediaAssetController.php:172
+* @see app/Http/Controllers/MediaAssetController.php:188
 * @route '/workspaces/{slug}/media/finalize'
 */
 finalize.url = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions) => {
@@ -362,7 +362,7 @@ finalize.url = (args: { slug: string | number } | [slug: string | number ] | str
 
 /**
 * @see \App\Http\Controllers\MediaAssetController::finalize
-* @see app/Http/Controllers/MediaAssetController.php:172
+* @see app/Http/Controllers/MediaAssetController.php:188
 * @route '/workspaces/{slug}/media/finalize'
 */
 finalize.post = (args: { slug: string | number } | [slug: string | number ] | string | number, options?: RouteQueryOptions): RouteDefinition<'post'> => ({

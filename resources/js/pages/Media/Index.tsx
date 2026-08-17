@@ -2,6 +2,7 @@
 import { Head, router } from '@inertiajs/react';
 import { Image, Files } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { FeatureGate } from '@/components/feature-gate';
 import { useActiveWorkspace } from '@/hooks/use-active-workspace';
 import { useTranslation } from '@/hooks/use-translation';
 import AppLayout from '@/layouts/app-layout';
@@ -18,12 +19,14 @@ interface MediaIndexProps {
     assets: Asset[];
     canCreate: boolean;
     canManage: boolean;
+    features: Record<string, boolean>;
 }
 
 export default function Index({
     assets,
     canCreate,
     canManage,
+    features,
 }: MediaIndexProps) {
     const { t } = useTranslation();
     const activeWorkspace = useActiveWorkspace();
@@ -90,70 +93,72 @@ export default function Index({
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={t('media.title')} />
 
-            <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
-                <div className="space-y-5">
-                    {/* Header - Violet/Purple Gradient */}
+            <FeatureGate feature={features.media_library}>
+                <div className="min-h-screen bg-background px-4 py-6 sm:px-6 sm:py-10 lg:py-12">
+                    <div className="space-y-5">
+                        {/* Header - Violet/Purple Gradient */}
 
-                    <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-blue-500 to-cyan-500 p-4 shadow-xl ring-1 ring-blue-400/30 sm:p-5 md:p-6 dark:from-blue-700 dark:to-cyan-700 dark:ring-blue-600/40">
-                        <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                            {/* LEFT */}
-                            <div className="min-w-0 space-y-1.5">
-                                <div className="flex items-center gap-2">
-                                    <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-sm">
-                                        <Image className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                        <div className="relative mb-6 overflow-hidden rounded-2xl bg-linear-to-br from-blue-500 to-cyan-500 p-4 shadow-xl ring-1 ring-blue-400/30 sm:p-5 md:p-6 dark:from-blue-700 dark:to-cyan-700 dark:ring-blue-600/40">
+                            <div className="relative z-10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                {/* LEFT */}
+                                <div className="min-w-0 space-y-1.5">
+                                    <div className="flex items-center gap-2">
+                                        <div className="rounded-xl border border-white/20 bg-white/10 p-2 backdrop-blur-sm">
+                                            <Image className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                                        </div>
+                                        <h1 className="text-lg leading-tight font-semibold text-white sm:text-xl md:text-3xl">
+                                            {t('media.title')}
+                                        </h1>
                                     </div>
-                                    <h1 className="text-lg leading-tight font-semibold text-white sm:text-xl md:text-3xl">
-                                        {t('media.title')}
-                                    </h1>
-                                </div>
-                                <p className="max-w-xs text-xs font-light text-white/90 sm:max-w-md sm:text-sm md:text-base">
-                                    {t('media.description')}
-                                </p>
-                            </div>
-
-                            {/* RIGHT */}
-                            <div className="flex flex-wrap items-center gap-2 sm:justify-end">
-                                {/* Badge */}
-                                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-medium text-white backdrop-blur-sm sm:text-xs">
-                                    <Files className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                                    <span className="whitespace-nowrap">
-                                        {assetsList.length}{' '}
-                                        {t('media.assetsCount')}
-                                    </span>
+                                    <p className="max-w-xs text-xs font-light text-white/90 sm:max-w-md sm:text-sm md:text-base">
+                                        {t('media.description')}
+                                    </p>
                                 </div>
 
-                                {/* Upload Dialog */}
-                                {canCreate && (
-                                    <div className="shrink-0">
-                                        <UploadDialog
-                                            open={uploadOpen}
-                                            onOpenChange={setUploadOpen}
-                                        />
+                                {/* RIGHT */}
+                                <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                                    {/* Badge */}
+                                    <div className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-[10px] font-medium text-white backdrop-blur-sm sm:text-xs">
+                                        <Files className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                                        <span className="whitespace-nowrap">
+                                            {assetsList.length}{' '}
+                                            {t('media.assetsCount')}
+                                        </span>
                                     </div>
-                                )}
+
+                                    {/* Upload Dialog */}
+                                    {canCreate && (
+                                        <div className="shrink-0">
+                                            <UploadDialog
+                                                open={uploadOpen}
+                                                onOpenChange={setUploadOpen}
+                                            />
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
+
+                        <StatsCards assets={assetsList} />
+
+                        <MediaTabs
+                            assets={assetsList}
+                            onDelete={handleDelete}
+                            onSelect={handleSelectAsset}
+                            canManage={canManage}
+                        />
+
+                        <AssetDetailDialog
+                            asset={selectedAsset}
+                            open={detailOpen}
+                            onOpenChange={setDetailOpen}
+                            onDelete={handleDelete}
+                            onToggleDefault={handleToggleDefault}
+                            canManage={canManage}
+                        />
                     </div>
-
-                    <StatsCards assets={assetsList} />
-
-                    <MediaTabs
-                        assets={assetsList}
-                        onDelete={handleDelete}
-                        onSelect={handleSelectAsset}
-                        canManage={canManage}
-                    />
-
-                    <AssetDetailDialog
-                        asset={selectedAsset}
-                        open={detailOpen}
-                        onOpenChange={setDetailOpen}
-                        onDelete={handleDelete}
-                        onToggleDefault={handleToggleDefault}
-                        canManage={canManage}
-                    />
                 </div>
-            </div>
+            </FeatureGate>
         </AppLayout>
     );
 }

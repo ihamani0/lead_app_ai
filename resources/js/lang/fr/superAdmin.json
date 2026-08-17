@@ -1,19 +1,36 @@
 {
     "dashboard": {
-        "title": "Tableau de bord",
+        "title": "Tableau de bord Super Admin",
         "totalTenants": "Total des tenants",
         "activeTenants": "Tenants actifs",
         "lowCreditTenants": "Tenants à faible crédit",
         "avgDailyCost": "Coût quotidien moyen",
-        "dollarsRecharged": "Dollars rechargés"
+        "dollarsRecharged": "Dollars rechargés",
+        "openRouterCredit": "Crédit OpenRouter",
+        "refresh": "Actualiser",
+        "used": "Utilisé :",
+        "clickToLoad": "Cliquez sur Actualiser pour charger",
+        "planDistribution": "Répartition des plans",
+        "topConsumers": "Meilleurs consommateurs (30 derniers jours)",
+        "unknown": "Inconnu",
+        "recentTenants": "Tenants récents",
+        "active": "Actif",
+        "inactive": "Inactif"
     },
-    "menu": {
+    "sidebar": {
         "dashboard": "Tableau de bord",
+        "tenantManagement": "GESTION DES TENANTS",
         "tenants": "Tenants",
-        "tenantsIndex": "Gestion des Tenants",
-        "tenantsCreate": "Ajouter un Tenant",
-        "tenantsShow": "Voir un Tenant",
-        "tenantsEdit": "Modifier un Tenant"
+        "leads": "Tous les Leads",
+        "aiModels": "Modèles IA",
+        "plans": "Plans & Tarifs",
+        "creditPackages": "Forfaits de crédits",
+        "systemReports": "RAPPORTS SYSTÈME",
+        "reports": "Rapports système",
+        "tokenUsage": "Utilisation des tokens",
+        "administration": "ADMINISTRATION",
+        "allUsers": "Tous les utilisateurs",
+        "systemSettings": "Paramètres système"
     },
     "tenants": {
         "list": {
@@ -24,56 +41,21 @@
                     "slug": "Slug",
                     "plan": "Plan",
                     "status": "Statut",
+                    "tokenBalance": "Solde de tokens",
+                    "users": "Utilisateurs",
                     "actions": "Actions"
                 },
-    "sidebar": {
-        "dashboard": "Tableau de bord",
-        "tenantManagement": "GESTION DES TENANTS",
-        "tenants": "Tenants",
-        "aiModels": "Modèles IA",
-        "plans": "Plans & Tarifs",
-        "systemReports": "RAPPORTS SYSTÈME",
-        "reports": "Rapports système",
-        "tokenUsage": "Utilisation des tokens",
-        "administration": "ADMINISTRATION",
-        "allUsers": "Tous les utilisateurs",
-        "systemSettings": "Paramètres système"
-    },
-    "actions": {
+                "actions": {
                     "view": "Voir",
                     "edit": "Modifier",
-                    "delete": "Supprimer"
-                }
-            }
-        },
-        "create": {
-            "title": "Ajouter un Tenant",
-            "form": {
-                "fields": {
-                    "name": "Nom",
-                    "slug": "Slug",
-                    "plan": "Plan",
-                    "dollar_limit": "Limite de dollars",
-                    "is_active": "Actif"
+                    "delete": "Supprimer",
+                    "manage": "Gérer"
                 },
-                "buttons": {
-                    "submit": "Créer"
-                }
-            }
-        },
-        "edit": {
-            "title": "Modifier un Tenant",
-            "form": {
-                "fields": {
-                    "name": "Nom",
-                    "slug": "Slug",
-                    "plan": "Plan",
-                    "dollar_limit": "Limite de dollars",
-                    "is_active": "Actif"
-                },
-                "buttons": {
-                    "submit": "Mettre à jour"
-                }
+                "empty": "Aucun tenant trouvé."
+            },
+            "status": {
+                "active": "Actif",
+                "inactive": "Inactif"
             }
         },
         "show": {
@@ -87,6 +69,7 @@
             },
             "sections": {
                 "information": "Informations sur le Tenant",
+                "plan": "Plan",
                 "credit_balance": "Solde de crédit",
                 "add_credit": "Ajouter des crédits",
                 "usage_statistics": "Statistiques d'utilisation",
@@ -94,14 +77,46 @@
                 "recent_transactions": "Transactions récentes",
                 "model_configuration": "Configuration du modèle"
             },
+            "labels": {
+                "currentPlan": "Plan actuel",
+                "subscriptionStatus": "Statut :",
+                "name": "Nom",
+                "slug": "Slug",
+                "plan": "Plan",
+                "status": "Statut",
+                "creditBalance": "Solde de crédit",
+                "aiModel": "Modèle IA",
+                "transactionType": "Type de transaction",
+                "dollarAmount": "Montant ($)",
+                "description": "Description (optionnelle)",
+                "quickAdd": "Ajout rapide :"
+            },
+            "placeholders": {
+                "selectModel": "Sélectionner un modèle",
+                "selectType": "Sélectionner un type",
+                "selectPlan": "Sélectionner un plan",
+                "dollarAmount": "10.00",
+                "description": "Paiement par virement bancaire"
+            },
+            "options": {
+                "defaultModel": "Par défaut (DeepSeek)",
+                "purchase": "Achat",
+                "bonus": "Bonus",
+                "adjustment": "Ajustement"
+            },
             "messages": {
                 "low_credit_alert": "Le tenant a un solde de crédit faible",
                 "no_transactions": "Aucune transaction récente",
-                "no_usage_data": "Aucune donnée d'utilisation disponible"
+                "no_usage_data": "Aucune donnée d'utilisation disponible",
+                "belowThreshold": "Sous le seuil de ${{amount}}"
             },
             "buttons": {
-                "add_credit": "Ajouter des crédits",
-                "update_model": "Mettre à jour le modèle"
+                "add_credit": "Ajouter du crédit",
+                "update_model": "Mettre à jour le modèle",
+                "adding": "Ajout en cours...",
+                "changePlan": "Changer de plan",
+                "cancel": "Annuler",
+                "apply": "Appliquer"
             },
             "forms": {
                 "add_credit": {
@@ -128,10 +143,20 @@
             "charts": {
                 "usage_over_time": "Utilisation au fil du temps",
                 "daily_costs": "Coûts quotidiens",
-                "monthly_usage": "Utilisation mensuelle"
+                "monthly_usage": "Utilisation mensuelle",
+                "dailyTokenUsage": "Utilisation quotidienne des tokens (30 derniers jours)",
+                "yAxisLabel": "Tokens",
+                "inputTokens": "Tokens d'entrée",
+                "outputTokens": "Tokens de sortie",
+                "empty": "Aucune donnée d'utilisation pour le moment."
+            },
+            "users": {
+                "title": "Utilisateurs ({count})",
+                "empty": "Aucun utilisateur trouvé."
             },
             "tables": {
                 "daily_usage": {
+                    "title": "Historique d'utilisation quotidienne (30 derniers jours)",
                     "headers": {
                         "date": "Date",
                         "total_tokens": "Tokens totaux",
@@ -139,18 +164,30 @@
                         "output_tokens": "Tokens de sortie",
                         "total_cost": "Coût total",
                         "millicents_recharged": "Millicents rechargés",
-                        "transactions": "Transactions"
-                    }
+                        "input": "Entrée",
+                        "output": "Sortie",
+                        "total": "Total",
+                        "cost": "Coût",
+                        "recharged": "Rechargé"
+                    },
+                    "empty": "Aucune donnée d'utilisation pour le moment."
                 },
                 "transactions": {
+                    "title": "Transactions récentes (50 dernières)",
                     "headers": {
                         "id": "ID",
                         "date": "Date",
                         "tokens": "Tokens",
                         "cost": "Coût",
                         "type": "Type",
-                        "reference_type": "Type de référence"
-                    }
+                        "reference_type": "Type de référence",
+                        "input": "Entrée",
+                        "output": "Sortie",
+                        "total": "Total",
+                        "reference": "Référence"
+                    },
+                    "empty": "Aucune transaction pour le moment.",
+                    "na": "N/A"
                 },
                 "users": {
                     "headers": {
@@ -159,11 +196,266 @@
                         "role": "Rôle"
                     }
                 }
+            },
+            "dialogs": {
+                "changePlan": {
+                    "title": "Changer de plan",
+                    "description": "Sélectionnez un nouveau plan pour ce tenant. Les limites et fonctionnalités seront mises à jour immédiatement.",
+                    "limits": "limites :"
+                }
             }
         }
+    },
+    "llmModels": {
+        "title": "Modèles LLM",
+        "pageTitle": "Modèles LLM",
+        "cardTitle": "Modèles disponibles",
+        "addModel": "Ajouter un modèle",
+        "dialogTitle": "Ajouter un nouveau modèle LLM",
+        "dialogDescription": "Configurer la tarification pour un nouveau modèle IA.",
+        "labels": {
+            "internalName": "Nom interne",
+            "provider": "Fournisseur",
+            "displayName": "Nom d'affichage"
+        },
+        "placeholders": {
+            "name": "deepseek",
+            "provider": "deepseek",
+            "displayName": "DeepSeek"
+        },
+        "sections": {
+            "yourPricing": "Votre tarification (cents par 1M tokens)",
+            "yourCost": "Votre coût (cents par 1M tokens)"
+        },
+        "fields": {
+            "inputRate": "Tarif entrée (cents)",
+            "outputRate": "Tarif sortie (cents)",
+            "inputCost": "Coût entrée (cents)",
+            "outputCost": "Coût sortie (cents)"
+        },
+        "button": "Créer le modèle",
+        "table": {
+            "headers": {
+                "name": "Nom",
+                "provider": "Fournisseur",
+                "yourInput": "Votre entrée",
+                "yourOutput": "Votre sortie",
+                "costInput": "Coût entrée",
+                "costOutput": "Coût sortie",
+                "margin": "Marge",
+                "status": "Statut"
+            },
+            "perM": "/M",
+            "status": {
+                "active": "Actif",
+                "inactive": "Inactif"
+            }
+        }
+    },
+    "plans": {
+        "title": "Plans & Tarifs",
+        "pageTitle": "Plans & Tarifs",
+        "cardTitle": "Plans disponibles",
+        "addPlan": "Ajouter un plan",
+        "editPlan": "Modifier le plan",
+        "deletePlan": "Supprimer le plan",
+        "noPlans": "Aucun plan trouvé.",
+        "dialogTitle": "Ajouter un nouveau plan",
+        "dialogEditTitle": "Modifier le plan",
+        "dialogDescription": "Configurer un nouvel abonnement.",
+        "dialogEditDescription": "Mettre à jour les paramètres du plan.",
+        "labels": {
+            "name": "Nom du plan",
+            "slug": "Slug",
+            "description": "Description",
+            "price": "Prix (par mois)",
+            "priceYearly": "Prix annuel",
+            "maxTeams": "Équipes max",
+            "maxMembers": "Membres max",
+            "maxLeads": "Leads max",
+            "maxAgents": "Agents max",
+            "maxInstances": "Instances max",
+            "maxStorage": "Stockage",
+            "dollarLimit": "Limite de dollars ($)",
+            "paddlePriceId": "ID prix Paddle mensuel",
+            "paddlePriceIdYearly": "ID prix Paddle annuel",
+            "features": "Fonctionnalités",
+            "status": "Statut",
+            "default": "Plan par défaut",
+            "tenants": "Tenants"
+        },
+        "placeholders": {
+            "name": "Professionnel",
+            "slug": "pro",
+            "description": "Pour les entreprises en croissance",
+            "price": "29.99"
+        },
+        "sections": {
+            "limits": "Limites",
+            "features": "Fonctionnalités",
+            "paddle": "Intégration Paddle"
+        },
+        "fields": {
+            "unlimited": "Illimité",
+            "none": "Aucun"
+        },
+        "features": {
+            "basicAnalytics": "Analytiques de base",
+            "advancedAnalytics": "Analytiques avancées",
+            "apiAccess": "Accès API",
+            "customRoles": "Rôles personnalisés",
+            "prioritySupport": "Support prioritaire",
+            "slaGuarantee": "Garantie SLA"
+        },
+        "table": {
+            "headers": {
+                "name": "Nom",
+                "price": "Prix",
+                "tenants": "Tenants",
+                "teams": "Équipes",
+                "members": "Membres",
+                "leads": "Leads",
+                "agents": "Agents",
+                "instances": "Instances",
+                "default": "Défaut",
+                "status": "Statut",
+                "actions": "Actions"
+            },
+            "status": {
+                "active": "Actif",
+                "inactive": "Inactif",
+                "default": "Défaut"
+            }
+        },
+        "button": "Créer le plan",
+        "saveButton": "Enregistrer",
+        "cancelButton": "Annuler",
+        "deleteConfirm": "Êtes-vous sûr ?",
+        "deleteWarning": "Ce plan a {count} tenant(s) assigné(s). Supprimer quand même ?",
+        "deleteDisabled": "Impossible de supprimer — {count} tenant(s) utilisent ce plan.",
+        "tenantCount": "{count} tenants",
+        "created": "Plan créé avec succès.",
+        "updated": "Plan mis à jour avec succès.",
+        "deleted": "Plan supprimé avec succès.",
+        "deleteError": "Impossible de supprimer un plan qui a des tenants assignés."
+    },
+    "menu": {
+        "dashboard": "Tableau de bord",
+        "tenants": "Tenants",
+        "tenantsIndex": "Gestion des Tenants",
+        "tenantsCreate": "Ajouter un Tenant",
+        "tenantsShow": "Voir un Tenant",
+        "tenantsEdit": "Modifier un Tenant"
     },
     "actions": {
         "create_tenant": "Créer un tenant",
         "view_tenants": "Voir les tenants"
+    },
+    "reports": {
+        "title": "Rapports système",
+        "summary": {
+            "totalTenants": "Total Tenants",
+            "activeTenants": "Tenants actifs",
+            "totalLeads": "Total Leads",
+            "totalUsers": "Total Utilisateurs"
+        },
+        "tenantGrowth": {
+            "title": "Croissance des Tenants",
+            "description": "Nouveaux tenants par mois (12 derniers mois)"
+        },
+        "planDistribution": {
+            "title": "Répartition des Plans",
+            "description": "Tenants par plan"
+        },
+        "leadGeneration": {
+            "title": "Génération de Leads",
+            "description": "Nouveaux leads par mois (12 derniers mois)"
+        },
+        "topTenants": {
+            "title": "Top Tenants par Utilisation",
+            "description": "Plus forte consommation de tokens (30 derniers jours)",
+            "columns": {
+                "tenant": "Tenant",
+                "cost": "Coût ($)",
+                "tokens": "Tokens"
+            }
+        },
+        "dailyTokenCost": {
+            "title": "Coût Quotidien des Tokens",
+            "description": "Coût total par jour (30 derniers jours)"
+        }
+    },
+    "tokenUsage": {
+        "title": "Utilisation des Tokens",
+        "summary": {
+            "totalTokens": "Total Tokens",
+            "totalCost": "Coût Total",
+            "totalRecharges": "Total Recharges",
+            "lowCredit": "Crédit Faible"
+        },
+        "filters": {
+            "last7": "7 jours",
+            "last30": "30 jours",
+            "last90": "90 jours",
+            "custom": "Personnalisé",
+            "dateFrom": "Du",
+            "dateTo": "Au",
+            "search": "Rechercher un tenant...",
+            "apply": "Appliquer"
+        },
+        "dailyChart": {
+            "title": "Utilisation Quotidienne",
+            "description": "Coût et recharges dans le temps",
+            "cost": "Coût",
+            "recharges": "Recharges"
+        },
+        "table": {
+            "title": "Détail par Tenant",
+            "description": "Consommation de tokens par tenant",
+            "columns": {
+                "tenant": "Tenant",
+                "input": "Entrée",
+                "output": "Sortie",
+                "total": "Total",
+                "cost": "Coût",
+                "recharges": "Recharges",
+                "net": "Net",
+                "balance": "Solde",
+                "status": "Statut"
+            },
+            "empty": "Aucune donnée d'utilisation trouvée.",
+            "statusOk": "OK",
+            "statusLow": "Faible"
+        }
+    },
+    "leads": {
+        "title": "Tous les Leads",
+        "filters": {
+            "all": "Tous",
+            "tenant": "Tenant",
+            "status": "Statut",
+            "temperature": "Temp.",
+            "qualification": "Qualif.",
+            "search": "Rechercher",
+            "searchPlaceholder": "Nom, téléphone, email...",
+            "dateFrom": "Du",
+            "dateTo": "Au",
+            "clear": "Effacer",
+            "export": "Exporter CSV"
+        },
+        "table": {
+            "headers": {
+                "tenant": "Tenant",
+                "name": "Nom",
+                "phone": "Téléphone",
+                "email": "Email",
+                "status": "Statut",
+                "temperature": "Temp.",
+                "qualification": "Qualif.",
+                "lastActivity": "Dernière activité",
+                "created": "Créé le"
+            },
+            "empty": "Aucun lead trouvé."
+        }
     }
 }

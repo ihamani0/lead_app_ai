@@ -49,7 +49,9 @@ export default function InstanceShow({ instance }: Props) {
     const slug = activeWorkspace?.slug;
 
     const [localInstance, setLocalInstance] = useState(instance);
-    const [qrCode, setQrCode] = useState<string | null>(instance.qr_code ?? null);
+    const [qrCode, setQrCode] = useState<string | null>(
+        instance.qr_code ?? null,
+    );
     const [isLoadingQr, setIsLoadingQr] = useState(false);
     const [isRestarting, setIsRestarting] = useState(false);
     const [isWaitingForQr, setIsWaitingForQr] = useState(false);

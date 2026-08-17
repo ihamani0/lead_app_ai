@@ -12,9 +12,10 @@ return new class extends Migration
             $table->ulid('id')->primary();
             $table->string('name', 255);
             $table->string('slug', 100)->unique();
-            $table->string('plan', 50)->default('starter'); // starter | pro | enterprise
             $table->boolean('is_active')->default(true);
             $table->jsonb('settings')->nullable();
+
+            $table->foreignId('plan_id')->nullable()->constrained('plans')->nullOnDelete();
 
             // owner — nullable FK; no constraint because tenants runs before users in timestamp order
             $table->foreignId('owner_id')->nullable()->index();

@@ -74,7 +74,9 @@ export default function Password({ requiresCurrentPassword = true }: Props) {
                                     type="password"
                                     className="mt-1 block w-full"
                                     autoComplete="current-password"
-                                    placeholder={t('settings.password.currentPlaceholder')}
+                                    placeholder={t(
+                                        'settings.password.currentPlaceholder',
+                                    )}
                                     value={form.data.current_password}
                                     onChange={(e) =>
                                         form.setData(
@@ -103,7 +105,9 @@ export default function Password({ requiresCurrentPassword = true }: Props) {
                                 type="password"
                                 className="mt-1 block w-full"
                                 autoComplete="new-password"
-                                placeholder={t('settings.password.newPlaceholder')}
+                                placeholder={t(
+                                    'settings.password.newPlaceholder',
+                                )}
                                 value={form.data.password}
                                 onChange={(e) =>
                                     form.setData('password', e.target.value)
@@ -125,7 +129,9 @@ export default function Password({ requiresCurrentPassword = true }: Props) {
                                 type="password"
                                 className="mt-1 block w-full"
                                 autoComplete="new-password"
-                                placeholder={t('settings.password.confirmPlaceholder')}
+                                placeholder={t(
+                                    'settings.password.confirmPlaceholder',
+                                )}
                                 value={form.data.password_confirmation}
                                 onChange={(e) =>
                                     form.setData(

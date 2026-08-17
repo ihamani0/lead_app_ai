@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { messages as messagesRoute, send as sendRoute } from '@/routes/workspaces/leads';
+import {
+    messages as messagesRoute,
+    send as sendRoute,
+} from '@/routes/workspaces/leads';
 import type { LeadMessage } from '@/types';
 
 interface PaginatedResponse<T> {

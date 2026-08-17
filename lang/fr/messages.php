@@ -65,6 +65,13 @@ return [
         'cannot_remove_owner' => 'Impossible de supprimer le propriétaire du workspace.',
         'cannot_delete_owner_role' => 'Impossible de supprimer le rôle propriétaire.',
         'invitation_accept_failed' => 'Échec de l\'acceptation de l\'invitation : :message',
+        'plan_limit_teams' => 'La limite de votre plan pour les espaces de travail a été atteinte.',
+        'plan_limit_members' => 'La limite de votre plan pour les membres a été atteinte.',
+        'plan_limit_agents' => 'La limite de votre plan pour les agents IA a été atteinte.',
+        'plan_limit_instances' => 'La limite de votre plan pour les instances a été atteinte.',
+        'plan_limit_leads' => 'La limite de votre plan pour les prospects a été atteinte.',
+        'plan_limit_storage' => 'Votre limite de stockage a été atteinte. Mettez à niveau votre plan pour stocker plus de fichiers.',
+        'plan_feature_unavailable' => 'Cette fonctionnalité n\'est pas disponible sur votre plan actuel.',
 
     ],
 

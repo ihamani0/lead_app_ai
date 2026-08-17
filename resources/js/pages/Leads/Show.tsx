@@ -1,4 +1,4 @@
-import { Deferred, Head, Link } from '@inertiajs/react';
+import { Deferred, Head, Link, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
 import {
     ArrowLeft,
@@ -8,6 +8,7 @@ import {
     User,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { FeatureGate } from '@/components/feature-gate';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -29,8 +30,11 @@ type Props = {
 export default function LeadShow({ lead, similarLeads }: Props) {
     const { t } = useTranslation();
     const activeWorkspace = useActiveWorkspace();
+    const features = usePage<SharedPageProps>().props.auth.user.tenant.features;
     const [showDetails, setShowDetails] = useState(true);
-    const [mobileTab, setMobileTab] = useState<'info' | 'chat' | 'details'>('chat');
+    const [mobileTab, setMobileTab] = useState<'info' | 'chat' | 'details'>(
+        'chat',
+    );
     const [liveLead, setLiveLead] = useState<LeadType>(lead);
 
     useEffect(() => {
@@ -234,7 +238,11 @@ export default function LeadShow({ lead, similarLeads }: Props) {
                                         data="similarLeads"
                                         fallback={<SimilarLeadsSkeleton />}
                                     >
-                                        <SimilarLeads leads={similarLeads as SimilarLead[]} />
+                                        <SimilarLeads
+                                            leads={
+                                                similarLeads as SimilarLead[]
+                                            }
+                                        />
                                     </Deferred>
                                 </div>
                             </div>
@@ -246,7 +254,7 @@ export default function LeadShow({ lead, similarLeads }: Props) {
                             mobileTab === 'chat' ? 'block' : 'hidden'
                         } lg:flex`}
                     >
-                        <LeadChat lead={liveLead} />
+                        <FeatureGate feature={features.talk_from_lead}><LeadChat lead={liveLead} /></FeatureGate>
                     </div>
 
                     {showDetails && (
