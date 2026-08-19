@@ -10,30 +10,41 @@ return new class extends Migration
 {
     public function up(): void
     {
-        if (! Schema::hasColumn('tenants', 'plan')) {
-            return;
+        if (! Schema::hasColumn('tenants', 'plan_id')) {
+            Schema::table('tenants', function (Blueprint $table) {
+                $table->foreignId('plan_id')->nullable()->constrained('plans')->nullOnDelete();
+            });
         }
 
-        $planIds = [
-            'free' => Plan::where('slug', 'free')->value('id'),
-            'pro' => Plan::where('slug', 'pro')->value('id'),
-            'enterprise' => Plan::where('slug', 'enterprise')->value('id'),
-        ];
+        if (Schema::hasColumn('tenants', 'plan')) {
+            $planIds = [
+                'free' => Plan::where('slug', 'free')->value('id'),
+                'pro' => Plan::where('slug', 'pro')->value('id'),
+                'enterprise' => Plan::where('slug', 'enterprise')->value('id'),
+            ];
 
-        foreach (['starter' => 'free', 'pro' => 'pro', 'enterprise' => 'enterprise'] as $legacy => $current) {
-            DB::table('tenants')
-                ->whereNull('plan_id')
-                ->where('plan', $legacy)
-                ->update(['plan_id' => $planIds[$current] ?? null]);
+            foreach (['starter' => 'free', 'free' => 'free', 'pro' => 'pro', 'enterprise' => 'enterprise'] as $legacy => $current) {
+                DB::table('tenants')
+                    ->whereNull('plan_id')
+                    ->where('plan', $legacy)
+                    ->update(['plan_id' => $planIds[$current] ?? null]);
+            }
+
+            Schema::table('tenants', function (Blueprint $table) {
+                $table->dropColumn('plan');
+            });
         }
-
-        Schema::table('tenants', function (Blueprint $table) {
-            $table->dropColumn('plan');
-        });
     }
 
     public function down(): void
     {
+        if (Schema::hasColumn('tenants', 'plan_id')) {
+            Schema::table('tenants', function (Blueprint $table) {
+                $table->dropForeign(['plan_id']);
+                $table->dropColumn('plan_id');
+            });
+        }
+
         if (! Schema::hasColumn('tenants', 'plan')) {
             Schema::table('tenants', function (Blueprint $table) {
                 $table->string('plan', 50)->nullable();
